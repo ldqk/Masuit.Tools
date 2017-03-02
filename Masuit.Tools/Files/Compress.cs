@@ -35,6 +35,24 @@ namespace Masuit.Tools.Files
             }
         }
 
+        public static Stream PackFiles(string directory)
+        {
+            try
+            {
+                FastZip fz = new FastZip();
+                fz.CreateEmptyDirectories = true;
+                //fz.CreateZip(filename, directory, true, "");
+                Stream s = new MemoryStream();
+                fz.CreateZip(s, directory, true, "*.*", "*");
+                fz = null;
+                return s;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         /// <summary>
         /// 文件压缩
         /// </summary> 
@@ -156,9 +174,9 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 压缩
         /// </summary>
-        /// <param name="FileToZip">待压缩的文件目录</param>
+        /// <param name="FileToZip">待压缩的文件目录或文件</param>
         /// <param name="ZipedFile">生成的目标文件</param>
-        /// <param name="level">压缩等级，默认值6</param>
+        /// <param name="level">压缩级别，默认值6</param>
         public static bool Zip(string FileToZip, string ZipedFile, int level = 6)
         {
             if (Directory.Exists(FileToZip))

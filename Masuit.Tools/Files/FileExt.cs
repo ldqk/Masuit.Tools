@@ -14,14 +14,17 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="fs">源</param>
         /// <param name="dest">目标地址</param>
-        public static void CopyToFile(this Stream fs, string dest)
+        /// <param name="bufferSize">缓冲区大小，默认8MB</param>
+        public static void CopyToFile(this Stream fs, string dest, int bufferSize = 1024 * 8 * 1024)
         {
             using (FileStream fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                byte[] buf = new byte[1024 * 1024 * 8];
+                byte[] buf = new byte[bufferSize];
                 int len = 0;
                 while ((len = fs.Read(buf, 0, buf.Length)) != 0)
+                {
                     fsWrite.Write(buf, 0, len);
+                }
             }
         }
 
@@ -30,17 +33,23 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="fs">源</param>
         /// <param name="dest">目标地址</param>
-        public static async void CopyToFileAsync(this Stream fs, string dest)
+        /// <param name="bufferSize">缓冲区大小，默认8MB</param>
+        public static async void CopyToFileAsync(this Stream fs, string dest, int bufferSize = 1024 * 1024 * 8)
         {
             using (FileStream fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                byte[] buf = new byte[1024 * 1024 * 8];
+                byte[] buf = new byte[bufferSize];
                 int len = 0;
                 await Task.Run(() =>
                 {
-                    while ((len = fs.Read(buf, 0, buf.Length)) != 0)
-                        fsWrite.Write(buf, 0, len);
-                }).ConfigureAwait(false);
+                    using (fs)
+                    {
+                        while ((len = fs.Read(buf, 0, buf.Length)) != 0)
+                        {
+                            fsWrite.Write(buf, 0, len);
+                        }
+                    }
+                }).ConfigureAwait(true);
             }
         }
 
@@ -142,7 +151,7 @@ namespace Masuit.Tools.Files
         /// <param name="stream">要计算哈希值的 Stream</param>
         /// <param name="algName">算法:sha1,md5</param>
         /// <returns>哈希值字节数组</returns>
-        private static async Task<byte[]> HashDataAsync(Stream stream, string algName)
+        private static async Task<byte[]> HashDataAsync(this Stream stream, string algName)
         {
             System.Security.Cryptography.HashAlgorithm algorithm;
             if (algName == null)

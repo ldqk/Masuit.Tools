@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Masuit.Utilities\Masuit.Tools.csproj" />
+    <ProjectReference Include="..\Masuit.Tools\Masuit.Tools.csproj" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>eb6cc774-090e-4102-a8b2-d8e11ebebdd7</ProjectGuid>
