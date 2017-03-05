@@ -29,8 +29,7 @@
     <Summary>包含一些常用的操作类，加密解密，大文件拷贝，图像裁剪，验证码</Summary>
     <Description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，文档转换，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。</Description>
     <ReleaseNotes>QQ:1170397736</ReleaseNotes>
-    <ProjectUrl>
-    </ProjectUrl>
+    <ProjectUrl>https://github.com/ldqk/Masuit.Tools</ProjectUrl>
     <LicenseUrl>
     </LicenseUrl>
     <Copyright>Copyright © 懒得勤快</Copyright>

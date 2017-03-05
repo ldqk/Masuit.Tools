@@ -664,13 +664,178 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 匹配Email
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static bool MatchEmail(this string s)
+        /// <param name="s">源字符串</param>
+        /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+        /// <returns>匹配对象</returns>
+        public static Match MatchEmail(this string s, out bool isMatch)
         {
-            return Regex.IsMatch(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            isMatch = match.Success;
+            return isMatch ? match : null;
         }
 
         #endregion
+
+        #region 匹配完整的URL
+
+        /// <summary>
+        /// 匹配完整格式的URL，支持以下格式的URL,支持中文域名：<br/>
+        /// 支持不带协议名的网址，支持自适应协议的网址，支持完整路径，支持查询参数，支持锚点，支持锚点查询参数，支持16进制编码<br/>
+        /// www.baidu.com <br/>
+        /// www.baidu.com <br/>
+        /// baidu.com <br/>
+        /// //www.baidu.com <br/>
+        /// http://www.baidu.com <br/>
+        /// https://www.baidu.com <br/>
+        /// https://baidu.com <br/>
+        /// ftp://baidu.com <br/>
+        /// ftp://baidu.com/abc/def <br/>
+        /// ftp://admin:123456@baidu.com <br/>
+        /// ftp://admin:123456@baidu.com/abc/def <br/>
+        /// https://baidu.com:8080 <br/>
+        /// https://baidu.com/abc/def <br/>
+        /// https://baidu.com:8080/abc/def <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www <br/>
+        /// https://baidu.com/abc/def/hhh.html?s=w@w{w}!s <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yy+y <br/>
+        /// https://baidu.com/abc/def/hhh.html?s=www&amp;x=yyy <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yyy#top <br/>
+        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA/hhh.html?s=www&amp;x=yyy#top <br/>
+        /// https://baidu.com:8080/abc/def/hi_j+k-mn%ADF%AA?s=www&amp;x=yyy#top/aaa <br/>
+        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&amp;x=yyy#top/aaa/bbb/ccc <br/>
+        /// http://music.163.com/#/my/m/music/empty <br/>
+        /// http://music.163.com/abc/#/my/m/music/empty <br/>
+        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy#/my/m/music/empty <br/>
+        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy/#/my/m/music/empty <br/>
+        /// http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&amp;s=fade&amp;type=1!k <br/>
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+        /// <returns>匹配对象</returns>
+        public static Match MatchUrl(this string s, out bool isMatch)
+        {
+            Match match = Regex.Match(s, @"^((\w*):?//)?((\w+)\.|((\S+):(\S+))@)?((\w+)\.(\w+))(:(\d{1,5}))?(/([a-z0-9A-Z-_@{}!+%/]+(\.\w+)?)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]+&?)+)?(/?#[a-z0-9A-Z-_@{}!+%/]+)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]*&?)+)?)?$");
+            isMatch = match.Success;
+            return isMatch ? match : null;
+        }
+        #endregion
+
+        #region 权威校验身份证号码
+        /// <summary>
+        /// 根据GB11643-1999标准权威校验中国身份证号码的合法性
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchIdentifyCard(this string s)
+        {
+            if (s.Length == 18)
+            {
+                long n = 0;
+                if (long.TryParse(s.Remove(17), out n) == false
+                    || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                {
+                    return false;//数字验证  
+                }
+                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+                if (address.IndexOf(s.Remove(2)) == -1)
+                {
+                    return false;//省份验证  
+                }
+                string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
+                DateTime time = new DateTime();
+                if (DateTime.TryParse(birth, out time) == false)
+                {
+                    return false;//生日验证  
+                }
+                string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
+                string[] Wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
+                char[] Ai = s.Remove(17).ToCharArray();
+                int sum = 0;
+                for (int i = 0; i < 17; i++)
+                {
+                    sum += int.Parse(Wi[i]) * int.Parse(Ai[i].ToString());
+                }
+                int y = -1;
+                Math.DivRem(sum, 11, out y);
+                if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
+                {
+                    return false;//校验码验证  
+                }
+                return true;//符合GB11643-1999标准  
+            }
+            if (s.Length == 15)
+            {
+                long n = 0;
+                if (long.TryParse(s, out n) == false || n < Math.Pow(10, 14))
+                {
+                    return false;//数字验证  
+                }
+                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+                if (address.IndexOf(s.Remove(2)) == -1)
+                {
+                    return false;//省份验证  
+                }
+                string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
+                DateTime time = new DateTime();
+                if (DateTime.TryParse(birth, out time) == false)
+                {
+                    return false;//生日验证  
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        #region 校验IP地址的合法性
+        /// <summary>
+        /// 校验IP地址的正确性，同时支持IPv4和IPv6
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+        /// <returns>匹配对象</returns>
+        public static Match MatchInetAddress(this string s, out bool isMatch)
+        {
+            Match match;
+            if (s.Contains(":"))
+            {
+                //IPv6
+                match = Regex.Match(s, "^((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))$");
+                isMatch = match.Success;
+            }
+            else
+            {
+                //IPv4
+                match = Regex.Match(s, @"^(\d+)\.(\d+)\.(\d+)\.(\d+)$");
+                isMatch = match.Success;
+                foreach (Group m in match.Groups)
+                {
+                    if (m.Value.ToInt32() < 0 || m.Value.ToInt32() > 255)
+                    {
+                        isMatch = false;
+                        break;
+                    }
+                }
+            }
+            return isMatch ? match : null;
+        }
+        #endregion
+
+        #region 校验手机号码的正确性
+        /// <summary>
+        /// 匹配手机号码
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+        /// <returns>匹配对象</returns>
+        public static Match MatchPhoneNumber(this string s, out bool isMatch)
+        {
+            Match match = Regex.Match(s, @"^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,6,7,8]))\d{8}$");
+            isMatch = match.Success;
+            return isMatch ? match : null;
+        }
+        #endregion
+
     }
 }

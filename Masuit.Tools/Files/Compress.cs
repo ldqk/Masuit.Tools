@@ -35,24 +35,6 @@ namespace Masuit.Tools.Files
             }
         }
 
-        public static Stream PackFiles(string directory)
-        {
-            try
-            {
-                FastZip fz = new FastZip();
-                fz.CreateEmptyDirectories = true;
-                //fz.CreateZip(filename, directory, true, "");
-                Stream s = new MemoryStream();
-                fz.CreateZip(s, directory, true, "*.*", "*");
-                fz = null;
-                return s;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         /// <summary>
         /// 文件压缩
         /// </summary> 
