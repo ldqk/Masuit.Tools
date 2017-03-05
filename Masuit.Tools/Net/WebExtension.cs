@@ -22,8 +22,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 获取线程内唯一的EF上下文对象
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T">EF上下文容器对象</typeparam>
+        /// <returns>EF上下文容器对象</returns>
         public static T GetDbContext<T>() where T : new()
         {
             T db;
@@ -136,7 +136,7 @@ namespace Masuit.Tools.Net
         /// 获取客户端IP地址信息
         /// </summary>
         /// <param name="ip">IP地址</param>
-        /// <returns></returns>
+        /// <returns>详细的地理位置、运营商信息</returns>
         public static async Task<IPData> GetIPAddressInfoAsync(this string ip)
         {
             HttpClient client = new HttpClient();

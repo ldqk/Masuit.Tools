@@ -53,7 +53,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 获取一个连接实例
         /// </summary>
-        /// <returns></returns>
+        /// <returns>连接实例</returns>
         public static IDatabase GetDatabase()
         {
             return Instance.GetDatabase();
@@ -63,7 +63,7 @@ namespace Masuit.Tools.Net
         /// 过期时间
         /// </summary>
         /// <param name="Min">分钟</param>
-        /// <returns></returns>
+        /// <returns>时间差</returns>
         private static TimeSpan ExpireTimeSpan(double Min)
         {
             bool bl = bool.Parse(ConfigurationManager.AppSettings["UseRedis"]);
@@ -90,8 +90,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 判断在缓存中是否存在该key的缓存数据
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">键</param>
+        /// <returns>是否存在</returns>
         public static bool Exists(string key)
         {
             return GetDatabase().KeyExists(key); //可直接调用
@@ -100,8 +100,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 移除指定key的缓存
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">键</param>
+        /// <returns>处理结果</returns>
         public static bool Remove(string key)
         {
             if (Exists(key))
@@ -116,7 +116,7 @@ namespace Masuit.Tools.Net
         /// <param name="key">键</param>
         /// <param name="t">值</param>
         /// <param name="minOut">多少分钟后过期，默认值180分钟</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool Set<T>(string key, T t, double minOut = 60 * 3)
         {
             return GetDatabase().StringSet(key, Serialize(t), ExpireTimeSpan(minOut));
@@ -125,9 +125,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// Get
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="key">键</param>
+        /// <returns>强类型值</returns>
         public static T Get<T>(string key)
         {
             return Deserialize<T>(GetDatabase().StringGet(key));
@@ -167,7 +167,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 得到所有缓存键值
         /// </summary>
-        /// <returns></returns>
+        /// <returns>数据列表</returns>
         public static List<string> GetAllKeys()
         {
             List<string> lstKey = new List<string>();
@@ -197,8 +197,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 序列化对象
         /// </summary>
-        /// <param name="o"></param>
-        /// <returns></returns>
+        /// <param name="o">对象</param>
+        /// <returns>字节数据</returns>
         private static byte[] Serialize(object o)
         {
             if (o == null)
@@ -215,9 +215,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 反序列化对象
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="stream"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="stream">字节流</param>
+        /// <returns>强类型对象</returns>
         private static T Deserialize<T>(byte[] stream)
         {
             if (stream == null)
@@ -233,9 +233,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 配置更改时
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerConfigurationChanged(object sender, EndPointEventArgs e)
         {
             //LogHelper.LogExceRun("Configuration changed: " + e.EndPoint, new Exception());
@@ -245,9 +245,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 发生错误时
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerErrorMessage(object sender, RedisErrorEventArgs e)
         {
             //LogHelper.LogExceRun("ErrorMessage: " + e.Message, new Exception());
@@ -257,9 +257,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 重新建立连接之前的错误
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerConnectionRestored(object sender, ConnectionFailedEventArgs e)
         {
             //LogHelper.LogExceRun("ConnectionRestored: " + e.EndPoint, new Exception());
@@ -269,9 +269,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
             //LogHelper.LogExceRun("重新连接：Endpoint failed: " + e.EndPoint + ", " + e.FailureType + (e.Exception == null ? "" : (", " + e.Exception.Message)), new Exception());
@@ -281,9 +281,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 更改集群
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerHashSlotMoved(object sender, HashSlotMovedEventArgs e)
         {
             //LogHelper.LogExceRun("HashSlotMoved:NewEndPoint" + e.NewEndPoint + ", OldEndPoint" + e.OldEndPoint, new Exception());
@@ -293,9 +293,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// redis类库错误
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="Exception"></exception>
+        /// <param name="sender"> </param>
+        /// <param name="e"> </param>
+        /// <exception cref="Exception"> </exception>
         private static void MuxerInternalError(object sender, InternalErrorEventArgs e)
         {
             //LogHelper.LogExceRun("redis类库错误InternalError:Message" + e.Exception.Message, new Exception());
@@ -312,7 +312,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="host">主机地址</param>
         /// <param name="port">端口号</param>
-        /// <returns></returns>
+        /// <returns>服务器对象</returns>
         public static IServer GetServer(string host, int port)
         {
             IServer server = Instance.GetServer(host, port);
@@ -322,7 +322,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 获取全部终结点
         /// </summary>
-        /// <returns></returns>
+        /// <returns>全部终端</returns>
         public static EndPoint[] GetEndPoints()
         {
             EndPoint[] endpoints = Instance.GetEndPoints();

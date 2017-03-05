@@ -34,8 +34,8 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 使用默认加密
         /// </summary>
-        /// <param name="strText"></param>
-        /// <returns></returns>
+        /// <param name="strText">被加密的字符串</param>
+        /// <returns>加密后的数据</returns>
         public static string DesEncrypt(string strText)
         {
             try
@@ -51,8 +51,8 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 使用默认解密
         /// </summary>
-        /// <param name="strText"></param>
-        /// <returns></returns>
+        /// <param name="strText">需要解密的 字符串</param>
+        /// <returns>解密后的数据</returns>
         public static string DesDecrypt(string strText)
         {
             try
@@ -66,12 +66,12 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary> 
-        /// Encrypt the string 
-        /// Attention:key must be 8 bits 
+        /// 解密字符串
+        /// 加密密钥必须是8位
         /// </summary> 
-        /// <param name="strText">string</param> 
-        /// <param name="strEncrKey">key</param> 
-        /// <returns></returns> 
+        /// <param name="strText">被解密的字符串</param> 
+        /// <param name="strEncrKey">密钥</param> 
+        /// <returns>解密后的数据</returns> 
         public static string DesEncrypt(string strText, string strEncrKey)
         {
             byte[] byKey = null;
@@ -401,7 +401,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="InputFile">源文件</param>
         /// <param name="OutputFile">输出文件</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool AES_EncryptFile(string InputFile, string OutputFile)
         {
             try
@@ -428,9 +428,9 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 对指定的文件解压缩
         /// </summary>
-        /// <param name="InputFile"></param>
-        /// <param name="OutputFile"></param>
-        /// <returns></returns>
+        /// <param name="InputFile">输入文件</param>
+        /// <param name="OutputFile">输出文件</param>
+        /// <returns>处理结果</returns>
         public static bool AES_DecryptFile(string InputFile, string OutputFile)
         {
             try
@@ -470,8 +470,8 @@ namespace Masuit.Tools.Security
         /// 系統中而不同。
         /// Base64加密
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str">需要加密的字符串</param>
+        /// <returns>加密后的数据</returns>
         public static string Base64Encrypt(string str)
         {
             byte[] encbuff = System.Text.Encoding.UTF8.GetBytes(str);
@@ -481,8 +481,8 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// Base64解密
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str">需要解密的字符串</param>
+        /// <returns>解密后的数据</returns>
         public static string Base64Decrypt(string str)
         {
             byte[] decbuff = Convert.FromBase64String(str);

@@ -457,7 +457,7 @@ namespace Masuit.Tools.Media
         /// (注：JPG,GIF,BMP,PNG)
         /// </summary>
         /// <param name="contentType">HttpPostedFile.ContentType</param>
-        /// <returns></returns>
+        /// <returns>是否为WEB格式图片</returns>
         public static bool IsWebImage(string contentType)
         {
             if ((contentType == "image/pjpeg") || (contentType == "image/jpeg") || (contentType == "image/gif") || (contentType == "image/bmp") || (contentType == "image/png"))
@@ -554,9 +554,9 @@ namespace Masuit.Tools.Media
         /// <param name="sFile">原图片</param>
         /// <param name="dFile">压缩后保存位置</param>
         /// <param name="dHeight">高度</param>
-        /// <param name="dWidth"></param>
+        /// <param name="dWidth">宽度</param>
         /// <param name="flag">压缩质量 1-100</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool GetPicThumbnail(string sFile, string dFile, int dHeight, int dWidth, int flag = 100)
         {
             using (Image iSource = Image.FromFile(sFile))
@@ -982,8 +982,8 @@ namespace Masuit.Tools.Media
         /// <summary>
         /// 图片灰度化
         /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
+        /// <param name="c">输入颜色</param>
+        /// <returns>输出颜色</returns>
         public static Color Gray(Color c)
         {
             int rgb = Convert.ToInt32(0.3 * c.R + 0.59 * c.G + 0.11 * c.B);

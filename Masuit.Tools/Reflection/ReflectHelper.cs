@@ -17,9 +17,9 @@ namespace Masuit.Tools.Reflection
         /// <summary>
         /// 获取实体相关属性的值
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
+        /// <param name="obj">反射对象</param>
+        /// <param name="propertyName">属性名</param>
+        /// <returns>属性值</returns>
         public static object GetInstanceValue(this object obj, string propertyName)
         {
             object objRet = null;
@@ -45,7 +45,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="objInitial">如果调用属性，则为相关对象的初始化数据，否则为Null。</param>
         /// <param name="funParams">函数参数信息</param>
         /// <returns>运行结果</returns>
-        /// <exception cref="InvalidProgramException"></exception>
+        /// <exception cref="InvalidProgramException">非法异常</exception>
         public static T InvokeMethodOrGetProperty<T>(this Type refType, string funName, object[] objInitial, params object[] funParams)
         {
             MemberInfo[] mis = refType.GetMember(funName);

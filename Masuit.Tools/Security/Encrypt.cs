@@ -15,11 +15,11 @@ namespace Masuit.Tools.Security
 
         /// <summary>
         ///     DES加密算法
-        ///     sKey为8位或16位
+        ///     密钥为8位或16位
         /// </summary>
         /// <param name="pToEncrypt">需要加密的字符串</param>
         /// <param name="sKey">密钥</param>
-        /// <returns></returns>
+        /// <returns>解密后的数据</returns>
         public static string DesEncrypt(this string pToEncrypt, string sKey)
         {
             var des = new DESCryptoServiceProvider();
@@ -42,11 +42,11 @@ namespace Masuit.Tools.Security
 
         /// <summary>
         ///     DES解密算法
-        ///     sKey为8位或16位
+        ///     密钥为8位或16位
         /// </summary>
         /// <param name="pToDecrypt">需要解密的字符串</param>
         /// <param name="sKey">密钥</param>
-        /// <returns></returns>
+        /// <returns>解密后的数据</returns>
         public static string DesDecrypt(this string pToDecrypt, string sKey)
         {
             var des = new DESCryptoServiceProvider();
@@ -73,7 +73,7 @@ namespace Masuit.Tools.Security
         /// <summary>
         ///     创建Key
         /// </summary>
-        /// <returns></returns>
+        /// <returns>密钥</returns>
         public static string GenerateKey()
         {
             var desCrypto = (DESCryptoServiceProvider)DES.Create();
@@ -89,7 +89,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="pToEncrypt">加密字符串</param>
         /// <param name="sKey">密钥Key</param>
-        /// <returns></returns>
+        /// <returns>加密后的字符串</returns>
         public static string MD5Encrypt(this string pToEncrypt, string sKey)
         {
             var des = new DESCryptoServiceProvider();
@@ -116,7 +116,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="pToDecrypt">解密字符串</param>
         /// <param name="sKey">密钥Key</param>
-        /// <returns></returns>
+        /// <returns>解密后的数据</returns>
         public static string MD5Decrypt(this string pToDecrypt, string sKey)
         {
             var des = new DESCryptoServiceProvider();
@@ -381,7 +381,7 @@ namespace Masuit.Tools.Security
         ///     MD5对数组数据加密
         /// </summary>
         /// <param name="input">包含需要加密的数据的数组</param>
-        /// <returns></returns>
+        /// <returns>加密后的字节流</returns>
         public static byte[] MD5Array(this byte[] input)
         {
             MD5_Init();
@@ -407,8 +407,8 @@ namespace Masuit.Tools.Security
         ///     获取数组的Hex值
         /// </summary>
         /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase"></param>
-        /// <returns></returns>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexString(this byte[] array, bool uppercase)
         {
             var hexString = "";
@@ -428,7 +428,7 @@ namespace Masuit.Tools.Security
         ///     对字符串进行MD5加密
         /// </summary>
         /// <param name="message">需要加密的字符串</param>
-        /// <returns></returns>
+        /// <returns>加密后的结果</returns>
         public static string MDString(this string message)
         {
             var c = message.ToCharArray();
@@ -447,7 +447,7 @@ namespace Masuit.Tools.Security
         /// 获取文件的MD5值
         /// </summary>
         /// <param name="fileName">需要求MD5值的文件的文件名及路径</param>
-        /// <returns></returns>
+        /// <returns>MD5字符串</returns>
         public static string MDFile(this string fileName)
         {
             var fs = File.Open(fileName, FileMode.Open, FileAccess.Read);
@@ -466,7 +466,7 @@ namespace Masuit.Tools.Security
         ///     测试MD5加密算法的函数
         /// </summary>
         /// <param name="message">需要加密的字符串</param>
-        /// <returns></returns>
+        /// <returns>加密后的 数据</returns>
         private static string MD5Test(this string message)
         {
             return "rnMD5 (" + "message" + ") = " + MDString(message);
@@ -479,7 +479,7 @@ namespace Masuit.Tools.Security
         /// <summary>
         ///     MD5加密算法测试用数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         private static string TestSuite()
         {
             var s = "";

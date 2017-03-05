@@ -13,8 +13,8 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// UBB代码处理函数
         /// </summary>
-        /// <param name="ubbStr">输入字符串</param>
-        /// <returns>输出字符串</returns>
+        /// <param name="ubbStr">输入UBB字符串</param>
+        /// <returns>输出html字符串</returns>
         public static string UbbToHtml(this string ubbStr)
         {
             Regex r;
@@ -415,7 +415,7 @@ namespace Masuit.Tools.Strings
         /// UBB转HTML方式2
         /// </summary>
         /// <param name="ubbStr">UBB 代码</param>
-        /// <returns></returns>
+        /// <returns>HTML代码</returns>
         public static string UbbToHtml2(this string ubbStr)
         {
             ubbStr = ubbStr.Replace("&", "&amp;");
@@ -568,7 +568,7 @@ namespace Masuit.Tools.Strings
         /// Html转UBB
         /// </summary>
         /// <param name="chr">HTML代码</param>
-        /// <returns></returns>
+        /// <returns>UBB代码</returns>
         public static string HtmltoUBB(this string chr)
         {
             if (chr == null)
@@ -612,8 +612,8 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 字符串转int
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        /// <param name="s">源字符串</param>
+        /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
             try
@@ -633,8 +633,8 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 字符串转double
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
+        /// <param name="s">源字符串</param>
+        /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
             try

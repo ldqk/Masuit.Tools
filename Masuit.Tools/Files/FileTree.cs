@@ -27,7 +27,7 @@ namespace Masuit.Tools.Files
         /// <param name="theDir">指定目录</param>
         /// <param name="nLevel">默认起始值,调用时,一般为0</param>
         /// <param name="Rn">用于迭加的传入值,一般为空</param>
-        /// <returns></returns>
+        /// <returns>所有子目录及文件</returns>
         public static string ListTreeShow(DirectoryInfo theDir, int nLevel, string Rn)//递归目录 文件
         {
             DirectoryInfo[] subDirectories = theDir.GetDirectories();//获得目录
@@ -92,7 +92,7 @@ namespace Masuit.Tools.Files
         /// <param name="nLevel">默认起始值,调用时,一般为0</param>
         /// <param name="Rn">用于迭加的传入值,一般为空</param>
         /// <param name="tplPath">默认选择模板名称</param>
-        /// <returns></returns>
+        /// <returns>所有子目录及文件</returns>
         public static string ListTreeShow(DirectoryInfo theDir, int nLevel, string Rn, string tplPath)//递归目录 文件
         {
             DirectoryInfo[] subDirectories = theDir.GetDirectories();//获得目录

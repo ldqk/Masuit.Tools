@@ -23,8 +23,8 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// RSA 的密钥产生 产生私钥 和公钥 
         /// </summary>
-        /// <param name="xmlKeys"></param>
-        /// <param name="xmlPublicKey"></param>
+        /// <param name="xmlKeys">私钥</param>
+        /// <param name="xmlPublicKey">公钥</param>
         public void RSAKey(out string xmlKeys, out string xmlPublicKey)
         {
             System.Security.Cryptography.RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
@@ -129,7 +129,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="m_strSource">源数据</param>
         /// <param name="HashData">哈希数据</param>
-        /// <returns></returns>
+        /// <returns>Hash描述表</returns>
         public bool GetHash(string m_strSource, ref byte[] HashData)
         {
             //从字符串中取得Hash描述 
@@ -147,7 +147,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="m_strSource">源数据</param>
         /// <param name="strHashData">哈希数据</param>
-        /// <returns></returns>
+        /// <returns>Hash描述表</returns>
         public bool GetHash(string m_strSource, ref string strHashData)
         {
             //从字符串中取得Hash描述 
@@ -166,7 +166,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="objFile">源文件</param>
         /// <param name="HashData">哈希字节数据</param>
-        /// <returns></returns>
+        /// <returns>Hash描述表</returns>
         public bool GetHash(System.IO.FileStream objFile, ref byte[] HashData)
         {
             //从文件中取得Hash描述 
@@ -182,7 +182,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="objFile">源文件</param>
         /// <param name="strHashData">哈希数据</param>
-        /// <returns></returns>
+        /// <returns>Hash描述表</returns>
         public bool GetHash(System.IO.FileStream objFile, ref string strHashData)
         {
             //从文件中取得Hash描述 
@@ -203,7 +203,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPrivate">私钥</param>
         /// <param name="HashbyteSignature">签名字节数据</param>
         /// <param name="EncryptedSignatureData">加密字节数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureFormatter(string p_strKeyPrivate, byte[] HashbyteSignature, ref byte[] EncryptedSignatureData)
         {
             System.Security.Cryptography.RSACryptoServiceProvider RSA = new System.Security.Cryptography.RSACryptoServiceProvider();
@@ -223,7 +223,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPrivate">私钥</param>
         /// <param name="HashbyteSignature">签名字节数据</param>
         /// <param name="m_strEncryptedSignatureData">加密字符串数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureFormatter(string p_strKeyPrivate, byte[] HashbyteSignature, ref string m_strEncryptedSignatureData)
         {
             byte[] EncryptedSignatureData;
@@ -245,7 +245,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPrivate">私钥</param>
         /// <param name="m_strHashbyteSignature">签名字符串数据</param>
         /// <param name="EncryptedSignatureData">加密字节数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureFormatter(string p_strKeyPrivate, string m_strHashbyteSignature, ref byte[] EncryptedSignatureData)
         {
             byte[] HashbyteSignature = Convert.FromBase64String(m_strHashbyteSignature);
@@ -266,7 +266,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPrivate">私钥</param>
         /// <param name="m_strHashbyteSignature">签名字符串数据</param>
         /// <param name="m_strEncryptedSignatureData">加密字符串数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureFormatter(string p_strKeyPrivate, string m_strHashbyteSignature, ref string m_strEncryptedSignatureData)
         {
             byte[] HashbyteSignature;
@@ -292,7 +292,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPublic">公钥</param>
         /// <param name="HashbyteDeformatter">哈希字节数据</param>
         /// <param name="DeformatterData">格式字节数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureDeformatter(string p_strKeyPublic, byte[] HashbyteDeformatter, byte[] DeformatterData)
         {
             System.Security.Cryptography.RSACryptoServiceProvider RSA = new System.Security.Cryptography.RSACryptoServiceProvider();
@@ -316,7 +316,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPublic">公钥</param>
         /// <param name="p_strHashbyteDeformatter">哈希字符串数据</param>
         /// <param name="DeformatterData">格式字节数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureDeformatter(string p_strKeyPublic, string p_strHashbyteDeformatter, byte[] DeformatterData)
         {
             byte[] HashbyteDeformatter = Convert.FromBase64String(p_strHashbyteDeformatter);
@@ -341,7 +341,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPublic">公钥</param>
         /// <param name="HashbyteDeformatter">哈希字节数据</param>
         /// <param name="p_strDeformatterData">格式字符串数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureDeformatter(string p_strKeyPublic, byte[] HashbyteDeformatter, string p_strDeformatterData)
         {
             byte[] DeformatterData;
@@ -367,7 +367,7 @@ namespace Masuit.Tools.Security
         /// <param name="p_strKeyPublic">公钥</param>
         /// <param name="p_strHashbyteDeformatter">哈希字符串数据</param>
         /// <param name="p_strDeformatterData">格式字符串数据</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public bool SignatureDeformatter(string p_strKeyPublic, string p_strHashbyteDeformatter, string p_strDeformatterData)
         {
             byte[] DeformatterData;

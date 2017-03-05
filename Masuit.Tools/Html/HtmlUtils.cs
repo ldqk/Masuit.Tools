@@ -383,7 +383,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获得标准的URL路径深度
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">URL路径</param>
         /// <returns>返回标准的形式：http://www.163.com/或http://www.163.com/news/。</returns>
         private static string _GetStandardUrlDepth(string url)
         {
@@ -544,13 +544,6 @@ namespace Masuit.Tools.Html
             return sFormartted;
         }
 
-        /// <summary>
-        /// 置换连接
-        /// </summary>
-        /// <param name="strRe"></param>
-        /// <param name="subMatch"></param>
-        /// <param name="sFormartted"></param>
-        /// <param name="sPageUrl"></param>
         private static string _ReplaceUrl(string strRe, string subMatch, string sFormartted, string sPageUrl)
         {
             Regex re = new Regex(strRe, RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
@@ -789,7 +782,7 @@ namespace Masuit.Tools.Html
         /// 判断是否是js链接
         /// </summary>
         /// <param name="sHtml">html</param>
-        /// <returns></returns>
+        /// <returns>判断是否是js链接</returns>
         public static bool IsExistsScriptLink(string sHtml)
         {
             Regex re = new Regex(@"<script[^>]+src\s*=\s*(?:'(?<src>[^']+)'|""(?<src>[^""]+)""|(?<src>[^>\s]+))\s*[^>]*>", RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
@@ -964,8 +957,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         ///  网页Body内容
         /// </summary>
-        /// <param name="sContent"></param>
-        /// <returns></returns>
+        /// <param name="sContent">html源代码</param>
+        /// <returns>网页Body内容</returns>
         public static string GetBody(string sContent)
         {
             Regex re = new Regex(@"[\s\S]*?<\bbody\b[^>]*>", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
@@ -1019,9 +1012,9 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获得链接的绝对路径
         /// </summary>
-        /// <param name="sUrl"></param>
-        /// <param name="sRUrl"></param>
-        /// <returns></returns>
+        /// <param name="sUrl">原链接地址</param>
+        /// <param name="sRUrl">相对地址</param>
+        /// <returns>获得链接的绝对路径</returns>
         public static string GetUrlByRelative(string sUrl, string sRUrl)
         {
             try
@@ -1120,10 +1113,10 @@ namespace Masuit.Tools.Html
         }
 
         /// <summary>
-        /// 和GetTxtFromHtml功能一样，不过保留换行符号
+        /// 从html中过滤出文本，不过保留换行符号
         /// </summary>
-        /// <param name="sHtml"></param>
-        /// <returns></returns>
+        /// <param name="sHtml">html源代码</param>
+        /// <returns>从html中过滤出文本，不过保留换行符号</returns>
         public static string GetTxtFromHtml2(string sHtml)
         {
             string del = @"<head[^>]*>[\s\S]*?</head>";
@@ -1405,7 +1398,7 @@ ReCatch:
         /// <param name="listUrl">URL集合</param>
         /// <param name="sCoding">文件编码</param>
         /// <returns>页面集合</returns>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="Exception"> </exception>
         public static List<KeyValuePair<int, string>> GetHtmlByUrlList(List<KeyValuePair<int, string>> listUrl, string sCoding)
         {
             int iTimeOut = int.Parse(System.Configuration.ConfigurationManager.AppSettings["SocketTimeOut"]);

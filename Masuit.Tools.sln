@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tools\Masuit.Tools.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Masuit.Tools帮助文档", "Masuit.Tools帮助文档\Masuit.Tools帮助文档.shfbproj", "{9960A20A-7BAD-4125-B93C-BCA3906EBCC1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{275D5A0D-C49C-497E-A4B5-F40285C2495F} = {275D5A0D-C49C-497E-A4B5-F40285C2495F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{91954D82-A5FC-417B-8FD9-D9C165C8F16C}"
 EndProject

@@ -6,7 +6,7 @@ namespace Masuit.Tools.Html
 {
     /*  使用方式         
     ListBuilder lb1=new ListBuilder("ul");
-    lb1.SetTemplate("<a href=\"{#url}\" target=\"_blank\"><strong>{#sortName}</strong></a>\r\n{#lb2}");
+    lb1.SetTemplate("<a href=\"{#url}\" target=\"_blank\"><strong>{#sortName}</strong> </a>\r\n{#lb2}");
 
     ListBuilder lb2=new ListBuilder("ul");
     lb2.SetTemplate("<a href=\""+url+"?tid={#id}"+"\" target=\"_blank\">{#title}</a> <span class='date'>[{#date}]</span>");
@@ -32,7 +32,7 @@ namespace Masuit.Tools.Html
         /// 构造函数
         /// </summary>
         /// <param name="_type">列表类型，可选"ul","dl"，默认"ul"</param>
-        /// <param name="className"></param>
+        /// <param name="className">类名</param>
         public ListBuilder(string _type, string className)
         {
             if (_type != string.Empty) type = _type;
@@ -114,8 +114,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 正则匹配中的委托定义
         /// </summary>
-        /// <param name="m"></param>
-        /// <returns></returns>
+        /// <param name="m">匹配对象</param>
+        /// <returns>正则匹配中的委托定义</returns>
         protected string MatchEvaluator(Match m)
         {
             string name = m.Groups[1].Captures[0].Value;
@@ -219,7 +219,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 根据模板绑定一个dataTable，使用datatable中的值来填充模板
         /// </summary>
-        /// <param name="dataTable"></param>
+        /// <param name="dataTable">内存表对象</param>
         public void BindData(System.Data.DataTable dataTable)
         {
             foreach (System.Data.DataRow dr in dataTable.Rows)

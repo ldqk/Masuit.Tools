@@ -32,7 +32,7 @@ namespace Masuit.Tools.Strings
         /// 生成验证码
         /// </summary>
         /// <param name="length">指定验证码的长度</param>
-        /// <returns></returns>
+        /// <returns>验证码</returns>
         public static string CreateValidateCode(int length)
         {
             int[] randMembers = new int[length];
@@ -128,7 +128,7 @@ namespace Masuit.Tools.Strings
         /// 得到验证码图片的长度
         /// </summary>
         /// <param name="validateNumLength">验证码的长度</param>
-        /// <returns></returns>
+        /// <returns>验证码长度</returns>
         public static int GetImageWidth(int validateNumLength)
         {
             return (int)(validateNumLength * 12.0);
@@ -137,7 +137,7 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 得到验证码的高度
         /// </summary>
-        /// <returns></returns>
+        /// <returns>验证码的高度</returns>
         public static double GetImageHeight()
         {
             return 22.5;

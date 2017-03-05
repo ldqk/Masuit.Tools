@@ -321,8 +321,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 4.2取得所有链接URL
         /// </summary>
-        /// <param name="html"></param>
-        /// <returns></returns>
+        /// <param name="html">html代码</param>
+        /// <returns>提取到的url</returns>
         public static string GetAllURL(string html)
         {
             StringBuilder sb = new StringBuilder();
@@ -342,8 +342,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 4.3获取所有连接文本
         /// </summary>
-        /// <param name="html"></param>
-        /// <returns></returns>
+        /// <param name="html">html代码</param>
+        /// <returns>所有的带链接的a标签</returns>
         public static string GetAllLinkText(string html)
         {
             StringBuilder sb = new StringBuilder();
@@ -497,10 +497,10 @@ namespace Masuit.Tools.Html
         #region 8.2过滤HTML中的不安全标签
 
         /// <summary>
-        /// 8.2过滤HTML中的不安全标签
+        /// 8.2过滤HTML中的不安全标签，去掉尖括号
         /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
+        /// <param name="content">html代码</param>
+        /// <returns>过滤后的安全内容</returns>
         public static string RemoveUnsafeHtml(string content)
         {
             content = Regex.Replace(content, @"(\<|\s+)o([a-z]+\s?=)", "$1$2", RegexOptions.IgnoreCase);
@@ -516,8 +516,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// HTML转行成TEXT HtmlToTxt(string strHtml)
         /// </summary>
-        /// <param name="strHtml"></param>
-        /// <returns></returns>
+        /// <param name="strHtml">html代码</param>
+        /// <returns>普通文本</returns>
         public static string HtmlToTxt(string strHtml)
         {
             string[] aryReg ={
@@ -556,8 +556,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 字符串转换为 HtmlStringToHtml(string str)
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str">字符串</param>
+        /// <returns>html标签</returns>
         public static string StringToHtml(string str)
         {
             str = str.Replace("&", "&amp;");
@@ -577,8 +577,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// html转换成字符串
         /// </summary>
-        /// <param name="strHtml"></param>
-        /// <returns></returns>
+        /// <param name="strHtml">html代码</param>
+        /// <returns>安全的字符串</returns>
         public static string HtmlToString(string strHtml)
         {
             strHtml = strHtml.Replace("<br>", "\r\n");
@@ -599,7 +599,7 @@ namespace Masuit.Tools.Html
         /// 获取URL编码
         /// </summary>
         /// <param name="url">URL</param>
-        /// <returns></returns>
+        /// <returns>编码类型</returns>
         public static string GetEncoding(string url)
         {
             HttpWebRequest request = null;
@@ -754,7 +754,7 @@ namespace Masuit.Tools.Html
         /// <param name="p">web页面</param>
         public static string Javascript(string jsPath, System.Web.UI.Page p)
         {
-            return @"<script type=""text/javascript"" src=""" + p.ResolveUrl(jsPath) + @"""></script>" + "\r\n";
+            return @"<script type=""text/javascript"" src=""" + p.ResolveUrl(jsPath) + @"""> </script>" + "\r\n";
         }
         #endregion
 
@@ -782,8 +782,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 从HTML中获取文本,保留br,p,img
         /// </summary>
-        /// <param name="HTML"></param>
-        /// <returns></returns>
+        /// <param name="HTML">html代码</param>
+        /// <returns>保留br,p,img的文本</returns>
         public static string GetTextFromHTML(string HTML)
         {
             Regex regEx = new Regex(@"</?(?!br|/?p|img)[^>]*>", RegexOptions.IgnoreCase);
@@ -797,9 +797,9 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获取HTML页面内制定Key的Value内容
         /// </summary>
-        /// <param name="html"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="html">html源代码</param>
+        /// <param name="key">键</param>
+        /// <returns>获取到的值</returns>
         public static string GetHiddenKeyValue(string html, string key)
         {
             string result = "";
@@ -852,8 +852,9 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 为脚本替换特殊字符串
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <returns> </returns>
+        [Obsolete("不建议使用", true)]
         public static string ReplaceStrToScript(string str)
         {
             str = str.Replace("\\", "\\\\");

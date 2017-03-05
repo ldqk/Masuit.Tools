@@ -25,7 +25,7 @@ namespace Masuit.Tools.Html
         /// <param name="currentPage">当前页</param>
         /// <param name="FieldName">地址栏参数</param>
         /// <param name="FieldValue">地址栏参数值</param>
-        /// <returns></returns>
+        /// <returns>分页栏</returns>
         public static string GetPager(int pageCount, int currentPage, string[] FieldName, string[] FieldValue)
         {
             string pString = "";
@@ -101,7 +101,7 @@ namespace Masuit.Tools.Html
         /// <param name="currentPage">当前页</param>
         /// <param name="prefix">上一页</param>
         /// <param name="suffix">下一页</param>
-        /// <returns></returns>
+        /// <returns>分页栏</returns>
         public static string GetHtmlPager(int pageCount, int currentPage, string prefix, string suffix)
         {
             int stepNum = 4;

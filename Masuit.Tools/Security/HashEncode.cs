@@ -21,7 +21,7 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 得到随机哈希加密字符串
         /// </summary>
-        /// <returns></returns>
+        /// <returns>随机哈希加密字符串</returns>
         public static string GetSecurity()
         {
             string Security = HashEncoding(GetRandomValue());
@@ -30,7 +30,7 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 得到一个随机数值
         /// </summary>
-        /// <returns></returns>
+        /// <returns>随机数值</returns>
         public static string GetRandomValue()
         {
             Random Seed = new Random();
@@ -40,8 +40,8 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 哈希加密一个字符串
         /// </summary>
-        /// <param name="Security"></param>
-        /// <returns></returns>
+        /// <param name="Security">需要加密的字符串</param>
+        /// <returns>加密后的数据</returns>
         public static string HashEncoding(string Security)
         {
             byte[] Value;

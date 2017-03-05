@@ -45,7 +45,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 服务器侦听方法 返回null则说明没有链接上
         /// </summary>
-        /// <param name="listener"></param>
+        /// <param name="listener">TCP监听对象</param>
         /// <returns>返回一个网络流</returns>
         public static NetworkStream ListenerStream(this TcpListener listener)
         {
@@ -69,7 +69,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="tcpclient">TCP客户端</param>
         /// <param name="ipendpoint">客户端节点</param>
-        /// <returns></returns>
+        /// <returns>客户端socket</returns>
         public static Socket ConnectSocket(this TcpClient tcpclient, IPEndPoint ipendpoint)
         {
             try
@@ -89,7 +89,7 @@ namespace Masuit.Tools.Net
         /// <param name="tcpclient">TCP客户端</param>
         /// <param name="ipadd">IP地址</param>
         /// <param name="port">端口号</param>
-        /// <returns></returns>
+        /// <returns>客户端socket</returns>
         public static Socket ConnectSocket(this TcpClient tcpclient, IPAddress ipadd, int port)
         {
             try
@@ -108,7 +108,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="tcpclient">TCP客户端</param>
         /// <param name="ipendpoint">客户端节点</param>
-        /// <returns></returns>
+        /// <returns>客户端的网络流</returns>
         public static NetworkStream ConnectStream(this TcpClient tcpclient, IPEndPoint ipendpoint)
         {
             try
@@ -128,7 +128,7 @@ namespace Masuit.Tools.Net
         /// <param name="tcpclient">TCP客户端</param>
         /// <param name="ipadd">IP地址</param>
         /// <param name="port">端口号</param>
-        /// <returns></returns>
+        /// <returns>客户端网络流对象</returns>
         public static NetworkStream ConnectStream(this TcpClient tcpclient, IPAddress ipadd, int port)
         {
             try
@@ -151,7 +151,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="socket">socket对象</param>
         /// <param name="size">字符串长度</param>
-        /// <returns></returns>
+        /// <returns>字节数据</returns>
         public static byte[] ReceiveFixData(this Socket socket, int size)
         {
             int offset = 0;
@@ -175,7 +175,7 @@ namespace Masuit.Tools.Net
         /// 这个发送小数据
         /// 设置包头的字节为8,不能超过8位数的字节数组
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="socket">客户端socket</param>
         /// <returns>byte[]数组</returns>
         public static byte[] ReceiveVarData(this Socket socket)
         {
@@ -191,8 +191,8 @@ namespace Masuit.Tools.Net
         /// 接收T类对象,反序列化
         /// </summary>
         /// <typeparam name="T">接收T类对象,T类必须是一个可序列化类</typeparam>
-        /// <param name="socket"></param>
-        /// <returns></returns>
+        /// <param name="socket">客户端socket</param>
+        /// <returns>强类型对象</returns>
         public static T ReceiveVarData<T>(this Socket socket)
         {
             //先接收包头长度 固定8个字节
@@ -302,7 +302,7 @@ namespace Masuit.Tools.Net
         /// <param name="path">文件保存路径(必须存在)</param>
         /// <param name="filename">文件名</param>
         /// <param name="size">预先知道的文件大小</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool ReceiveFile(this Socket socket, string path, string filename, long size)
         {
             return ReceiveFile(socket, path, filename, size, null);
@@ -379,8 +379,8 @@ namespace Masuit.Tools.Net
         /// 发送固定长度消息
         /// 发送字节数不能大于int型最大值
         /// </summary>
-        /// <param name="socket"></param>
-        /// <param name="msg"></param>
+        /// <param name="socket">源socket</param>
+        /// <param name="msg">消息的字节数组</param>
         /// <returns>返回发送字节个数</returns>
         public static int SendFixData(this Socket socket, byte[] msg)
         {
@@ -405,9 +405,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 发送变长信息 格式 包头(包头占8位) + 正文
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="socket">发送方socket对象</param>
         /// <param name="contact">发送文本</param>
-        /// <returns></returns>
+        /// <returns>发送的数据内容长度</returns>
         public static int SendVarData(this Socket socket, string contact)
         {
             //得到字符长度
@@ -423,9 +423,9 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 发送变成信息
         /// </summary>
-        /// <param name="socket"></param>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
+        /// <param name="socket">发送方socket对象</param>
+        /// <param name="bytes">消息的 字节数组</param>
+        /// <returns>消息长度</returns>
         public static int SendVarData(this Socket socket, byte[] bytes)
         {
             //得到包头字节
@@ -442,9 +442,9 @@ namespace Masuit.Tools.Net
         /// 发送T类型对象,序列化
         /// </summary>
         /// <typeparam name="T">T类型</typeparam>
-        /// <param name="socket"></param>
+        /// <param name="socket">发送方的socket对象</param>
         /// <param name="obj">T类型对象,必须是可序列化的</param>
-        /// <returns></returns>
+        /// <returns>消息长度</returns>
         public static int SendSerializeObject<T>(this Socket socket, T obj)
         {
             byte[] bytes = SerializeObject(obj);
@@ -457,8 +457,8 @@ namespace Masuit.Tools.Net
         /// <param name="socket">socket对象</param>
         /// <param name="path">文件路径</param>
         /// <param name="issend">是否发送文件(头)信息,如果当前知道文件[大小,名称]则为false</param>
-        /// <param name="progress"></param>
-        /// <returns></returns>
+        /// <param name="progress">处理过程</param>
+        /// <returns>处理结果</returns>
         public static bool SendFile(this Socket socket, string path, bool issend, Action<int> progress)
         {
             bool ret = false;
@@ -511,7 +511,7 @@ namespace Masuit.Tools.Net
         /// <param name="socket">socket对象</param>
         /// <param name="path">文件路径</param>
         /// <param name="issend">是否发生(头)信息</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool SendFile(this Socket socket, string path, bool issend)
         {
             return SendFile(socket, path, issend, null);
@@ -522,7 +522,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="socket">socket对象</param>
         /// <param name="path">文件路径</param>
-        /// <returns></returns>
+        /// <returns>处理结果</returns>
         public static bool SendFile(this Socket socket, string path)
         {
             return SendFile(socket, path, false, null);

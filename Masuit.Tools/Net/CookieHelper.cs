@@ -15,16 +15,8 @@ namespace Masuit.Tools.Net
     /// </summary>
     public static class CookieHelper
     {
-        /// <summary>
-        /// Win32API
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="cookieName"></param>
-        /// <param name="cookieData"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
         [DllImport("wininet.dll", SetLastError = true)]
-        public static extern bool InternetGetCookie(string url, string cookieName, StringBuilder cookieData, ref int size);
+        private static extern bool InternetGetCookie(string url, string cookieName, StringBuilder cookieData, ref int size);
 
         /// <summary>
         /// 获取Cookie容器
@@ -154,7 +146,7 @@ namespace Masuit.Tools.Net
         /// 获取指定Cookie值
         /// </summary>
         /// <param name="cookiename">cookiename</param>
-        /// <returns></returns>
+        /// <returns>Cookie值</returns>
         public static string GetCookieValue(string cookiename)
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies[cookiename];
@@ -171,7 +163,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="Key">key</param>
         /// <param name="cookie">字符串Cookie</param>
-        /// <returns></returns>
+        /// <returns>Cookie值</returns>
         public static string GetCookieValue(string Key, string cookie)
         {
             foreach (CookieItem item in GetCookieList(cookie))
@@ -186,7 +178,7 @@ namespace Masuit.Tools.Net
         /// 根据字符生成Cookie列表
         /// </summary>
         /// <param name="cookie">Cookie字符串</param>
-        /// <returns></returns>
+        /// <returns>Cookie列表</returns>
         public static List<CookieItem> GetCookieList(string cookie)
         {
             List<CookieItem> cookielist = new List<CookieItem>();
@@ -207,8 +199,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 获取cookie数组
         /// </summary>
-        /// <param name="ck"></param>
-        /// <returns></returns>
+        /// <param name="ck">cokki数据</param>
+        /// <returns>字符串数组</returns>
         public static string[] GetCKS(string ck)
         {
             if (ck != null)
@@ -321,8 +313,8 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 添加一个Cookie（24小时过期）
         /// </summary>
-        /// <param name="cookiename"></param>
-        /// <param name="cookievalue"></param>
+        /// <param name="cookiename">键</param>
+        /// <param name="cookievalue">值</param>
         public static void SetCookie(string cookiename, string cookievalue)
         {
             SetCookie(cookiename, cookievalue, DateTime.Now.AddDays(1.0));
@@ -483,7 +475,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="key">Key值</param>
         /// <param name="value">Value值</param>
-        /// <returns></returns>
+        /// <returns>格式化后的数据</returns>
         public static string CookieFormat(string key, string value)
         {
             return string.Format("{0}={1};", key, value);
