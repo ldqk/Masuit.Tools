@@ -35,7 +35,6 @@ namespace Masuit.Tools.Net
             db = (T)CallContext.GetData("db");
             return db;
         }
-
         #endregion
 
         #region 发送邮件
