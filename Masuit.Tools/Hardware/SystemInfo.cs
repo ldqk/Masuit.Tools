@@ -2,12 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Web.Script.Serialization;
-using ConDep.Dsl.Config;
 
 namespace Masuit.Tools.Hardware
 {
@@ -156,6 +154,7 @@ namespace Masuit.Tools.Hardware
         #endregion
 
         #region 获取CPU信息
+
         /// <summary>
         /// 获取CPU信息
         /// </summary>
@@ -211,6 +210,7 @@ namespace Masuit.Tools.Hardware
         #endregion
 
         #region 获取CPU温度
+
         /// <summary>
         /// 获取CPU温度
         /// </summary>
@@ -304,6 +304,7 @@ namespace Masuit.Tools.Hardware
         #endregion
 
         #region Win32API声明 
+
 #pragma warning disable 1591
         [DllImport("kernel32")]
         public static extern void GetWindowsDirectory(StringBuilder WinDir, int count);
@@ -339,129 +340,90 @@ namespace Masuit.Tools.Hardware
 
         #endregion
 
-        #region 获得分区信息 
+
+
+        #region CPU
 
         /// <summary>
-        /// 获取分区信息
+        /// CPU模型
         /// </summary>
-        /// <returns>分区信息</returns>
-        public static ArrayList GetLogicalDrives()
+        public class CpuInfo
         {
-            ArrayList drives = new ArrayList();
-            ManagementClass diskClass = new ManagementClass("Win32_LogicalDisk");
-            ManagementObjectCollection disks = diskClass.GetInstances();
-            foreach (ManagementObject disk in disks)
-            {
-                if (int.Parse(disk["DriveType"].ToString()) == (int)DriveType.Fixed)
-                    drives.Add(new DiskInfo { Name = disk["Name"].ToString(), SizeInKb = long.Parse(disk["Size"].ToString()), FreeSpaceInKb = long.Parse(disk["FreeSpace"].ToString()) });
-            }
+            /// <summary>
+            /// 设备ID端口
+            /// </summary>
+            public string DeviceID { get; set; }
 
-            return drives;
+            /// <summary>
+            /// CPU型号 
+            /// </summary>
+            public string Type { get; set; }
+
+            /// <summary>
+            /// CPU厂商
+            /// </summary>
+            public string Manufacturer { get; set; }
+
+            /// <summary>
+            /// CPU最大睿频
+            /// </summary>
+            public string MaxClockSpeed { get; set; }
+
+            /// <summary>
+            /// CPU的时钟频率
+            /// </summary>
+            public string CurrentClockSpeed { get; set; }
+
+            /// <summary>
+            /// CPU核心数
+            /// </summary>
+            public int NumberOfCores { get; set; }
+
+            /// <summary>
+            /// 逻辑处理器核心数
+            /// </summary>
+            public int NumberOfLogicalProcessors { get; set; }
+
+            /// <summary>
+            /// CPU使用率
+            /// </summary>
+            public double CpuLoad { get; set; }
+
+            /// <summary>
+            /// CPU位宽
+            /// </summary>
+            public string DataWidth { get; set; }
+
+            /// <summary>
+            /// 核心温度
+            /// </summary>
+            public double Temperature { get; set; }
         }
 
-        /// <summary>
-        /// 获取特定分区信息
-        /// </summary>
-        /// <param name="DriverID">盘符</param>
-        /// <returns>特定分区信息</returns>
-        public static ArrayList GetLogicalDrives(char DriverID)
-        {
-            ArrayList drives = new ArrayList();
-            WqlObjectQuery wmiquery = new WqlObjectQuery("SELECT * FROM Win32_LogicalDisk WHERE DeviceID = ’" + DriverID + ":’");
-            ManagementObjectSearcher wmifind = new ManagementObjectSearcher(wmiquery);
-            foreach (ManagementObject disk in wmifind.Get())
-            {
-                if (int.Parse(disk["DriveType"].ToString()) == (int)DriveType.Fixed)
-                    drives.Add(new DiskInfo { Name = disk["Name"].ToString(), SizeInKb = long.Parse(disk["Size"].ToString()), FreeSpaceInKb = long.Parse(disk["FreeSpace"].ToString()) });
-            }
+        #endregion
 
-            return drives;
+        #region RAM
+
+        /// <summary>
+        /// 内存条模型
+        /// </summary>
+        public class RamInfo
+        {
+#pragma warning disable 1591
+            public double MemoryAvailable { get; set; }
+            public double PhysicalMemory { get; set; }
+            public double TotalPageFile { get; set; }
+            public double AvailablePageFile { get; set; }
+            public double TotalVirtual { get; set; }
+            public double AvailableVirtual { get; set; }
+
+            public double MemoryUsage
+            {
+                get { return (1 - MemoryAvailable / PhysicalMemory) * 100; }
+            }
+#pragma warning restore 1591
         }
 
         #endregion
     }
-
-    #region CPU
-
-    /// <summary>
-    /// CPU模型
-    /// </summary>
-    public class CpuInfo
-    {
-        /// <summary>
-        /// 设备ID端口
-        /// </summary>
-        public string DeviceID { get; set; }
-
-        /// <summary>
-        /// CPU型号 
-        /// </summary>
-        public string Type { get; set; }
-
-        /// <summary>
-        /// CPU厂商
-        /// </summary>
-        public string Manufacturer { get; set; }
-
-        /// <summary>
-        /// CPU最大睿频
-        /// </summary>
-        public string MaxClockSpeed { get; set; }
-
-        /// <summary>
-        /// CPU的时钟频率
-        /// </summary>
-        public string CurrentClockSpeed { get; set; }
-
-        /// <summary>
-        /// CPU核心数
-        /// </summary>
-        public int NumberOfCores { get; set; }
-
-        /// <summary>
-        /// 逻辑处理器核心数
-        /// </summary>
-        public int NumberOfLogicalProcessors { get; set; }
-
-        /// <summary>
-        /// CPU使用率
-        /// </summary>
-        public double CpuLoad { get; set; }
-
-        /// <summary>
-        /// CPU位宽
-        /// </summary>
-        public string DataWidth { get; set; }
-
-        /// <summary>
-        /// 核心温度
-        /// </summary>
-        public double Temperature { get; set; }
-    }
-
-    #endregion
-
-    #region RAM
-
-    /// <summary>
-    /// 内存条模型
-    /// </summary>
-    public class RamInfo
-    {
-#pragma warning disable 1591
-        public double MemoryAvailable { get; set; }
-        public double PhysicalMemory { get; set; }
-        public double TotalPageFile { get; set; }
-        public double AvailablePageFile { get; set; }
-        public double TotalVirtual { get; set; }
-        public double AvailableVirtual { get; set; }
-
-        public double MemoryUsage
-        {
-            get { return (1 - MemoryAvailable / PhysicalMemory) * 100; }
-        }
-#pragma warning restore 1591
-    }
-
-    #endregion
 }
