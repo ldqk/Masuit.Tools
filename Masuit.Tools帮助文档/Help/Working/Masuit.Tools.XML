@@ -1,0 +1,4624 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Masuit.Tools</name>
+    </assembly>
+    <members>
+        <member name="T:Masuit.Tools.Database.DataTableHelper">
+            <summary>
+            DataTable帮助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.AddIdentityColumn(System.Data.DataTable)">
+            <summary>
+            给DataTable增加一个自增列
+            如果DataTable 存在 identityid 字段  则 直接返回DataTable 不做任何处理
+            </summary>
+            <param name="dt">DataTable</param>
+            <returns>返回Datatable 增加字段 identityid </returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.IsHaveRows(System.Data.DataTable)">
+            <summary>
+            检查DataTable 是否有数据行
+            </summary>
+            <param name="dt">DataTable</param>
+            <returns>是否有数据行</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.DataTableToList``1(System.Data.DataTable)">
+            <summary>
+            DataTable转换成实体列表
+            </summary>
+            <typeparam name="T">实体 T </typeparam>
+            <param name="table">datatable</param>
+            <returns>强类型的数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.ListToDataTable``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            实体列表转换成DataTable
+            </summary>
+            <typeparam name="T">实体</typeparam>
+            <param name="list"> 实体列表</param>
+            <returns>映射为数据表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            将泛型集合类转换成DataTable
+            </summary>
+            <typeparam name="T">集合项类型</typeparam>
+            <param name="list">集合</param>
+            <returns>数据集(表)</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0},System.String[])">
+            <summary>
+            将泛型集合类转换成DataTable
+            </summary>
+            <typeparam name="T">集合项类型</typeparam>
+            <param name="list">集合</param>
+            <param name="propertyName">需要返回的列的列名</param>
+            <returns>数据集(表)</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.CreateTable(System.Collections.Generic.List{System.String})">
+            <summary>
+            根据nameList里面的字段创建一个表格,返回该表格的DataTable
+            </summary>
+            <param name="nameList">包含字段信息的列表</param>
+            <returns>DataTable</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.CreateTable(System.String)">
+            <summary>
+            通过字符列表创建表字段，字段格式可以是：
+            1) a,b,c,d,e
+            2) a|int,b|string,c|bool,d|decimal
+            </summary>
+            <param name="nameString">字符列表</param>
+            <returns>内存表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.ConvertType(System.String)">
+            <summary>
+            根据类型名返回一个Type类型
+            </summary>
+            <param name="typeName">类型的名称</param>
+            <returns>Type对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.GetDataRowArray(System.Data.DataRowCollection)">
+            <summary>
+            获得从DataRowCollection转换成的DataRow数组
+            </summary>
+            <param name="drc">DataRowCollection</param>
+            <returns>DataRow数组</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.GetTableFromRows(System.Data.DataRow[])">
+            <summary>
+            将DataRow数组转换成DataTable，注意行数组的每个元素须具有相同的数据结构，
+            否则当有元素长度大于第一个元素时，抛出异常
+            </summary>
+            <param name="rows">行数组</param>
+            <returns>将内存行组装成内存表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.SortedTable(System.Data.DataTable,System.String[])">
+            <summary>
+            排序表的视图
+            </summary>
+            <param name="dt">原内存表</param>
+            <param name="sorts">排序方式</param>
+            <returns>排序后的内存表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataTableHelper.FilterDataTable(System.Data.DataTable,System.String)">
+            <summary>
+            根据条件过滤表的内容
+            </summary>
+            <param name="dt">原内存表</param>
+            <param name="condition">过滤条件</param>
+            <returns>过滤后的内存表</returns>
+        </member>
+        <member name="T:Masuit.Tools.Database.DataExt">
+            <summary>
+            日期操作扩展类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataExt.MapEntity``1(System.Data.SqlClient.SqlDataReader)">
+            <summary>
+            根据SqlDataReader映射到实体模型
+            </summary>
+            <typeparam name="T">实体模型</typeparam>
+            <param name="reader">SqlDataReader</param>
+            <returns>映射后的实体模型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataExt.MapEntity``1(System.Data.DataRow)">
+            <summary>
+            根据DataRow映射到实体模型
+            </summary>
+            <typeparam name="T">实体模型</typeparam>
+            <param name="row">数据行</param>
+            <returns>映射后的实体模型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Database.DataExt.MapEntity``1(System.Data.IDataReader)">
+            <summary>
+            根据DataReader映射到实体模型
+            </summary>
+            <typeparam name="T">实体模型</typeparam>
+            <param name="dr">IDataReader</param>
+            <returns>映射后的实体模型</returns>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.ChineseCalendar">
+            <summary>
+            中国农历年处理类用net自带类
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.cCalendar">
+            <summary>
+            实例化一个  ChineseLunisolarCalendar
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetChineseDateTimeNow">
+            <summary>
+            获取农历当前日期
+            </summary>
+            <returns>当前农历日期</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetChineseDateTime(System.DateTime)">
+            <summary>
+            根据公历获取农历日期
+            </summary>
+            <param name="datetime">公历日期</param>
+            <returns>公历日期的字符串形式</returns>
+        </member>
+        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.Now">
+            <summary>
+            返回农历日期
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.MaxSupportedDateTime">
+            <summary>
+            最大支持日期
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.MinSupportedDateTime">
+            <summary>
+            最小支持日期
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetShengXiao(System.DateTime)">
+            <summary>
+            返回生肖
+            </summary>
+            <param name="datetime">公历日期</param>
+            <returns>生肖</returns>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.tiangan">
+            <summary>
+            十天干
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.dizhi">
+            <summary>
+            十二地支
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.shengxiao">
+            <summary>
+            十二生肖
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetLunisolarYear(System.Int32)">
+            <summary>
+            返回农历天干地支年
+            </summary>
+            <param name="year">农历年</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+            <returns>天干地支年</returns>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.months">
+            <summary>
+            农历月
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetLunisolarMonth(System.Int32)">
+            <summary>
+            返回农历月
+            </summary>
+            <param name="month">月份</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+            <returns>农历月</returns>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.ChineseCalendar.days">
+            <summary>
+            日
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.GetLunisolarDay(System.Int32)">
+            <summary>
+            返回农历日
+            </summary>
+            <param name="day">阳历日</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+            <returns>农历日</returns>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.CNCalendar">
+            <summary>
+            日历操作
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.FormatDate(System.Int32,System.Int32)">
+            <summary>
+            格式化日期
+            </summary>
+            <param name="m">月份</param>
+            <param name="d">日期</param>
+            <returns>x月x日</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.ReadFileFromEmbedded(System.String)">
+            <summary>
+            从嵌入资源中读取文件内容(e.g: xml).
+            </summary>
+            <param name="fileWholeName">嵌入资源文件名，包括项目的命名空间.</param>
+            <returns>资源中的文件内容.</returns>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.CNCalendar.structDate">
+            <summary>
+            结构、日期对象
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo">
+            <summary>
+            结构、完整的日期对象
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Year">
+            <summary>
+            公历年
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Month">
+            <summary>
+            公历月
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Day">
+            <summary>
+            公历日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.IsLeap">
+            <summary>
+            是否闰月
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Cyear">
+            <summary>
+            农历年
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Scyear">
+            <summary>
+            农历年名称
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.CyearCyl">
+            <summary>
+            干支年
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Cmonth">
+            <summary>
+            农历月
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Scmonth">
+            <summary>
+            农历月名称
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.CmonthCyl">
+            <summary>
+            干支月
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Cday">
+            <summary>
+            农历日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Scday">
+            <summary>
+            农历日名称
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.CdayCyl">
+            <summary>
+            干支日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.cnAnm">
+            <summary>
+            农历属象
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.solarterm">
+            <summary>
+            节气
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.DayInWeek">
+            <summary>
+            星期几
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Feast">
+            <summary>
+            节日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Fullinfo">
+            <summary>
+            完整的日期信息
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.cnFtvl">
+            <summary>
+            阴历节日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.cnFtvs">
+            <summary>
+            阳历节日
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Info">
+            <summary>
+            系统问候语
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.Image">
+            <summary>
+            主题图片
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.StructDateFullInfo.SayHello">
+            <summary>
+            有特别的问候语吗
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.lunarInfo">
+            <summary>
+            农历月份信息
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.cMonthName">
+            <summary>
+            农历月份名字
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.gan">
+            <summary>
+            天干
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.zhi">
+            <summary>
+            地支
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.animals">
+            <summary>
+            生肖
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.solarTerm">
+            <summary>
+            节气
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.solarTermInfo">
+            <summary>
+            节气对应数值？
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.DateTimeExt.CNCalendar.sFtv">
+            <summary>
+            节假日信息
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetLYearDays(System.Int32)">
+            <summary>
+            传回农历y年的总天数
+            </summary>
+            <param name="y">公元年</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetLeapDays(System.Int32)">
+            <summary>
+            传回农历y年闰月的天数
+            </summary>
+            <param name="y">公元年</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetLeapMonth(System.Int32)">
+            <summary>
+            传回农历y年闰哪个月 1-12 , 没闰传回 0
+            </summary>
+            <param name="y">公元年</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetLMonthDays(System.Int32,System.Int32)">
+            <summary>
+            传回农历y年m月的总天数
+            </summary>
+            <param name="y">公元年</param>
+            <param name="m">月份</param> 
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.AnimalsYear(System.Int32)">
+            <summary>
+            传回农历y年的生肖
+            </summary>
+            <param name="y">公元年</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.Cyclical(System.Int32)">
+             <summary>
+            传入月日的offset 传回天干地支, 0=甲子
+             </summary>
+             <param name="num">月日的偏差</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.cyclical(System.Int32)">
+            <summary>
+            传入offset 传回干支, 0=甲子
+            </summary>
+            <param name="y">公元年</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetLunar(System.DateTime)">
+            <summary>
+            返回一个农历日期结构体
+            </summary>
+            <param name="date">日期对象</param>
+            <returns>农历日期结构体</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.calElement(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            传出y年m月d日对应的农历[0].year [1].month [2].day2 [3].yearCyl [4].monCyl [5].dayCyl [6].isLeap
+            </summary>
+            <param name="y">年</param>
+            <param name="m">月</param>
+            <param name="d">日</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetCDay(System.Int32)">
+            <summary>
+            将值转成农历汉字日子
+            </summary>
+            <param name="d">农历日</param>
+            <returns>中文表示</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetSolarTermDay(System.Int32,System.Int32)">
+            <summary>
+             某年的第n个节气为几日(从0,即小寒起算)
+            n:节气下标
+            </summary>
+            <param name="y">年</param>
+            <param name="n">节气</param>
+            <returns>日期时间</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetDateTidyInfo(System.DateTime)">
+            <summary>
+            得到精简日期信息（不含节日）
+            </summary>
+            <param name="d">待检查的日子</param>
+            <returns>日期信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.GetDateInfo(System.DateTime)">
+            <summary>
+            得到日期信息
+            </summary>
+            <param name="d">待检查的日子</param>
+            <returns>日期信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.CNCalendar.getChinaDate(System.DateTime)">
+            <summary>
+            获取农历
+            </summary>
+            <param name="dt">阳历日期</param>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.DateTimeHelper">
+            <summary>
+            日期时间帮助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.GetWeekAmount(System.Int32)">
+            <summary>
+            获取某一年有多少周
+            </summary>
+            <param name="year">年份</param>
+            <returns>该年周数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.WeekOfYear(System.DateTime)">
+            <summary>
+            返回年度第几个星期   默认星期日是第一天
+            </summary>
+            <param name="date">时间</param>
+            <returns>第几周</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.WeekOfYear(System.DateTime,System.DayOfWeek)">
+            <summary>
+            返回年度第几个星期
+            </summary>
+            <param name="date">时间</param>
+            <param name="week">一周的开始日期</param>
+            <returns>第几周</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.GetWeekTime(System.Int32,System.Int32,System.DateTime@,System.DateTime@)">
+            <summary>
+            得到一年中的某周的起始日和截止日
+            年 nYear
+            周数 nNumWeek
+            周始 out dtWeekStart
+            周终 out dtWeekeEnd
+            </summary>
+            <param name="nYear">年份</param>
+            <param name="nNumWeek">第几周</param>
+            <param name="dtWeekStart">开始日期</param>
+            <param name="dtWeekeEnd">结束日期</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.GetWeekWorkTime(System.Int32,System.Int32,System.DateTime@,System.DateTime@)">
+            <summary>
+            得到一年中的某周的起始日和截止日    周一到周五  工作日
+            </summary>
+            <param name="nYear">年份</param>
+            <param name="nNumWeek">第几周</param>
+            <param name="dtWeekStart">开始日期</param>
+            <param name="dtWeekeEnd">结束日期</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.SetLocalTime(System.DateTime)">
+            <summary>
+            设置本地计算机时间
+            </summary>
+            <param name="dt">DateTime对象</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateTimeHelper.GetInt(System.String,System.Boolean)">
+            <summary>
+            从指定的字符串中获取整数
+            </summary>
+            <param name="origin">原始的字符串</param>
+            <param name="fullMatch">是否完全匹配，若为false，则返回字符串中的第一个整数数字</param>
+            <returns>整数数字</returns>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.DateUtil">
+            <summary>
+            日期操作工具类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDateTime(System.Int32)">
+            <summary>
+            返回相对于当前时间的相对天数
+            </summary>
+            <param name="relativeday">相对天数</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDateTimeF">
+            <summary>
+            返回标准时间格式string
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetStandardDateTime(System.String,System.String)">
+            <summary>
+            返回标准时间 
+            </summary>
+            <param name="fDateTime">日期时间字符串</param>
+            <param name="formatStr">格式</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetStandardDateTime(System.String)">
+            <summary>
+            返回标准时间 yyyy-MM-dd HH:mm:ss
+            </summary>
+            <param name="fDateTime">日期时间字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDaysOfYear(System.Int32)">
+            <summary>
+            返回本年有多少天
+            </summary>
+            <param name="iYear">年份</param>
+            <returns>本年的天数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDaysOfYear(System.DateTime)">
+            <summary>本年有多少天</summary>
+            <param name="dt">日期</param>
+            <returns>本天在当年的天数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDaysOfMonth(System.Int32,System.Int32)">
+            <summary>本月有多少天</summary>
+            <param name="iYear">年</param>
+            <param name="Month">月</param>
+            <returns>天数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetDaysOfMonth(System.DateTime)">
+            <summary>本月有多少天</summary>
+            <param name="dt">日期</param>
+            <returns>天数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetWeekNameOfDay(System.DateTime)">
+            <summary>返回当前日期的星期名称</summary>
+            <param name="idt">日期</param>
+            <returns>星期名称</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.GetWeekNumberOfDay(System.DateTime)">
+            <summary>返回当前日期的星期编号</summary>
+            <param name="idt">日期</param>
+            <returns>星期数字编号</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.IsRuYear(System.DateTime)">
+            <summary>判断当前日期所属的年份是否是闰年，私有函数</summary>
+            <param name="idt">日期</param>
+            <returns>是闰年：True ，不是闰年：False</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.IsRuYear(System.Int32)">
+            <summary>判断当前年份是否是闰年，私有函数</summary>
+            <param name="iYear">年份</param>
+            <returns>是闰年：True ，不是闰年：False</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.ConvertStringToDate(System.String)">
+            <summary>
+            将输入的字符串转化为日期。如果字符串的格式非法，则返回当前日期。
+            </summary>
+            <param name="strInput">输入字符串</param>
+            <returns>日期对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.ConvertDateToString(System.DateTime,System.String)">
+            <summary>
+            将日期对象转化为格式字符串
+            </summary>
+            <param name="oDateTime">日期对象</param>
+            <param name="strFormat">
+            格式：
+            	"SHORTDATE"===短日期
+            	"LONGDATE"==长日期
+            	其它====自定义格式
+            </param>
+            <returns>日期字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.DateUtil.IsDateTime(System.String)">
+            <summary>
+            判断是否为合法日期，必须大于1800年1月1日
+            </summary>
+            <param name="strDate">输入日期字符串</param>
+            <returns>True/False</returns>
+        </member>
+        <member name="T:Masuit.Tools.DateTimeExt.TimeHelper">
+            <summary>
+            时间相关操作帮助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetTimeDelay(System.DateTime,System.DateTime)">
+            <summary>
+            获得一段时间内有多少小时
+            </summary>
+            <param name="dtStar">起始时间</param>
+            <param name="dtEnd">终止时间</param>
+            <returns>小时差</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetDateString(System.DateTime)">
+            <summary>
+            获得8位时间整型数字
+            </summary>
+            <param name="dt">当前的日期时间对象</param>
+            <returns>8位时间整型数字</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.ReturnDateFormat(System.Int32,System.String@,System.String@)">
+            <summary>
+             返回每月的第一天和最后一天
+            </summary>
+            <param name="month">月份</param>
+            <param name="firstDay">第一天</param>
+            <param name="lastDay">最后一天</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatDate(System.DateTime,System.Char)">
+            <summary>
+            将时间格式化成 年月日 的形式,如果时间为null，返回当前系统时间
+            </summary>
+            <param name="dt">年月日分隔符</param>
+            <param name="Separator">分隔符</param>
+            <returns>xxxx年xx月xx日</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatTime(System.DateTime,System.Char)">
+            <summary>
+            将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
+            </summary>
+            <param name="dt">当前日期时间对象</param>
+            <param name="Separator">分隔符</param>
+            <returns> xx时xx分xx秒 </returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.SecondToMinute(System.Int32)">
+            <summary>
+            把秒转换成分钟
+            </summary>
+            <param name="Second">秒数</param>
+            <returns>分钟数</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetMonthLastDate(System.Int32,System.Int32)">
+            <summary>
+            返回某年某月最后一天
+            </summary>
+            <param name="year">年份</param>
+            <param name="month">月份</param>
+            <returns>日</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.DateDiff(System.DateTime,System.DateTime)">
+            <summary>
+            返回时间差
+            </summary>
+            <param name="DateTime1">时间1</param>
+            <param name="DateTime2">时间2</param>
+            <returns>时间差</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetDiffTime(System.DateTime,System.DateTime)">
+            <summary>
+            时间差
+            </summary>
+            <param name="beginTime">开始时间</param>
+            <param name="endTime">结束时间</param>
+            <returns>时间差</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetDiffTime(System.DateTime,System.DateTime,System.Int32@)">
+            <summary>
+            计算2个时间差
+            </summary>
+            <param name="beginTime">开始时间</param>
+            <param name="endTime">结束时间</param>
+            <param name="mindTime">中间的时间</param>
+            <returns>时间差</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.DateDiff2(System.DateTime,System.DateTime)">
+            <summary>
+            获得两个日期的间隔
+            </summary>
+            <param name="DateTime1">日期一。</param>
+            <param name="DateTime2">日期二。</param>
+            <returns>日期间隔TimeSpan。</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.FormatDate(System.DateTime,System.String)">
+            <summary>
+            格式化日期时间
+            </summary>
+            <param name="dateTime1">日期时间</param>
+            <param name="dateMode">显示模式</param>
+            <returns>0-9种模式的日期</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetRandomTime(System.DateTime,System.DateTime)">
+            <summary>
+            得到随机日期
+            </summary>
+            <param name="time1">起始日期</param>
+            <param name="time2">结束日期</param>
+            <returns>间隔日期之间的 随机日期</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.CsharpTime2JavascriptTime(System.DateTime)">
+            <summary>
+            C#的时间到Javascript的时间的转换
+            </summary>
+            <param name="TheDate">C#的时间</param>
+            <returns>Javascript的时间</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.PhpTime2CsharpTime(System.Int64)">
+            <summary>
+            PHP的时间转换成C#中的DateTime
+            </summary>
+            <param name="time">php的时间</param>
+            <returns>C#的时间</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.CsharpTime2PhpTime(System.DateTime)">
+            <summary>
+             C#中的DateTime转换成PHP的时间
+            </summary>
+            <param name="time">C#时间</param>
+            <returns>php时间</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.dateConvert(System.String)">
+            <summary> 
+            Rss日期时间转换，将时间全部转换为GMT时间 
+            </summary> 
+            <param name="strDateTime">Rss中读取的时间</param> 
+            <returns>处理后的标准时间格式</returns> 
+        </member>
+        <member name="T:Masuit.Tools.Files.SharpZip">
+            <summary>
+            SharpZip
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.SharpZip.PackFiles(System.String,System.String)">
+            <summary>
+            文件压缩
+            </summary> 
+            <param name="filename"> 压缩后的文件名(包含物理路径)</param>
+            <param name="directory">待压缩的文件夹(包含物理路径)</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.SharpZip.PackFilesAsync(System.String,System.String)">
+            <summary>
+            文件压缩
+            </summary> 
+            <param name="filename"> 压缩后的文件名(包含物理路径)</param>
+            <param name="directory">待压缩的文件夹(包含物理路径)</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.SharpZip.UnpackFiles(System.String,System.String)">
+            <summary>
+            文件解压缩
+            </summary>
+            <param name="file">待解压文件名(包含物理路径)</param>
+            <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.SharpZip.UnpackFilesAsync(System.String,System.String)">
+            <summary>
+            文件解压缩
+            </summary>
+            <param name="file">待解压文件名(包含物理路径)</param>
+            <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
+        </member>
+        <member name="T:Masuit.Tools.Files.ClassZip">
+            <summary>
+            ClassZip
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.ClassZip.Zip(System.String,System.String,System.Int32)">
+            <summary>
+            压缩
+            </summary>
+            <param name="FileToZip">待压缩的文件目录或文件</param>
+            <param name="ZipedFile">生成的目标文件</param>
+            <param name="level">压缩级别，默认值6</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ClassZip.UnZip(System.String,System.String)">
+            <summary>
+            解压
+            </summary>
+            <param name="FileToUpZip">待解压的文件</param>
+            <param name="ZipedFolder">解压目标存放目录</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ClassZip.ZipFileDictory(System.String,ICSharpCode.SharpZipLib.Zip.ZipOutputStream,System.String)">
+            <summary>
+            递归压缩文件夹方法
+            </summary>
+            <param name="folderToZip">需要压缩的文件夹</param>
+            <param name="s">压缩流</param>
+            <param name="parentFolderName">父级文件夹</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ClassZip.ZipFileDictory(System.String,System.String,System.Int32)">
+            <summary>
+            压缩目录
+            </summary>
+            <param name="FolderToZip">待压缩的文件夹，全路径格式</param>
+            <param name="ZipedFile">压缩后的文件名，全路径格式</param>
+            <param name="level">压缩等级</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ClassZip.ZipFile(System.String,System.String,System.Int32)">
+            <summary>
+            压缩文件
+            </summary>
+            <param name="fileToZip">要进行压缩的文件名</param>
+            <param name="zipedFile">压缩后生成的压缩文件名</param>
+            <param name="level">压缩等级</param>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+        </member>
+        <member name="T:Masuit.Tools.Files.ZipHelper">
+            <summary>
+            WinRAR压缩操作
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.ZipHelper.EnZip(System.String,System.String,System.String)">
+            <summary>
+            压缩
+            </summary>
+            <param name="zipname">要解压的文件名</param>
+            <param name="zippath">要压缩的文件目录</param>
+            <param name="dirpath">初始目录</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ZipHelper.DeZip(System.String,System.String)">
+            <summary>
+            解压缩
+            </summary>
+            <param name="zipname">要解压的文件名</param>
+            <param name="zippath">要解压的文件路径</param>
+        </member>
+        <member name="T:Masuit.Tools.Files.DocumentConvert">
+            <summary>
+            文档转换操作
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Doc2Html(System.String,System.String,System.String)">
+            <summary>
+            doc转html
+            </summary>
+            <param name="docPath">doc文件路径</param>
+            <param name="htmlDir">生成的html所在目录，由于生成html后会将图片都放到同级的目录下，所以用文件夹保存，默认的html文件名为index.html</param>
+            <param name="index">默认文档名为index.html</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Doc2HtmlAsync(System.String,System.String,System.String)">
+            <summary>
+            doc转html
+            </summary>
+            <param name="docPath">doc文件路径</param>
+            <param name="htmlDir">生成的html所在目录，由于生成html后会将图片都放到同级的目录下，所以用文件夹保存，默认的html文件名为index.html</param>
+            <param name="index">默认文档名为index.html</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Doc2Pdf(System.String,System.String,Aspose.Words.PaperSize,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            doc转pdf
+            </summary>
+            <param name="docPath">doc源文件</param>
+            <param name="pdfPath">目标pdf文件</param>
+            <param name="paperSize">纸张大小</param>
+            <param name="leftMargin">左边距</param>
+            <param name="rightMargin">右边距</param>
+            <param name="topMargin">上边距</param>
+            <param name="bottomMargin">下边距</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Doc2PdfAsync(System.String,System.String,Aspose.Words.PaperSize,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            doc转pdf
+            </summary>
+            <param name="docPath">doc源文件</param>
+            <param name="pdfPath">目标pdf文件</param>
+            <param name="paperSize">纸张大小</param>
+            <param name="leftMargin">左边距</param>
+            <param name="rightMargin">右边距</param>
+            <param name="topMargin">上边距</param>
+            <param name="bottomMargin">下边距</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Html2Word(System.String,System.String,Aspose.Words.PaperSize,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            html转Word
+            </summary>
+            <param name="htmlPath">html源文件</param>
+            <param name="docPath">目标doc文件</param>
+            <param name="paperSize">纸张大小，默认A4纸</param>
+            <param name="leftMargin">左边距，默认10</param>
+            <param name="rightMargin">右边距，默认10</param>
+            <param name="topMargin">上边距，默认10</param>
+            <param name="bottomMargin">下边距，默认10</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.DocumentConvert.Html2WordAsync(System.String,System.String,Aspose.Words.PaperSize,System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            html转Word
+            </summary>
+            <param name="htmlPath">html源文件</param>
+            <param name="docPath">目标doc文件</param>
+            <param name="paperSize">纸张大小，默认A4纸</param>
+            <param name="leftMargin">左边距，默认10</param>
+            <param name="rightMargin">右边距，默认10</param>
+            <param name="topMargin">上边距，默认10</param>
+            <param name="bottomMargin">下边距，默认10</param>
+        </member>
+        <member name="T:Masuit.Tools.Files.ExtensionAttach">
+            <summary>
+            文件关联
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.ExtensionAttach.SaveReg(System.String,System.String)">
+            <summary>
+            关联文件
+            </summary>
+            <param name="filePathString">应用程序路径</param>
+            <param name="pFileTypeName">文件类型</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.ExtensionAttach.DelReg(System.String)">
+            <summary>
+            取消文件关联
+            </summary>
+            <param name="pFileTypeName">文件类型</param>
+        </member>
+        <member name="T:Masuit.Tools.Files.FileTree">
+            <summary>
+            文件目录树操作
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileTree.GetFoldAll(System.String)">
+            <summary>
+            获取指定文件夹下所有子目录及文件
+            </summary>
+            <param name="Path">详细路径</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileTree.ListTreeShow(System.IO.DirectoryInfo,System.Int32,System.String)">
+            <summary>
+            获取指定文件夹下所有子目录及文件函数
+            </summary>
+            <param name="theDir">指定目录</param>
+            <param name="nLevel">默认起始值,调用时,一般为0</param>
+            <param name="Rn">用于迭加的传入值,一般为空</param>
+            <returns>所有子目录及文件</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileTree.GetFoldAll(System.String,System.String,System.String)">
+             <summary>
+             获取指定文件夹下所有子目录及文件(下拉框形)
+             </summary>
+             <param name="Path">详细路径</param>
+            <param name="DropName">下拉列表名称</param>
+            <param name="tplPath">默认选择模板名称</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileTree.ListTreeShow(System.IO.DirectoryInfo,System.Int32,System.String,System.String)">
+            <summary>
+            获取指定文件夹下所有子目录及文件函数
+            </summary>
+            <param name="theDir">指定目录</param>
+            <param name="nLevel">默认起始值,调用时,一般为0</param>
+            <param name="Rn">用于迭加的传入值,一般为空</param>
+            <param name="tplPath">默认选择模板名称</param>
+            <returns>所有子目录及文件</returns>
+        </member>
+        <member name="T:Masuit.Tools.Files.INIFile">
+            <summary>
+            INI文件操作辅助类
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Files.INIFile.path">
+            <summary>
+            文件路径
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.#ctor(System.String)">
+            <summary>
+            传入INI文件路径构造对象
+            </summary>
+            <param name="INIPath">INI文件路径</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.IniWriteValue(System.String,System.String,System.String)">
+            <summary>
+            写INI文件
+            </summary>
+            <param name="Section">分组节点</param>
+            <param name="Key">关键字</param>
+            <param name="Value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.IniReadValue(System.String,System.String)">
+            <summary>
+            读取INI文件
+            </summary>
+            <param name="Section">分组节点</param>
+            <param name="Key">关键字</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.IniReadValues(System.String,System.String)">
+            <summary>
+            读取INI文件
+            </summary>
+            <param name="section">分组节点</param>
+            <param name="key">关键字</param>
+            <returns>值的字节表现形式</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.ClearAllSection">
+            <summary>
+            删除ini文件下所有段落
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.ClearSection(System.String)">
+            <summary>
+            删除ini文件下指定段落下的所有键
+            </summary>
+            <param name="Section">分组节点</param>
+        </member>
+        <member name="T:Masuit.Tools.Files.FileExt">
+            <summary>
+            大文件操作扩展类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.CopyToFile(System.IO.Stream,System.String,System.Int32)">
+            <summary>
+            以文件流的形式复制大文件
+            </summary>
+            <param name="fs">源</param>
+            <param name="dest">目标地址</param>
+            <param name="bufferSize">缓冲区大小，默认8MB</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.CopyToFileAsync(System.IO.Stream,System.String,System.Int32)">
+            <summary>
+            以文件流的形式复制大文件(异步方式)
+            </summary>
+            <param name="fs">源</param>
+            <param name="dest">目标地址</param>
+            <param name="bufferSize">缓冲区大小，默认8MB</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.GetFileMD5(System.IO.FileStream)">
+            <summary>
+            计算文件的 MD5 值
+            </summary>
+            <param name="fs">源文件流</param>
+            <returns>MD5 值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.GetFileMD5Async(System.IO.FileStream)">
+            <summary>
+            计算文件的 MD5 值
+            </summary>
+            <param name="fs">源文件流</param>
+            <returns>MD5 值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.GetFileSha1(System.IO.Stream)">
+            <summary>
+            计算文件的 sha1 值
+            </summary>
+            <param name="fs">源文件流</param>
+            <returns>sha1 值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.GetFileSha1Async(System.IO.FileStream)">
+            <summary>
+            计算文件的 sha1 值
+            </summary>
+            <param name="fs">源文件流</param>
+            <returns>sha1 值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.HashFile(System.IO.Stream,System.String)">
+            <summary>
+            计算文件的哈希值
+            </summary>
+            <param name="fs">被操作的源数据流</param>
+            <param name="algName">算法:sha1,md5</param>
+            <returns>哈希值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.HashFileAsync(System.IO.Stream,System.String)">
+            <summary>
+            计算文件的哈希值
+            </summary>
+            <param name="fs">被操作的源数据流</param>
+            <param name="algName">算法:sha1,md5</param>
+            <returns>哈希值16进制字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.HashData(System.IO.Stream,System.String)">
+            <summary>
+            计算哈希值
+            </summary>
+            <param name="stream">要计算哈希值的 Stream</param>
+            <param name="algName">算法:sha1,md5</param>
+            <returns>哈希值字节数组</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.HashDataAsync(System.IO.Stream,System.String)">
+            <summary>
+            计算哈希值
+            </summary>
+            <param name="stream">要计算哈希值的 Stream</param>
+            <param name="algName">算法:sha1,md5</param>
+            <returns>哈希值字节数组</returns>
+        </member>
+        <member name="M:Masuit.Tools.Files.FileExt.ByteArrayToHexString(System.Byte[])">
+            <summary>
+            字节数组转换为16进制表示的字符串
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Html.HtmlHelper">
+             <summary>
+            1、获取HTML
+            1.1获取指定页面的HTML代码 GetHtml(string url, string postData, bool isPost, CookieContainer cookieContainer)
+            1.2获取HTMLGetHtml(string url, CookieContainer cookieContainer)
+            2、获取字符流
+            2.1获取字符流GetStream(string url, CookieContainer cookieContainer)
+            3、清除HTML标记 
+            3.1清除HTML标记  NoHTML(string Htmlstring)
+            4、匹配页面的链接 
+            4.1获取页面的链接正则 GetHref(string HtmlCode)
+            5、匹配页面的图片地址
+             5.1匹配页面的图片地址 GetImgSrc(string HtmlCode, string imgHttp)
+            5.2匹配<img src="" />中的图片路径实际链接  GetImg(string ImgString, string imgHttp)
+            6、抓取远程页面内容
+             6.1以GET方式抓取远程页面内容 Get_Http(string tUrl)
+             6.2以POST方式抓取远程页面内容 Post_Http(string url, string postData, string encodeType)
+            7、压缩HTML输出
+            7.1压缩HTML输出 ZipHtml(string Html)
+            8、过滤HTML标签
+             8.1过滤指定HTML标签 DelHtml(string s_TextStr, string html_Str)  
+             8.2过滤HTML中的不安全标签 RemoveUnsafeHtml(string content)
+             HTML转行成TEXT HtmlToTxt(string strHtml)
+             字符串转换为 HtmlStringToHtml(string str)
+             html转换成字符串HtmlToString(string strHtml)
+             获取URL编码
+             判断URL是否有效
+             返回 HTML 字符串的编码解码结果
+             </summary>
+        </member>
+        <member name="P:Masuit.Tools.Html.HtmlHelper.CookieContainer">
+            <summary> 
+            Cookie容器
+            </summary> 
+        </member>
+        <member name="P:Masuit.Tools.Html.HtmlHelper.Encoding">
+            <summary> 
+            获取网页源码时使用的编码
+            </summary> 
+        </member>
+        <member name="P:Masuit.Tools.Html.HtmlHelper.NetworkDelay">
+            <summary>
+            网络延迟
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Html.HtmlHelper.MaxTry">
+            <summary>
+            最大尝试次数
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetHtml(System.String,System.String,System.Boolean,System.Net.CookieContainer)">
+            <summary>
+            1.1获取指定页面的HTML代码
+            </summary>
+            <param name="url">指定页面的路径</param>
+            <param name="postData">post 提交的字符串</param>
+            <param name="isPost">是否以post方式发送请求</param>
+            <param name="cookieContainer">Cookie集合</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetHtml(System.String,System.Net.CookieContainer)">
+            <summary>
+            1.2获取HTML
+            </summary>
+            <param name="url">地址</param>
+            <param name="cookieContainer">Cookie集合</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetStream(System.String,System.Net.CookieContainer)">
+             <summary>
+             2.1获取字符流
+             </summary>
+            ---------------------------------------------------------------------------------------------------------------
+             示例:
+             System.Net.CookieContainer cookie = new System.Net.CookieContainer(); 
+             Stream s = HttpHelper.GetStream("http://www.baidu.com", cookie);
+             picVerify.Image = Image.FromStream(s);
+            ---------------------------------------------------------------------------------------------------------------
+             <param name="url">地址</param>
+             <param name="cookieContainer">cookieContainer</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.RemoveHTML(System.String)">
+            <summary>   
+            3.1清除HTML标记   
+            </summary>   
+            <param name="Htmlstring">包括HTML的源码</param>   
+            <returns>已经去除后的文字</returns>   
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetHref(System.String)">
+            <summary>
+            4.1获取页面的链接正则
+            </summary>
+            <param name="HtmlCode">html代码</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetAllURL(System.String)">
+            <summary>
+            4.2取得所有链接URL
+            </summary>
+            <param name="html">html代码</param>
+            <returns>提取到的url</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetAllLinkText(System.String)">
+            <summary>
+            4.3获取所有连接文本
+            </summary>
+            <param name="html">html代码</param>
+            <returns>所有的带链接的a标签</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetImgSrc(System.String,System.String)">
+            <summary>
+            5.1匹配页面的图片地址
+            </summary>
+            <param name="HtmlCode">html代码</param>
+            <param name="imgHttp">要补充的http://路径信息</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetImg(System.String,System.String)">
+            <summary>
+            5.2匹配<img src="" />中的图片路径实际链接
+            </summary>
+            <param name="ImgString"><img src="" />字符串</param>
+            <param name="imgHttp">图片路径</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.Get_Http(System.String)">
+            <summary>
+            6.1以GET方式抓取远程页面内容
+            </summary>
+            <param name="tUrl">URL</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.Post_Http(System.String,System.String,System.String)">
+            <summary>
+            6.2以POST方式抓取远程页面内容
+            </summary>
+            <param name="url">URL</param>
+            <param name="postData">参数列表</param>
+            <param name="encodeType">编码类型</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.ZipHtml(System.String)">
+            <summary>
+            7.1压缩HTML输出
+            </summary>
+            <param name="Html">html</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.DelHtml(System.String,System.String)">
+            <summary>
+            8.1过滤指定HTML标签
+            </summary>
+            <param name="s_TextStr">要过滤的字符</param>
+            <param name="html_Str">a img p div</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.RemoveUnsafeHtml(System.String)">
+            <summary>
+            8.2过滤HTML中的不安全标签，去掉尖括号
+            </summary>
+            <param name="content">html代码</param>
+            <returns>过滤后的安全内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.HtmlToTxt(System.String)">
+            <summary>
+            HTML转行成TEXT HtmlToTxt(string strHtml)
+            </summary>
+            <param name="strHtml">html代码</param>
+            <returns>普通文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.StringToHtml(System.String)">
+            <summary>
+            字符串转换为 HtmlStringToHtml(string str)
+            </summary>
+            <param name="str">字符串</param>
+            <returns>html标签</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.HtmlToString(System.String)">
+            <summary>
+            html转换成字符串
+            </summary>
+            <param name="strHtml">html代码</param>
+            <returns>安全的字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetEncoding(System.String)">
+            <summary>
+            获取URL编码
+            </summary>
+            <param name="url">URL</param>
+            <returns>编码类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetUrlError(System.String)">
+            <summary>
+            判断URL是否有效
+            </summary>
+            <param name="url">待判断的URL，可以是网页以及图片链接等</param>
+            <returns>200为正确，其余为大致网页错误代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.HtmlEncode(System.String)">
+            <summary>
+            返回 HTML 字符串的编码结果
+            </summary>
+            <param name="inputData">字符串</param>
+            <returns>编码结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.HtmlDecode(System.String)">
+            <summary>
+            返回 HTML 字符串的解码结果
+            </summary>
+            <param name="str">字符串</param>
+            <returns>解码结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.File(System.String,System.Web.UI.Page)">
+            <summary>
+            加载文件块
+            </summary>
+            <param name="Path">文件路径</param>
+            <param name="p">Page页</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.CSS(System.String,System.Web.UI.Page)">
+            <summary>
+            加载CSS样式文件
+            </summary>
+            <param name="cssPath">css路径</param>
+            <param name="p">Page页</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.Javascript(System.String,System.Web.UI.Page)">
+            <summary>
+            加载javascript脚本文件
+            </summary>
+            <param name="jsPath">js路径</param>
+            <param name="p">web页面</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetCookieCollection(System.String)">
+            <summary>
+            获取Cookie集合
+            </summary>
+            <param name="cookieString">Cookie的键</param>
+            <returns>Cookie键值集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetTextFromHTML(System.String)">
+            <summary>
+            从HTML中获取文本,保留br,p,img
+            </summary>
+            <param name="HTML">html代码</param>
+            <returns>保留br,p,img的文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.GetHiddenKeyValue(System.String,System.String)">
+            <summary>
+            获取HTML页面内制定Key的Value内容
+            </summary>
+            <param name="html">html源代码</param>
+            <param name="key">键</param>
+            <returns>获取到的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.StrFormat(System.String)">
+            <summary>
+            替换回车换行符为html换行符
+            </summary>
+            <param name="str">html</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.EncodeHtml(System.String)">
+            <summary>
+            替换html字符
+            </summary>
+            <param name="strHtml">html</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlHelper.ReplaceStrToScript(System.String)">
+            <summary>
+            为脚本替换特殊字符串
+            </summary>
+            <param name="str"> </param>
+            <returns> </returns>
+        </member>
+        <member name="T:Masuit.Tools.Html.HtmlPager">
+            <summary>
+            HTMl 分页
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.GetPager(System.Int32,System.Int32)">
+            <summary>
+            写出分页
+            </summary>
+            <param name="pageCount">页数</param>
+            <param name="currentPage">当前页</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.GetPager(System.Int32,System.Int32,System.String[],System.String[])">
+            <summary>
+            写出分页
+            </summary>
+            <param name="pageCount">页数</param>
+            <param name="currentPage">当前页</param>
+            <param name="FieldName">地址栏参数</param>
+            <param name="FieldValue">地址栏参数值</param>
+            <returns>分页栏</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.GetHtmlPager(System.Int32,System.Int32,System.String,System.String)">
+            <summary>
+            写出分页
+            </summary>
+            <param name="pageCount">总页数</param>
+            <param name="currentPage">当前页</param>
+            <param name="prefix">上一页</param>
+            <param name="suffix">下一页</param>
+            <returns>分页栏</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.Paging(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            分页
+            </summary>
+            <param name="url">URL</param>
+            <param name="para">参数</param>
+            <param name="sumpage">总页数</param>
+            <param name="page">当前页</param>
+            <returns>当前页的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.Paging(System.String,System.String,System.Int32,System.Int32,System.Web.UI.UserControl)">
+            <summary>
+            分页控件
+            </summary>
+            <param name="url">URL</param>
+            <param name="para">参数</param>
+            <param name="sumpage">总页数</param>
+            <param name="page">当前页</param>
+            <param name="myPaging">分页控件</param>
+            <returns>当前页的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.Paging(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            分页
+            </summary>
+            <param name="para">参数</param>
+            <param name="sumpage">总页数</param>
+            <param name="page">当前页</param>
+            <param name="count">总条数</param>
+            <returns>当前页的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.paging2(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            带第一页和最后一页
+            </summary>
+            <param name="para">参数</param>
+            <param name="sumpage">总页数</param>
+            <param name="page">当前页</param>
+            <param name="count">总条数</param>
+            <returns>当前页的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlPager.Paging(System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            分页
+            </summary>
+            <param name="url">URL</param>
+            <param name="para">参数</param>
+            <param name="sumpage">总页数</param>
+            <param name="page">当前页</param>
+            <param name="count">总条数</param>
+            <returns>当前页的内容</returns>
+        </member>
+        <member name="T:Masuit.Tools.Html.HtmlTools">
+            <summary>
+            HTML工具类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlTools.GetCreateDate(System.String,System.String)">
+            <summary>
+            获得发表日期、编码
+            </summary>
+            <param name="sContent">内容</param>
+            <param name="sRegex">正则表达式</param>
+            <returns>日期</returns>
+        </member>
+        <member name="T:Masuit.Tools.Html.HtmlUtils">
+            <summary>
+            html工具类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetList(System.String,System.String,System.Int32)">
+            <summary>
+            多个匹配内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="iGroupIndex">第几个分组, 从1开始, 0代表不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetList(System.String,System.String,System.String)">
+            <summary>
+            多个匹配内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="sGroupName">分组名, ""代表不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetText(System.String,System.String,System.Int32)">
+            <summary>
+            单个匹配内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="iGroupIndex">分组序号, 从1开始, 0不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetText(System.String,System.String,System.String)">
+            <summary>
+            单个匹配内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="sGroupName">分组名, ""代表不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.Replace(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            替换指定内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="sReplace">替换值</param>
+            <param name="iGroupIndex">分组序号, 0代表不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.Replace(System.String,System.String,System.String,System.String)">
+            <summary>
+            替换指定内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="sReplace">替换值</param>
+            <param name="sGroupName">分组名, "" 代表不分组</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.Split(System.String,System.String,System.Int32)">
+            <summary>
+            分割指定内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+            <param name="iStrLen">最小保留字符串长度</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetLinks(System.String)">
+            <summary>
+            多个链接
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetLinkHelp(System.String)">
+            <summary>
+            单个链接
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetImgTag(System.String)">
+            <summary>
+            图片标签
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetImgSrc(System.String)">
+            <summary>
+            图片地址
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetDomain(System.String)">
+            <summary>
+            根据URL获得域名
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTitle(System.String,System.String)">
+            <summary>
+            文章标题
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTitle(System.String)">
+            <summary>
+            网页标题
+            </summary>
+            <param name="sInput">html</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHtml(System.String)">
+            <summary>
+            网页内容
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetBodyHelp(System.String)">
+            <summary>
+            网页Body内容
+            </summary>
+            <param name="sInput">html</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetBody(System.String,System.String)">
+            <summary>
+            网页Body内容
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetSource(System.String,System.String)">
+            <summary>
+            文章来源
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetAuthor(System.String,System.String)">
+            <summary>
+            作者名
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetPageLinks(System.String,System.String)">
+            <summary>
+            分页链接地址
+            </summary>
+            <param name="sInput">输入内容</param>
+            <param name="sRegex">表达式字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetUrl(System.String,System.String)">
+            <summary>
+            根据相对路径得到绝对路径
+            </summary>
+            <param name="sInput">原始网站地址</param>
+            <param name="sRelativeUrl">相对链接地址</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils._GetStandardUrlDepth(System.String)">
+            <summary>
+            获得标准的URL路径深度
+            </summary>
+            <param name="url">URL路径</param>
+            <returns>返回标准的形式：http://www.163.com/或http://www.163.com/news/。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetKeyWord(System.String)">
+            <summary>
+            关键字
+            </summary>
+            <param name="sInput">输入内容</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetContent(System.String,System.String,System.String,System.Data.DataTable)">
+            <summary>
+            获取内容
+            </summary>
+            <param name="sOriContent">原始数据</param>
+            <param name="sOtherRemoveReg">需要移除的字符</param>
+            <param name="sPageUrl">URL</param>
+            <param name="dtAntiLink">反链 表数据</param>
+            <returns>转码后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.IsXml(System.String)">
+            <summary>
+            判断是否是xml格式
+            </summary>
+            <param name="sFormartted">输入内容</param>
+            <returns>是否是xml数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.ClearTag(System.String)">
+            <summary>
+            清除html标签
+            </summary>
+            <param name="sHtml">html代码</param>
+            <returns>清理后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.ClearTag(System.String,System.String)">
+            <summary>
+            根据正则清除html标签
+            </summary>
+            <param name="sHtml">html代码</param>
+            <param name="sRegex">正则表达式</param>
+            <returns>清理后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.ConvertToJavascript(System.String)">
+            <summary>
+            将html转换成js代码
+            </summary>
+            <param name="sHtml">html代码</param>
+            <returns>js代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.DelTag(System.String,System.String,System.Boolean)">
+            <summary>
+            删除字符串中的特定标记 
+            </summary>
+            <param name="str">html代码</param>
+            <param name="tag">指定的标记</param>
+            <param name="isContent">是否清除内容 </param>
+            <returns>清理后的代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.DelTagArray(System.String,System.String,System.Boolean)">
+            <summary>
+            删除字符串中的一组标记 
+            </summary>
+            <param name="str">html代码</param>
+            <param name="tagA">标记</param>
+            <param name="isContent">是否清除内容 </param>
+            <returns>清理后的代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetLink(System.String)">
+            <summary>
+            根据内容获得链接
+            </summary>
+            <param name="sContent">html代码</param>
+            <returns>链接</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTextByLink(System.String)">
+            <summary>
+            根据链接得到文本
+            </summary>
+            <param name="sContent">链接</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.IsExistsScriptLink(System.String)">
+            <summary>
+            判断是否是js链接
+            </summary>
+            <param name="sHtml">html</param>
+            <returns>判断是否是js链接</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetLinksFromRss(System.String,System.String)">
+            <summary>
+            从RSS FEED中读取
+            </summary>
+            <param name="sContent">RSS内容</param>
+            <param name="sUrl">URL</param>
+            <returns>读取到的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetLinksFromRss(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String}@)">
+            <summary>
+            从RSS FEED中读取
+            </summary>
+            <param name="sContent">RSS内容</param>
+            <param name="sUrl">URL</param>
+            <param name="lisDes">过滤条件</param>
+            <returns>读取到的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTitleFromRss(System.String)">
+            <summary>
+             从RSS FEED中读取标题
+            </summary>
+            <param name="sContent">RSS</param>
+            <returns>标题</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.RemoveByReg(System.String,System.String)">
+            <summary>
+            根据标签进行移除
+            </summary>
+            <param name="sContent">html</param>
+            <param name="sRegex">正则表达式</param>
+            <returns>清理后的代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.ReplaceByReg(System.String,System.String,System.String)">
+            <summary>
+            根据正则表达式替换内容
+            </summary>
+            <param name="sContent">html</param>
+            <param name="sReplace">需要替换的内容</param>
+            <param name="sRegex">符合正则的内容</param>
+            <returns>替换后内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetBody(System.String)">
+            <summary>
+             网页Body内容
+            </summary>
+            <param name="sContent">html源代码</param>
+            <returns>网页Body内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTextByReg(System.String,System.String)">
+            <summary>
+            根据标签获取文本
+            </summary>
+            <param name="sContent">html</param>
+            <param name="sRegex">正则表达式</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTextByReg(System.String,System.String,System.String)">
+            <summary>
+            根据标签获取文本
+            </summary>
+            <param name="sContent">html</param>
+            <param name="sRegex">正则表达式</param>
+            <param name="sGroupName">分组名</param>
+            <returns>文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetUrlByRelative(System.String,System.String)">
+            <summary>
+            获得链接的绝对路径
+            </summary>
+            <param name="sUrl">原链接地址</param>
+            <param name="sRUrl">相对地址</param>
+            <returns>获得链接的绝对路径</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetListByReg(System.String,System.String)">
+            <summary>
+            根据标签获取数据集合
+            </summary>
+            <param name="sContent">html</param>
+            <param name="sRegex">正则表达式</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetDomainUrl(System.String)">
+            <summary>
+            获得主域
+            </summary>
+            <param name="sUrl">URL</param>
+            <returns>域名</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTxtFromHtml(System.String)">
+            <summary>
+            从html中过滤出文本
+            </summary>
+            <param name="sHtml">html</param>
+            <returns>纯文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetTxtFromHtml2(System.String)">
+            <summary>
+            从html中过滤出文本，不过保留换行符号
+            </summary>
+            <param name="sHtml">html源代码</param>
+            <returns>从html中过滤出文本，不过保留换行符号</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.RemoveEndWith(System.String,System.String)">
+            <summary>
+            按结尾移除内容
+            </summary>
+            <param name="sOrg">原始数据</param>
+            <param name="sEnd">结束的字符串</param>
+            <returns>清理后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHtmlByUrl(System.String)">
+            <summary>
+            根据超链接地址获取页面内容
+            </summary>
+            <param name="sUrl">URL</param>
+            <returns>页面内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHtmlByUrl(System.String,System.String)">
+            <summary>
+            根据超链接地址获取页面内容
+            </summary>
+            <param name="sUrl">URL</param>
+            <param name="sCoding">文件编码</param>
+            <returns>页面内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHtmlByUrl(System.String@,System.String)">
+            <summary>
+            根据超链接地址获取页面内容，并将url作为引用类型
+            </summary>
+            <param name="sUrl">URL</param>
+            <param name="sCoding">文件编码</param>
+            <returns>页面内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHttpHead(System.String)">
+            <summary>
+            获取http报文头
+            </summary>
+            <param name="sUrl">URL</param>
+            <returns>报文信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.DealWithFrame(System.String,System.String)">
+            <summary>
+            处理框架页面问题。如果该页面是框架结构的话，返回该框架
+            </summary>
+            <param name="url">URL</param>
+            <param name="content">内容</param>
+            <returns>框架结构</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.DealWithIFrame(System.String,System.String)">
+            <summary>
+            处理浮动桢问题。如果该页面存在浮动桢，返回浮动桢
+            </summary>
+            <param name="url">URL</param>
+            <param name="content">内容</param>
+            <returns>浮动桢</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetHtmlByUrlList(System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{System.Int32,System.String}},System.String)">
+            <summary>
+            获得多个页面
+            </summary>
+            <param name="listUrl">URL集合</param>
+            <param name="sCoding">文件编码</param>
+            <returns>页面集合</returns>
+            <exception cref="T:System.Exception"> </exception>
+        </member>
+        <member name="T:Masuit.Tools.Html.HtmlUtils.PageType">
+            <summary>
+            页面类型枚举
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Html.HtmlUtils.PageType.HTML">
+            <summary>
+            HTML格式
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Html.HtmlUtils.PageType.RSS">
+            <summary>
+            RSS格式
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlUtils.GetPageType(System.String,System.String@)">
+            <summary>
+            获取页面类型
+            </summary>
+            <param name="sUrl">URL</param>
+            <param name="sHtml">内容</param>
+            <returns>页面类型枚举</returns>
+        </member>
+        <member name="T:Masuit.Tools.Html.ListBuilder">
+            <summary>
+            无序列表生成器
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.#ctor(System.String,System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="_type">列表类型，可选"ul","dl"，默认"ul"</param>
+            <param name="className">类名</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.#ctor">
+            <summary>
+            以ul构造列表
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.#ctor(System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="_type">列表类型，可选"ul","dl"，默认"ul"</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.SetTemplate(System.String)">
+            <summary>
+            设置模版
+            </summary>
+            <param name="_template">模版，以{#name}作为参数，name来自数据源datatable或者执行设置</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.AddTemplateData(System.String,System.String)">
+            <summary>
+            添加模版数据
+            </summary>
+            <param name="name">名称</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.EndTemplateData(System.String)">
+            <summary>
+            模版数据添加完成后需调用此方法
+            </summary>
+            <param name="className">列表项（li或者dd）的css类名</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.EndTemplateData">
+            <summary>
+            模版数据添加完成后需调用此方法
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.GenerateString">
+            <summary>
+            生成字符串返回
+            </summary>
+            <returns>生成后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.MatchEvaluator(System.Text.RegularExpressions.Match)">
+            <summary>
+            正则匹配中的委托定义
+            </summary>
+            <param name="m">匹配对象</param>
+            <returns>正则匹配中的委托定义</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.SetTitle(System.String,System.String,System.String)">
+            <summary>
+            设置标题
+            </summary>
+            <param name="text">文本</param>
+            <param name="url">链接</param>
+            <param name="target">目标窗口，可选"_blank","_self"等，默认"_self"</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.SetTitle(System.String,System.String)">
+            <summary>
+            设置标题
+            </summary>
+            <param name="text">文本</param>
+            <param name="url">链接</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.SetTitle(System.String)">
+            <summary>
+            设置纯文本标题
+            </summary>
+            <param name="text">文本</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.SetTitle(System.String,System.String,System.String,System.String)">
+            <summary>
+            设置标题
+            </summary>
+            <param name="text">文本</param>
+            <param name="url">链接</param>
+            <param name="target">目标窗口，可选"_blank","_self"等，默认"_self"</param>
+            <param name="className">CSS类名</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.AddItem(System.String,System.String,System.String,System.String)">
+            <summary>
+            添加一项
+            </summary>
+            <param name="text">文本</param>
+            <param name="url">链接</param>
+            <param name="target">目标窗口，可选"_blank","_self"等，默认"_self"</param>
+            <param name="className">CSS类名</param>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.ToString">
+            <summary>
+            返回列表的HTML
+            </summary>
+            <returns>列表的HTML</returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.ListBuilder.BindData(System.Data.DataTable)">
+            <summary>
+            根据模板绑定一个dataTable，使用datatable中的值来填充模板
+            </summary>
+            <param name="dataTable">内存表对象</param>
+        </member>
+        <member name="T:Masuit.Tools.Net.CacheHelper">
+            <summary>
+            全局统一的缓存类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.GetCache``1(System.String)">
+            <summary>
+            获取数据缓存
+            </summary>
+            <typeparam name="T">返回的类型</typeparam>
+            <param name="CacheKey">键</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.SetCache(System.String,System.Object)">
+            <summary>
+            设置数据缓存
+            </summary>
+            <param name="CacheKey">键</param>
+            <param name="objObject">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.SetCache(System.String,System.Object,System.TimeSpan)">
+            <summary>
+            设置数据缓存
+            </summary>
+            <param name="cacheKey">键</param>
+            <param name="objObject">值</param>
+            <param name="Timeout">过期时间</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="cacheKey"/>"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.SetCache(System.String,System.Object,System.DateTime,System.TimeSpan)">
+            <summary>
+            设置当前应用程序指定CacheKey的Cache值
+            </summary>
+            <param name="CacheKey">键</param>
+            <param name="objObject">值</param>
+            <param name="absoluteExpiration">绝对过期时间</param>
+            <param name="slidingExpiration">滑动过期时间</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.RemoveAllCache(System.String)">
+            <summary>
+            移除指定数据缓存
+            </summary>
+            <param name="CacheKey">键</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.RemoveAllCache">
+            <summary>
+            移除全部缓存
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.CacheHelper.Add(System.String,System.Object)">
+            <summary>
+            添加缓存数据
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="P:Masuit.Tools.Net.CacheHelper.Instance">
+            <summary>
+            缓存实例
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Net.CookieHelper">
+            <summary>
+             Cookie操作辅助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetUriCookieContainer(System.Uri)">
+            <summary>
+            获取Cookie容器
+            </summary>
+            <param name="uri">URL</param>
+            <returns>Cookie容器</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.PrintCookies(System.Net.CookieContainer,System.Uri)">
+            <summary>
+            获取url下的Cookie
+            </summary>
+            <param name="cookies">Cookie对象</param>
+            <param name="uri">URL</param>
+            <returns>Cookie内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.ClearCookie(System.String)">
+            <summary>
+            清除指定Cookie
+            </summary>
+            <param name="cookiename">cookiename</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.Clear">
+            <summary>
+            删除所有cookie值
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.ClearCookies(System.String,System.String)">
+            <summary>
+            清除系统指定的Cookie
+            </summary>
+            <param name="ck">指定的Cookie</param>
+            <param name="url">Cookie的域</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.ClearCookiesFiles">
+            <summary>
+            清除系统的Cookie文件
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCookieValue(System.String)">
+            <summary>
+            获取指定Cookie值
+            </summary>
+            <param name="cookiename">cookiename</param>
+            <returns>Cookie值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCookieValue(System.String,System.String)">
+            <summary>
+            根据Key值得到Cookie值,Key不区分大小写
+            </summary>
+            <param name="Key">key</param>
+            <param name="cookie">字符串Cookie</param>
+            <returns>Cookie值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCookieList(System.String)">
+            <summary>
+            根据字符生成Cookie列表
+            </summary>
+            <param name="cookie">Cookie字符串</param>
+            <returns>Cookie列表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCKS(System.String)">
+            <summary>
+            获取cookie数组
+            </summary>
+            <param name="ck">cokki数据</param>
+            <returns>字符串数组</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCK(System.String[])">
+            <summary>
+            从Cookie数组中转换成不重复的Cookie字符串，相同的Cookie取前面的
+            </summary>
+            <param name="cks">Cookie数组</param>
+            <returns>剔除重复的Cookie字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCK(System.Net.CookieCollection)">
+            <summary>
+            从CookieCollection中获取Cookie字符串
+            </summary>
+            <param name="cc">CookieCollection，一般用在WebRequest中</param>
+            <returns>转换后的Cookie字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetCK(System.String,System.String)">
+            <summary>
+            将Cookie字符串填充到CookieCollection中
+            </summary>
+            <param name="ck">Cookie字符串</param>
+            <param name="url">Cookie的域</param>
+            <returns>添加后的CookieCollection</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.SetCookie(System.String,System.String)">
+            <summary>
+            添加一个Cookie（24小时过期）
+            </summary>
+            <param name="cookiename">键</param>
+            <param name="cookievalue">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.SetCookie(System.String,System.String,System.DateTime)">
+            <summary>
+            添加一个Cookie
+            </summary>
+            <param name="cookiename">cookie名</param>
+            <param name="cookievalue">cookie值</param>
+            <param name="expires">过期时间 DateTime</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.IncludeCKAsync(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            检查Cookie集合中是否包含指定的Cookie值
+            </summary>
+            <param name="cks">Cookie集合</param>
+            <param name="ck">待判断的Cookie</param>
+            <returns>Cookie集合中是否包含指定的Cookie</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.InternetSetCookie(System.String,System.String,System.String)">
+            <summary>
+            设置系统Cookie
+            </summary>
+            <param name="lpszUrlName">Cookie域</param>
+            <param name="lbszCookieName">Cookie名</param>
+            <param name="lpszCookieData">Cookie数据</param>
+            <returns>设置成功与否</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.GetDomains(System.String)">
+            <summary>
+            获取所有可能的Cookie域
+            </summary>
+            <param name="url">域的全称</param>
+            <returns>所有可能的域</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.SetCKAppendToCC(System.Net.CookieCollection,System.String,System.String)">
+            <summary>
+            将Cookie字符串描述的Cookie追加到CookieCoollection
+            </summary>
+            <param name="cc">CookieCoollection</param>
+            <param name="ck">Cookie字符串</param>
+            <param name="url">Cookie的域</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.SetCKToSystem(System.String,System.String)">
+            <summary>
+            将Cookie字符串设置到系统中，便于浏览器使用
+            </summary>
+            <param name="ck">Cookie字符串</param>
+            <param name="url">Cookie的域</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.SetCKToSystem(System.Net.CookieCollection,System.String)">
+            <summary>
+            将CookieCollection中的Cookie设置到系统中，便于浏览器使用
+            </summary>
+            <param name="cc">CookieCollection</param>
+            <param name="url">Cookie的域</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.CookieHelper.CookieFormat(System.String,System.String)">
+            <summary>
+            格式化Cookie为标准格式
+            </summary>
+            <param name="key">Key值</param>
+            <param name="value">Value值</param>
+            <returns>格式化后的数据</returns>
+        </member>
+        <member name="T:Masuit.Tools.Net.CookieItem">
+            <summary>
+            Cookie对象
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Net.CookieItem.Key">
+            <summary>
+            键
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Net.CookieItem.Value">
+            <summary>
+            值
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Net.SocketClient">
+            <summary>
+            Socket客户端操作类
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Net.SocketClient.m_maxpacket">
+            <summary>
+            设置数据缓冲区大小 默认1024
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ListenerSocket(System.Net.Sockets.TcpListener)">
+            <summary>
+            服务器侦听方法 返回null则说明没有链接上
+            </summary>
+            <returns>返回一个套接字(Socket)</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ListenerStream(System.Net.Sockets.TcpListener)">
+            <summary>
+            服务器侦听方法 返回null则说明没有链接上
+            </summary>
+            <param name="listener">TCP监听对象</param>
+            <returns>返回一个网络流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ConnectSocket(System.Net.Sockets.TcpClient,System.Net.IPEndPoint)">
+            <summary>
+            从客户端连接获取socket对象
+            </summary>
+            <param name="tcpclient">TCP客户端</param>
+            <param name="ipendpoint">客户端节点</param>
+            <returns>客户端socket</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ConnectSocket(System.Net.Sockets.TcpClient,System.Net.IPAddress,System.Int32)">
+            <summary>
+            从客户端连接获取socket对象
+            </summary>
+            <param name="tcpclient">TCP客户端</param>
+            <param name="ipadd">IP地址</param>
+            <param name="port">端口号</param>
+            <returns>客户端socket</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ConnectStream(System.Net.Sockets.TcpClient,System.Net.IPEndPoint)">
+            <summary>
+            从客户端获取网络流对象
+            </summary>
+            <param name="tcpclient">TCP客户端</param>
+            <param name="ipendpoint">客户端节点</param>
+            <returns>客户端的网络流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ConnectStream(System.Net.Sockets.TcpClient,System.Net.IPAddress,System.Int32)">
+            <summary>
+            从客户端获取网络流对象
+            </summary>
+            <param name="tcpclient">TCP客户端</param>
+            <param name="ipadd">IP地址</param>
+            <param name="port">端口号</param>
+            <returns>客户端网络流对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveFixData(System.Net.Sockets.Socket,System.Int32)">
+            <summary>
+            接受固定长度字符串
+            </summary>
+            <param name="socket">socket对象</param>
+            <param name="size">字符串长度</param>
+            <returns>字节数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveVarData(System.Net.Sockets.Socket)">
+            <summary>
+            接收变长字符串
+            为了处理粘包问题 ,每次发送数据时 包头(数据字节长度) + 正文
+            这个发送小数据
+            设置包头的字节为8,不能超过8位数的字节数组
+            </summary>
+            <param name="socket">客户端socket</param>
+            <returns>byte[]数组</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveVarData``1(System.Net.Sockets.Socket)">
+            <summary>
+            接收T类对象,反序列化
+            </summary>
+            <typeparam name="T">接收T类对象,T类必须是一个可序列化类</typeparam>
+            <param name="socket">客户端socket</param>
+            <returns>强类型对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveFile(System.Net.Sockets.Socket,System.String,System.String,System.Int64,System.Action{System.Int32})">
+            <summary>
+            在预先得到文件的文件名和大小
+            调用此方法接收文件
+            </summary>
+            <param name="socket">socket服务端</param>
+            <param name="path">路径必须存在</param>
+            <param name="filename">文件名</param>
+            <param name="size">预先知道的文件大小</param>
+            <param name="progress">处理过程</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveFile(System.Net.Sockets.Socket,System.String,System.String,System.Int64)">
+            <summary>
+            从socket服务端接收文件
+            </summary>
+            <param name="socket">socket服务端</param>
+            <param name="path">文件保存路径(必须存在)</param>
+            <param name="filename">文件名</param>
+            <param name="size">预先知道的文件大小</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.ReceiveFile(System.Net.Sockets.Socket,System.String)">
+            <summary>
+            预先不知道文件名和文件大小 用此方法接收
+            此方法对于的发送方法是SendFile()
+            </summary>
+            <param name="socket">socket服务端</param>
+            <param name="path">要保存的目录</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.GetPath(System.String,System.String)">
+            <summary>
+            得到文件路径(防止有文件名重复)
+             如:aaa.txt已经在directory目录下存在,则会得到文件aaa(1).txt
+            </summary>
+            <param name="directory">目录名</param>
+            <param name="file">文件名</param>
+            <returns>文件路径</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendFixData(System.Net.Sockets.Socket,System.Byte[])">
+            <summary>
+            发送固定长度消息
+            发送字节数不能大于int型最大值
+            </summary>
+            <param name="socket">源socket</param>
+            <param name="msg">消息的字节数组</param>
+            <returns>返回发送字节个数</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendVarData(System.Net.Sockets.Socket,System.String)">
+            <summary>
+            发送变长信息 格式 包头(包头占8位) + 正文
+            </summary>
+            <param name="socket">发送方socket对象</param>
+            <param name="contact">发送文本</param>
+            <returns>发送的数据内容长度</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendVarData(System.Net.Sockets.Socket,System.Byte[])">
+            <summary>
+            发送变成信息
+            </summary>
+            <param name="socket">发送方socket对象</param>
+            <param name="bytes">消息的 字节数组</param>
+            <returns>消息长度</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendSerializeObject``1(System.Net.Sockets.Socket,``0)">
+            <summary>
+            发送T类型对象,序列化
+            </summary>
+            <typeparam name="T">T类型</typeparam>
+            <param name="socket">发送方的socket对象</param>
+            <param name="obj">T类型对象,必须是可序列化的</param>
+            <returns>消息长度</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendFile(System.Net.Sockets.Socket,System.String,System.Boolean,System.Action{System.Int32})">
+            <summary>
+            发送文件
+            </summary>
+            <param name="socket">socket对象</param>
+            <param name="path">文件路径</param>
+            <param name="issend">是否发送文件(头)信息,如果当前知道文件[大小,名称]则为false</param>
+            <param name="progress">处理过程</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendFile(System.Net.Sockets.Socket,System.String,System.Boolean)">
+            <summary>
+            发送文件,不需要进度信息
+            </summary>
+            <param name="socket">socket对象</param>
+            <param name="path">文件路径</param>
+            <param name="issend">是否发生(头)信息</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.SocketClient.SendFile(System.Net.Sockets.Socket,System.String)">
+            <summary>
+            发送文件,不需要进度信息和(头)信息
+            </summary>
+            <param name="socket">socket对象</param>
+            <param name="path">文件路径</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="T:Masuit.Tools.Net.WebExtension">
+            <summary>
+            Web操作扩展
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.GetDbContext``1">
+            <summary>
+            获取线程内唯一的EF上下文对象
+            </summary>
+            <typeparam name="T">EF上下文容器对象</typeparam>
+            <returns>EF上下文容器对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.Sendmail(Masuit.Utilities.Models.Email)">
+            <summary>
+            发送邮件
+            </summary>
+            <param name="mail">邮箱对象</param>
+            <returns>发送成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.SendmailAsync(Masuit.Utilities.Models.Email)">
+            <summary>
+            发送邮件
+            </summary>
+            <param name="mail">邮箱对象</param>
+            <returns>发送成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.SetSession(System.String,System.Object)">
+            <summary>
+            写Session
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.GetSession``1(System.String)">
+            <summary>
+            获取Session
+            </summary>
+            <typeparam name="T">对象</typeparam>
+            <param name="key">键</param>
+            <returns>对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.WebExtension.GetIPAddressInfoAsync(System.String)">
+            <summary>
+            获取客户端IP地址信息
+            </summary>
+            <param name="ip">IP地址</param>
+            <returns>详细的地理位置、运营商信息</returns>
+        </member>
+        <member name="T:Masuit.Tools.NoSQL.RedisConnectionHelp">
+            <summary>
+            ConnectionMultiplexer对象管理帮助类
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.NoSQL.RedisConnectionHelp.SysCustomKey">
+            <summary>
+            系统自定义Key前缀
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.NoSQL.RedisConnectionHelp.RedisConnectionString">
+            <summary>
+            Redis服务器连接字符串，在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，如：<br/>
+            &lt;connectionStrings&gt;<br/>
+                 &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
+            &lt;/connectionStrings&gt;
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.NoSQL.RedisConnectionHelp.Instance">
+            <summary>
+            单例获取
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.GetConnectionMultiplexer(System.String)">
+            <summary>
+            缓存获取
+            </summary>
+            <param name="connectionString">连接字符串</param>
+            <returns>连接对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerConfigurationChanged(System.Object,StackExchange.Redis.EndPointEventArgs)">
+            <summary>
+            配置更改时
+            </summary>
+            <param name="sender">触发者</param>
+            <param name="e">事件参数</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerErrorMessage(System.Object,StackExchange.Redis.RedisErrorEventArgs)">
+            <summary>
+            发生错误时
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerConnectionRestored(System.Object,StackExchange.Redis.ConnectionFailedEventArgs)">
+            <summary>
+            重新建立连接之前的错误
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerConnectionFailed(System.Object,StackExchange.Redis.ConnectionFailedEventArgs)">
+            <summary>
+            连接失败 ， 如果重新连接成功你将不会收到这个通知
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerHashSlotMoved(System.Object,StackExchange.Redis.HashSlotMovedEventArgs)">
+            <summary>
+            更改集群
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisConnectionHelp.MuxerInternalError(System.Object,StackExchange.Redis.InternalErrorEventArgs)">
+            <summary>
+            redis类库错误
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Masuit.Tools.NoSQL.RedisHelper">
+            <summary>
+            Redis操作
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.NoSQL.RedisHelper.CustomKey">
+            <summary>
+            自定义键
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.#ctor(System.Int32)">
+            <summary>
+            构造函数，使用该构造函数需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作，如：<br/>
+            &lt;connectionStrings&gt;<br/>
+                 &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
+            &lt;/connectionStrings&gt;
+            </summary>
+            <param name="dbNum">数据库编号</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.#ctor(System.Int32,System.String)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="dbNum">数据库的编号</param>
+            <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSet(System.String,System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            保存单个key value
+            </summary>
+            <param name="key">Redis Key</param>
+            <param name="value">保存的值</param>
+            <param name="expiry">过期时间</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSet(System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{StackExchange.Redis.RedisKey,StackExchange.Redis.RedisValue}})">
+            <summary>
+            保存多个key value
+            </summary>
+            <param name="keyValues">键值对</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSet``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            保存一个对象
+            </summary>
+            <typeparam name="T">对象类型</typeparam>
+            <param name="key">键</param>
+            <param name="obj">值</param>
+            <param name="expiry">过期时间</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGet(System.String)">
+            <summary>
+            获取单个key的值
+            </summary>
+            <param name="key">键</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGet(System.Collections.Generic.List{System.String})">
+            <summary>
+            获取多个Key
+            </summary>
+            <param name="listKey">键集合</param>
+            <returns>值集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGet``1(System.String)">
+            <summary>
+            获取一个key的对象
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>实例对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringIncrement(System.String,System.Double)">
+            <summary>
+            为数字增长val
+            </summary>
+            <param name="key">键</param>
+            <param name="val">可以为负</param>
+            <returns>增长后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringDecrement(System.String,System.Double)">
+            <summary>
+            为数字减少val
+            </summary>
+            <param name="key">键</param>
+            <param name="val">可以为负</param>
+            <returns>减少后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSetAsync(System.String,System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            保存单个key value
+            </summary>
+            <param name="key">Redis Key</param>
+            <param name="value">保存的值</param>
+            <param name="expiry">过期时间</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSetAsync(System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{StackExchange.Redis.RedisKey,StackExchange.Redis.RedisValue}})">
+            <summary>
+            保存多个key value
+            </summary>
+            <param name="keyValues">键值对</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringSetAsync``1(System.String,``0,System.Nullable{System.TimeSpan})">
+            <summary>
+            保存一个对象
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="obj">需要被缓存的对象</param>
+            <param name="expiry">过期时间</param>
+            <returns>是否保存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGetAsync(System.String)">
+            <summary>
+            获取单个key的值
+            </summary>
+            <param name="key">键</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGetAsync(System.Collections.Generic.List{System.String})">
+            <summary>
+            获取多个Key
+            </summary>
+            <param name="listKey">键集合</param>
+            <returns>值集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringGetAsync``1(System.String)">
+            <summary>
+            获取一个key的对象
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>实例对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringIncrementAsync(System.String,System.Double)">
+            <summary>
+            为数字增长val
+            </summary>
+            <param name="key">键</param>
+            <param name="val">可以为负</param>
+            <returns>增长后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.StringDecrementAsync(System.String,System.Double)">
+            <summary>
+            为数字减少val
+            </summary>
+            <param name="key">键</param>
+            <param name="val">可以为负</param>
+            <returns>减少后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashExists(System.String,System.String)">
+            <summary>
+            判断某个数据是否已经被缓存
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>是否缓存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashSet``1(System.String,System.String,``0)">
+            <summary>
+            存储数据到hash表
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="t">对象实例</param>
+            <returns>是否存储成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDelete(System.String,System.String)">
+            <summary>
+            移除hash中的某值
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>是否移除成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDelete(System.String,System.Collections.Generic.List{StackExchange.Redis.RedisValue})">
+            <summary>
+            移除hash中的多个值
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKeys">数据的键集合</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashGet``1(System.String,System.String)">
+            <summary>
+            从hash表获取数据
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>对象实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashIncrement(System.String,System.String,System.Double)">
+            <summary>
+            为数字增长val
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="val">可以为负</param>
+            <returns>增长后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDecrement(System.String,System.String,System.Double)">
+            <summary>
+            为数字减少val
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="val">可以为负</param>
+            <returns>减少后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashKeys``1(System.String)">
+            <summary>
+            获取hashkey所有Redis key
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashExistsAsync(System.String,System.String)">
+            <summary>
+            判断某个数据是否已经被缓存
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>是否缓存成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashSetAsync``1(System.String,System.String,``0)">
+            <summary>
+            存储数据到hash表
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="t">对象实例</param>
+            <returns>是否存储成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDeleteAsync(System.String,System.String)">
+            <summary>
+            移除hash中的某值
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>是否移除成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDeleteAsync(System.String,System.Collections.Generic.List{StackExchange.Redis.RedisValue})">
+            <summary>
+            移除hash中的多个值
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKeys">数据的键集合</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashGeAsync``1(System.String,System.String)">
+            <summary>
+            从hash表获取数据
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <returns>对象实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashIncrementAsync(System.String,System.String,System.Double)">
+            <summary>
+            为数字增长val
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="val">可以为负</param>
+            <returns>增长后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashDecrementAsync(System.String,System.String,System.Double)">
+            <summary>
+            为数字减少val
+            </summary>
+            <param name="key">键</param>
+            <param name="dataKey">数据的键</param>
+            <param name="val">可以为负</param>
+            <returns>减少后的值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.HashKeysAsync``1(System.String)">
+            <summary>
+            获取hashkey所有Redis key
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRemove``1(System.String,``0)">
+            <summary>
+            移除指定ListId的内部List的值
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRange``1(System.String)">
+            <summary>
+            获取指定key的List
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>数据集</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRightPush``1(System.String,``0)">
+            <summary>
+            入队
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRightPop``1(System.String)">
+            <summary>
+            出队
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>值</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLeftPush``1(System.String,``0)">
+            <summary>
+            入栈
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLeftPop``1(System.String)">
+            <summary>
+            出栈
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>对象实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLength(System.String)">
+            <summary>
+            获取集合中的数量
+            </summary>
+            <param name="key">键</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRemoveAsync``1(System.String,``0)">
+            <summary>
+            移除指定ListId的内部List的值
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRangeAsync``1(System.String)">
+            <summary>
+            获取指定key的List
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRightPushAsync``1(System.String,``0)">
+            <summary>
+            入队
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListRightPopAsync``1(System.String)">
+            <summary>
+            出队
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>对象实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLeftPushAsync``1(System.String,``0)">
+            <summary>
+            入栈
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLeftPopAsync``1(System.String)">
+            <summary>
+            出栈
+            </summary>
+            <typeparam name="T">数据类型</typeparam>
+            <param name="key">键</param>
+            <returns>实例对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.ListLengthAsync(System.String)">
+            <summary>
+            获取集合中的数量
+            </summary>
+            <param name="key">键</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetAdd``1(System.String,``0,System.Double)">
+            <summary>
+            添加
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+            <param name="score">排序号</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetRemove``1(System.String,``0)">
+            <summary>
+            删除
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetRangeByRank``1(System.String)">
+            <summary>
+            获取全部
+            </summary>
+            <param name="key">键</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetLength(System.String)">
+            <summary>
+            获取集合中的数量
+            </summary>
+            <param name="key">键</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetAddAsync``1(System.String,``0,System.Double)">
+            <summary>
+            添加
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+            <param name="score">排序号</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetRemoveAsync``1(System.String,``0)">
+            <summary>
+            删除
+            </summary>
+            <param name="key">键</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetRangeByRankAsync``1(System.String)">
+            <summary>
+            获取全部
+            </summary>
+            <param name="key">键</param>
+            <returns>数据集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SortedSetLengthAsync(System.String)">
+            <summary>
+            获取集合中的数量
+            </summary>
+            <param name="key">键</param>
+            <returns>数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.KeyDelete(System.String)">
+            <summary>
+            删除单个key
+            </summary>
+            <param name="key">redis key</param>
+            <returns>是否删除成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.KeyDelete(System.Collections.Generic.List{System.String})">
+            <summary>
+            删除多个key
+            </summary>
+            <param name="keys">rediskey</param>
+            <returns>成功删除的个数</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.KeyExists(System.String)">
+            <summary>
+            判断key是否存储
+            </summary>
+            <param name="key">键</param>
+            <returns>是否存储成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.KeyRename(System.String,System.String)">
+            <summary>
+            重新命名key
+            </summary>
+            <param name="key">旧的键</param>
+            <param name="newKey">新的键</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.KeyExpire(System.String,System.Nullable{System.TimeSpan})">
+            <summary>
+            设置Key的时间
+            </summary>
+            <param name="key">键</param>
+            <param name="expiry">过期时间</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.Subscribe(System.String,System.Action{StackExchange.Redis.RedisChannel,StackExchange.Redis.RedisValue})">
+            <summary>
+            Redis发布订阅  订阅
+            </summary>
+            <param name="subChannel">订阅频道</param>
+            <param name="handler">处理过程</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.Publish``1(System.String,``0)">
+            <summary>
+            Redis发布订阅  发布
+            </summary>
+            <typeparam name="T">消息对象</typeparam>
+            <param name="channel">发布频道</param>
+            <param name="msg">消息</param>
+            <returns>消息的数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.Unsubscribe(System.String)">
+            <summary>
+            Redis发布订阅  取消订阅
+            </summary>
+            <param name="channel">频道</param>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.UnsubscribeAll">
+            <summary>
+            Redis发布订阅  取消全部订阅
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.CreateTransaction">
+            <summary>
+            创建一个事务
+            </summary>
+            <returns>事务对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.GetDatabase">
+            <summary>
+            获得一个数据库实例
+            </summary>
+            <returns>数据库实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.GetServer(System.String)">
+            <summary>
+            获得一个服务器实例
+            </summary>
+            <param name="hostAndPort">服务器地址</param>
+            <returns>服务器实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.NoSQL.RedisHelper.SetSysCustomKey(System.String)">
+            <summary>
+            设置前缀
+            </summary>
+            <param name="customKey">前缀</param>
+        </member>
+        <member name="T:Masuit.Tools.Reflection.ReflectHelper">
+            <summary>
+            反射辅助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetInstanceValue(System.Object,System.String)">
+            <summary>
+            获取实体相关属性的值
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="propertyName">属性名</param>
+            <returns>属性值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.InvokeMethodOrGetProperty``1(System.Type,System.String,System.Object[],System.Object[])">
+            <summary>
+            直接调用内部对象的方法/函数或获取属性(支持重载调用)
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="refType">目标数据类型</param>
+            <param name="funName">函数名称，区分大小写。</param>
+            <param name="objInitial">如果调用属性，则为相关对象的初始化数据，否则为Null。</param>
+            <param name="funParams">函数参数信息</param>
+            <returns>运行结果</returns>
+            <exception cref="T:System.InvalidProgramException">非法异常</exception>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.InvokeFunction``1(System.Type,System.String,System.Object[])">
+            <summary>
+            调用相关实体类型的函数方法
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="refType">实体类型</param>
+            <param name="funName">函数名称</param>
+            <param name="funParams">函数参数列表</param>
+            <returns>调用该函数之后的结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.LoadBitmap(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集资源的位图资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+            <param name="imageName">资源项名称</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetStringRes(System.Type,System.String,System.String)">
+            <summary>
+             获取程序集资源的文本资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resName">资源项名称</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetManifestString(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集嵌入资源的文本形式
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="charset">字符集编码</param>
+            <param name="ResName">嵌入资源相对路径</param>
+            <returns>如没找到该资源则返回空字符</returns>
+        </member>
+        <member name="T:Masuit.Tools.Reflection.ReflectionUtil">
+            <summary>
+            反射操作辅助类，如获取或设置字段、属性的值等反射信息。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.InvokeMethod``1(System.Object,System.String,System.Object[])">
+            <summary>
+            执行方法
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="methodName">方法名，区分大小写</param>
+            <param name="args">方法参数</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.SetField(System.Object,System.String,System.Object)">
+            <summary>
+            设置字段
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">字段名</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetField``1(System.Object,System.String)">
+            <summary>
+            获取字段
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">字段名</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetFields(System.Object)">
+            <summary>
+            获取所有的字段信息
+            </summary>
+            <param name="obj">反射对象</param>
+            <returns>字段信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.SetProperty(System.Object,System.String,System.Object)">
+            <summary>
+            设置属性
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">属性名</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetProperty``1(System.Object,System.String)">
+            <summary>
+            获取属性
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">属性名</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetProperties(System.Object)">
+            <summary>
+            获取所有的属性信息
+            </summary>
+            <param name="obj">反射对象</param>
+            <returns>属性信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Enum)">
+            <overloads>
+            	Get The Member Description using Description Attribute.
+            </overloads>
+            <summary>
+            Get The Enum Field Description using Description Attribute.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>return description or value.ToString()</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Enum,System.Object[])">
+            <summary>
+            Get The Enum Field Description using Description Attribute and 
+            objects to format the Description.
+            </summary>
+            <param name="value">Enum For Which description is required.</param>
+            <param name="args">An Object array containing zero or more objects to format.</param>
+            <returns>return null if DescriptionAttribute is not found or return type description</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/>"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo)">
+            <summary>
+            Get The Type Description using Description Attribute.
+            </summary>
+            <param name="member">Specified Member for which Info is Required</param>
+            <returns>return null if DescriptionAttribute is not found or return type description</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo,System.Object[])">
+            <summary>
+            Get The Type Description using Description Attribute and 
+            objects to format the Description.
+            </summary>
+            <param name="member"> Specified Member for which Info is Required</param>
+            <param name="args">An Object array containing zero or more objects to format.</param>
+            <returns>return <see cref="F:System.String.Empty"/> if DescriptionAttribute is 
+            not found or return type description</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="member"/>"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.Assembly)">
+            <overloads>
+            Gets the specified object attributes
+            </overloads>
+            <summary>
+            Gets the specified object attributes for assembly as specified by type
+            </summary>
+            <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
+            <param name="assembly">the assembly in which the specified attribute is defined</param>
+            <returns>Attribute as Object or null if not found.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="attributeType"/>"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.MemberInfo)">
+            <summary>
+            Gets the specified object attributes for type as specified by type
+            </summary>
+            <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
+            <param name="type">the type on which the specified attribute is defined</param>
+            <returns>Attribute as Object or null if not found.</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.MemberInfo,System.Boolean)">
+            <summary>
+            Gets the specified object attributes for type as specified by type with option to serach parent
+            </summary>
+            <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
+            <param name="type">the type on which the specified attribute is defined</param>
+            <param name="searchParent">if set to <see langword="true"/> [search parent].</param>
+            <returns>
+            Attribute as Object or null if not found.
+            </returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttributes(System.Type,System.Reflection.MemberInfo)">
+            <summary>
+            Gets the collection of all specified object attributes for type as specified by type
+            </summary>
+            <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
+            <param name="type">the type on which the specified attribute is defined</param>
+            <returns>Attribute as Object or null if not found.</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttributes(System.Type,System.Reflection.MemberInfo,System.Boolean)">
+            <summary>
+            Gets the collection of all specified object attributes for type as specified by type with option to serach parent
+            </summary>
+            <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
+            <param name="type">the type on which the specified attribute is defined</param>
+            <param name="searchParent">The attribute Type for which the custom attribute is to be returned.</param>
+            <returns>
+            Attribute as Object or null if not found.
+            </returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetImageResource(System.String)">
+            <summary>
+            根据资源名称获取图片资源流
+            </summary>
+            <param name="ResourceName">资源的名称</param>
+            <returns>数据流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.LoadBitmap(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集资源的位图资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+            <param name="imageName">资源项名称</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetStringRes(System.Type,System.String,System.String)">
+            <summary>
+             获取程序集资源的文本资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resName">资源项名称</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetManifestString(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集嵌入资源的文本形式
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="charset">字符集编码</param>
+            <param name="ResName">嵌入资源相对路径</param>
+            <returns>如没找到该资源则返回空字符</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.CreateInstance(System.String)">
+            <summary>
+            创建对应实例
+            </summary>
+            <param name="type">类型</param>
+            <returns>对应实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.CreateInstance(System.Type)">
+            <summary>
+            创建对应实例
+            </summary>
+            <param name="type">类型</param>
+            <returns>对应实例</returns>
+        </member>
+        <member name="T:Masuit.Tools.Security.EncodeHelper">
+            <summary>
+            DES对称加解密、AES RijndaelManaged加解密、Base64加密解密、MD5加密等操作辅助类
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Security.EncodeHelper.DEFAULT_ENCRYPT_KEY">
+            <summary>
+            默认的加密密钥
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesEncrypt(System.String)">
+            <summary>
+            使用默认加密
+            </summary>
+            <param name="strText">被加密的字符串</param>
+            <returns>加密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesDecrypt(System.String)">
+            <summary>
+            使用默认解密
+            </summary>
+            <param name="strText">需要解密的 字符串</param>
+            <returns>解密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesEncrypt(System.String,System.String)">
+            <summary> 
+            解密字符串
+            加密密钥必须是8位
+            </summary> 
+            <param name="strText">被解密的字符串</param> 
+            <param name="strEncrKey">密钥</param> 
+            <returns>解密后的数据</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesDecrypt(System.String,System.String)">
+            <summary> 
+            Decrypt string 
+            Attention:key must be 8 bits 
+            </summary> 
+            <param name="strText">Decrypt string</param> 
+            <param name="sDecrKey">key</param> 
+            <returns>output string</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesEncrypt(System.String,System.String,System.String)">
+            <summary> 
+            Encrypt files 
+            Attention:key must be 8 bits 
+            </summary> 
+            <param name="m_InFilePath">Encrypt file path</param> 
+            <param name="m_OutFilePath">output file</param> 
+            <param name="strEncrKey">key</param> 
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.DesDecrypt(System.String,System.String,System.String)">
+            <summary> 
+            Decrypt files 
+            Attention:key must be 8 bits 
+            </summary> 
+            <param name="m_InFilePath">Decrypt filepath</param> 
+            <param name="m_OutFilePath">output filepath</param> 
+            <param name="sDecrKey">key</param> 
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_Encrypt(System.String)">
+            <summary>
+            对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+            </summary>
+            <param name="encryptString">待加密字符串</param>
+            <returns>加密结果字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_Encrypt(System.String,System.String)">
+            <summary>
+            对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+            </summary>
+            <param name="encryptString">待加密字符串</param>
+            <param name="encryptKey">加密密钥，须半角字符</param>
+            <returns>加密结果字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_Decrypt(System.String)">
+            <summary>
+            对称加密算法AES RijndaelManaged解密字符串
+            </summary>
+            <param name="decryptString">待解密的字符串</param>
+            <returns>解密成功返回解密后的字符串,失败返源串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_Decrypt(System.String,System.String)">
+            <summary>
+            对称加密算法AES RijndaelManaged解密字符串
+            </summary>
+            <param name="decryptString">待解密的字符串</param>
+            <param name="decryptKey">解密密钥,和加密密钥相同</param>
+            <returns>解密成功返回解密后的字符串,失败返回空</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.GetSubString(System.String,System.Int32,System.String)">
+            <summary>
+            按字节长度(按字节,一个汉字为2个字节)取得某字符串的一部分
+            </summary>
+            <param name="sourceString">源字符串</param>
+            <param name="length">所取字符串字节长度</param>
+            <param name="tailString">附加字符串(当字符串不够长时，尾部所添加的字符串，一般为"...")</param>
+            <returns>某字符串的一部分</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.GetSubString(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            按字节长度(按字节,一个汉字为2个字节)取得某字符串的一部分
+            </summary>
+            <param name="sourceString">源字符串</param>
+            <param name="startIndex">索引位置，以0开始</param>
+            <param name="length">所取字符串字节长度</param>
+            <param name="tailString">附加字符串(当字符串不够长时，尾部所添加的字符串，一般为"...")</param>
+            <returns>某字符串的一部分</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_EncryptStrream(System.IO.FileStream,System.String)">
+            <summary>
+            加密文件流
+            </summary>
+            <param name="fs">需要加密的文件流</param>
+            <param name="decryptKey">加密密钥</param>
+            <returns>加密流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_DecryptStream(System.IO.FileStream,System.String)">
+            <summary>
+            解密文件流
+            </summary>
+            <param name="fs">需要解密的文件流</param>
+            <param name="decryptKey">解密密钥</param>
+            <returns>加密流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_EncryptFile(System.String,System.String)">
+            <summary>
+            对指定文件加密
+            </summary>
+            <param name="InputFile">源文件</param>
+            <param name="OutputFile">输出文件</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.AES_DecryptFile(System.String,System.String)">
+            <summary>
+            对指定的文件解压缩
+            </summary>
+            <param name="InputFile">输入文件</param>
+            <param name="OutputFile">输出文件</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.Base64Encrypt(System.String)">
+            <summary>
+            Base64是一種使用64基的位置計數法。它使用2的最大次方來代表僅可列印的ASCII 字元。
+            這使它可用來作為電子郵件的傳輸編碼。在Base64中的變數使用字元A-Z、a-z和0-9 ，
+            這樣共有62個字元，用來作為開始的64個數字，最後兩個用來作為數字的符號在不同的
+            系統中而不同。
+            Base64加密
+            </summary>
+            <param name="str">需要加密的字符串</param>
+            <returns>加密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.Base64Decrypt(System.String)">
+            <summary>
+            Base64解密
+            </summary>
+            <param name="str">需要解密的字符串</param>
+            <returns>解密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.MD5Encrypt(System.String)">
+            <summary> 
+            MD5加密
+            </summary> 
+            <param name="strText">原数据</param> 
+            <returns>MD5字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.EncyptMD5_3_16(System.String)">
+            <summary>
+            MD5 三次加密算法.计算过程: (QQ使用)
+            1. 验证码转为大写
+            2. 将密码使用这个方法进行三次加密后,与验证码进行叠加
+            3. 然后将叠加后的内容再次MD5一下,得到最终验证码的值
+            </summary>
+            <param name="s">需要加密的字符串</param>
+            <returns>MD5字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.EncodeHelper.SHA256(System.String)">
+            <summary>
+            SHA256函数
+            </summary>
+            <param name="str">原始字符串</param>
+            <returns>SHA256结果(返回长度为44字节的字符串)</returns>
+        </member>
+        <member name="T:Masuit.Tools.Security.Encrypt">
+            <summary>
+            常用的加密解密算法
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.DesEncrypt(System.String,System.String)">
+            <summary>
+                DES加密算法
+                密钥为8位或16位
+            </summary>
+            <param name="pToEncrypt">需要加密的字符串</param>
+            <param name="sKey">密钥</param>
+            <returns>解密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.DesDecrypt(System.String,System.String)">
+            <summary>
+                DES解密算法
+                密钥为8位或16位
+            </summary>
+            <param name="pToDecrypt">需要解密的字符串</param>
+            <param name="sKey">密钥</param>
+            <returns>解密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.GenerateKey">
+            <summary>
+                创建Key
+            </summary>
+            <returns>密钥</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MD5Encrypt(System.String,System.String)">
+            <summary>
+                MD5加密
+            </summary>
+            <param name="pToEncrypt">加密字符串</param>
+            <param name="sKey">密钥Key</param>
+            <returns>加密后的字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MD5Decrypt(System.String,System.String)">
+            <summary>
+                MD5解密
+            </summary>
+            <param name="pToDecrypt">解密字符串</param>
+            <param name="sKey">密钥Key</param>
+            <returns>解密后的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MD5Array(System.Byte[])">
+            <summary>
+                MD5对数组数据加密
+            </summary>
+            <param name="input">包含需要加密的数据的数组</param>
+            <returns>加密后的字节流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.ArrayToHexString(System.Byte[],System.Boolean)">
+            <summary>
+                获取数组的Hex值
+            </summary>
+            <param name="array">需要求Hex值的数组</param>
+            <param name="uppercase">是否转大写</param>
+            <returns>字节数组的16进制表示</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MDString(System.String)">
+            <summary>
+                对字符串进行MD5加密
+            </summary>
+            <param name="message">需要加密的字符串</param>
+            <returns>加密后的结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MDFile(System.String)">
+            <summary>
+            获取文件的MD5值
+            </summary>
+            <param name="fileName">需要求MD5值的文件的文件名及路径</param>
+            <returns>MD5字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.MD5Test(System.String)">
+            <summary>
+                测试MD5加密算法的函数
+            </summary>
+            <param name="message">需要加密的字符串</param>
+            <returns>加密后的 数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Encrypt.TestSuite">
+            <summary>
+                MD5加密算法测试用数据
+            </summary>
+            <returns> </returns>
+        </member>
+        <member name="T:Masuit.Tools.Security.RC2">
+            <summary>
+                RC2加密解密算法
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.InitBinFile(System.String)">
+            <summary>
+                新建一个大小为10261B的文件，以便将加密数据写入固定大小的文件。
+            </summary>
+            <param name="filePath">文件保存的地址，包含文件名</param>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.EncryptToFile(System.String,System.String,System.Int32)">
+            <summary>
+                将文本数据加密后写入一个文件，其中，这个文件是用InitBinFile建立的，这个文件将被分成十块，
+                用来分别保存10组不同的数据，第一个byte位保留，第2位到第21位分别用来存放每块数据的长度，但
+                一个byte的取值为0-127，所以，用两个byte来存放一个长度。
+            </summary>
+            <param name="toEncryptText">要加密的文本数据</param>
+            <param name="filePath">要写入的文件</param>
+            <param name="dataIndex">写入第几块，取值为1--10</param>
+            <returns>是否操作成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.DecryptFromFile(System.String,System.Int32)">
+            <summary>
+                从一个文件中解密出一段文本，其中，这个文件是由InitBinFile建立的，并且由 EncryptToFile加密的
+            </summary>
+            <param name="filePath">要解密的文件</param>
+            <param name="dataIndex">要从哪一个块中解密</param>
+            <returns>解密后的文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.EncryptToFile(System.String,System.String)">
+            <summary>
+                将一段文本加密后保存到一个文件
+            </summary>
+            <param name="toEncryptText">要加密的文本数据</param>
+            <param name="filePath">要保存的文件</param>
+            <returns>是否加密成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.DecryptFromFile(System.String)">
+            <summary>
+                将一个被加密的文件解密
+            </summary>
+            <param name="filePath">要解密的文件</param>
+            <returns>解密后的文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.EncryptToFile(System.String,System.String,System.Int32,System.Byte[],System.Byte[])">
+            <summary>
+                将文本数据加密后写入一个文件，其中，这个文件是用InitBinFile建立的，这个文件将被分成十块，
+                用来分别保存10组不同的数据，第一个byte位保留，第2位到第21位分别用来存放每块数据的长度，但
+                一个byte的取值为0-127，所以，用两个byte来存放一个长度。
+            </summary>
+            <param name="toEncryptText">要加密的文本数据</param>
+            <param name="filePath">要写入的文件</param>
+            <param name="dataIndex">写入第几块，取值为1--10</param>
+            <param name="IV">初始化向量</param>
+            <param name="Key">加密密匙</param>
+            <returns>是否操作成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.DecryptFromFile(System.String,System.Int32,System.Byte[],System.Byte[])">
+            <summary>
+                从一个文件中解密出一段文本，其中，这个文件是由InitBinFile建立的，并且由 EncryptToFile加密的
+            </summary>
+            <param name="filePath">要解密的文件</param>
+            <param name="dataIndex">要从哪一个块中解密</param>
+            <param name="IV">初始化向量</param>
+            <param name="Key">解密密匙</param>
+            <returns>解密后的文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.EncryptToFile(System.String,System.String,System.Byte[],System.Byte[])">
+            <summary>
+                将一段文本加密后保存到一个文件
+            </summary>
+            <param name="toEncryptText">要加密的文本数据</param>
+            <param name="filePath">要保存的文件</param>
+            <param name="IV">初始化向量</param>
+            <param name="Key">加密密匙</param>
+            <returns>是否加密成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.DecryptFromFile(System.String,System.Byte[],System.Byte[])">
+            <summary>
+                将一个被加密的文件解密
+            </summary>
+            <param name="filePath">要解密的文件</param>
+            <param name="IV">初始化向量</param>
+            <param name="Key">解密密匙</param>
+            <returns>解密后的文本</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.SetIV(System.String)">
+            <summary>
+                设置加密或解密的初始化向量
+            </summary>
+            <param name="s">长度等于8的ASCII字符集的字符串</param>
+        </member>
+        <member name="M:Masuit.Tools.Security.RC2.SetKey(System.String)">
+            <summary>
+                设置加密或解密的密匙
+            </summary>
+            <param name="s">长度等于16的ASCII字符集的字符串</param>
+        </member>
+        <member name="T:Masuit.Tools.Security.Rijndael">
+            <summary>
+                对称加密解密算法类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.Rijndael.SymmetricMethod">
+            <summary>
+                对称加密类的构造函数
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.Rijndael.GetLegalKey">
+            <summary>
+                获得密钥
+            </summary>
+            <returns>密钥</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Rijndael.GetLegalIV">
+            <summary>
+                获得初始向量IV
+            </summary>
+            <returns>初试向量IV</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Rijndael.Encrypto(System.String)">
+            <summary>
+                加密方法
+            </summary>
+            <param name="Source">待加密的串</param>
+            <returns>经过加密的串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.Rijndael.Decrypto(System.String)">
+            <summary>
+                解密方法
+            </summary>
+            <param name="Source">待解密的串</param>
+            <returns>经过解密的串</returns>
+        </member>
+        <member name="T:Masuit.Tools.Security.HashEncode">
+            <summary>
+            得到随机安全码（哈希加密）。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.HashEncode.#ctor">
+            <summary>
+            哈希加密
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.HashEncode.GetSecurity">
+            <summary>
+            得到随机哈希加密字符串
+            </summary>
+            <returns>随机哈希加密字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.HashEncode.GetRandomValue">
+            <summary>
+            得到一个随机数值
+            </summary>
+            <returns>随机数值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.HashEncode.HashEncoding(System.String)">
+            <summary>
+            哈希加密一个字符串
+            </summary>
+            <param name="Security">需要加密的字符串</param>
+            <returns>加密后的数据</returns>
+        </member>
+        <member name="T:Masuit.Tools.Security.RSACryption">
+            <summary> 
+            RSA加密解密及RSA签名和验证
+            </summary> 
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.#ctor">
+            <summary>
+            RSA加密
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.RSAKey(System.String@,System.String@)">
+            <summary>
+            RSA 的密钥产生 产生私钥 和公钥 
+            </summary>
+            <param name="xmlKeys">私钥</param>
+            <param name="xmlPublicKey">公钥</param>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.RSAEncrypt(System.String,System.String)">
+            <summary>
+            RSA的加密函数 string
+            </summary>
+            <param name="xmlPublicKey">公钥</param>
+            <param name="mStrEncryptString">需要加密的字符串</param>
+            <returns>加密后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.RSAEncrypt(System.String,System.Byte[])">
+            <summary>
+            RSA的加密函数 byte[]
+            </summary>
+            <param name="xmlPublicKey">公钥</param>
+            <param name="EncryptString">需要加密的字节数组</param>
+            <returns>加密后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.RSADecrypt(System.String,System.String)">
+            <summary>
+            RSA的解密函数  string
+            </summary>
+            <param name="xmlPrivateKey">私钥</param>
+            <param name="m_strDecryptString">需要解密的字符串</param>
+            <returns>解密后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.RSADecrypt(System.String,System.Byte[])">
+            <summary>
+            RSA的解密函数  byte
+            </summary>
+            <param name="xmlPrivateKey">私钥</param>
+            <param name="DecryptString">需要解密的字符串</param>
+            <returns>解密后的内容</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.GetHash(System.String,System.Byte[]@)">
+            <summary>
+            获取Hash描述表
+            </summary>
+            <param name="m_strSource">源数据</param>
+            <param name="HashData">哈希数据</param>
+            <returns>Hash描述表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.GetHash(System.String,System.String@)">
+            <summary>
+            获取Hash描述表
+            </summary>
+            <param name="m_strSource">源数据</param>
+            <param name="strHashData">哈希数据</param>
+            <returns>Hash描述表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.GetHash(System.IO.FileStream,System.Byte[]@)">
+            <summary>
+            从文件流获取Hash描述表
+            </summary>
+            <param name="objFile">源文件</param>
+            <param name="HashData">哈希字节数据</param>
+            <returns>Hash描述表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.GetHash(System.IO.FileStream,System.String@)">
+            <summary>
+            从文件流获取Hash描述表
+            </summary>
+            <param name="objFile">源文件</param>
+            <param name="strHashData">哈希数据</param>
+            <returns>Hash描述表</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureFormatter(System.String,System.Byte[],System.Byte[]@)">
+            <summary>
+            RSA签名
+            </summary>
+            <param name="p_strKeyPrivate">私钥</param>
+            <param name="HashbyteSignature">签名字节数据</param>
+            <param name="EncryptedSignatureData">加密字节数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureFormatter(System.String,System.Byte[],System.String@)">
+            <summary>
+            RSA签名
+            </summary>
+            <param name="p_strKeyPrivate">私钥</param>
+            <param name="HashbyteSignature">签名字节数据</param>
+            <param name="m_strEncryptedSignatureData">加密字符串数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureFormatter(System.String,System.String,System.Byte[]@)">
+            <summary>
+            RSA签名
+            </summary>
+            <param name="p_strKeyPrivate">私钥</param>
+            <param name="m_strHashbyteSignature">签名字符串数据</param>
+            <param name="EncryptedSignatureData">加密字节数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureFormatter(System.String,System.String,System.String@)">
+            <summary>
+            RSA签名
+            </summary>
+            <param name="p_strKeyPrivate">私钥</param>
+            <param name="m_strHashbyteSignature">签名字符串数据</param>
+            <param name="m_strEncryptedSignatureData">加密字符串数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureDeformatter(System.String,System.Byte[],System.Byte[])">
+            <summary>
+            RSA 签名验证 
+            </summary>
+            <param name="p_strKeyPublic">公钥</param>
+            <param name="HashbyteDeformatter">哈希字节数据</param>
+            <param name="DeformatterData">格式字节数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureDeformatter(System.String,System.String,System.Byte[])">
+            <summary>
+            RSA 签名验证 
+            </summary>
+            <param name="p_strKeyPublic">公钥</param>
+            <param name="p_strHashbyteDeformatter">哈希字符串数据</param>
+            <param name="DeformatterData">格式字节数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureDeformatter(System.String,System.Byte[],System.String)">
+            <summary>
+            RSA 签名验证
+            </summary>
+            <param name="p_strKeyPublic">公钥</param>
+            <param name="HashbyteDeformatter">哈希字节数据</param>
+            <param name="p_strDeformatterData">格式字符串数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Security.RSACryption.SignatureDeformatter(System.String,System.String,System.String)">
+            <summary>
+            RSA 签名验证
+            </summary>
+            <param name="p_strKeyPublic">公钥</param>
+            <param name="p_strHashbyteDeformatter">哈希字符串数据</param>
+            <param name="p_strDeformatterData">格式字符串数据</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo">
+            <summary>
+            硬件信息
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.#cctor">
+            <summary>
+            静态构造函数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.ProcessorCount">
+            <summary>
+            获取CPU核心数 
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuLoad">
+            <summary>
+            获取CPU占用率 %
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.MemoryAvailable">
+            <summary>
+            获取可用内存
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.PhysicalMemory">
+            <summary>
+            获取物理内存
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.FindAllApps(System.Int32)">
+            <summary>
+            查找所有应用程序标题 
+            </summary>
+            <param name="Handle">应用程序标题范型</param>
+            <returns>所有应用程序集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCpuCount">
+            <summary>
+            获取CPU的数量
+            </summary>
+            <returns>CPU的数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCpuInfo">
+            <summary>
+            获取CPU信息
+            </summary>
+            <returns>CPU信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetRamInfo">
+            <summary>
+            获取内存信息
+            </summary>
+            <returns>内存信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCPUTemperature">
+            <summary>
+            获取CPU温度
+            </summary>
+            <returns>CPU温度</returns>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.CPU_INFO">
+            <summary>
+            定义CPU的信息结构
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.MEMORY_INFO">
+            <summary>
+            定义内存的信息结构
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.SYSTEMTIME_INFO">
+            <summary>
+            定义系统时间的信息结构
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.CpuInfo">
+            <summary>
+            CPU模型
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.DeviceID">
+            <summary>
+            设备ID端口
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.Type">
+            <summary>
+            CPU型号 
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.Manufacturer">
+            <summary>
+            CPU厂商
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.MaxClockSpeed">
+            <summary>
+            CPU最大睿频
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.CurrentClockSpeed">
+            <summary>
+            CPU的时钟频率
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.NumberOfCores">
+            <summary>
+            CPU核心数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.NumberOfLogicalProcessors">
+            <summary>
+            逻辑处理器核心数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.CpuLoad">
+            <summary>
+            CPU使用率
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.DataWidth">
+            <summary>
+            CPU位宽
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuInfo.Temperature">
+            <summary>
+            核心温度
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.RamInfo">
+            <summary>
+            内存条模型
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Media.ImageUtilities">
+            <summary>
+            图片处理
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.CutForSquare(System.IO.Stream,System.String,System.Int32,System.Int32)">
+            <summary>
+            正方型裁剪
+            以图片中心为轴心，截取正方型，然后等比缩放
+            用于头像处理
+            </summary>
+            <param name="fromFile">原图Stream对象</param>
+            <param name="fileSaveUrl">缩略图存放地址</param>
+            <param name="side">指定的边长（正方型）</param>
+            <param name="quality">质量（范围0-100）</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.CutForCustom(System.IO.Stream,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            指定长宽裁剪
+            按模版比例最大范围的裁剪图片并缩放至模版尺寸
+            </summary>
+            <param name="fromFile">原图Stream对象</param>
+            <param name="fileSaveUrl">保存路径</param>
+            <param name="maxWidth">最大宽(单位:px)</param>
+            <param name="maxHeight">最大高(单位:px)</param>
+            <param name="quality">质量（范围0-100）</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.ZoomAuto(System.IO.Stream,System.String,System.Double,System.Double,System.String,System.String)">
+            <summary>
+            图片等比缩放
+            </summary>
+            <param name="fromFile">原图Stream对象</param>
+            <param name="savePath">缩略图存放地址</param>
+            <param name="targetWidth">指定的最大宽度</param>
+            <param name="targetHeight">指定的最大高度</param>
+            <param name="watermarkText">水印文字(为""表示不使用水印)</param>
+            <param name="watermarkImage">水印图片路径(为""表示不使用水印)</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.IsWebImage(System.String)">
+            <summary>
+            判断文件类型是否为WEB格式图片
+            (注：JPG,GIF,BMP,PNG)
+            </summary>
+            <param name="contentType">HttpPostedFile.ContentType</param>
+            <returns>是否为WEB格式图片</returns>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.CutImage(System.Drawing.Bitmap,System.Drawing.Rectangle)">
+            <summary>
+            裁剪图片 -- 用GDI+   
+            </summary>
+            <param name="b">原始Bitmap</param>
+            <param name="rec">裁剪区域</param>
+            <returns>剪裁后的Bitmap</returns>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>  
+             Resize图片   
+            </summary>  
+            <param name="bmp">原始Bitmap </param>  
+            <param name="newWidth">新的宽度</param>  
+            <param name="newHeight">新的高度</param>  
+            <returns>处理以后的图片</returns>  
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.CutAndResize(System.Drawing.Bitmap,System.Drawing.Rectangle,System.Int32,System.Int32)">
+            <summary>
+            裁剪并缩放
+            </summary>
+            <param name="bmp">原始图片</param>
+            <param name="rec">裁剪的矩形区域</param>
+            <param name="newWidth">新的宽度</param>  
+            <param name="newHeight">新的高度</param>  
+            <returns>处理以后的图片</returns>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.GetPicThumbnail(System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            无损压缩图片
+            </summary>
+            <param name="sFile">原图片</param>
+            <param name="dFile">压缩后保存位置</param>
+            <param name="dHeight">高度</param>
+            <param name="dWidth">宽度</param>
+            <param name="flag">压缩质量 1-100</param>
+            <returns>处理结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.MakeThumbnail(System.String,System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            生成缩略图
+            </summary>
+            <param name="originalImagePath">源图路径（物理路径）</param>
+            <param name="thumbnailPath">缩略图路径（物理路径）</param>
+            <param name="width">缩略图宽度</param>
+            <param name="height">缩略图高度</param>
+            <param name="mode">生成缩略图的方式</param>    
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.LDPic(System.Drawing.Bitmap,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            调整光暗
+            </summary>
+            <param name="mybm">原始图片</param>
+            <param name="width">原始图片的长度</param>
+            <param name="height">原始图片的高度</param>
+            <param name="val">增加或减少的光暗值</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.RePic(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            反色处理
+            </summary>
+            <param name="mybm">原始图片</param>
+            <param name="width">原始图片的长度</param>
+            <param name="height">原始图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.Relief(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            浮雕处理
+            </summary>
+            <param name="oldBitmap">原始图片</param>
+            <param name="Width">原始图片的长度</param>
+            <param name="Height">原始图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.ResizeImageAsync(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            拉伸图片
+            </summary>
+            <param name="bmp">原始图片</param>
+            <param name="newW">新的宽度</param>
+            <param name="newH">新的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.FilPic(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            滤色处理
+            </summary>
+            <param name="mybm">原始图片</param>
+            <param name="width">原始图片的长度</param>
+            <param name="height">原始图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.RevPicLR(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            左右翻转
+            </summary>
+            <param name="mybm">原始图片</param>
+            <param name="width">原始图片的长度</param>
+            <param name="height">原始图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.RevPicUD(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            上下翻转
+            </summary>
+            <param name="mybm">原始图片</param>
+            <param name="width">原始图片的长度</param>
+            <param name="height">原始图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.Compress(System.String,System.String)">
+            <summary>
+            压缩到指定尺寸
+            </summary>
+            <param name="oldfile">原文件</param>
+            <param name="newfile">新文件</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.Gray(System.Drawing.Color)">
+            <summary>
+            图片灰度化
+            </summary>
+            <param name="c">输入颜色</param>
+            <returns>输出颜色</returns>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.BWPic(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            转换为黑白图片
+            </summary>
+            <param name="mybm">要进行处理的图片</param>
+            <param name="width">图片的长度</param>
+            <param name="height">图片的高度</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.GetFrames(System.String,System.String)">
+            <summary>
+            获取图片中的各帧
+            </summary>
+            <param name="pPath">图片路径</param>
+            <param name="pSavedPath">保存路径</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.ImageWatermark(System.String,System.String,System.String)">
+            <summary>
+            图片水印处理方法
+            </summary>
+            <param name="path">需要加载水印的图片路径（绝对路径）</param>
+            <param name="waterpath">水印图片（绝对路径）</param>
+            <param name="location">水印位置（传送正确的代码）</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.GetLocation(System.String,System.Drawing.Image,System.Drawing.Image)">
+            <summary>
+            图片水印位置处理方法
+            </summary>
+            <param name="location">水印位置</param>
+            <param name="img">需要添加水印的图片</param>
+            <param name="waterimg">水印图片</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.LetterWatermark(System.String,System.Int32,System.String,System.Drawing.Color,System.String)">
+            <summary>
+            文字水印处理方法
+            </summary>
+            <param name="path">图片路径（绝对路径）</param>
+            <param name="size">字体大小</param>
+            <param name="letter">水印文字</param>
+            <param name="color">颜色</param>
+            <param name="location">水印位置</param>
+        </member>
+        <member name="M:Masuit.Tools.Media.ImageUtilities.GetLocation(System.String,System.Drawing.Image,System.Int32,System.Int32)">
+            <summary>
+            文字水印位置的方法
+            </summary>
+            <param name="location">位置代码</param>
+            <param name="img">图片对象</param>
+            <param name="width">宽(当水印类型为文字时,传过来的就是字体的大小)</param>
+            <param name="height">高(当水印类型为文字时,传过来的就是字符的长度)</param>
+        </member>
+        <member name="T:Masuit.Tools.Models.AsposeLicense">
+            <summary>
+            Aspose内存补丁
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Models.AsposeLicense.ActivateMemoryPatching">
+            <summary>
+            启动Aspose的内存破解
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Strings.ConvertJson">
+            <summary>
+            JSON转换类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.String2Json(System.String)">
+            <summary>
+            过滤特殊字符
+            </summary>
+            <param name="s">源数据</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.StringFormat(System.String,System.Type)">
+            <summary>
+            格式化字符型、日期型、布尔型
+            </summary>
+            <param name="str">源数据</param>
+            <param name="type">类型</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ListToJson``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            List转换成Json
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="list">集合数据</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ListToJson``1(System.Collections.Generic.IList{``0},System.String)">
+            <summary>
+            List转换成Json 
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="list">集合数据</param>
+            <param name="jsonName">json名</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Object)">
+            <summary> 
+            对象转换为Json 
+            </summary> 
+            <param name="jsonObject">对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Collections.IEnumerable)">
+            <summary> 
+            对象集合转换Json 
+            </summary> 
+            <param name="array">集合对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToArrayString(System.Collections.IEnumerable)">
+            <summary> 
+            普通集合转换Json 
+            </summary> 
+            <param name="array">集合对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Data.DataSet)">
+            <summary> 
+            DataSet转换为Json 
+            </summary> 
+            <param name="dataSet">DataSet对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Data.DataTable)">
+            <summary> 
+            Datatable转换为Json 
+            </summary> 
+            <param name="dt">Datatable对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Data.DataTable,System.String)">
+            <summary>
+            DataTable转换为Json 
+            </summary>
+            <param name="dt">内存表</param>
+            <param name="jsonName">json名</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ConvertJson.ToJson(System.Data.Common.DbDataReader)">
+            <summary> 
+            DataReader转换为Json 
+            </summary> 
+            <param name="dataReader">DataReader对象</param> 
+            <returns>Json字符串</returns> 
+        </member>
+        <member name="T:Masuit.Tools.Strings.JsonHelper">
+            <summary>
+            Json帮助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Strings.JsonHelper.GetJsonFromObject(System.Object)">
+            <summary>
+            将对象转换成json数据
+            </summary>
+            <param name="obj">实例对象</param>
+            <returns>json</returns>
+        </member>
+        <member name="T:Masuit.Tools.Strings.StringExt">
+            <summary>
+            字符串扩展类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.UbbToHtml(System.String)">
+            <summary>
+            UBB代码处理函数
+            </summary>
+            <param name="ubbStr">输入UBB字符串</param>
+            <returns>输出html字符串</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.UbbToHtml2(System.String)">
+            <summary>
+            UBB转HTML方式2
+            </summary>
+            <param name="ubbStr">UBB 代码</param>
+            <returns>HTML代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.HtmltoUBB(System.String)">
+            <summary>
+            Html转UBB
+            </summary>
+            <param name="chr">HTML代码</param>
+            <returns>UBB代码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.ToInt32(System.String)">
+            <summary>
+            字符串转int
+            </summary>
+            <param name="s">源字符串</param>
+            <returns>int类型的数字</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.ToDouble(System.String)">
+            <summary>
+            字符串转double
+            </summary>
+            <param name="s">源字符串</param>
+            <returns>double类型的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.DoubleToInt32(System.Double)">
+            <summary>
+            将double转换成int
+            </summary>
+            <param name="num">double类型</param>
+            <returns>int类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.MatchEmail(System.String,System.Boolean@)">
+            <summary>
+            匹配Email
+            </summary>
+            <param name="s">源字符串</param>
+            <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+            <returns>匹配对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.MatchUrl(System.String,System.Boolean@)">
+            <summary>
+            匹配完整格式的URL，支持以下格式的URL,支持中文域名：<br/>
+            支持不带协议名的网址，支持自适应协议的网址，支持完整路径，支持查询参数，支持锚点，支持锚点查询参数，支持16进制编码<br/>
+            www.baidu.com <br/>
+            www.baidu.com <br/>
+            baidu.com <br/>
+            //www.baidu.com <br/>
+            http://www.baidu.com <br/>
+            https://www.baidu.com <br/>
+            https://baidu.com <br/>
+            ftp://baidu.com <br/>
+            ftp://baidu.com/abc/def <br/>
+            ftp://admin:123456@baidu.com <br/>
+            ftp://admin:123456@baidu.com/abc/def <br/>
+            https://baidu.com:8080 <br/>
+            https://baidu.com/abc/def <br/>
+            https://baidu.com:8080/abc/def <br/>
+            https://baidu.com:8080/abc/def/hhh.html <br/>
+            https://baidu.com:8080/abc/def/hhh.html?s=www <br/>
+            https://baidu.com/abc/def/hhh.html?s=w@w{w}!s <br/>
+            https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yy+y <br/>
+            https://baidu.com/abc/def/hhh.html?s=www&amp;x=yyy <br/>
+            https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yyy#top <br/>
+            https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA/hhh.html?s=www&amp;x=yyy#top <br/>
+            https://baidu.com:8080/abc/def/hi_j+k-mn%ADF%AA?s=www&amp;x=yyy#top/aaa <br/>
+            https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&amp;x=yyy#top/aaa/bbb/ccc <br/>
+            http://music.163.com/#/my/m/music/empty <br/>
+            http://music.163.com/abc/#/my/m/music/empty <br/>
+            http://music.163.com/def/hhh.html?s=www&amp;x=yyy#/my/m/music/empty <br/>
+            http://music.163.com/def/hhh.html?s=www&amp;x=yyy/#/my/m/music/empty <br/>
+            http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&amp;s=fade&amp;type=1!k <br/>
+            </summary>
+            <param name="s">源字符串</param>
+            <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+            <returns>匹配对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.MatchIdentifyCard(System.String)">
+            <summary>
+            根据GB11643-1999标准权威校验中国身份证号码的合法性
+            </summary>
+            <param name="s">源字符串</param>
+            <returns>是否匹配成功</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.MatchInetAddress(System.String,System.Boolean@)">
+            <summary>
+            校验IP地址的正确性，同时支持IPv4和IPv6
+            </summary>
+            <param name="s">源字符串</param>
+            <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+            <returns>匹配对象</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.StringExt.MatchPhoneNumber(System.String,System.Boolean@)">
+            <summary>
+            匹配手机号码
+            </summary>
+            <param name="s">源字符串</param>
+            <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
+            <returns>匹配对象</returns>
+        </member>
+        <member name="T:Masuit.Tools.Strings.ValidateCode">
+            <summary>
+            画验证码
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Strings.ValidateCode.MaxLength">
+            <summary>
+            验证码的最大长度
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Strings.ValidateCode.MinLength">
+            <summary>
+            验证码的最小长度
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateCode(System.Int32)">
+            <summary>
+            生成验证码
+            </summary>
+            <param name="length">指定验证码的长度</param>
+            <returns>验证码</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.String,System.Web.HttpContext)">
+            <summary>
+            创建验证码的图片
+            </summary>
+            <param name="validateCode">验证码序列</param>
+            <param name="context">当前的HttpContext上下文对象</param>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ValidateCode.GetImageWidth(System.Int32)">
+            <summary>
+            得到验证码图片的长度
+            </summary>
+            <param name="validateNumLength">验证码的长度</param>
+            <returns>验证码长度</returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.ValidateCode.GetImageHeight">
+            <summary>
+            得到验证码的高度
+            </summary>
+            <returns>验证码的高度</returns>
+        </member>
+    </members>
+</doc>
