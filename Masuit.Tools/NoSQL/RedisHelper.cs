@@ -262,7 +262,7 @@ namespace Masuit.Tools.NoSQL
         /// 判断某个数据是否已经被缓存
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>是否缓存成功</returns>
         public bool HashExists(string key, string dataKey)
         {
@@ -275,7 +275,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
         /// <returns>是否存储成功</returns>
         public bool HashSet<T>(string key, string dataKey, T t)
@@ -292,7 +292,7 @@ namespace Masuit.Tools.NoSQL
         /// 移除hash中的某值
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>是否移除成功</returns>
         public bool HashDelete(string key, string dataKey)
         {
@@ -304,7 +304,7 @@ namespace Masuit.Tools.NoSQL
         /// 移除hash中的多个值
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKeys">数据的键集合</param>
+        /// <param name="dataKeys">对象的字段集合</param>
         /// <returns>数量</returns>
         public long HashDelete(string key, List<RedisValue> dataKeys)
         {
@@ -318,7 +318,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>对象实例</returns>
         public T HashGet<T>(string key, string dataKey)
         {
@@ -334,7 +334,7 @@ namespace Masuit.Tools.NoSQL
         /// 为数字增长val
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>增长后的值</returns>
         public double HashIncrement(string key, string dataKey, double val = 1)
@@ -347,7 +347,7 @@ namespace Masuit.Tools.NoSQL
         /// 为数字减少val
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>减少后的值</returns>
         public double HashDecrement(string key, string dataKey, double val = 1)
@@ -380,7 +380,7 @@ namespace Masuit.Tools.NoSQL
         /// 判断某个数据是否已经被缓存
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>是否缓存成功</returns>
         public async Task<bool> HashExistsAsync(string key, string dataKey)
         {
@@ -393,7 +393,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
         /// <returns>是否存储成功</returns>
         public async Task<bool> HashSetAsync<T>(string key, string dataKey, T t)
@@ -410,7 +410,7 @@ namespace Masuit.Tools.NoSQL
         /// 移除hash中的某值
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>是否移除成功</returns>
         public async Task<bool> HashDeleteAsync(string key, string dataKey)
         {
@@ -422,7 +422,7 @@ namespace Masuit.Tools.NoSQL
         /// 移除hash中的多个值
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKeys">数据的键集合</param>
+        /// <param name="dataKeys">对象的字段集合</param>
         /// <returns>数量</returns>
         public async Task<long> HashDeleteAsync(string key, List<RedisValue> dataKeys)
         {
@@ -436,7 +436,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <returns>对象实例</returns>
         public async Task<T> HashGeAsync<T>(string key, string dataKey)
         {
@@ -449,7 +449,7 @@ namespace Masuit.Tools.NoSQL
         /// 为数字增长val
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>增长后的值</returns>
         public async Task<double> HashIncrementAsync(string key, string dataKey, double val = 1)
@@ -462,7 +462,7 @@ namespace Masuit.Tools.NoSQL
         /// 为数字减少val
         /// </summary>
         /// <param name="key">键</param>
-        /// <param name="dataKey">数据的键</param>
+        /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>减少后的值</returns>
         public async Task<double> HashDecrementAsync(string key, string dataKey, double val = 1)
