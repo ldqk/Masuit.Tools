@@ -1,4 +1,5 @@
 ﻿using System;
+using Masuit.Tools.Win32;
 
 namespace Test
 {
@@ -39,7 +40,7 @@ namespace Test
             //"114.114.256.114".MatchInetAddress(out isIP);//False
             //"114.114.114.114".MatchInetAddress(out isIP);//True
             //Console.WriteLine(isIP);
-
+            Console.WriteLine(WindowsCommand.Execute("help"));
             Console.ReadKey();
         }
     }
