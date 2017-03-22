@@ -36,10 +36,6 @@
     <DocumentationFile>bin\Release\Masuit.Tools.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aspose.Words, Version=17.3.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspose.Words.17.3.0\lib\net40\Aspose.Words.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
@@ -74,7 +70,6 @@
     <Compile Include="DateTimeExt\DateUtil.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
     <Compile Include="Files\Compress.cs" />
-    <Compile Include="Files\DocumentConvert.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
     <Compile Include="Files\FileTree.cs" />
     <Compile Include="Files\INIFile.cs" />
@@ -95,7 +90,6 @@
     <Compile Include="Files\FileExt.cs" />
     <Compile Include="Hardware\SystemInfo.cs" />
     <Compile Include="Media\ImageUtilities.cs" />
-    <Compile Include="Models\AsposeLicense.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\INetAddress.cs" />
     <Compile Include="Models\IPData.cs" />

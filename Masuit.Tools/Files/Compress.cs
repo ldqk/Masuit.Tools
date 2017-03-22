@@ -22,17 +22,10 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static void PackFiles(string filename, string directory)
         {
-            try
-            {
-                FastZip fz = new FastZip();
-                fz.CreateEmptyDirectories = true;
-                fz.CreateZip(filename, directory, true, "");
-                fz = null;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            FastZip fz = new FastZip();
+            fz.CreateEmptyDirectories = true;
+            fz.CreateZip(filename, directory, true, "");
+            fz = null;
         }
 
         /// <summary>
@@ -42,20 +35,13 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static async void PackFilesAsync(string filename, string directory)
         {
-            try
+            FastZip fz = new FastZip();
+            fz.CreateEmptyDirectories = true;
+            await Task.Run(() =>
             {
-                FastZip fz = new FastZip();
-                fz.CreateEmptyDirectories = true;
-                await Task.Run(() =>
-                {
-                    fz.CreateZip(filename, directory, true, "");
-                    fz = null;
-                }).ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+                fz.CreateZip(filename, directory, true, "");
+                fz = null;
+            }).ConfigureAwait(false);
         }
 
         #endregion
