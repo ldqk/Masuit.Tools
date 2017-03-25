@@ -659,6 +659,28 @@ namespace Masuit.Tools.Strings
             return (int)Math.Floor(num);
         }
 
+        #region 检测字符串中是否包含列表中的关键词
+        /// <summary>
+        /// 检测字符串中是否包含列表中的关键词
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="keys">关键词列表</param>
+        /// <returns></returns>
+        public static bool Contains(this string s, string[] keys)
+        {
+            bool isContain = false;
+            foreach (string key in keys)
+            {
+                if (s.ToLower().Contains(key.ToLower()))
+                {
+                    isContain = true;
+                    break;
+                }
+            }
+            return isContain;
+        }
+        #endregion
+
         #region 匹配Email
 
         /// <summary>

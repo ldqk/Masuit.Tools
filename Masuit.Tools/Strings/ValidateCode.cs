@@ -39,6 +39,8 @@ namespace Masuit.Tools.Strings
         /// </summary>
         /// <param name="validateCode">验证码序列</param>
         /// <param name="context">当前的HttpContext上下文对象</param>
+        /// <param name="fontSize">字体大小，默认值22px</param>
+        /// <param name="lineHeight">行高，默认36px</param>
         /// <exception cref="Exception">The operation failed.</exception>
         /// <exception cref="HttpException">The Web application is running under IIS 7 in Integrated mode.</exception>
         public static void CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 22, int lineHeight = 36)
