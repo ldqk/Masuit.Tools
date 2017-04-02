@@ -438,6 +438,28 @@ namespace Masuit.Tools.Security
             var digest = MD5Array(b);
             return ArrayToHexString(digest, false);
         }
+        /// <summary>
+        ///     对字符串进行MD5二次加密
+        /// </summary>
+        /// <param name="message">需要加密的字符串</param>
+        /// <returns>加密后的结果</returns>
+        public static string MDString2(this string message) => MDString(MDString(message));
+
+        /// <summary>
+        ///     对字符串进行MD5加盐加密
+        /// </summary>
+        /// <param name="message">需要加密的字符串</param>
+        /// <param name="salt">盐</param>
+        /// <returns>加密后的结果</returns>
+        public static string MDString(this string message, string salt) => MDString(message + salt);
+
+        /// <summary>
+        ///     对字符串进行MD5二次加盐加密
+        /// </summary>
+        /// <param name="message">需要加密的字符串</param>
+        /// <param name="salt">盐</param>
+        /// <returns>加密后的结果</returns>
+        public static string MDString2(this string message, string salt) => MDString(MDString(message + salt), salt);
 
         #endregion
 

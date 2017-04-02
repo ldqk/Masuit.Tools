@@ -666,19 +666,8 @@ namespace Masuit.Tools.Strings
         /// <param name="s">源字符串</param>
         /// <param name="keys">关键词列表</param>
         /// <returns></returns>
-        public static bool Contains(this string s, string[] keys)
-        {
-            bool isContain = false;
-            foreach (string key in keys)
-            {
-                if (s.ToLower().Contains(key.ToLower()))
-                {
-                    isContain = true;
-                    break;
-                }
-            }
-            return isContain;
-        }
+        public static bool Contains(this string s, string[] keys) => Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+
         #endregion
 
         #region 匹配Email
