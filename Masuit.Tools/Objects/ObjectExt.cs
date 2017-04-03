@@ -11,7 +11,7 @@
         /// <param name="_this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public static bool ReferenceEquals(this object _this, object o)
+        public new static bool ReferenceEquals(this object _this, object o)
         {
             return object.ReferenceEquals(_this, o);
         }

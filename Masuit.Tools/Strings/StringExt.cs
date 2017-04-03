@@ -607,6 +607,17 @@ namespace Masuit.Tools.Strings
 
         #endregion
 
+        #region 生成安全的html代码
+
+        /// <summary>
+        /// 生成安全的html代码
+        /// </summary>
+        /// <param name="html">源html</param>
+        /// <returns>安全化后的html</returns>
+        public static string ConvertToSecurityHtml(this string html) => Regex.Replace(html, @"<script[.\s\S]+?<\/script>|<link.*>|<style.*<\/style>", "");
+
+        #endregion
+
         #region 字符串转int
 
         /// <summary>
