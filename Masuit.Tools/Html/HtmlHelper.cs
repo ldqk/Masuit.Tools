@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using Masuit.Tools.Win32;
 
 namespace Masuit.Tools.Html
 {
@@ -89,8 +90,26 @@ namespace Masuit.Tools.Html
         #endregion
 
         #region 1、获取HTML
+
         /// <summary>
-        /// 1.1获取指定页面的HTML代码
+        /// 去除html标签后并截取字符串
+        /// </summary>
+        /// <param name="html">源html</param>
+        /// <param name="length">截取长度</param>
+        /// <returns></returns>
+        public static string RemoveHtmlTag(this string html, int length = 0)
+        {
+            string strText = Regex.Replace(html, "<[^>]+>", "");
+            strText = Regex.Replace(strText, "&[^;]+;", "");
+            if (length > 0 && strText.Length > length)
+            {
+                return strText.Substring(0, length);
+            }
+            return strText;
+        }
+
+        /// <summary>
+        /// 获取指定页面的HTML代码
         /// </summary>
         /// <param name="url">指定页面的路径</param>
         /// <param name="postData">post 提交的字符串</param>
@@ -161,7 +180,7 @@ namespace Masuit.Tools.Html
         }
 
         /// <summary>
-        /// 1.2获取HTML
+        /// 获取HTML
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="cookieContainer">Cookie集合</param>
@@ -261,6 +280,21 @@ namespace Masuit.Tools.Html
         #endregion
 
         #region 3、清除HTML标记
+
+        /// <summary>
+        /// 清理Word文档转html后的冗余标签属性
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static string ClearHtml(this string html)
+        {
+            string s = Regex.Match(Regex.Replace(html, @"background-color:#?\w{3,7}|font-family:'?[\w|\(|\)]*'?;?", ""), @"<body[^>]*>([\s\S]*)<\/body>").Groups[1].Value.Replace("&#xa0;", "");
+            s = Regex.Replace(s, @"\w+-?\w+:0\w+;?", "");//去除多余的零值属性
+            s = Regex.Replace(s, "alt=\"(.+?)\"", "");//除去alt属性
+            //s = Regex.Replace(s, @"-aw-.+:\w+;?", "");//去除Word产生的-aw属性
+            return s;
+        }
+
         ///<summary>   
         ///3.1清除HTML标记   
         ///</summary>   
@@ -363,7 +397,15 @@ namespace Masuit.Tools.Html
         #region  5、匹配页面的图片地址
 
         /// <summary>
-        /// 5.1匹配页面的图片地址
+        /// 替换html的img路径为绝对路径
+        /// </summary>
+        /// <param name="html"></param>
+        /// <param name="imgDest"></param>
+        /// <returns></returns>
+        public static string ReplaceHtmlImgSource(this string html, string imgDest) => html.Replace("<img src=\"", "<img src=\"" + imgDest + "/");
+
+        /// <summary>
+        /// 匹配页面的图片地址
         /// </summary>
         /// <param name="HtmlCode">html代码</param>
         /// <param name="imgHttp">要补充的http://路径信息</param>
@@ -380,7 +422,48 @@ namespace Masuit.Tools.Html
         }
 
         /// <summary>
-        /// 5.2匹配<img src="" />中的图片路径实际链接
+        /// 将src的绝对路径换成相对路径
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string ConvertImgSrcToRelativePath(this string s)
+        {
+            return Regex.Replace(s, @"<img src=""(http:\/\/.+?)/", @"<img src=""/");
+        }
+
+
+        /// <summary>
+        /// 匹配html的img标签
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static Match MatchImgTag(this string html) => Regex.Match(html, @"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
+
+        /// <summary>
+        /// 获取html中第一个img标签的src
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static string MatchFirstImgSrc(this string html) => MatchImgTag(html).Groups[1].Value;
+
+        /// <summary>
+        /// 随机获取html代码中的img标签的src属性
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static string MatchRandomImgSrc(this string html)
+        {
+            GroupCollection groups = MatchImgTag(html).Groups;
+            string img = groups[new Random().StrictNext(groups.Count)].Value;
+            if (img.StartsWith("<"))
+            {
+                return img.MatchImgTag().Groups[1].Value;
+            }
+            return img;
+        }
+
+        /// <summary>
+        /// 匹配<img src="" />中的图片路径实际链接
         /// </summary>
         /// <param name="ImgString"><img src="" />字符串</param>
         /// <param name="imgHttp">图片路径</param>
