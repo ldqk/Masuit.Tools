@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-using System.Net.Mail;
 using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -35,75 +32,6 @@ namespace Masuit.Tools.Net
             db = (T)CallContext.GetData("db");
             return db;
         }
-        #endregion
-
-        #region 发送邮件
-
-        /// <summary>
-        /// 发送邮件
-        /// </summary>
-        /// <param name="mail">邮箱对象</param>
-        /// <returns>发送成功</returns>
-        public static bool Sendmail(this Email mail)
-        {
-            using (MailMessage msg = new MailMessage())
-            {
-                msg.To.Add(mail.To);
-                msg.From = new MailAddress(mail.MailAccount, mail.Subject);
-                msg.Subject = mail.Subject; //邮件标题
-                msg.SubjectEncoding = Encoding.UTF8; //邮件标题编码
-                msg.Body = mail.Body; //邮件内容
-                msg.BodyEncoding = Encoding.UTF8; //邮件内容编码
-                msg.IsBodyHtml = mail.IsHtml; //是否是HTML邮件
-                msg.Priority = MailPriority.High; //邮件优先级
-                SmtpClient client = new SmtpClient();
-                client.Credentials = new NetworkCredential(mail.MailAccount, mail.Password);
-                client.Host = mail.Smtp;
-                object userState = msg;
-                try
-                {
-                    client.Send(msg);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-        /// <summary>
-        /// 发送邮件
-        /// </summary>
-        /// <param name="mail">邮箱对象</param>
-        /// <returns>发送成功</returns>
-        public static bool SendmailAsync(this Email mail)
-        {
-            using (MailMessage msg = new MailMessage())
-            {
-                msg.To.Add(mail.To);
-                msg.From = new MailAddress(mail.MailAccount, mail.Subject);
-                msg.Subject = mail.Subject; //邮件标题
-                msg.SubjectEncoding = Encoding.UTF8; //邮件标题编码
-                msg.Body = mail.Body; //邮件内容
-                msg.BodyEncoding = Encoding.UTF8; //邮件内容编码
-                msg.IsBodyHtml = mail.IsHtml; //是否是HTML邮件
-                msg.Priority = MailPriority.High; //邮件优先级
-                SmtpClient client = new SmtpClient();
-                client.Credentials = new NetworkCredential(mail.MailAccount, mail.Password);
-                client.Host = mail.Smtp;
-                object userState = msg;
-                try
-                {
-                    client.SendAsync(msg, userState);
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
         #endregion
 
         #region 写Session
