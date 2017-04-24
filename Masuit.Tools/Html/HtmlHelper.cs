@@ -11,34 +11,34 @@ using Masuit.Tools.Win32;
 namespace Masuit.Tools.Html
 {
     /// <summary>
-    ///1、获取HTML
-    ///1.1获取指定页面的HTML代码 GetHtml(string url, string postData, bool isPost, CookieContainer cookieContainer)
-    ///1.2获取HTMLGetHtml(string url, CookieContainer cookieContainer)
-    ///2、获取字符流
-    ///2.1获取字符流GetStream(string url, CookieContainer cookieContainer)
-    ///3、清除HTML标记 
-    ///3.1清除HTML标记  NoHTML(string Htmlstring)
-    ///4、匹配页面的链接 
-    ///4.1获取页面的链接正则 GetHref(string HtmlCode)
-    ///5、匹配页面的图片地址
-    /// 5.1匹配页面的图片地址 GetImgSrc(string HtmlCode, string imgHttp)
-    ///5.2匹配<img src="" />中的图片路径实际链接  GetImg(string ImgString, string imgHttp)
-    ///6、抓取远程页面内容
-    /// 6.1以GET方式抓取远程页面内容 Get_Http(string tUrl)
-    /// 6.2以POST方式抓取远程页面内容 Post_Http(string url, string postData, string encodeType)
-    ///7、压缩HTML输出
-    ///7.1压缩HTML输出 ZipHtml(string Html)
-    ///8、过滤HTML标签
-    /// 8.1过滤指定HTML标签 DelHtml(string s_TextStr, string html_Str)  
-    /// 8.2过滤HTML中的不安全标签 RemoveUnsafeHtml(string content)
-    /// HTML转行成TEXT HtmlToTxt(string strHtml)
-    /// 字符串转换为 HtmlStringToHtml(string str)
-    /// html转换成字符串HtmlToString(string strHtml)
-    /// 获取URL编码
-    /// 判断URL是否有效
+    ///1、获取HTML<br/>
+    ///1.1获取指定页面的HTML代码 GetHtml(string url, string postData, bool isPost, CookieContainer cookieContainer)<br/>
+    ///1.2获取HTMLGetHtml(string url, CookieContainer cookieContainer)<br/>
+    ///2、获取字符流<br/>
+    ///2.1获取字符流GetStream(string url, CookieContainer cookieContainer)<br/>
+    ///3、清除HTML标记 <br/>
+    ///3.1清除HTML标记  NoHTML(string Htmlstring)<br/>
+    ///4、匹配页面的链接 <br/>
+    ///4.1获取页面的链接正则 GetHref(string HtmlCode)<br/>
+    ///5、匹配页面的图片地址<br/>
+    /// 5.1匹配页面的图片地址 GetImgSrc(string HtmlCode, string imgHttp)<br/>
+    ///5.2匹配<img src="" />中的图片路径实际链接  GetImg(string ImgString, string imgHttp)<br/>
+    ///6、抓取远程页面内容<br/>
+    /// 6.1以GET方式抓取远程页面内容 Get_Http(string tUrl)<br/>
+    /// 6.2以POST方式抓取远程页面内容 Post_Http(string url, string postData, string encodeType)<br/>
+    ///7、压缩HTML输出<br/>
+    ///7.1压缩HTML输出 ZipHtml(string Html)<br/>
+    ///8、过滤HTML标签<br/>
+    /// 8.1过滤指定HTML标签 DelHtml(string s_TextStr, string html_Str)  <br/>
+    /// 8.2过滤HTML中的不安全标签 RemoveUnsafeHtml(string content)<br/>
+    /// HTML转行成TEXT HtmlToTxt(string strHtml)<br/>
+    /// 字符串转换为 HtmlStringToHtml(string str)<br/>
+    /// html转换成字符串HtmlToString(string strHtml)<br/>
+    /// 获取URL编码<br/>
+    /// 判断URL是否有效<br/>
     /// 返回 HTML 字符串的编码解码结果
     /// </summary>
-    public static class HtmlHelper
+    public static partial class HtmlTools
     {
         #region 私有字段
         private static CookieContainer cc = new CookieContainer();

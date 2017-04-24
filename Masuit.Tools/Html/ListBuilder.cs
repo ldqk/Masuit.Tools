@@ -4,22 +4,20 @@ using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.Html
 {
-    /*  使用方式         
-    ListBuilder lb1=new ListBuilder("ul");
-    lb1.SetTemplate("<a href=\"{#url}\" target=\"_blank\"><strong>{#sortName}</strong> </a>\r\n{#lb2}");
-
-    ListBuilder lb2=new ListBuilder("ul");
-    lb2.SetTemplate("<a href=\""+url+"?tid={#id}"+"\" target=\"_blank\">{#title}</a> <span class='date'>[{#date}]</span>");
-    lb2.BindData(dt2);
-    或者
-    lb1.AddTemplateData("sortName",dr["sortName"].ToString());
-    lb1.AddTemplateData("url",url+"#sid."+dr["id"].ToString()+"/page.1/");
-    lb1.AddTemplateData("lb2",lb2.ToString());
-    lb1.EndTemplateData();
-    lSitemap.Text=lb1.ToString();
- */
     /// <summary>
-    /// 无序列表生成器
+    /// 无序列表生成器<br/>
+    /// 使用方式：<br/>
+    /// ListBuilder lb1=new ListBuilder("ul");<br/>
+    /// lb1.SetTemplate("&lt;a href="{#url}" target="_blank">&lt;strong>{#sortName}&lt;/strong> &lt;/a>\r\n{#lb2}");<br/>
+    /// ListBuilder lb2 = new ListBuilder("ul");<br/>
+    /// lb2.SetTemplate("&lt;a href=url?tid={#id}" target=\"_blank\">{#title}&lt;/a> &lt;span class='date'>[{#date}]&lt;/span>");<br/>
+    /// lb2.BindData(dt2);<br/>
+    /// 或者<br/>
+    /// lb1.AddTemplateData("sortName", dr["sortName"].ToString());<br/>
+    /// lb1.AddTemplateData("url",url+"#sid."+dr["id"].ToString()+"/page.1/");<br/>
+    /// lb1.AddTemplateData("lb2",lb2.ToString());<br/>
+    /// lb1.EndTemplateData();<br/>
+    /// lSitemap.Text=lb1.ToString();<br/>
     /// </summary>
     public class ListBuilder
     {
