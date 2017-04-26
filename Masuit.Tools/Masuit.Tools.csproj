@@ -109,6 +109,7 @@
     <Compile Include="Strings\StringExt.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
+    <Compile Include="Win32\Windows.cs" />
     <Compile Include="Win32\WindowsCommand.cs" />
   </ItemGroup>
   <ItemGroup>
