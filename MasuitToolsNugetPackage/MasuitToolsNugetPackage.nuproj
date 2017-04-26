@@ -22,7 +22,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>Masuit.Tools</Id>
-    <Version>1.1.2</Version>
+    <Version>1.2.1</Version>
     <Title>Masuit.Tools</Title>
     <Authors>懒得勤快</Authors>
     <Owners>QQ:1170397736</Owners>
