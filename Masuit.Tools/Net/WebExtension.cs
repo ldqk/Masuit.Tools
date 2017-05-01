@@ -4,8 +4,9 @@ using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Script.Serialization;
-using Masuit.Utilities.Models;
+using Masuit.Tools.Models;
+using Masuit.Tools.Strings;
+using Newtonsoft.Json;
 
 namespace Masuit.Tools.Net
 {
@@ -66,16 +67,15 @@ namespace Masuit.Tools.Net
         /// <returns>详细的地理位置、运营商信息</returns>
         public static async Task<IPData> GetIPAddressInfoAsync(this string ip)
         {
-            HttpClient client = new HttpClient();
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            INetAddress ipAddress; //IP地址对象变量声明
-            Match match = Regex.Match(ip, @"\d+\.\d+\.\d+\.\d+"); //IP地址正则
-            if (match.Success)
+            var client = new HttpClient();
+            bool isIpAddress;
+            Match match = ip.MatchInetAddress(out isIpAddress); //IP地址正则
+            if (isIpAddress)
             {
                 try
                 {
                     string ipData = await client.GetStringAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}").ConfigureAwait(false); //根据API地址获取
-                    ipAddress = serializer.Deserialize<INetAddress>(ipData); //将获取到的json数据反序列化为对象
+                    var ipAddress = JsonConvert.DeserializeObject<INetAddress>(ipData); //IP地址对象变量声明
                     return ipAddress.data;
                 }
                 catch (Exception)

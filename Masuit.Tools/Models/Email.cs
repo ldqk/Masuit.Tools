@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 
-namespace Masuit.Utilities.Models
+namespace Masuit.Tools.Models
 {
 #pragma warning disable 1591
     public class Email

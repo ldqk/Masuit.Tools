@@ -23,7 +23,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="uri">URL</param>
         /// <returns>Cookie容器</returns>
-        public static CookieContainer GetUriCookieContainer(Uri uri)
+        public static CookieContainer GetUriCookieContainer(this Uri uri)
         {
             CookieContainer cookies = null;
             //定义Cookie数据的大小。   
@@ -50,7 +50,7 @@ namespace Masuit.Tools.Net
         /// <param name="cookies">Cookie对象</param>
         /// <param name="uri">URL</param>
         /// <returns>Cookie内容</returns>
-        public static string PrintCookies(CookieContainer cookies, Uri uri)
+        public static string PrintCookies(this CookieContainer cookies, Uri uri)
         {
             CookieCollection cc = cookies.GetCookies(uri);
             StringBuilder sb = new StringBuilder();
@@ -250,7 +250,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="cc">CookieCollection，一般用在WebRequest中</param>
         /// <returns>转换后的Cookie字符串</returns>
-        public static string GetCK(CookieCollection cc)
+        public static string GetCK(this CookieCollection cc)
         {
             string ck = "";
             for (int i = 0; i < cc.Count; i++)
@@ -348,7 +348,7 @@ namespace Masuit.Tools.Net
         /// <param name="cks">Cookie集合</param>
         /// <param name="ck">待判断的Cookie</param>
         /// <returns>Cookie集合中是否包含指定的Cookie</returns>
-        public static async Task<bool> IncludeCKAsync(List<string> cks, string ck)
+        public static async Task<bool> IncludeCKAsync(this List<string> cks, string ck)
         {
             try
             {
@@ -423,7 +423,7 @@ namespace Masuit.Tools.Net
         /// <param name="cc">CookieCoollection</param>
         /// <param name="ck">Cookie字符串</param>
         /// <param name="url">Cookie的域</param>
-        public static void SetCKAppendToCC(CookieCollection cc, string ck, string url)
+        public static void SetCKAppendToCC(this CookieCollection cc, string ck, string url)
         {
             CookieCollection tmp = GetCK(ck, url);
             for (int i = 0; i < tmp.Count; i++)
@@ -457,7 +457,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="cc">CookieCollection</param>
         /// <param name="url">Cookie的域</param>
-        public static void SetCKToSystem(CookieCollection cc, string url)
+        public static void SetCKToSystem(this CookieCollection cc, string url)
         {
             List<string> domains = GetDomains(url);
             for (int i = 0; i < cc.Count; i++)

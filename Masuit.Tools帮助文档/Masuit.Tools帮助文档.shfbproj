@@ -27,8 +27,8 @@
       <Argument Key="maxVersionParts" Value="" xmlns="" />
     </TransformComponentArguments>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\Masuit.Tools\bin\Release\Masuit.Tools.XML" />
-      <DocumentationSource sourceFile="..\Masuit.Tools\bin\Release\Masuit.Tools.dll" />
+      <DocumentationSource sourceFile="..\Masuit.Tools\bin\Debug\Masuit.Tools.XML" />
+      <DocumentationSource sourceFile="..\Masuit.Tools\bin\Debug\Masuit.Tools.dll" />
     </DocumentationSources>
     <MaximumGroupParts>2</MaximumGroupParts>
     <NamespaceGrouping>False</NamespaceGrouping>

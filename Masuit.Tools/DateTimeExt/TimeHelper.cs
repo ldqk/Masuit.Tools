@@ -181,28 +181,28 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 返回时间差
         /// </summary>
-        /// <param name="DateTime1">时间1</param>
-        /// <param name="DateTime2">时间2</param>
+        /// <param name="dateTime1">时间1</param>
+        /// <param name="dateTime2">时间2</param>
         /// <returns>时间差</returns>
-        public static string DateDiff(System.DateTime DateTime1, System.DateTime DateTime2)
+        public static string DateDiff(this DateTime dateTime1, DateTime dateTime2)
         {
             string dateDiff = null;
             try
             {
-                TimeSpan ts = DateTime2 - DateTime1;
+                TimeSpan ts = dateTime2 - dateTime1;
                 if (ts.Days >= 1)
                 {
-                    dateDiff = DateTime1.Month.ToString() + "月" + DateTime1.Day.ToString() + "日";
+                    dateDiff = dateTime1.Month + "月" + dateTime1.Day + "日";
                 }
                 else
                 {
                     if (ts.Hours > 1)
                     {
-                        dateDiff = ts.Hours.ToString() + "小时前";
+                        dateDiff = ts.Hours + "小时前";
                     }
                     else
                     {
-                        dateDiff = ts.Minutes.ToString() + "分钟前";
+                        dateDiff = ts.Minutes + "分钟前";
                     }
                 }
             }
@@ -217,7 +217,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="beginTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
         /// <returns>时间差</returns>
-        public static string GetDiffTime(System.DateTime beginTime, System.DateTime endTime)
+        public static string GetDiffTime(this DateTime beginTime, DateTime endTime)
         {
             int i = 0;
             return GetDiffTime(beginTime, endTime, ref i);
@@ -230,7 +230,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="endTime">结束时间</param>
         /// <param name="mindTime">中间的时间</param>
         /// <returns>时间差</returns>
-        public static string GetDiffTime(System.DateTime beginTime, System.DateTime endTime, ref int mindTime)
+        public static string GetDiffTime(this DateTime beginTime, System.DateTime endTime, ref int mindTime)
         {
             string strResout = string.Empty;
             //获得2时间的时间间隔秒计算
@@ -293,7 +293,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="DateTime1">日期一。</param>
         /// <param name="DateTime2">日期二。</param>
         /// <returns>日期间隔TimeSpan。</returns>
-        public static TimeSpan DateDiff2(System.DateTime DateTime1, System.DateTime DateTime2)
+        public static TimeSpan DateDiff2(this System.DateTime DateTime1, System.DateTime DateTime2)
         {
             TimeSpan ts1 = new TimeSpan(DateTime1.Ticks);
             TimeSpan ts2 = new TimeSpan(DateTime2.Ticks);
@@ -309,7 +309,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="dateTime1">日期时间</param>
         /// <param name="dateMode">显示模式</param>
         /// <returns>0-9种模式的日期</returns>
-        public static string FormatDate(System.DateTime dateTime1, string dateMode)
+        public static string FormatDate(this System.DateTime dateTime1, string dateMode)
         {
             switch (dateMode)
             {
@@ -346,7 +346,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="time1">起始日期</param>
         /// <param name="time2">结束日期</param>
         /// <returns>间隔日期之间的 随机日期</returns>
-        public static System.DateTime GetRandomTime(System.DateTime time1, System.DateTime time2)
+        public static System.DateTime GetRandomTime(this System.DateTime time1, System.DateTime time2)
         {
             Random random = new Random();
             System.DateTime minTime = new System.DateTime();
@@ -446,7 +446,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary> 
         /// <param name="strDateTime">Rss中读取的时间</param> 
         /// <returns>处理后的标准时间格式</returns> 
-        public static string dateConvert(string strDateTime)
+        public static string DateConvert(string strDateTime)
         {
             strDateTime = strDateTime.Replace("+0000", "GMT");
             strDateTime = strDateTime.Replace("+0100", "GMT");

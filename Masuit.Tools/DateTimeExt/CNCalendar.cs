@@ -18,7 +18,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>x月x日</returns>
         private static string FormatDate(int m, int d)
         {
-            return string.Format("{0:00}{1:00}", m, d);
+            return $"{m:00}{d:00}";
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Masuit.Tools.DateTimeExt
         public static string ReadFileFromEmbedded(string fileWholeName)
         {
             //文件属性-生成操作-嵌入的资源
-            string result = string.Empty;
+            string result;
 
             using (TextReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(fileWholeName)))
             {

@@ -288,10 +288,10 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string ClearHtml(this string html)
         {
-            string s = Regex.Match(Regex.Replace(html, @"background-color:#?\w{3,7}|font-family:'?[\w|\(|\)]*'?;?", ""), @"<body[^>]*>([\s\S]*)<\/body>").Groups[1].Value.Replace("&#xa0;", "");
-            s = Regex.Replace(s, @"\w+-?\w+:0\w+;?", "");//去除多余的零值属性
-            s = Regex.Replace(s, "alt=\"(.+?)\"", "");//除去alt属性
-            //s = Regex.Replace(s, @"-aw-.+:\w+;?", "");//去除Word产生的-aw属性
+            string s = Regex.Match(Regex.Replace(html, @"background-color:#?\w{3,7}|font-family:'?[\w|\(|\)]*'?;?", string.Empty), @"<body[^>]*>([\s\S]*)<\/body>").Groups[1].Value.Replace("&#xa0;", string.Empty);
+            s = Regex.Replace(s, @"\w+-?\w+:0\w+;?", string.Empty);//去除多余的零值属性
+            s = Regex.Replace(s, "alt=\"(.+?)\"", string.Empty);//除去alt属性
+            s = Regex.Replace(s, @"-aw.+?\s", string.Empty);//去除Word产生的-aw属性
             return s;
         }
 

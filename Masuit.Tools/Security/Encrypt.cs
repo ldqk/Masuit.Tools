@@ -649,7 +649,7 @@ namespace Masuit.Tools.Security
         /// <param name="filePath">要解密的文件</param>
         /// <param name="dataIndex">要从哪一个块中解密</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(string filePath, int dataIndex)
+        public static string DecryptFromFile(this string filePath, int dataIndex)
         {
             var r = "";
             if ((dataIndex > 10) && (dataIndex < 1))
@@ -724,7 +724,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="filePath">要解密的文件</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(string filePath)
+        public static string DecryptFromFile(this string filePath)
         {
             var r = "";
             byte[] decrypted;
@@ -825,7 +825,7 @@ namespace Masuit.Tools.Security
         /// <param name="IV">初始化向量</param>
         /// <param name="Key">解密密匙</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(string filePath, int dataIndex, byte[] IV, byte[] Key)
+        public static string DecryptFromFile(this string filePath, int dataIndex, byte[] IV, byte[] Key)
         {
             var r = "";
             if ((dataIndex > 10) && (dataIndex < 1))
@@ -904,7 +904,7 @@ namespace Masuit.Tools.Security
         /// <param name="IV">初始化向量</param>
         /// <param name="Key">解密密匙</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(string filePath, byte[] IV, byte[] Key)
+        public static string DecryptFromFile(this string filePath, byte[] IV, byte[] Key)
         {
             var r = "";
             byte[] decrypted;
@@ -935,7 +935,7 @@ namespace Masuit.Tools.Security
         ///     设置加密或解密的初始化向量
         /// </summary>
         /// <param name="s">长度等于8的ASCII字符集的字符串</param>
-        public static void SetIV(string s)
+        public static void SetIV(this string s)
         {
             if (s.Length != 8)
             {
@@ -962,7 +962,7 @@ namespace Masuit.Tools.Security
         ///     设置加密或解密的密匙
         /// </summary>
         /// <param name="s">长度等于16的ASCII字符集的字符串</param>
-        public static void SetKey(string s)
+        public static void SetKey(this string s)
         {
             if (s.Length != 16)
             {

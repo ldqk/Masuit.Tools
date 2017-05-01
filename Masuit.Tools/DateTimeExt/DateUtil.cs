@@ -14,7 +14,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="relativeday">相对天数</param>
         public static string GetDateTime(int relativeday)
         {
-            return System.DateTime.Now.AddDays(relativeday).ToString("yyyy-MM-dd HH:mm:ss");
+            return DateTime.Now.AddDays(relativeday).ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         public static string GetDateTimeF()
         {
-            return System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fffffff");
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fffffff");
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>本年有多少天</summary>
         /// <param name="dt">日期</param>
         /// <returns>本天在当年的天数</returns>
-        public static int GetDaysOfYear(System.DateTime dt)
+        public static int GetDaysOfYear(this DateTime dt)
         {
             //取得传入参数的年份部分，用来判断是否是闰年
             int n = dt.Year;
@@ -91,12 +91,12 @@ namespace Masuit.Tools.DateTimeExt
 
         /// <summary>本月有多少天</summary>
         /// <param name="iYear">年</param>
-        /// <param name="Month">月</param>
+        /// <param name="month">月</param>
         /// <returns>天数</returns>
-        public static int GetDaysOfMonth(int iYear, int Month)
+        public static int GetDaysOfMonth(int iYear, int month)
         {
             int days = 0;
-            switch (Month)
+            switch (month)
             {
                 case 1:
                     days = 31;
@@ -151,10 +151,10 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>本月有多少天</summary>
         /// <param name="dt">日期</param>
         /// <returns>天数</returns>
-        public static int GetDaysOfMonth(System.DateTime dt)
+        public static int GetDaysOfMonth(this DateTime dt)
         {
             //--------------------------------//
-            //--从dt中取得当前的年，月信息  --//
+            //从dt中取得当前的年，月信息  --//
             //--------------------------------//
             int month, days = 0;
             var year = dt.Year;
@@ -217,7 +217,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>返回当前日期的星期名称</summary>
         /// <param name="idt">日期</param>
         /// <returns>星期名称</returns>
-        public static string GetWeekNameOfDay(System.DateTime idt)
+        public static string GetWeekNameOfDay(this DateTime idt)
         {
             string week = "";
 
@@ -252,7 +252,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>返回当前日期的星期编号</summary>
         /// <param name="idt">日期</param>
         /// <returns>星期数字编号</returns>
-        public static string GetWeekNumberOfDay(System.DateTime idt)
+        public static string GetWeekNumberOfDay(this DateTime idt)
         {
             string week = "";
 
@@ -287,7 +287,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>判断当前日期所属的年份是否是闰年，私有函数</summary>
         /// <param name="idt">日期</param>
         /// <returns>是闰年：True ，不是闰年：False</returns>
-        private static bool IsRuYear(System.DateTime idt)
+        private static bool IsRuYear(DateTime idt)
         {
             //形式参数为日期类型 
             //例如：2003-12-12
@@ -354,7 +354,7 @@ namespace Masuit.Tools.DateTimeExt
         ///		其它====自定义格式
         /// </param>
         /// <returns>日期字符串</returns>
-        public static string ConvertDateToString(System.DateTime oDateTime, string strFormat)
+        public static string ConvertDateToString(this DateTime oDateTime, string strFormat)
         {
             string strDate = "";
 
@@ -390,11 +390,10 @@ namespace Masuit.Tools.DateTimeExt
         {
             try
             {
-                System.DateTime oDate = System.DateTime.Parse(strDate);
-                if (oDate.CompareTo(System.DateTime.Parse("1800-1-1")) > 0)
+                DateTime oDate = DateTime.Parse(strDate);
+                if (oDate.CompareTo(DateTime.Parse("1800-1-1")) > 0)
                     return true;
-                else
-                    return false;
+                return false;
             }
             catch (Exception)
             {

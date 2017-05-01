@@ -119,7 +119,7 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>return description or value.ToString()</returns>
-        public static string GetDescription(Enum value)
+        public static string GetDescription(this Enum value)
         {
             return GetDescription(value, null);
         }
@@ -132,7 +132,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="args">An Object array containing zero or more objects to format.</param>
         /// <returns>return null if DescriptionAttribute is not found or return type description</returns>
         /// <exception cref="ArgumentNullException"><paramref name="value"/>"/> is <c>null</c>.</exception>
-        public static string GetDescription(Enum value, params object[] args)
+        public static string GetDescription(this Enum value, params object[] args)
         {
             if (value == null)
             {
@@ -160,7 +160,7 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="member">Specified Member for which Info is Required</param>
         /// <returns>return null if DescriptionAttribute is not found or return type description</returns>
-        public static string GetDescription(MemberInfo member)
+        public static string GetDescription(this MemberInfo member)
         {
             return GetDescription(member, null);
         }
@@ -174,7 +174,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>return <see cref="String.Empty"/> if DescriptionAttribute is 
         /// not found or return type description</returns>
         /// <exception cref="ArgumentNullException"><paramref name="member"/>"/> is <c>null</c>.</exception>
-        public static string GetDescription(MemberInfo member, params object[] args)
+        public static string GetDescription(this MemberInfo member, params object[] args)
         {
             string text1;
 
@@ -215,7 +215,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="assembly">the assembly in which the specified attribute is defined</param>
         /// <returns>Attribute as Object or null if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="attributeType"/>"/> is <c>null</c>.</exception>
-        public static object GetAttribute(Type attributeType, Assembly assembly)
+        public static object GetAttribute(this Type attributeType, Assembly assembly)
         {
             if (attributeType == null)
             {
@@ -239,7 +239,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
         /// <param name="type">the type on which the specified attribute is defined</param>
         /// <returns>Attribute as Object or null if not found.</returns>
-        public static object GetAttribute(Type attributeType, MemberInfo type)
+        public static object GetAttribute(this Type attributeType, MemberInfo type)
         {
             return GetAttribute(attributeType, type, false);
         }
@@ -253,7 +253,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>
         /// Attribute as Object or null if not found.
         /// </returns>
-        public static object GetAttribute(Type attributeType, MemberInfo type, bool searchParent)
+        public static object GetAttribute(this Type attributeType, MemberInfo type, bool searchParent)
         {
             if (attributeType == null)
             {
@@ -285,7 +285,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
         /// <param name="type">the type on which the specified attribute is defined</param>
         /// <returns>Attribute as Object or null if not found.</returns>
-        public static object[] GetAttributes(Type attributeType, MemberInfo type)
+        public static object[] GetAttributes(this Type attributeType, MemberInfo type)
         {
             return GetAttributes(attributeType, type, false);
         }
@@ -299,7 +299,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>
         /// Attribute as Object or null if not found.
         /// </returns>
-        public static object[] GetAttributes(Type attributeType, MemberInfo type, bool searchParent)
+        public static object[] GetAttributes(this Type attributeType, MemberInfo type, bool searchParent)
         {
             if (type == null)
             {
@@ -327,12 +327,12 @@ namespace Masuit.Tools.Reflection
         /// <summary>
         /// 根据资源名称获取图片资源流
         /// </summary>
-        /// <param name="ResourceName">资源的名称</param>
+        /// <param name="resourceName">资源的名称</param>
         /// <returns>数据流</returns>
-        public static Stream GetImageResource(string ResourceName)
+        public static Stream GetImageResource(string resourceName)
         {
             Assembly asm = Assembly.GetExecutingAssembly();
-            return asm.GetManifestResourceStream(ResourceName);
+            return asm.GetManifestResourceStream(resourceName);
         }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="assemblyType">程序集中的某一对象类型</param>
         /// <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
         /// <param name="imageName">资源项名称</param>
-        public static Bitmap LoadBitmap(Type assemblyType, string resourceHolder, string imageName)
+        public static Bitmap LoadBitmap(this Type assemblyType, string resourceHolder, string imageName)
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
@@ -354,7 +354,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="assemblyType">程序集中的某一对象类型</param>
         /// <param name="resName">资源项名称</param>
         /// <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
-        public static string GetStringRes(Type assemblyType, string resName, string resourceHolder)
+        public static string GetStringRes(this Type assemblyType, string resName, string resourceHolder)
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
@@ -368,7 +368,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="charset">字符集编码</param>
         /// <param name="ResName">嵌入资源相对路径</param>
         /// <returns>如没找到该资源则返回空字符</returns>
-        public static string GetManifestString(Type assemblyType, string charset, string ResName)
+        public static string GetManifestString(this Type assemblyType, string charset, string ResName)
         {
             Assembly asm = Assembly.GetAssembly(assemblyType);
             Stream st = asm.GetManifestResourceStream(string.Concat(assemblyType.Namespace,
@@ -388,16 +388,15 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="type">类型</param>
         /// <returns>对应实例</returns>
-        public static object CreateInstance(string type)
+        public static T CreateInstance<T>(string type) where T : class
         {
-            Type tmp = null;
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for (int i = 0; i < assemblies.Length; i++)
+            foreach (Assembly t in assemblies)
             {
-                tmp = assemblies[i].GetType(type);
+                var tmp = t.GetType(type);
                 if (tmp != null)
                 {
-                    return assemblies[i].CreateInstance(type);
+                    return t.CreateInstance(type) as T;
                 }
             }
             return null;
@@ -409,9 +408,9 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="type">类型</param>
         /// <returns>对应实例</returns>
-        public static object CreateInstance(Type type)
+        public static T CreateInstance<T>(this Type type) where T : class
         {
-            return CreateInstance(type.FullName);
+            return CreateInstance<T>(type.FullName);
         }
         #endregion
     }

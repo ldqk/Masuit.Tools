@@ -28,7 +28,7 @@ namespace Masuit.Tools.Files
         /// <param name="nLevel">默认起始值,调用时,一般为0</param>
         /// <param name="Rn">用于迭加的传入值,一般为空</param>
         /// <returns>所有子目录及文件</returns>
-        public static string ListTreeShow(DirectoryInfo theDir, int nLevel, string Rn)//递归目录 文件
+        public static string ListTreeShow(this DirectoryInfo theDir, int nLevel, string Rn)//递归目录 文件
         {
             DirectoryInfo[] subDirectories = theDir.GetDirectories();//获得目录
             foreach (DirectoryInfo dirinfo in subDirectories)
@@ -90,24 +90,24 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="theDir">指定目录</param>
         /// <param name="nLevel">默认起始值,调用时,一般为0</param>
-        /// <param name="Rn">用于迭加的传入值,一般为空</param>
+        /// <param name="rn">用于迭加的传入值,一般为空</param>
         /// <param name="tplPath">默认选择模板名称</param>
         /// <returns>所有子目录及文件</returns>
-        public static string ListTreeShow(DirectoryInfo theDir, int nLevel, string Rn, string tplPath)//递归目录 文件
+        public static string ListTreeShow(this DirectoryInfo theDir, int nLevel, string rn, string tplPath)//递归目录 文件
         {
             DirectoryInfo[] subDirectories = theDir.GetDirectories();//获得目录
 
             foreach (DirectoryInfo dirinfo in subDirectories)
             {
-                Rn += "<option value=\"" + dirinfo.Name + "\"";
+                rn += "<option value=\"" + dirinfo.Name + "\"";
                 if (string.Equals(tplPath, dirinfo.Name, System.StringComparison.CurrentCultureIgnoreCase))
                 {
-                    Rn += " selected ";
+                    rn += " selected ";
                 }
-                Rn += ">";
+                rn += ">";
                 if (nLevel == 0)
                 {
-                    Rn += "┣";
+                    rn += "┣";
                 }
                 else
                 {
@@ -116,21 +116,21 @@ namespace Masuit.Tools.Files
                     {
                         _s += "│&nbsp;";
                     }
-                    Rn += _s + "┣";
+                    rn += _s + "┣";
                 }
-                Rn += "" + dirinfo.Name + "</option>";
+                rn += "" + dirinfo.Name + "</option>";
                 FileInfo[] fileInfo = dirinfo.GetFiles();   //目录下的文件
                 foreach (FileInfo fInfo in fileInfo)
                 {
-                    Rn += "<option value=\"" + dirinfo.Name + "/" + fInfo.Name + "\"";
+                    rn += "<option value=\"" + dirinfo.Name + "/" + fInfo.Name + "\"";
                     if (string.Equals(tplPath, fInfo.Name, System.StringComparison.CurrentCultureIgnoreCase))
                     {
-                        Rn += " selected ";
+                        rn += " selected ";
                     }
-                    Rn += ">";
+                    rn += ">";
                     if (nLevel == 0)
                     {
-                        Rn += "│&nbsp;├";
+                        rn += "│&nbsp;├";
                     }
                     else
                     {
@@ -139,13 +139,13 @@ namespace Masuit.Tools.Files
                         {
                             _f += "│&nbsp;";
                         }
-                        Rn += _f + "│&nbsp;├";
+                        rn += _f + "│&nbsp;├";
                     }
-                    Rn += fInfo.Name + "</option>";
+                    rn += fInfo.Name + "</option>";
                 }
-                Rn = ListTreeShow(dirinfo, nLevel + 1, Rn, tplPath);
+                rn = ListTreeShow(dirinfo, nLevel + 1, rn, tplPath);
             }
-            return Rn;
+            return rn;
         }
         #endregion
     }

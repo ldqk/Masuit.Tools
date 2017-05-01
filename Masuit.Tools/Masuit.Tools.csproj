@@ -104,8 +104,6 @@
     <Compile Include="Security\HashEncode.cs" />
     <Compile Include="Security\RSACryption.cs" />
     <Compile Include="Objects\ObjectExt.cs" />
-    <Compile Include="Strings\ConvertJson.cs" />
-    <Compile Include="Strings\JsonHelper.cs" />
     <Compile Include="Strings\StringExt.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />

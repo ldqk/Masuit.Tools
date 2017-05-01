@@ -163,7 +163,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="funName">函数名称</param>
         /// <param name="funParams">函数参数列表</param>
         /// <returns>调用该函数之后的结果</returns>
-        public static T InvokeFunction<T>(Type refType, string funName, params object[] funParams)
+        public static T InvokeFunction<T>(this Type refType, string funName, params object[] funParams)
         {
             return InvokeMethodOrGetProperty<T>(refType, funName, null, funParams);
         }
@@ -176,7 +176,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="assemblyType">程序集中的某一对象类型</param>
         /// <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
         /// <param name="imageName">资源项名称</param>
-        public static Bitmap LoadBitmap(Type assemblyType, string resourceHolder, string imageName)
+        public static Bitmap LoadBitmap(this Type assemblyType, string resourceHolder, string imageName)
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
@@ -189,7 +189,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="assemblyType">程序集中的某一对象类型</param>
         /// <param name="resName">资源项名称</param>
         /// <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
-        public static string GetStringRes(Type assemblyType, string resName, string resourceHolder)
+        public static string GetStringRes(this Type assemblyType, string resName, string resourceHolder)
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
@@ -203,7 +203,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="charset">字符集编码</param>
         /// <param name="ResName">嵌入资源相对路径</param>
         /// <returns>如没找到该资源则返回空字符</returns>
-        public static string GetManifestString(Type assemblyType, string charset, string ResName)
+        public static string GetManifestString(this Type assemblyType, string charset, string ResName)
         {
             Assembly asm = Assembly.GetAssembly(assemblyType);
             Stream st = asm.GetManifestResourceStream(string.Concat(assemblyType.Namespace,

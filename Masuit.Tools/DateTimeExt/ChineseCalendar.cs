@@ -74,7 +74,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="datetime">公历日期</param>
         /// <returns>生肖</returns>
-        public static string GetShengXiao(DateTime datetime)
+        public static string GetShengXiao(this DateTime datetime)
         {
             return shengxiao[cCalendar.GetTerrestrialBranch(cCalendar.GetSexagenaryYear(datetime)) - 1];
         }

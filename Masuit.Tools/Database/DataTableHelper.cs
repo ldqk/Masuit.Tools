@@ -17,7 +17,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>返回Datatable 增加字段 identityid </returns>
-        public static DataTable AddIdentityColumn(DataTable dt)
+        public static DataTable AddIdentityColumn(this DataTable dt)
         {
             if (!dt.Columns.Contains("identityid"))
             {
@@ -35,7 +35,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>是否有数据行</returns>
-        public static bool IsHaveRows(DataTable dt)
+        public static bool IsHaveRows(this DataTable dt)
         {
             if (dt?.Rows.Count > 0)
                 return true;
@@ -49,7 +49,7 @@ namespace Masuit.Tools.Database
         /// <typeparam name="T">实体 T </typeparam>
         /// <param name="table">datatable</param>
         /// <returns>强类型的数据集合</returns>
-        public static IList<T> DataTableToList<T>(DataTable table)
+        public static IList<T> DataTableToList<T>(this DataTable table)
             where T : class
         {
             if (!IsHaveRows(table))
@@ -83,7 +83,7 @@ namespace Masuit.Tools.Database
         /// <typeparam name="T">实体</typeparam>
         /// <param name="list"> 实体列表</param>
         /// <returns>映射为数据表</returns>
-        public static DataTable ListToDataTable<T>(IList<T> list)
+        public static DataTable ListToDataTable<T>(this IList<T> list)
             where T : class
         {
             if (list == null || list.Count <= 0)
@@ -136,7 +136,7 @@ namespace Masuit.Tools.Database
         /// <typeparam name="T">集合项类型</typeparam>
         /// <param name="list">集合</param>
         /// <returns>数据集(表)</returns>
-        public static DataTable ToDataTable<T>(IList<T> list)
+        public static DataTable ToDataTable<T>(this IList<T> list)
         {
             return ToDataTable<T>(list, null);
         }
@@ -148,7 +148,7 @@ namespace Masuit.Tools.Database
         /// <param name="list">集合</param>
         /// <param name="propertyName">需要返回的列的列名</param>
         /// <returns>数据集(表)</returns>
-        public static DataTable ToDataTable<T>(IList<T> list, params string[] propertyName)
+        public static DataTable ToDataTable<T>(this IList<T> list, params string[] propertyName)
         {
             List<string> propertyNameList = new List<string>();
             if (propertyName != null)
@@ -204,7 +204,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="nameList">包含字段信息的列表</param>
         /// <returns>DataTable</returns>
-        public static DataTable CreateTable(List<string> nameList)
+        public static DataTable CreateTable(this List<string> nameList)
         {
             if (nameList.Count <= 0)
                 return null;
@@ -218,9 +218,9 @@ namespace Masuit.Tools.Database
         }
 
         /// <summary>
-        /// 通过字符列表创建表字段，字段格式可以是：
-        /// 1) a,b,c,d,e
-        /// 2) a|int,b|string,c|bool,d|decimal
+        /// 通过字符列表创建表字段，字段格式可以是：<br/>
+        /// 1) a,b,c,d,e<br/>
+        /// 2) a|int,b|string,c|bool,d|decimal<br/>
         /// </summary>
         /// <param name="nameString">字符列表</param>
         /// <returns>内存表</returns>
@@ -321,7 +321,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="drc">DataRowCollection</param>
         /// <returns>DataRow数组</returns>
-        public static DataRow[] GetDataRowArray(DataRowCollection drc)
+        public static DataRow[] GetDataRowArray(this DataRowCollection drc)
         {
             int count = drc.Count;
             DataRow[] drs = new DataRow[count];
@@ -338,7 +338,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="rows">行数组</param>
         /// <returns>将内存行组装成内存表</returns>
-        public static DataTable GetTableFromRows(DataRow[] rows)
+        public static DataTable GetTableFromRows(this DataRow[] rows)
         {
             if (rows.Length <= 0)
             {

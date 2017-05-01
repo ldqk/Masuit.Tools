@@ -24,7 +24,7 @@ namespace Masuit.Tools.Media
         /// <param name="fileSaveUrl">缩略图存放地址</param>
         /// <param name="side">指定的边长（正方型）</param>
         /// <param name="quality">质量（范围0-100）</param>
-        public static void CutForSquare(Stream fromFile, string fileSaveUrl, int side, int quality)
+        public static void CutForSquare(this Stream fromFile, string fileSaveUrl, int side, int quality)
         {
             //创建目录
             string dir = Path.GetDirectoryName(fileSaveUrl);
@@ -141,7 +141,7 @@ namespace Masuit.Tools.Media
         /// <param name="maxWidth">最大宽(单位:px)</param>
         /// <param name="maxHeight">最大高(单位:px)</param>
         /// <param name="quality">质量（范围0-100）</param>
-        public static void CutForCustom(Stream fromFile, string fileSaveUrl, int maxWidth, int maxHeight, int quality)
+        public static void CutForCustom(this Stream fromFile, string fileSaveUrl, int maxWidth, int maxHeight, int quality)
         {
             //从文件获取原始图片，并使用流中嵌入的颜色管理信息
             Image initImage = Image.FromStream(fromFile, true);
@@ -275,7 +275,7 @@ namespace Masuit.Tools.Media
         /// <param name="targetHeight">指定的最大高度</param>
         /// <param name="watermarkText">水印文字(为""表示不使用水印)</param>
         /// <param name="watermarkImage">水印图片路径(为""表示不使用水印)</param>
-        public static void ZoomAuto(Stream fromFile, string savePath, double targetWidth, double targetHeight, string watermarkText, string watermarkImage)
+        public static void ZoomAuto(this Stream fromFile, string savePath, double targetWidth, double targetHeight, string watermarkText, string watermarkImage)
         {
             //创建目录
             string dir = Path.GetDirectoryName(savePath);

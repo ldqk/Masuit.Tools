@@ -36,7 +36,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="strText">被加密的字符串</param>
         /// <returns>加密后的数据</returns>
-        public static string DesEncrypt(string strText)
+        public static string DesEncrypt(this string strText)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="strText">需要解密的 字符串</param>
         /// <returns>解密后的数据</returns>
-        public static string DesDecrypt(string strText)
+        public static string DesDecrypt(this string strText)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace Masuit.Tools.Security
         /// <param name="strText">被解密的字符串</param> 
         /// <param name="strEncrKey">密钥</param> 
         /// <returns>解密后的数据</returns> 
-        public static string DesEncrypt(string strText, string strEncrKey)
+        public static string DesEncrypt(this string strText, string strEncrKey)
         {
             byte[] byKey = null;
             byte[] IV = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
@@ -94,7 +94,7 @@ namespace Masuit.Tools.Security
         /// <param name="strText">Decrypt string</param> 
         /// <param name="sDecrKey">key</param> 
         /// <returns>output string</returns> 
-        public static string DesDecrypt(string strText, string sDecrKey)
+        public static string DesDecrypt(this string strText, string sDecrKey)
         {
             byte[] byKey = null;
             byte[] IV = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
@@ -118,7 +118,7 @@ namespace Masuit.Tools.Security
         /// <param name="m_InFilePath">Encrypt file path</param> 
         /// <param name="m_OutFilePath">output file</param> 
         /// <param name="strEncrKey">key</param> 
-        public static void DesEncrypt(string m_InFilePath, string m_OutFilePath, string strEncrKey)
+        public static void DesEncrypt(this string m_InFilePath, string m_OutFilePath, string strEncrKey)
         {
             byte[] byKey = null;
             byte[] IV = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
@@ -155,7 +155,7 @@ namespace Masuit.Tools.Security
         /// <param name="m_InFilePath">Decrypt filepath</param> 
         /// <param name="m_OutFilePath">output filepath</param> 
         /// <param name="sDecrKey">key</param> 
-        public static void DesDecrypt(string m_InFilePath, string m_OutFilePath, string sDecrKey)
+        public static void DesDecrypt(this string m_InFilePath, string m_OutFilePath, string sDecrKey)
         {
             byte[] byKey = null;
             byte[] IV = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
@@ -196,7 +196,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
         /// <returns>加密结果字符串</returns>
-        public static string AES_Encrypt(string encryptString)
+        public static string AES_Encrypt(this string encryptString)
         {
             return AES_Encrypt(encryptString, Default_AES_Key);
         }
@@ -207,7 +207,7 @@ namespace Masuit.Tools.Security
         /// <param name="encryptString">待加密字符串</param>
         /// <param name="encryptKey">加密密钥，须半角字符</param>
         /// <returns>加密结果字符串</returns>
-        public static string AES_Encrypt(string encryptString, string encryptKey)
+        public static string AES_Encrypt(this string encryptString, string encryptKey)
         {
             encryptKey = GetSubString(encryptKey, 32, "");
             encryptKey = encryptKey.PadRight(32, ' ');
@@ -228,7 +228,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
         /// <returns>解密成功返回解密后的字符串,失败返源串</returns>
-        public static string AES_Decrypt(string decryptString)
+        public static string AES_Decrypt(this string decryptString)
         {
             return AES_Decrypt(decryptString, Default_AES_Key);
         }
@@ -239,7 +239,7 @@ namespace Masuit.Tools.Security
         /// <param name="decryptString">待解密的字符串</param>
         /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
         /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
-        public static string AES_Decrypt(string decryptString, string decryptKey)
+        public static string AES_Decrypt(this string decryptString, string decryptKey)
         {
             try
             {
@@ -269,7 +269,7 @@ namespace Masuit.Tools.Security
         /// <param name="length">所取字符串字节长度</param>
         /// <param name="tailString">附加字符串(当字符串不够长时，尾部所添加的字符串，一般为"...")</param>
         /// <returns>某字符串的一部分</returns>
-        private static string GetSubString(string sourceString, int length, string tailString)
+        private static string GetSubString(this string sourceString, int length, string tailString)
         {
             return GetSubString(sourceString, 0, length, tailString);
         }
@@ -282,7 +282,7 @@ namespace Masuit.Tools.Security
         /// <param name="length">所取字符串字节长度</param>
         /// <param name="tailString">附加字符串(当字符串不够长时，尾部所添加的字符串，一般为"...")</param>
         /// <returns>某字符串的一部分</returns>
-        private static string GetSubString(string sourceString, int startIndex, int length, string tailString)
+        private static string GetSubString(this string sourceString, int startIndex, int length, string tailString)
         {
             string myResult = sourceString;
 
@@ -402,7 +402,7 @@ namespace Masuit.Tools.Security
         /// <param name="InputFile">源文件</param>
         /// <param name="OutputFile">输出文件</param>
         /// <returns>处理结果</returns>
-        public static bool AES_EncryptFile(string InputFile, string OutputFile)
+        public static bool AES_EncryptFile(this string InputFile, string OutputFile)
         {
             try
             {
@@ -431,7 +431,7 @@ namespace Masuit.Tools.Security
         /// <param name="InputFile">输入文件</param>
         /// <param name="OutputFile">输出文件</param>
         /// <returns>处理结果</returns>
-        public static bool AES_DecryptFile(string InputFile, string OutputFile)
+        public static bool AES_DecryptFile(this string InputFile, string OutputFile)
         {
             try
             {
@@ -472,7 +472,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="str">需要加密的字符串</param>
         /// <returns>加密后的数据</returns>
-        public static string Base64Encrypt(string str)
+        public static string Base64Encrypt(this string str)
         {
             byte[] encbuff = System.Text.Encoding.UTF8.GetBytes(str);
             return Convert.ToBase64String(encbuff);
@@ -483,7 +483,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="str">需要解密的字符串</param>
         /// <returns>解密后的数据</returns>
-        public static string Base64Decrypt(string str)
+        public static string Base64Decrypt(this string str)
         {
             byte[] decbuff = Convert.FromBase64String(str);
             return System.Text.Encoding.UTF8.GetString(decbuff);
@@ -496,7 +496,7 @@ namespace Masuit.Tools.Security
         /// </summary> 
         /// <param name="strText">原数据</param> 
         /// <returns>MD5字符串</returns> 
-        public static string MD5Encrypt(string strText)
+        public static string MD5Encrypt(this string strText)
         {
             MD5 md5 = new MD5CryptoServiceProvider();
             byte[] result = md5.ComputeHash(Encoding.Default.GetBytes(strText));
@@ -511,7 +511,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="s">需要加密的字符串</param>
         /// <returns>MD5字符串</returns>
-        public static string EncyptMD5_3_16(string s)
+        public static string EncyptMD5_3_16(this string s)
         {
             MD5 md5 = MD5CryptoServiceProvider.Create();
             byte[] bytes = System.Text.Encoding.ASCII.GetBytes(s);
@@ -533,7 +533,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="str">原始字符串</param>
         /// <returns>SHA256结果(返回长度为44字节的字符串)</returns>
-        public static string SHA256(string str)
+        public static string SHA256(this string str)
         {
             byte[] SHA256Data = Encoding.UTF8.GetBytes(str);
             SHA256Managed Sha256 = new SHA256Managed();
