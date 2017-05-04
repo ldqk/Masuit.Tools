@@ -74,9 +74,9 @@ namespace Masuit.Tools.Net
             {
                 try
                 {
-                    string ipData = await client.GetStringAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}").ConfigureAwait(false); //根据API地址获取
+                    string ipData = await client.GetStringAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}"); //根据API地址获取
                     var ipAddress = JsonConvert.DeserializeObject<INetAddress>(ipData); //IP地址对象变量声明
-                    return ipAddress.data;
+                    return ipAddress?.data ?? new INetAddress { data = { region = "未能获取到IP地址信息" } }.data; //如果发生异常，则构造一个空对象;
                 }
                 catch (Exception)
                 {
