@@ -3,7 +3,7 @@ using Masuit.Tools.Win32;
 
 namespace Test
 {
-    class Program
+    internal static class Program
     {
         static void Main(string[] args)
         {

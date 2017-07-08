@@ -48,13 +48,12 @@
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.1.2.1\lib\net45\StackExchange.Redis.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="StackExchange.Redis, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.4\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -77,6 +76,7 @@
     <Compile Include="DateTimeExt\DateTimeHelper.cs" />
     <Compile Include="DateTimeExt\DateUtil.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Files\Compress.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
     <Compile Include="Files\FileTree.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Html\HtmlPager.cs" />
     <Compile Include="Html\HtmlTools.cs" />
     <Compile Include="Html\ListBuilder.cs" />
+    <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Net\CacheHelper.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\SocketClient.cs" />
@@ -104,7 +105,6 @@
     <Compile Include="Security\HashEncode.cs" />
     <Compile Include="Security\RSACryption.cs" />
     <Compile Include="Objects\ObjectExt.cs" />
-    <Compile Include="Strings\StringExt.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
     <Compile Include="Win32\Windows.cs" />

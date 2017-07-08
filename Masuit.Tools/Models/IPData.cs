@@ -2,6 +2,9 @@
 
 namespace Masuit.Tools.Models
 {
+    /// <summary>
+    /// IP地址信息
+    /// </summary>
     public class IPData
     {
         /// <summary>

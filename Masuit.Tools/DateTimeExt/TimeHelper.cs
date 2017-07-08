@@ -51,8 +51,8 @@ namespace Masuit.Tools.DateTimeExt
             switch (month)
             {
                 case 1:
-                    firstDay = System.DateTime.Now.ToString(year + "-0" + month + "-01");
-                    lastDay = System.DateTime.Now.ToString(year + "-0" + month + "-31");
+                    firstDay = DateTime.Now.ToString($"{year}-0{month}-01");
+                    lastDay = System.DateTime.Now.ToString($"{year}-0{month}-31");
                     break;
                 case 2:
                     firstDay = System.DateTime.Now.ToString(year + "-0" + month + "-01");
@@ -98,7 +98,7 @@ namespace Masuit.Tools.DateTimeExt
                     lastDay = System.DateTime.Now.ToString(year + "-" + month + "-30");
                     break;
                 default:
-                    firstDay = System.DateTime.Now.ToString(year + "-" + month + "-01");
+                    firstDay = DateTime.Now.ToString(year + "-" + month + "-01");
                     lastDay = System.DateTime.Now.ToString(year + "-" + month + "-31");
                     break;
             }

@@ -1,13 +1,246 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Masuit.Tools.Strings
+namespace Masuit.Tools
 {
     /// <summary>
-    /// 字符串扩展类
+    /// 扩展方法
     /// </summary>
-    public static class StringExt
+    public static class Extensions
     {
+        /// <summary>
+        /// 遍历数组
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static void ForEach(this object[] objs, Action<object> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static void ForEach(this IEnumerable<dynamic> objs, Action<object> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历集合
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static void ForEach(this IList<dynamic> objs, Action<object> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历数组
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static void ForEach<T>(this T[] objs, Action<T> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static void ForEach<T>(this IEnumerable<T> objs, Action<T> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static void ForEach<T>(this IList<T> objs, Action<T> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历数组并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this object[] objs, Func<object, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<dynamic> objs, Func<object, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历List并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this IList<dynamic> objs, Func<object, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+
+        /// <summary>
+        /// 遍历数组并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this T[] objs, Func<T, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<T> objs, Func<T, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+        /// <summary>
+        /// 遍历List并返回一个新的List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> ForEach<T>(this IList<T> objs, Func<T, T> action)
+        {
+            foreach (var o in objs)
+            {
+                yield return action(o);
+            }
+        }
+
+        /// <summary>
+        /// 映射到目标类型(浅克隆)
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型</returns>
+        public static TDestination MapTo<TDestination>(this object source) where TDestination : new()
+        {
+            TDestination dest = new TDestination();
+            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            return dest;
+        }
+
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static IEnumerable<TDestination> ToList<TDestination>(this object[] source) where TDestination : new()
+        {
+            foreach (var o in source)
+            {
+                var dest = new TDestination();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                yield return dest;
+            }
+        }
+
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static IEnumerable<TDestination> ToList<TDestination>(this IList<dynamic> source) where TDestination : new()
+        {
+            foreach (var o in source)
+            {
+                var dest = new TDestination();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                yield return dest;
+            }
+        }
+
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
+        {
+            foreach (var o in source)
+            {
+                var dest = new TDestination();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                yield return dest;
+            }
+        }
+
         #region UBB转HTML
 
         /// <summary>
@@ -55,8 +288,7 @@ namespace Masuit.Tools.Strings
 
             //处理换行，在每个新行的前面添加两个全角空格
             r = new Regex(@"(\r\n((&nbsp;)|　)+)(?<正文>\S+)", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<BR>　　" + m.Groups["正文"]);
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<BR>　　" + m.Groups["正文"]);
             //处理换行，在每个新行的前面添加两个全角空格
             ubbStr = ubbStr.Replace("\r\n", "<BR>");
 
@@ -65,24 +297,21 @@ namespace Masuit.Tools.Strings
             #region 处[b][/b]标记
 
             r = new Regex(@"(\[b\])([ \S\t]*?)(\[\/b\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<B>" + m.Groups[2] + "</B>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<B>" + m.Groups[2] + "</B>");
 
             #endregion
 
             #region 处[i][/i]标记
 
             r = new Regex(@"(\[i\])([ \S\t]*?)(\[\/i\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<I>" + m.Groups[2] + "</I>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<I>" + m.Groups[2] + "</I>");
 
             #endregion
 
             #region 处[u][/u]标记
 
             r = new Regex(@"(\[U\])([ \S\t]*?)(\[\/U\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<U>" + m.Groups[2] + "</U>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<U>" + m.Groups[2] + "</U>");
 
             #endregion
 
@@ -90,8 +319,7 @@ namespace Masuit.Tools.Strings
 
             //处[p][/p]标记
             r = new Regex(@"((\r\n)*\[p\])(.*?)((\r\n)*\[\/p\])", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<P class=\"pstyle\">" + m.Groups[3] + "</P>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<P class=\"pstyle\">" + m.Groups[3] + "</P>");
 
             #endregion
 
@@ -99,8 +327,7 @@ namespace Masuit.Tools.Strings
 
             //处[sup][/sup]标记
             r = new Regex(@"(\[sup\])([ \S\t]*?)(\[\/sup\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUP>" + m.Groups[2] + "</SUP>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUP>" + m.Groups[2] + "</SUP>");
 
             #endregion
 
@@ -108,8 +335,7 @@ namespace Masuit.Tools.Strings
 
             //处[sub][/sub]标记
             r = new Regex(@"(\[sub\])([ \S\t]*?)(\[\/sub\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUB>" + m.Groups[2] + "</SUB>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUB>" + m.Groups[2] + "</SUB>");
 
             #endregion
 
@@ -119,8 +345,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[url\])([ \S\t]*?)(\[\/url\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[2] + "</A>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[2] + "</A>");
             }
 
             #endregion
@@ -131,9 +356,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[url=([ \S\t]+)\])([ \S\t]*?)(\[\/url\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">"
-                   + m.Groups[3] + "</A>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[3] + "</A>");
             }
 
             #endregion
@@ -144,9 +367,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[email\])([ \S\t]*?)(\[\/email\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" +
-                   m.Groups[2] + "</A>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[2] + "</A>");
             }
 
             #endregion
@@ -157,9 +378,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[email=([ \S\t]+)\])([ \S\t]*?)(\[\/email\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" +
-                   m.Groups[3] + "</A>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[3] + "</A>");
             }
 
             #endregion
@@ -170,9 +389,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[size=([1-7])\])([ \S\t]*?)(\[\/size\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<FONT SIZE=" + m.Groups[2] + ">" +
-                   m.Groups[3] + "</FONT>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT SIZE=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
             #endregion
@@ -183,9 +400,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[color=([\S]+)\])([ \S\t]*?)(\[\/color\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<FONT COLOR=" + m.Groups[2] + ">" +
-                   m.Groups[3] + "</FONT>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT COLOR=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
             #endregion
@@ -196,9 +411,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[font=([\S]+)\])([ \S\t]*?)(\[\/font\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<FONT FACE=" + m.Groups[2] + ">" +
-                   m.Groups[3] + "</FONT>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT FACE=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
             #endregion
@@ -209,8 +422,7 @@ namespace Masuit.Tools.Strings
             r = new Regex("\\[picture\\](\\d+?)\\[\\/picture\\]", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<A href=\"ShowImage.aspx?Type=ALL&Action=forumImage&ImageID=" + m.Groups[1] + "\" target=\"_blank\"><IMG border=0 Title=\"点击打开新窗口查看\" src=\"ShowImage.aspx?Action=forumImage&ImageID=" + m.Groups[1] + "\"></A>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"ShowImage.aspx?Type=ALL&Action=forumImage&ImageID=" + m.Groups[1] + "\" target=\"_blank\"><IMG border=0 Title=\"点击打开新窗口查看\" src=\"ShowImage.aspx?Action=forumImage&ImageID=" + m.Groups[1] + "\"></A>");
             }
 
             #endregion
@@ -221,9 +433,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[align=([\S]+)\])([ \S\t]*?)(\[\/align\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<P align=" + m.Groups[2] + ">" +
-                   m.Groups[3] + "</P>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<P align=" + m.Groups[2] + ">" + m.Groups[3] + "</P>");
             }
 
             #endregion
@@ -234,9 +444,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[H=([1-6])\])([ \S\t]*?)(\[\/H\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<H" + m.Groups[2] + ">" +
-                   m.Groups[3] + "</H" + m.Groups[2] + ">");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<H" + m.Groups[2] + ">" + m.Groups[3] + "</H" + m.Groups[2] + ">");
             }
 
             #endregion
@@ -247,14 +455,11 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[list(=(A|a|I|i| ))?\]([ \S\t]*)\r\n)((\[\*\]([ \S\t]*\r\n))*?)(\[\/list\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                string strLI = m.Groups[5].ToString();
-                Regex rLI = new Regex(@"\[\*\]([ \S\t]*\r\n?)", RegexOptions.IgnoreCase);
-                Match mLI;
-                for (mLI = rLI.Match(strLI); mLI.Success; mLI = mLI.NextMatch())
-                    strLI = strLI.Replace(mLI.Groups[0].ToString(), "<LI>" + mLI.Groups[1]);
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                    "<UL TYPE=\"" + m.Groups[3] + "\"><B>" + m.Groups[4] + "</B>" +
-                    strLI + "</UL>");
+                string strLi = m.Groups[5].ToString();
+                Regex rLi = new Regex(@"\[\*\]([ \S\t]*\r\n?)", RegexOptions.IgnoreCase);
+                Match mLi;
+                for (mLi = rLi.Match(strLi); mLi.Success; mLi = mLi.NextMatch()) strLi = strLi.Replace(mLi.Groups[0].ToString(), "<LI>" + mLi.Groups[1]);
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<UL TYPE=\"" + m.Groups[3] + "\"><B>" + m.Groups[4] + "</B>" + strLi + "</UL>");
             }
 
             #endregion
@@ -265,8 +470,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[SHADOW=)(\d*?),(#*\w*?),(\d*?)\]([\S\t]*?)(\[\/SHADOW\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<TABLE WIDTH=" + m.Groups[2] + "STYLE=FILTER:SHADOW(COLOR=" + m.Groups[3] + ",STRENGTH=" + m.Groups[4] + ")>" + m.Groups[5] + "</TABLE>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<TABLE WIDTH=" + m.Groups[2] + "STYLE=FILTER:SHADOW(COLOR=" + m.Groups[3] + ",STRENGTH=" + m.Groups[4] + ")>" + m.Groups[5] + "</TABLE>");
             }
 
             #endregion
@@ -277,9 +481,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[glow=)(\d*?),(#*\w*?),(\d*?)\]([\S\t]*?)(\[\/glow\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<TABLE WIDTH=" + m.Groups[2] + "  STYLE=FILTER:GLOW(COLOR=" + m.Groups[3] + ", STRENGTH=" + m.Groups[4] + ")>" +
-                   m.Groups[5] + "</TABLE>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<TABLE WIDTH=" + m.Groups[2] + "  STYLE=FILTER:GLOW(COLOR=" + m.Groups[3] + ", STRENGTH=" + m.Groups[4] + ")>" + m.Groups[5] + "</TABLE>");
             }
 
             #endregion
@@ -287,24 +489,21 @@ namespace Masuit.Tools.Strings
             #region 处[center][/center]标记
 
             r = new Regex(@"(\[center\])([ \S\t]*?)(\[\/center\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<CENTER>" + m.Groups[2] + "</CENTER>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<CENTER>" + m.Groups[2] + "</CENTER>");
 
             #endregion
 
             #region 处[ IMG][ /IMG]标记
 
             r = new Regex(@"(\[IMG\])(http|https|ftp):\/\/([ \S\t]*?)(\[\/IMG\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<br><a onfocus=this.blur() href=" + m.Groups[2] + "://" + m.Groups[3] + " target=_blank><IMG SRC=" + m.Groups[2] + "://" + m.Groups[3] + " border=0 alt=按此在新窗口浏览图片 onload=javascript:if(screen.width-333<this.width)this.width=screen.width-333></a>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<br><a onfocus=this.blur() href=" + m.Groups[2] + "://" + m.Groups[3] + " target=_blank><IMG SRC=" + m.Groups[2] + "://" + m.Groups[3] + " border=0 alt=按此在新窗口浏览图片 onload=javascript:if(screen.width-333<this.width)this.width=screen.width-333></a>");
 
             #endregion
 
             #region 处[em]标记
 
             r = new Regex(@"(\[em([\S\t]*?)\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<img src=pic/em" + m.Groups[2] + ".gif border=0 align=middle>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<img src=pic/em" + m.Groups[2] + ".gif border=0 align=middle>");
 
             #endregion
 
@@ -314,8 +513,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[flash=)(\d*?),(\d*?)\]([\S\t]*?)(\[\/flash\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<a href=" + m.Groups[4] + " TARGET=_blank><IMG SRC=pic/swf.gif border=0 alt=点击开新窗口欣赏该FLASH动画!> [全屏欣赏]</a><br><br><OBJECT codeBase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0 classid=clsid:D27CDB6E-AE6D-11cf-96B8-444553540000 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=movie VALUE=" + m.Groups[4] + "><PARAM NAME=quality VALUE=high><param name=menu value=false><embed src=" + m.Groups[4] + " quality=high menu=false pluginspage=http://www.macromedia.com/go/getflashplayer type=application/x-shockwave-flash width=" + m.Groups[2] + " height=" + m.Groups[3] + ">" + m.Groups[4] + "</embed></OBJECT>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<a href=" + m.Groups[4] + " TARGET=_blank><IMG SRC=pic/swf.gif border=0 alt=点击开新窗口欣赏该FLASH动画!> [全屏欣赏]</a><br><br><OBJECT codeBase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0 classid=clsid:D27CDB6E-AE6D-11cf-96B8-444553540000 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=movie VALUE=" + m.Groups[4] + "><PARAM NAME=quality VALUE=high><param name=menu value=false><embed src=" + m.Groups[4] + " quality=high menu=false pluginspage=http://www.macromedia.com/go/getflashplayer type=application/x-shockwave-flash width=" + m.Groups[2] + " height=" + m.Groups[3] + ">" + m.Groups[4] + "</embed></OBJECT>");
             }
 
             #endregion
@@ -326,8 +524,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[dir=)(\d*?),(\d*?)\]([\S\t]*?)(\[\/dir\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<object classid=clsid:166B1BCA-3F9C-11CF-8075-444553540000 codebase=http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=7,0,2,0 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><param name=src value=" + m.Groups[4] + "><embed src=" + m.Groups[4] + " pluginspage=http://www.macromedia.com/shockwave/download/ width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<object classid=clsid:166B1BCA-3F9C-11CF-8075-444553540000 codebase=http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=7,0,2,0 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><param name=src value=" + m.Groups[4] + "><embed src=" + m.Groups[4] + " pluginspage=http://www.macromedia.com/shockwave/download/ width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
             }
 
             #endregion
@@ -338,8 +535,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[rm=)(\d*?),(\d*?)\]([\S\t]*?)(\[\/rm\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<OBJECT classid=clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA class=OBJECT id=RAOCX width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=CONSOLE VALUE=Clip1><PARAM NAME=CONTROLS VALUE=imagewindow><PARAM NAME=AUTOSTART VALUE=true></OBJECT><br><OBJECT classid=CLSID:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA height=32 id=video2 width=" + m.Groups[2] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=AUTOSTART VALUE=-1><PARAM NAME=CONTROLS VALUE=controlpanel><PARAM NAME=CONSOLE VALUE=Clip1></OBJECT>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<OBJECT classid=clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA class=OBJECT id=RAOCX width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=CONSOLE VALUE=Clip1><PARAM NAME=CONTROLS VALUE=imagewindow><PARAM NAME=AUTOSTART VALUE=true></OBJECT><br><OBJECT classid=CLSID:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA height=32 id=video2 width=" + m.Groups[2] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=AUTOSTART VALUE=-1><PARAM NAME=CONTROLS VALUE=controlpanel><PARAM NAME=CONSOLE VALUE=Clip1></OBJECT>");
             }
 
             #endregion
@@ -350,8 +546,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[mp=)(\d*?),(\d*?)\]([\S\t]*?)(\[\/mp\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<object align=middle classid=CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95 class=OBJECT id=MediaPlayer width=" + m.Groups[2] + " height=" + m.Groups[3] + " ><param name=ShowStatusBar value=-1><param name=Filename value=" + m.Groups[4] + "><embed type=application/x-oleobject codebase=http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701 flename=mp src=" + m.Groups[4] + "  width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<object align=middle classid=CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95 class=OBJECT id=MediaPlayer width=" + m.Groups[2] + " height=" + m.Groups[3] + " ><param name=ShowStatusBar value=-1><param name=Filename value=" + m.Groups[4] + "><embed type=application/x-oleobject codebase=http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701 flename=mp src=" + m.Groups[4] + "  width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
             }
 
             #endregion
@@ -362,8 +557,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[qt=)(\d*?),(\d*?)\]([\S\t]*?)(\[\/qt\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<embed src=" + m.Groups[4] + " width=" + m.Groups[2] + " height=" + m.Groups[3] + " autoplay=true loop=false controller=true playeveryframe=false cache=false scale=TOFIT bgcolor=#000000 kioskmode=false targetcache=false pluginspage=http://www.apple.com/quicktime/>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<embed src=" + m.Groups[4] + " width=" + m.Groups[2] + " height=" + m.Groups[3] + " autoplay=true loop=false controller=true playeveryframe=false cache=false scale=TOFIT bgcolor=#000000 kioskmode=false targetcache=false pluginspage=http://www.apple.com/quicktime/>");
             }
 
             #endregion
@@ -371,24 +565,21 @@ namespace Masuit.Tools.Strings
             #region 处[QUOTE][/QUOTE]标记
 
             r = new Regex(@"(\[QUOTE\])([ \S\t]*?)(\[\/QUOTE\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<div style='border:#CCCCCC 1px dashed; width:94%; color:#999999; padding:3px; background:#F8F8F8'>" + m.Groups[2] + "</div><br /> ");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<div style='border:#CCCCCC 1px dashed; width:94%; color:#999999; padding:3px; background:#F8F8F8'>" + m.Groups[2] + "</div><br /> ");
 
             #endregion
 
             #region 处[move][/move]标记
 
             r = new Regex(@"(\[move\])([ \S\t]*?)(\[\/move\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
 
             #endregion
 
             #region 处[FLY][/FLY]标记
 
             r = new Regex(@"(\[FLY\])([ \S\t]*?)(\[\/FLY\])", RegexOptions.IgnoreCase);
-            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE width=80% behavior=alternate scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
+            for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE width=80% behavior=alternate scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
 
             #endregion
 
@@ -398,8 +589,7 @@ namespace Masuit.Tools.Strings
             r = new Regex(@"(\[image\])([ \S\t]*?)(\[\/image\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch())
             {
-                ubbStr = ubbStr.Replace(m.Groups[0].ToString(),
-                   "<img src=\"" + m.Groups[2] + "\" border=0 align=middle><br>");
+                ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<img src=\"" + m.Groups[2] + "\" border=0 align=middle><br>");
             }
 
             #endregion
@@ -571,8 +761,7 @@ namespace Masuit.Tools.Strings
         /// <returns>UBB代码</returns>
         public static string HtmltoUBB(this string chr)
         {
-            if (chr == null)
-                return "";
+            if (chr == null) return "";
             chr = chr.Replace("&lt", "<");
             chr = chr.Replace("&gt", ">");
             chr = chr.Replace("<br/>", " ");
@@ -671,6 +860,7 @@ namespace Masuit.Tools.Strings
         }
 
         #region 检测字符串中是否包含列表中的关键词
+
         /// <summary>
         /// 检测字符串中是否包含列表中的关键词
         /// </summary>
@@ -741,9 +931,11 @@ namespace Masuit.Tools.Strings
             isMatch = match.Success;
             return isMatch ? match : null;
         }
+
         #endregion
 
         #region 权威校验身份证号码
+
         /// <summary>
         /// 根据GB11643-1999标准权威校验中国身份证号码的合法性
         /// </summary>
@@ -753,64 +945,65 @@ namespace Masuit.Tools.Strings
         {
             if (s.Length == 18)
             {
-                long n = 0;
-                if (long.TryParse(s.Remove(17), out n) == false
-                    || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                long n;
+                if (long.TryParse(s.Remove(17), out n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
                 {
-                    return false;//数字验证  
+                    return false; //数字验证  
                 }
                 string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
-                if (address.IndexOf(s.Remove(2)) == -1)
+                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
-                    return false;//省份验证  
+                    return false; //省份验证  
                 }
                 string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
-                DateTime time = new DateTime();
-                if (DateTime.TryParse(birth, out time) == false)
+                DateTime time;
+                if (!DateTime.TryParse(birth, out time))
                 {
-                    return false;//生日验证  
+                    return false; //生日验证  
                 }
                 string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
-                string[] Wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
-                char[] Ai = s.Remove(17).ToCharArray();
+                string[] wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
+                char[] ai = s.Remove(17).ToCharArray();
                 int sum = 0;
                 for (int i = 0; i < 17; i++)
                 {
-                    sum += int.Parse(Wi[i]) * int.Parse(Ai[i].ToString());
+                    sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
                 }
-                int y = -1;
+                int y;
                 Math.DivRem(sum, 11, out y);
                 if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
                 {
-                    return false;//校验码验证  
+                    return false; //校验码验证  
                 }
-                return true;//符合GB11643-1999标准  
+                return true; //符合GB11643-1999标准  
             }
             if (s.Length == 15)
             {
-                long n = 0;
+                long n;
                 if (long.TryParse(s, out n) == false || n < Math.Pow(10, 14))
                 {
-                    return false;//数字验证  
+                    return false; //数字验证  
                 }
                 string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
-                if (address.IndexOf(s.Remove(2)) == -1)
+                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
-                    return false;//省份验证  
+                    return false; //省份验证  
                 }
                 string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
-                DateTime time = new DateTime();
+                DateTime time;
                 if (DateTime.TryParse(birth, out time) == false)
                 {
-                    return false;//生日验证  
+                    return false; //生日验证  
                 }
                 return true;
             }
             return false;
         }
+
         #endregion
 
         #region 校验IP地址的合法性
+
         /// <summary>
         /// 校验IP地址的正确性，同时支持IPv4和IPv6
         /// </summary>
@@ -842,9 +1035,11 @@ namespace Masuit.Tools.Strings
             }
             return isMatch ? match : null;
         }
+
         #endregion
 
         #region 校验手机号码的正确性
+
         /// <summary>
         /// 匹配手机号码
         /// </summary>
@@ -857,7 +1052,7 @@ namespace Masuit.Tools.Strings
             isMatch = match.Success;
             return isMatch ? match : null;
         }
-        #endregion
 
+        #endregion
     }
 }
