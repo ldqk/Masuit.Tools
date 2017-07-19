@@ -14,7 +14,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="year">年份</param>
         /// <returns>该年周数</returns>
-        public static int GetWeekAmount(int year)
+        public static int GetWeekAmount(this DateTime _, int year)
         {
             var end = new System.DateTime(year, 12, 31); //该年最后一天
             var gc = new GregorianCalendar();
@@ -55,7 +55,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="nNumWeek">第几周</param>
         /// <param name="dtWeekStart">开始日期</param>
         /// <param name="dtWeekeEnd">结束日期</param>
-        public static void GetWeekTime(int nYear, int nNumWeek, out DateTime dtWeekStart, out DateTime dtWeekeEnd)
+        public static void GetWeekTime(this DateTime _, int nYear, int nNumWeek, out DateTime dtWeekStart, out DateTime dtWeekeEnd)
         {
             var dt = new DateTime(nYear, 1, 1);
             dt += new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);
@@ -70,7 +70,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="nNumWeek">第几周</param>
         /// <param name="dtWeekStart">开始日期</param>
         /// <param name="dtWeekeEnd">结束日期</param>
-        public static void GetWeekWorkTime(int nYear, int nNumWeek, out System.DateTime dtWeekStart, out System.DateTime dtWeekeEnd)
+        public static void GetWeekWorkTime(this DateTime _, int nYear, int nNumWeek, out System.DateTime dtWeekStart, out System.DateTime dtWeekeEnd)
         {
             var dt = new DateTime(nYear, 1, 1);
             dt += new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);

@@ -545,17 +545,5 @@ namespace Masuit.Tools.Net
         }
 
         #endregion
-
-        #region NetworkStream接收数据
-
-        //没写
-
-        #endregion
-
-        #region NetworkStream发送数据
-
-        //没写
-
-        #endregion
     }
 }

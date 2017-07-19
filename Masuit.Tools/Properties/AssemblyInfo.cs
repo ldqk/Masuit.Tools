@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 
-[assembly: AssemblyTitle("Masuit.Utilities")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Masuit.Tools")]
+[assembly: AssemblyDescription("懒得勤快")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Masuit.Utilities")]
+[assembly: AssemblyCompany("懒得勤快")]
+[assembly: AssemblyProduct("Masuit.Tools")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace Masuit.Tools.DateTimeExt
 {
@@ -11,26 +10,24 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 返回相对于当前时间的相对天数
         /// </summary>
+        /// <param name="dt"></param>
         /// <param name="relativeday">相对天数</param>
-        public static string GetDateTime(int relativeday)
+        public static string GetDateTime(this DateTime dt, int relativeday)
         {
-            return DateTime.Now.AddDays(relativeday).ToString("yyyy-MM-dd HH:mm:ss");
+            return dt.AddDays(relativeday).ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         /// <summary>
         /// 返回标准时间格式string
         /// </summary>
-        public static string GetDateTimeF()
-        {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fffffff");
-        }
+        public static string GetDateTimeF(this DateTime dt) => dt.ToString("yyyy-MM-dd HH:mm:ss:fffffff");
 
         /// <summary>
         /// 返回标准时间 
         /// </summary>
         /// <param name="fDateTime">日期时间字符串</param>
         /// <param name="formatStr">格式</param>
-        public static string GetStandardDateTime(string fDateTime, string formatStr)
+        public static string GetStandardDateTime(this string fDateTime, string formatStr)
         {
             if (fDateTime == "0000-0-0 0:00:00")
             {
@@ -44,17 +41,52 @@ namespace Masuit.Tools.DateTimeExt
         /// 返回标准时间 yyyy-MM-dd HH:mm:ss
         /// </summary>
         /// <param name="fDateTime">日期时间字符串</param>
-        public static string GetStandardDateTime(string fDateTime)
+        public static string GetStandardDateTime(this string fDateTime)
         {
             return GetStandardDateTime(fDateTime, "yyyy-MM-dd HH:mm:ss");
         }
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的秒数
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static double GetTotalSeconds(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalSeconds;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的毫秒数
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static double GetTotalMilliseconds(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalMilliseconds;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的分钟数
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static double GetTotalMinutes(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalMinutes;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的小时数
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static double GetTotalHours(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalHours;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的天数
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static double GetTotalDays(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalDays;
 
         /// <summary>
         /// 返回本年有多少天
         /// </summary>
         /// <param name="iYear">年份</param>
         /// <returns>本年的天数</returns>
-        public static int GetDaysOfYear(int iYear)
+        public static int GetDaysOfYear(this DateTime _, int iYear)
         {
             int cnt = 0;
             if (IsRuYear(iYear))
@@ -64,7 +96,7 @@ namespace Masuit.Tools.DateTimeExt
             }
             else
             {
-                //--非闰年少1天 即：2 月为 28 天
+                //非闰年少1天 即：2 月为 28 天
                 cnt = 365;
             }
             return cnt;
@@ -93,7 +125,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="iYear">年</param>
         /// <param name="month">月</param>
         /// <returns>天数</returns>
-        public static int GetDaysOfMonth(int iYear, int month)
+        public static int GetDaysOfMonth(this DateTime _, int iYear, int month)
         {
             int days = 0;
             switch (month)
@@ -127,8 +159,6 @@ namespace Masuit.Tools.DateTimeExt
                     days = 30;
                     break;
                 case 7:
-                    days = 31;
-                    break;
                 case 8:
                     days = 31;
                     break;
@@ -327,7 +357,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="strInput">输入字符串</param>
         /// <returns>日期对象</returns>
-        public static System.DateTime ConvertStringToDate(string strInput)
+        public static System.DateTime ConvertStringToDate(this string strInput)
         {
             System.DateTime oDateTime;
 
@@ -386,13 +416,12 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="strDate">输入日期字符串</param>
         /// <returns>True/False</returns>
-        public static bool IsDateTime(string strDate)
+        public static bool IsDateTime(this string strDate)
         {
             try
             {
                 DateTime oDate = DateTime.Parse(strDate);
-                if (oDate.CompareTo(DateTime.Parse("1800-1-1")) > 0)
-                    return true;
+                if (oDate.CompareTo(DateTime.Parse("1800-1-1")) > 0) return true;
                 return false;
             }
             catch (Exception)
@@ -402,4 +431,3 @@ namespace Masuit.Tools.DateTimeExt
         }
     }
 }
-

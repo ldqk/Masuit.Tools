@@ -8,7 +8,7 @@ namespace Masuit.Tools.DateTimeExt
     /// <summary>
     /// 日历操作
     /// </summary>
-    public class CNCalendar
+    public static class CNCalendar
     {
         /// <summary>
         /// 格式化日期
@@ -425,7 +425,7 @@ namespace Masuit.Tools.DateTimeExt
         /// 传回农历y年的生肖
         /// </summary>
         /// <param name="y">公元年</param>
-        private string AnimalsYear(int y)
+        private static string AnimalsYear(int y)
         {
             return animals[(y - 4) % 12];
         }
@@ -434,7 +434,7 @@ namespace Masuit.Tools.DateTimeExt
         ///传入月日的offset 传回天干地支, 0=甲子
         /// </summary>
         /// <param name="num">月日的偏差</param>
-        private string Cyclical(int num)
+        private static string Cyclical(int num)
         {
             return gan[num % 10] + zhi[num % 12];
         }
@@ -443,7 +443,7 @@ namespace Masuit.Tools.DateTimeExt
         /// 传入offset 传回干支, 0=甲子
         /// </summary>
         /// <param name="y">公元年</param>
-        private string cyclical(int y)
+        private static string cyclical(int y)
         {
             int num = y - 1900 + 36;
             return Cyclical(num);
@@ -546,7 +546,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="y">年</param>
         /// <param name="m">月</param>
         /// <param name="d">日</param>
-        private long[] calElement(int y, int m, int d)
+        private static long[] calElement(int y, int m, int d)
         {
             long[] nongDate = new long[7];
 
@@ -633,7 +633,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="d">农历日</param>
         /// <returns>中文表示</returns>
-        private string GetCDay(int d)
+        private static string GetCDay(int d)
         {
             string s = "";
 
@@ -663,7 +663,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="y">年</param>
         /// <param name="n">节气</param>
         /// <returns>日期时间</returns>
-        private DateTime GetSolarTermDay(int y, int n)
+        private static DateTime GetSolarTermDay(int y, int n)
         {
             //按分钟起计算
             double minutes = (525948.766245 * (y - 1900)) + solarTermInfo[n - 1];
@@ -690,7 +690,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="d">待检查的日子</param>
         /// <returns>日期信息</returns>
-        public StructDateFullInfo GetDateTidyInfo(DateTime d)
+        public static StructDateFullInfo GetDateTidyInfo(this DateTime d)
         {
             StructDateFullInfo dayinfo = new StructDateFullInfo();
             structDate day = GetLunar(d);
@@ -783,7 +783,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="d">待检查的日子</param>
         /// <returns>日期信息</returns>
-        public StructDateFullInfo GetDateInfo(DateTime d)
+        public static StructDateFullInfo GetDateInfo(this DateTime d)
         {
             // xml文件属性-生成操作-嵌入的资源
             string calendarXmlData = ReadFileFromEmbedded("Core.Common" + "CCalendarData.xml");
@@ -921,7 +921,7 @@ namespace Masuit.Tools.DateTimeExt
         /// 获取农历
         /// </summary>
         /// <param name="dt">阳历日期</param>
-        public StructDateFullInfo getChinaDate(DateTime dt)
+        public static StructDateFullInfo getChinaDate(this DateTime dt)
         {
             StructDateFullInfo cd = new StructDateFullInfo();
             int year = dt.Year;

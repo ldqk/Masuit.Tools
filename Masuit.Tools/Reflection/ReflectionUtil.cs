@@ -329,7 +329,7 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="resourceName">资源的名称</param>
         /// <returns>数据流</returns>
-        public static Stream GetImageResource(string resourceName)
+        public static Stream GetImageResource(this Assembly _, string resourceName)
         {
             Assembly asm = Assembly.GetExecutingAssembly();
             return asm.GetManifestResourceStream(resourceName);

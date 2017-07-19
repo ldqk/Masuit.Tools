@@ -551,70 +551,65 @@ namespace Masuit.Tools.Media
         /// <summary>
         /// 无损压缩图片
         /// </summary>
-        /// <param name="sFile">原图片</param>
+        /// <param name="image">原图片</param>
         /// <param name="dFile">压缩后保存位置</param>
         /// <param name="dHeight">高度</param>
         /// <param name="dWidth">宽度</param>
         /// <param name="flag">压缩质量 1-100</param>
         /// <returns>处理结果</returns>
-        public static bool GetPicThumbnail(string sFile, string dFile, int dHeight, int dWidth, int flag = 100)
+        public static bool GetPicThumbnail(this Image image, string dFile, int dHeight, int dWidth, int flag = 100)
         {
-            using (Image iSource = Image.FromFile(sFile))
+            ImageFormat tFormat = image.RawFormat;
+            int sW = 0, sH = 0;
+            //按比例缩放
+            Size temSize = new Size(image.Width, image.Height);
+            if ((temSize.Width > dHeight) || (temSize.Width > dWidth)) //将**改成c#中的或者操作符号
             {
-                ImageFormat tFormat = iSource.RawFormat;
-                int sW = 0, sH = 0;
-                //按比例缩放
-                Size tem_size = new Size(iSource.Width, iSource.Height);
-                if ((tem_size.Width > dHeight) || (tem_size.Width > dWidth)) //将**改成c#中的或者操作符号
+                if (temSize.Width * dHeight > temSize.Height * dWidth)
                 {
-                    if (tem_size.Width * dHeight > tem_size.Height * dWidth)
-                    {
-                        sW = dWidth;
-                        sH = dWidth * tem_size.Height / tem_size.Width;
-                    }
-                    else
-                    {
-                        sH = dHeight;
-                        sW = tem_size.Width * dHeight / tem_size.Height;
-                    }
+                    sW = dWidth;
+                    sH = dWidth * temSize.Height / temSize.Width;
                 }
                 else
                 {
-                    sW = tem_size.Width;
-                    sH = tem_size.Height;
+                    sH = dHeight;
+                    sW = temSize.Width * dHeight / temSize.Height;
                 }
-                using (Bitmap ob = new Bitmap(dWidth, dHeight))
+            }
+            else
+            {
+                sW = temSize.Width;
+                sH = temSize.Height;
+            }
+            using (Bitmap ob = new Bitmap(dWidth, dHeight))
+            {
+                Graphics g = Graphics.FromImage(ob);
+                g.Clear(Color.WhiteSmoke);
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(image, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+                g.Dispose();
+                //以下代码为保存图片时，设置压缩质量
+                EncoderParameters ep = new EncoderParameters();
+                long[] qy = new long[1];
+                qy[0] = flag; //设置压缩的比例1-100
+                EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
+                ep.Param[0] = eParam;
+                ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
+                ImageCodecInfo jpegICIinfo = null;
+                for (int x = 0; x < arrayICI.Length; x++)
                 {
-                    Graphics g = Graphics.FromImage(ob);
-                    g.Clear(Color.WhiteSmoke);
-                    g.CompositingQuality = CompositingQuality.HighQuality;
-                    g.SmoothingMode = SmoothingMode.HighQuality;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(iSource, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, iSource.Width, iSource.Height, GraphicsUnit.Pixel);
-                    g.Dispose();
-                    //以下代码为保存图片时，设置压缩质量
-                    EncoderParameters ep = new EncoderParameters();
-                    long[] qy = new long[1];
-                    qy[0] = flag; //设置压缩的比例1-100
-                    EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
-                    ep.Param[0] = eParam;
-                    ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
-                    ImageCodecInfo jpegICIinfo = null;
-                    for (int x = 0; x < arrayICI.Length; x++)
+                    if (arrayICI[x].FormatDescription.Equals("JPEG"))
                     {
-                        if (arrayICI[x].FormatDescription.Equals("JPEG"))
-                        {
-                            jpegICIinfo = arrayICI[x];
-                            break;
-                        }
+                        jpegICIinfo = arrayICI[x];
+                        break;
                     }
-
-                    if (jpegICIinfo != null)
-                        ob.Save(dFile, jpegICIinfo, ep); //dFile是压缩后的新路径
-                    else
-                        ob.Save(dFile, tFormat);
-                    return true;
                 }
+
+                if (jpegICIinfo != null) ob.Save(dFile, jpegICIinfo, ep); //dFile是压缩后的新路径
+                else ob.Save(dFile, tFormat);
+                return true;
             }
         }
 
@@ -625,15 +620,13 @@ namespace Masuit.Tools.Media
         /// <summary>
         /// 生成缩略图
         /// </summary>
-        /// <param name="originalImagePath">源图路径（物理路径）</param>
+        /// <param name="originalImage">原图</param>
         /// <param name="thumbnailPath">缩略图路径（物理路径）</param>
         /// <param name="width">缩略图宽度</param>
         /// <param name="height">缩略图高度</param>
         /// <param name="mode">生成缩略图的方式</param>    
-        public static void MakeThumbnail(string originalImagePath, string thumbnailPath, int width, int height, string mode)
+        public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, string mode)
         {
-            Image originalImage = Image.FromFile(originalImagePath);
-
             int towidth = width;
             int toheight = height;
 
@@ -934,12 +927,10 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="oldfile">原文件</param>
         /// <param name="newfile">新文件</param>
-        public static bool Compress(string oldfile, string newfile)
+        public static bool Compress(this Image img, string newfile)
         {
             try
             {
-                Image img = Image.FromFile(oldfile);
-                ImageFormat thisFormat = img.RawFormat;
                 Size newSize = new Size(100, 125);
                 Bitmap outBmp = new Bitmap(newSize.Width, newSize.Height);
                 Graphics g = Graphics.FromImage(outBmp);
@@ -948,11 +939,10 @@ namespace Masuit.Tools.Media
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(img, new Rectangle(0, 0, newSize.Width, newSize.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
                 g.Dispose();
-                EncoderParameters encoderParams = new EncoderParameters();
-                long[] quality = new long[1];
+                var encoderParams = new EncoderParameters();
+                var quality = new long[1];
                 quality[0] = 100;
-                EncoderParameter encoderParam = new EncoderParameter(Encoder.Quality, quality);
-                encoderParams.Param[0] = encoderParam;
+                encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
                 ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
                 ImageCodecInfo jpegICI = null;
                 for (int x = 0; x < arrayICI.Length; x++)
@@ -964,7 +954,6 @@ namespace Masuit.Tools.Media
                     }
                 }
 
-                img.Dispose();
                 if (jpegICI != null) outBmp.Save(newfile, ImageFormat.Jpeg);
                 outBmp.Dispose();
                 return true;
@@ -984,7 +973,7 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="c">输入颜色</param>
         /// <returns>输出颜色</returns>
-        public static Color Gray(Color c)
+        public static Color Gray(this Color c)
         {
             int rgb = Convert.ToInt32(0.3 * c.R + 0.59 * c.G + 0.11 * c.B);
             return Color.FromArgb(rgb, rgb, rgb);
@@ -1028,11 +1017,10 @@ namespace Masuit.Tools.Media
         /// <summary>
         /// 获取图片中的各帧
         /// </summary>
-        /// <param name="pPath">图片路径</param>
+        /// <param name="gif">源gif</param>
         /// <param name="pSavedPath">保存路径</param>
-        public static void GetFrames(string pPath, string pSavedPath)
+        public static void GetFrames(this Image gif, string pSavedPath)
         {
-            Image gif = Image.FromFile(pPath);
             using (gif)
             {
                 FrameDimension fd = new FrameDimension(gif.FrameDimensionsList[0]);
@@ -1043,207 +1031,6 @@ namespace Masuit.Tools.Media
                     gif.Save(pSavedPath + "\\frame_" + i + ".jpg", ImageFormat.Jpeg);
                 }
             }
-        }
-
-        #endregion
-
-        #region 图片水印
-
-        /// <summary>
-        /// 图片水印处理方法
-        /// </summary>
-        /// <param name="path">需要加载水印的图片路径（绝对路径）</param>
-        /// <param name="waterpath">水印图片（绝对路径）</param>
-        /// <param name="location">水印位置（传送正确的代码）</param>
-        public static string ImageWatermark(string path, string waterpath, string location)
-        {
-            string kz_name = Path.GetExtension(path);
-            if ((kz_name == ".jpg") || (kz_name == ".bmp") || (kz_name == ".jpeg"))
-            {
-                DateTime time = DateTime.Now;
-                string filename = "" + time.Year + time.Month + time.Day + time.Hour + time.Minute + time.Second + time.Millisecond;
-                Image img = Image.FromFile(path);
-                Image waterimg = Image.FromFile(waterpath);
-                Graphics g = Graphics.FromImage(img);
-                ArrayList loca = GetLocation(location, img, waterimg);
-                g.DrawImage(waterimg, new Rectangle(int.Parse(loca[0].ToString()), int.Parse(loca[1].ToString()), waterimg.Width, waterimg.Height));
-                waterimg.Dispose();
-                g.Dispose();
-                string newpath = Path.GetDirectoryName(path) + filename + kz_name;
-                img.Save(newpath);
-                img.Dispose();
-                File.Copy(newpath, path, true);
-                if (File.Exists(newpath))
-                    File.Delete(newpath);
-            }
-            return path;
-        }
-
-        /// <summary>
-        /// 图片水印位置处理方法
-        /// </summary>
-        /// <param name="location">水印位置</param>
-        /// <param name="img">需要添加水印的图片</param>
-        /// <param name="waterimg">水印图片</param>
-        private static ArrayList GetLocation(string location, Image img, Image waterimg)
-        {
-            ArrayList loca = new ArrayList();
-            int x = 0;
-            int y = 0;
-
-            if (location == "LT")
-            {
-                x = 10;
-                y = 10;
-            }
-            else if (location == "T")
-            {
-                x = img.Width / 2 - waterimg.Width / 2;
-                y = img.Height - waterimg.Height;
-            }
-            else if (location == "RT")
-            {
-                x = img.Width - waterimg.Width;
-                y = 10;
-            }
-            else if (location == "LC")
-            {
-                x = 10;
-                y = img.Height / 2 - waterimg.Height / 2;
-            }
-            else if (location == "C")
-            {
-                x = img.Width / 2 - waterimg.Width / 2;
-                y = img.Height / 2 - waterimg.Height / 2;
-            }
-            else if (location == "RC")
-            {
-                x = img.Width - waterimg.Width;
-                y = img.Height / 2 - waterimg.Height / 2;
-            }
-            else if (location == "LB")
-            {
-                x = 10;
-                y = img.Height - waterimg.Height;
-            }
-            else if (location == "B")
-            {
-                x = img.Width / 2 - waterimg.Width / 2;
-                y = img.Height - waterimg.Height;
-            }
-            else
-            {
-                x = img.Width - waterimg.Width;
-                y = img.Height - waterimg.Height;
-            }
-            loca.Add(x);
-            loca.Add(y);
-            return loca;
-        }
-
-        #endregion
-
-        #region 文字水印
-
-        /// <summary>
-        /// 文字水印处理方法
-        /// </summary>
-        /// <param name="path">图片路径（绝对路径）</param>
-        /// <param name="size">字体大小</param>
-        /// <param name="letter">水印文字</param>
-        /// <param name="color">颜色</param>
-        /// <param name="location">水印位置</param>
-        public static string LetterWatermark(string path, int size, string letter, Color color, string location)
-        {
-            #region
-
-            string kz_name = Path.GetExtension(path);
-            if ((kz_name == ".jpg") || (kz_name == ".bmp") || (kz_name == ".jpeg"))
-            {
-                DateTime time = DateTime.Now;
-                string filename = "" + time.Year + time.Month + time.Day + time.Hour + time.Minute + time.Second + time.Millisecond;
-                Image img = Image.FromFile(path);
-                Graphics gs = Graphics.FromImage(img);
-                ArrayList loca = GetLocation(location, img, size, letter.Length);
-                Font font = new Font("宋体", size);
-                Brush br = new SolidBrush(color);
-                gs.DrawString(letter, font, br, float.Parse(loca[0].ToString()), float.Parse(loca[1].ToString()));
-                gs.Dispose();
-                string newpath = Path.GetDirectoryName(path) + filename + kz_name;
-                img.Save(newpath);
-                img.Dispose();
-                File.Copy(newpath, path, true);
-                if (File.Exists(newpath))
-                    File.Delete(newpath);
-            }
-            return path;
-
-            #endregion
-        }
-
-        /// <summary>
-        /// 文字水印位置的方法
-        /// </summary>
-        /// <param name="location">位置代码</param>
-        /// <param name="img">图片对象</param>
-        /// <param name="width">宽(当水印类型为文字时,传过来的就是字体的大小)</param>
-        /// <param name="height">高(当水印类型为文字时,传过来的就是字符的长度)</param>
-        private static ArrayList GetLocation(string location, Image img, int width, int height)
-        {
-            #region
-
-            ArrayList loca = new ArrayList(); //定义数组存储位置
-            float x = 10;
-            float y = 10;
-
-            if (location == "LT")
-            {
-                loca.Add(x);
-                loca.Add(y);
-            }
-            else if (location == "T")
-            {
-                x = img.Width / 2 - width * height / 2;
-                loca.Add(x);
-                loca.Add(y);
-            }
-            else if (location == "RT")
-            {
-                x = img.Width - width * height;
-            }
-            else if (location == "LC")
-            {
-                y = img.Height / 2;
-            }
-            else if (location == "C")
-            {
-                x = img.Width / 2 - width * height / 2;
-                y = img.Height / 2;
-            }
-            else if (location == "RC")
-            {
-                x = img.Width - height;
-                y = img.Height / 2;
-            }
-            else if (location == "LB")
-            {
-                y = img.Height - width - 5;
-            }
-            else if (location == "B")
-            {
-                x = img.Width / 2 - width * height / 2;
-                y = img.Height - width - 5;
-            }
-            else
-            {
-                x = img.Width - (width * height);
-                y = img.Height - width - 5;
-            }
-            loca.Add(x);
-            loca.Add(y);
-            return loca;
-
-            #endregion
         }
 
         #endregion

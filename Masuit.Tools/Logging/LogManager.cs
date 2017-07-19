@@ -41,7 +41,7 @@ namespace Masuit.Tools.Logging
                             logArr = new[] { logPath, logMergeContent };
                             temp.Add(logArr);
                         }
-                        LogQueue.TryDequeue(out Tuple<string, string> val);
+                        LogQueue.TryDequeue(out Tuple<string, string> _);
                     }
                     foreach (string[] item in temp)
                     {
@@ -68,6 +68,27 @@ namespace Masuit.Tools.Logging
         {
             string logPath = GetLogPath();
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source}  {info}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+        /// <summary>
+        /// 写入Info级别的日志
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="info"></param>
+        public static void Info(Type source, string info)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source.FullName}  {info}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+        /// <summary>
+        /// 写入Info级别的日志
+        /// </summary>
+        /// <param name="info"></param>
+        public static void Info(string info)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}  {info}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
 
@@ -115,6 +136,27 @@ namespace Masuit.Tools.Logging
         {
             string logPath = GetLogPath();
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source}  {debug}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+        /// <summary>
+        /// 写入debug级别日志
+        /// </summary>
+        /// <param name="source">异常源的类型</param>
+        /// <param name="debug">异常对象</param>
+        public static void Debug(Type source, string debug)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source.FullName}  {debug}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+        /// <summary>
+        /// 写入debug级别日志
+        /// </summary>
+        /// <param name="debug">异常对象</param>
+        public static void Debug(string debug)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {debug}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
 

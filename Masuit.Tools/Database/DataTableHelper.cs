@@ -224,11 +224,9 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="nameString">字符列表</param>
         /// <returns>内存表</returns>
-        public static DataTable CreateTable(string nameString)
+        public static DataTable CreateTable(this DataTable dt, string nameString)
         {
-            string[] nameArray = nameString.Split(new char[] { ',', ';' });
-            List<string> nameList = new List<string>();
-            DataTable dt = new DataTable();
+            string[] nameArray = nameString.Split(',', ';');
             foreach (string item in nameArray)
             {
                 if (!string.IsNullOrEmpty(item))

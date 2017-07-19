@@ -182,7 +182,7 @@ namespace Masuit.Tools.Net
         public static List<CookieItem> GetCookieList(string cookie)
         {
             List<CookieItem> cookielist = new List<CookieItem>();
-            foreach (string item in cookie.Split(new string[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string item in cookie.Split(new[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (Regex.IsMatch(item, @"([\s\S]*?)=([\s\S]*?)$"))
                 {

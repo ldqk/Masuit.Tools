@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.SessionState;
 using Masuit.Tools.Models;
 using Masuit.Tools.Strings;
 using Newtonsoft.Json;
@@ -22,7 +24,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T">EF上下文容器对象</typeparam>
         /// <returns>EF上下文容器对象</returns>
-        public static T GetDbContext<T>() where T : new()
+        public static T GetDbContext<T>(this DbContext _) where T : DbContext, new()
         {
             T db;
             if (CallContext.GetData("db") == null) //由于CallContext比HttpContext先存在，所以首选CallContext为线程内唯一对象
@@ -42,7 +44,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public static void SetSession(string key, dynamic value) => HttpContext.Current.Session[key] = value;
+        public static void SetSession(this HttpSessionState session, string key, dynamic value) => session.Add(key, value);
 
         #endregion
 
@@ -54,7 +56,7 @@ namespace Masuit.Tools.Net
         /// <typeparam name="T">对象</typeparam>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T GetSession<T>(string key) => (T)HttpContext.Current.Session[key];
+        public static T GetSession<T>(this HttpSessionState session, string key) => (T)session[key];
 
         #endregion
 

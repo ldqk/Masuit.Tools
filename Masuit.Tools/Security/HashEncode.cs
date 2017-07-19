@@ -1,48 +1,27 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+using Masuit.Tools.Win32;
 
 namespace Masuit.Tools.Security
 {
     /// <summary>
     /// 得到随机安全码（哈希加密）。
     /// </summary>
-    public class HashEncode
+    public static class HashEncode
     {
-        /// <summary>
-        /// 哈希加密
-        /// </summary>
-        public HashEncode()
-        {
-            //
-            // TODO: 在此处添加构造函数逻辑
-            //
-        }
         /// <summary>
         /// 得到随机哈希加密字符串
         /// </summary>
         /// <returns>随机哈希加密字符串</returns>
-        public static string GetSecurity()
-        {
-            string Security = HashEncoding(GetRandomValue());
-            return Security;
-        }
-        /// <summary>
-        /// 得到一个随机数值
-        /// </summary>
-        /// <returns>随机数值</returns>
-        public static string GetRandomValue()
-        {
-            Random Seed = new Random();
-            string RandomVaule = Seed.Next(1, int.MaxValue).ToString();
-            return RandomVaule;
-        }
+        public static string GetSecurity(this Random r) => HashEncoding(r.StrictNext().ToString());
+
         /// <summary>
         /// 哈希加密一个字符串
         /// </summary>
         /// <param name="Security">需要加密的字符串</param>
         /// <returns>加密后的数据</returns>
-        public static string HashEncoding(string Security)
+        public static string HashEncoding(this string Security)
         {
             byte[] Value;
             UnicodeEncoding Code = new UnicodeEncoding();

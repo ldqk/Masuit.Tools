@@ -17,9 +17,9 @@ namespace Masuit.Tools.DateTimeExt
         /// 获取农历当前日期
         /// </summary>
         /// <returns>当前农历日期</returns>
-        public static string GetChineseDateTimeNow()
+        public static string GetChineseDateTimeNow(this DateTime dt)
         {
-            return GetChineseDateTime(DateTime.Now);
+            return GetChineseDateTime(dt);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 返回农历日期
         /// </summary>
-        public static string Now => GetChineseDateTimeNow();
+        public static string Now => DateTime.Now.GetChineseDateTimeNow();
 
         /// <summary>
         /// 最大支持日期
@@ -108,7 +108,6 @@ namespace Masuit.Tools.DateTimeExt
             {
                 int tgIndex = (year - 4) % 10;
                 int dzIndex = (year - 4) % 12;
-
                 return string.Concat(tiangan[tgIndex], dizhi[dzIndex], "[", shengxiao[dzIndex], "]");
             }
 

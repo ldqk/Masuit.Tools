@@ -1,6 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Masuit.Tools
 {
@@ -9,6 +16,8 @@ namespace Masuit.Tools
     /// </summary>
     public static class Extensions
     {
+        #region Sync
+
         /// <summary>
         /// 遍历数组
         /// </summary>
@@ -180,6 +189,111 @@ namespace Masuit.Tools
             }
         }
 
+        #endregion
+
+        #region Async
+
+        /// <summary>
+        /// 遍历数组
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static async void ForEachAsync(this object[] objs, Action<object> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static async void ForEachAsync(this IEnumerable<dynamic> objs, Action<object> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 遍历集合
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        public static async void ForEachAsync(this IList<dynamic> objs, Action<object> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 遍历数组
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static async void ForEachAsync<T>(this T[] objs, Action<T> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static async void ForEachAsync<T>(this IEnumerable<T> objs, Action<T> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 遍历List
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static async void ForEachAsync<T>(this IList<T> objs, Action<T> action)
+        {
+            await Task.Run(() =>
+            {
+                foreach (var o in objs)
+                {
+                    action(o);
+                }
+            });
+        }
+
+        #endregion
+
         /// <summary>
         /// 映射到目标类型(浅克隆)
         /// </summary>
@@ -191,6 +305,67 @@ namespace Masuit.Tools
             TDestination dest = new TDestination();
             dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
             return dest;
+        }
+        /// <summary>
+        /// 映射到目标类型(浅克隆)
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型</returns>
+        public static async Task<TDestination> MapToAsync<TDestination>(this object source) where TDestination : new()
+        {
+            return await Task.Run(() =>
+            {
+                TDestination dest = new TDestination();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                return dest;
+            });
+        }
+
+        /// <summary>
+        /// 映射到目标类型(深克隆)
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型</returns>
+        public static TDestination Map<TDestination>(this object source) where TDestination : new() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
+        /// <summary>
+        /// 映射到目标类型(深克隆)
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型</returns>
+        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new()
+        {
+            return await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
+        }
+
+        /// <summary>
+        /// 复制一个新的对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static T Copy<T>(this T source) where T : new()
+        {
+            T dest = new T();
+            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            return dest;
+        }
+        /// <summary>
+        /// 复制一个新的对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static async Task<T> CopyAsync<T>(this T source) where T : new()
+        {
+            return await Task.Run(() =>
+            {
+                T dest = new T();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                return dest;
+            });
         }
 
         /// <summary>
@@ -208,6 +383,26 @@ namespace Masuit.Tools
                 yield return dest;
             }
         }
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this object[] source) where TDestination : new()
+        {
+            return await Task.Run(() =>
+            {
+                IList<TDestination> list = new List<TDestination>();
+                foreach (var o in source)
+                {
+                    var dest = new TDestination();
+                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    list.Add(dest);
+                }
+                return list;
+            });
+        }
 
         /// <summary>
         /// 映射到目标类型的集合
@@ -223,6 +418,26 @@ namespace Masuit.Tools
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
                 yield return dest;
             }
+        }
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IList<dynamic> source) where TDestination : new()
+        {
+            return await Task.Run(() =>
+            {
+                IList<TDestination> list = new List<TDestination>();
+                foreach (var o in source)
+                {
+                    var dest = new TDestination();
+                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    list.Add(dest);
+                }
+                return list;
+            });
         }
 
         /// <summary>
@@ -240,6 +455,39 @@ namespace Masuit.Tools
                 yield return dest;
             }
         }
+        /// <summary>
+        /// 映射到目标类型的集合
+        /// </summary>
+        /// <param name="source">源</param>
+        /// <typeparam name="TDestination">目标类型</typeparam>
+        /// <returns>目标类型集合</returns>
+        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
+        {
+            return await Task.Run(() =>
+            {
+                IList<TDestination> list = new List<TDestination>();
+                foreach (var o in source)
+                {
+                    var dest = new TDestination();
+                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    list.Add(dest);
+                }
+                return list;
+            });
+        }
+
+        /// <summary>
+        /// 转换成json字符串
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source);
+        /// <summary>
+        /// 转换成json字符串
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source));
 
         #region UBB转HTML
 
@@ -597,6 +845,13 @@ namespace Masuit.Tools
             return ubbStr;
         }
 
+        /// <summary>
+        /// UBB代码处理函数
+        /// </summary>
+        /// <param name="ubbStr">输入UBB字符串</param>
+        /// <returns>输出html字符串</returns>
+        public static async Task<string> UbbToHtmlAsync(this string ubbStr) => await Task.Run(() => UbbToHtml(ubbStr));
+
         #endregion
 
         #region UBB转HTML方式2
@@ -750,6 +1005,13 @@ namespace Masuit.Tools
             return ubbStr;
         }
 
+        /// <summary>
+        /// UBB转HTML方式2
+        /// </summary>
+        /// <param name="ubbStr">UBB 代码</param>
+        /// <returns>HTML代码</returns>
+        public static async Task<string> UbbToHtml2Async(this string ubbStr) => await Task.Run(() => UbbToHtml2(ubbStr));
+
         #endregion
 
         #region Html转UBB
@@ -793,6 +1055,12 @@ namespace Masuit.Tools
             chr = Regex.Replace(chr, @"<center>—— 以下是引用 ——<table border='1' width='80%' cellpadding='10' cellspacing='0' ><tr><td>$1</td></tr></table></center>", @"[quote](?<x>.*)[/quote]", RegexOptions.IgnoreCase);
             return chr;
         }
+        /// <summary>
+        /// Html转UBB
+        /// </summary>
+        /// <param name="chr">HTML代码</param>
+        /// <returns>UBB代码</returns>
+        public static async Task<string> HtmltoUBBAsync(this string chr) => await Task.Run(() => HtmltoUBB(chr));
 
         #endregion
 
@@ -1054,5 +1322,43 @@ namespace Masuit.Tools
         }
 
         #endregion
+
+        /// <summary>
+        /// 将dataUri保存为图片
+        /// </summary>
+        /// <param name="source">dataUri数据源</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">操作失败。</exception>
+        public static Bitmap SaveDataUriAsImageFile(string source)
+        {
+            string strbase64 = source.Substring(source.IndexOf(',') + 1);
+            strbase64 = strbase64.Trim('\0');
+            Bitmap bmp2;
+            byte[] arr = Convert.FromBase64String(strbase64);
+            using (var ms = new MemoryStream(arr))
+            {
+                var bmp = new Bitmap(ms);
+                //新建第二个bitmap类型的bmp2变量。
+                bmp2 = new Bitmap(bmp, bmp.Width, bmp.Height);
+                //将第一个bmp拷贝到bmp2中
+                Graphics draw = Graphics.FromImage(bmp2);
+                using (draw)
+                {
+                    draw.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
+                }
+            }
+            return bmp2;
+        }
+
+        /// <summary>
+        /// 严格比较两个对象是否是同一对象
+        /// </summary>
+        /// <param name="_this">自己</param>
+        /// <param name="o">需要比较的对象</param>
+        /// <returns>是否同一对象</returns>
+        public new static bool ReferenceEquals(this object _this, object o)
+        {
+            return object.ReferenceEquals(_this, o);
+        }
     }
 }

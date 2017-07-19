@@ -27,7 +27,7 @@ namespace Masuit.Tools.Security
         /// <param name="xmlPublicKey">公钥</param>
         public void RSAKey(out string xmlKeys, out string xmlPublicKey)
         {
-            System.Security.Cryptography.RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
+            var rsa = new RSACryptoServiceProvider();
             xmlKeys = rsa.ToXmlString(true);
             xmlPublicKey = rsa.ToXmlString(false);
         }

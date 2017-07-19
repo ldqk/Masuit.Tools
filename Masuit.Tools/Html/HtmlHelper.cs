@@ -115,11 +115,11 @@ namespace Masuit.Tools.Html
         /// <param name="postData">post 提交的字符串</param>
         /// <param name="isPost">是否以post方式发送请求</param>
         /// <param name="cookieContainer">Cookie集合</param>
-        public static string GetHtml(string url, string postData, bool isPost, CookieContainer cookieContainer)
+        public static string GetHtml(this HttpWebRequest _, string url, string postData, bool isPost, CookieContainer cookieContainer)
         {
             if (string.IsNullOrEmpty(postData))
             {
-                return GetHtml(url, cookieContainer);
+                return GetHtml(null, url, cookieContainer);
             }
             Thread.Sleep(NetworkDelay);
             currentTry++;
@@ -129,7 +129,7 @@ namespace Masuit.Tools.Html
             {
                 byte[] byteRequest = Encoding.Default.GetBytes(postData);
 
-                httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+                httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.CookieContainer = cookieContainer;
                 httpWebRequest.ContentType = contentType;
                 httpWebRequest.ServicePoint.ConnectionLimit = MaxTry;
@@ -170,7 +170,7 @@ namespace Masuit.Tools.Html
             {
                 if (currentTry <= MaxTry)
                 {
-                    GetHtml(url, postData, isPost, cookieContainer);
+                    GetHtml(null, url, postData, isPost, cookieContainer);
                 }
                 currentTry--;
                 if (httpWebRequest != null) httpWebRequest.Abort();
@@ -184,7 +184,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="url">地址</param>
         /// <param name="cookieContainer">Cookie集合</param>
-        public static string GetHtml(string url, CookieContainer cookieContainer)
+        public static string GetHtml(this HttpWebRequest _, string url, CookieContainer cookieContainer)
         {
             Thread.Sleep(NetworkDelay);
             currentTry++;
@@ -192,7 +192,7 @@ namespace Masuit.Tools.Html
             HttpWebResponse httpWebResponse = null;
             try
             {
-                httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+                httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.CookieContainer = cookieContainer;
                 httpWebRequest.ContentType = contentType;
                 httpWebRequest.ServicePoint.ConnectionLimit = MaxTry;
@@ -213,7 +213,7 @@ namespace Masuit.Tools.Html
             }
             catch (Exception)
             {
-                if (currentTry <= MaxTry) GetHtml(url, cookieContainer);
+                if (currentTry <= MaxTry) GetHtml(null, url, cookieContainer);
                 currentTry--;
                 if (httpWebRequest != null) httpWebRequest.Abort();
                 if (httpWebResponse != null) httpWebResponse.Close();
@@ -234,7 +234,7 @@ namespace Masuit.Tools.Html
         ///---------------------------------------------------------------------------------------------------------------
         /// <param name="url">地址</param>
         /// <param name="cookieContainer">cookieContainer</param>
-        public static Stream GetStream(string url, CookieContainer cookieContainer)
+        public static Stream GetStream(this HttpWebRequest _, string url, CookieContainer cookieContainer)
         {
             currentTry++;
 
@@ -243,7 +243,7 @@ namespace Masuit.Tools.Html
 
             try
             {
-                httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+                httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpWebRequest.CookieContainer = cookieContainer;
                 httpWebRequest.ContentType = contentType;
                 httpWebRequest.ServicePoint.ConnectionLimit = MaxTry;
@@ -261,7 +261,7 @@ namespace Masuit.Tools.Html
             {
                 if (currentTry <= MaxTry)
                 {
-                    GetHtml(url, cookieContainer);
+                    GetHtml(null, url, cookieContainer);
                 }
 
                 currentTry--;
@@ -300,7 +300,7 @@ namespace Masuit.Tools.Html
         ///</summary>   
         ///<param name="Htmlstring">包括HTML的源码</param>   
         ///<returns>已经去除后的文字</returns>   
-        public static string RemoveHTML(string Htmlstring)
+        public static string RemoveHTML(this string Htmlstring)
         {
             //删除脚本   
             Htmlstring = Regex.Replace(Htmlstring, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
@@ -339,7 +339,7 @@ namespace Masuit.Tools.Html
         /// 4.1获取页面的链接正则
         /// </summary>
         /// <param name="HtmlCode">html代码</param>
-        public static string GetHref(string HtmlCode)
+        public static string GetHref(this string HtmlCode)
         {
             string MatchVale = "";
             string Reg = @"(h|H)(r|R)(e|E)(f|F) *= *('|"")?((\w|\\|\/|\.|:|-|_)+)[\S]*";
@@ -357,7 +357,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="html">html代码</param>
         /// <returns>提取到的url</returns>
-        public static string GetAllURL(string html)
+        public static string GetAllURL(this string html)
         {
             StringBuilder sb = new StringBuilder();
             Match m = Regex.Match(html.ToLower(), "<a href=(.*?)>.*?</a>");
@@ -378,7 +378,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="html">html代码</param>
         /// <returns>所有的带链接的a标签</returns>
-        public static string GetAllLinkText(string html)
+        public static string GetAllLinkText(this string html)
         {
             StringBuilder sb = new StringBuilder();
             Match m = Regex.Match(html.ToLower(), "<a href=.*?>(1,100})</a>");
@@ -409,7 +409,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="HtmlCode">html代码</param>
         /// <param name="imgHttp">要补充的http://路径信息</param>
-        public static string GetImgSrc(string HtmlCode, string imgHttp)
+        public static string GetImgSrc(this string HtmlCode, string imgHttp)
         {
             string MatchVale = "";
             string Reg = @"<img.+?>";
@@ -467,7 +467,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="ImgString"><img src="" />字符串</param>
         /// <param name="imgHttp">图片路径</param>
-        public static string GetImg(string ImgString, string imgHttp)
+        public static string GetImg(this string ImgString, string imgHttp)
         {
             string MatchVale = "";
             string Reg = @"src=.+\.(bmp|jpg|gif|png|)";
@@ -487,12 +487,12 @@ namespace Masuit.Tools.Html
         /// 6.1以GET方式抓取远程页面内容
         /// </summary>
         /// <param name="tUrl">URL</param>
-        public static string Get_Http(string tUrl)
+        public static string Get_Http(this HttpWebRequest _, string tUrl)
         {
             string strResult;
             try
             {
-                HttpWebRequest hwr = (HttpWebRequest)HttpWebRequest.Create(tUrl);
+                HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(tUrl);
                 hwr.Timeout = 19600;
                 HttpWebResponse hwrs = (HttpWebResponse)hwr.GetResponse();
                 Stream myStream = hwrs.GetResponseStream();
@@ -518,7 +518,7 @@ namespace Masuit.Tools.Html
         /// <param name="url">URL</param>
         /// <param name="postData">参数列表</param>
         /// <param name="encodeType">编码类型</param>
-        public static string Post_Http(string url, string postData, string encodeType)
+        public static string Post_Http(this HttpWebRequest _, string url, string postData, string encodeType)
         {
             string strResult = null;
             try
@@ -549,7 +549,7 @@ namespace Masuit.Tools.Html
         /// 7.1压缩HTML输出
         /// </summary>
         /// <param name="Html">html</param>
-        public static string ZipHtml(string Html)
+        public static string ZipHtml(this string Html)
         {
             Html = Regex.Replace(Html, @">\s+?<", "><");//去除HTML中的空白字符
             Html = Regex.Replace(Html, @"\r\n\s*", "");
@@ -566,7 +566,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="s_TextStr">要过滤的字符</param>
         /// <param name="html_Str">a img p div</param>
-        public static string DelHtml(string s_TextStr, string html_Str)
+        public static string DelHtml(this string s_TextStr, string html_Str)
         {
             string rStr = "";
             if (!string.IsNullOrEmpty(s_TextStr))
@@ -584,7 +584,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="content">html代码</param>
         /// <returns>过滤后的安全内容</returns>
-        public static string RemoveUnsafeHtml(string content)
+        public static string RemoveUnsafeHtml(this string content)
         {
             content = Regex.Replace(content, @"(\<|\s+)o([a-z]+\s?=)", "$1$2", RegexOptions.IgnoreCase);
             content = Regex.Replace(content, @"(script|frame|form|meta|behavior|style)([\s|:|>])+", "$1.$2", RegexOptions.IgnoreCase);
@@ -601,7 +601,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="strHtml">html代码</param>
         /// <returns>普通文本</returns>
-        public static string HtmlToTxt(string strHtml)
+        public static string HtmlToTxt(this string strHtml)
         {
             string[] aryReg ={
             @"<script[^>]*?>.*?</script>",
@@ -621,7 +621,6 @@ namespace Masuit.Tools.Html
             @"<!--.*\n"
             };
 
-            string newReg = aryReg[0];
             string strOutput = strHtml;
             for (int i = 0; i < aryReg.Length; i++)
             {
@@ -641,7 +640,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="str">字符串</param>
         /// <returns>html标签</returns>
-        public static string StringToHtml(string str)
+        public static string StringToHtml(this string str)
         {
             str = str.Replace("&", "&amp;");
             str = str.Replace(" ", "&nbsp;");
@@ -662,7 +661,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="strHtml">html代码</param>
         /// <returns>安全的字符串</returns>
-        public static string HtmlToString(string strHtml)
+        public static string HtmlToString(this string strHtml)
         {
             strHtml = strHtml.Replace("<br>", "\r\n");
             strHtml = strHtml.Replace(@"<br />", "\r\n");
@@ -683,7 +682,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="url">URL</param>
         /// <returns>编码类型</returns>
-        public static string GetEncoding(string url)
+        public static string GetEncoding(this HttpWebRequest _, string url)
         {
             HttpWebRequest request = null;
             HttpWebResponse response = null;
@@ -747,7 +746,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="url">待判断的URL，可以是网页以及图片链接等</param>
         /// <returns>200为正确，其余为大致网页错误代码</returns>
-        public static int GetUrlError(string url)
+        public static int GetUrlError(this HttpWebRequest _, string url)
         {
             int num = 200;
             try
@@ -805,59 +804,22 @@ namespace Masuit.Tools.Html
         }
         #endregion
 
-        #region 加载文件块
-        /// <summary>
-        /// 加载文件块
-        /// </summary>
-        /// <param name="Path">文件路径</param>
-        /// <param name="p">Page页</param>
-        public static string File(string Path, System.Web.UI.Page p)
-        {
-            return @p.ResolveUrl(Path);
-        }
-        #endregion
-
-        #region 加载CSS样式文件
-        /// <summary>
-        /// 加载CSS样式文件
-        /// </summary>
-        /// <param name="cssPath">css路径</param>
-        /// <param name="p">Page页</param>
-        public static string CSS(string cssPath, System.Web.UI.Page p)
-        {
-            return @"<link href=""" + p.ResolveUrl(cssPath) + @""" rel=""stylesheet"" type=""text/css"" />" + "\r\n";
-        }
-        #endregion
-
-        #region 加载JavaScript脚本文件
-        /// <summary>
-        /// 加载javascript脚本文件
-        /// </summary>
-        /// <param name="jsPath">js路径</param>
-        /// <param name="p">web页面</param>
-        public static string Javascript(string jsPath, System.Web.UI.Page p)
-        {
-            return @"<script type=""text/javascript"" src=""" + p.ResolveUrl(jsPath) + @"""> </script>" + "\r\n";
-        }
-        #endregion
-
         /// <summary>
         /// 获取Cookie集合
         /// </summary>
         /// <param name="cookieString">Cookie的键</param>
         /// <returns>Cookie键值集合</returns>
-        public static CookieCollection GetCookieCollection(string cookieString)
+        public static CookieCollection GetCookieCollection(this CookieCollection cookie, string cookieString)
         {
-            CookieCollection ccc = new CookieCollection();
             //string cookieString = "SID=ARRGy4M1QVBtTU-ymi8bL6X8mVkctYbSbyDgdH8inu48rh_7FFxHE6MKYwqBFAJqlplUxq7hnBK5eqoh3E54jqk=;Domain=.google.com;Path=/,LSID=AaMBTixN1MqutGovVSOejyb8mVkctYbSbyDgdH8inu48rh_7FFxHE6MKYwqBFAJqlhCe_QqxLg00W5OZejb_UeQ=;Domain=www.google.com;Path=/accounts";
             Regex re = new Regex("([^;,]+)=([^;,]+);Domain=([^;,]+);Path=([^;,]+)", RegexOptions.IgnoreCase);
             foreach (Match m in re.Matches(cookieString))
             {
                 //name,   value,   path,   domain   
                 Cookie c = new Cookie(m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value, m.Groups[3].Value);
-                ccc.Add(c);
+                cookie.Add(c);
             }
-            return ccc;
+            return cookie;
         }
 
         #region 从HTML中获取文本,保留br,p,img
@@ -867,7 +829,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="HTML">html代码</param>
         /// <returns>保留br,p,img的文本</returns>
-        public static string GetTextFromHTML(string HTML)
+        public static string GetTextFromHTML(this string HTML)
         {
             Regex regEx = new Regex(@"</?(?!br|/?p|img)[^>]*>", RegexOptions.IgnoreCase);
 
@@ -883,7 +845,7 @@ namespace Masuit.Tools.Html
         /// <param name="html">html源代码</param>
         /// <param name="key">键</param>
         /// <returns>获取到的值</returns>
-        public static string GetHiddenKeyValue(string html, string key)
+        public static string GetHiddenKeyValue(this string html, string key)
         {
             string result = "";
             string sRegex = string.Format("<input\\s*type=\"hidden\".*?name=\"{0}\".*?\\s*value=[\"|'](?<value>.*?)[\"|'^/]", key);
@@ -901,7 +863,7 @@ namespace Masuit.Tools.Html
         /// 替换回车换行符为html换行符
         /// </summary>
         /// <param name="str">html</param>
-        public static string StrFormat(string str)
+        public static string StrFormat(this string str)
         {
             string str2;
             if (str == null)
@@ -920,7 +882,7 @@ namespace Masuit.Tools.Html
         /// 替换html字符
         /// </summary>
         /// <param name="strHtml">html</param>
-        public static string EncodeHtml(string strHtml)
+        public static string EncodeHtml(this string strHtml)
         {
             if (strHtml != "")
             {

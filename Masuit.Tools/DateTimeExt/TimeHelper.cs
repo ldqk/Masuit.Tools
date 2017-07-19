@@ -41,7 +41,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="month">月份</param>
         /// <param name="firstDay">第一天</param>
         /// <param name="lastDay">最后一天</param>
-        public static void ReturnDateFormat(int month, out string firstDay, out string lastDay)
+        public static void ReturnDateFormat(this DateTime _, int month, out string firstDay, out string lastDay)
         {
             int year = DateTime.Now.Year + (month / 12);
             if (month != 12)
@@ -155,9 +155,9 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="Second">秒数</param>
         /// <returns>分钟数</returns>
-        public static int SecondToMinute(int Second)
+        public static int SecondToMinute(this DateTime _, int Second)
         {
-            decimal mm = (decimal)((decimal)Second / (decimal)60);
+            decimal mm = Second / (decimal)60;
             return Convert.ToInt32(Math.Ceiling(mm));
         }
         #endregion
@@ -169,7 +169,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="year">年份</param>
         /// <param name="month">月份</param>
         /// <returns>日</returns>
-        public static int GetMonthLastDate(int year, int month)
+        public static int GetMonthLastDate(this DateTime _, int year, int month)
         {
             System.DateTime lastDay = new System.DateTime(year, month, new System.Globalization.GregorianCalendar().GetDaysInMonth(year, month));
             int Day = lastDay.Day;
@@ -419,7 +419,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="time">php的时间</param>
         /// <returns>C#的时间</returns>
-        public static System.DateTime PhpTime2CsharpTime(long time)
+        public static System.DateTime PhpTime2CsharpTime(this DateTime _, long time)
         {
             System.DateTime timeStamp = new System.DateTime(1970, 1, 1);  //得到1970年的时间戳
             long t = (time + 8 * 60 * 60) * 10000000 + timeStamp.Ticks;
@@ -446,7 +446,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary> 
         /// <param name="strDateTime">Rss中读取的时间</param> 
         /// <returns>处理后的标准时间格式</returns> 
-        public static string DateConvert(string strDateTime)
+        public static string DateConvert(this string strDateTime)
         {
             strDateTime = strDateTime.Replace("+0000", "GMT");
             strDateTime = strDateTime.Replace("+0100", "GMT");

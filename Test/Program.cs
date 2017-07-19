@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml.Serialization;
+using Masuit.Tools;
 using Masuit.Tools.Win32;
 
 namespace Test

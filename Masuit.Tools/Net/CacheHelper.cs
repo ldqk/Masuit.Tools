@@ -18,10 +18,9 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T">返回的类型</typeparam>
         /// <param name="CacheKey">键</param>
-        public static T GetCache<T>(string CacheKey)
+        public static T GetCache<T>(this Cache cache, string CacheKey)
         {
-            System.Web.Caching.Cache objCache = HttpRuntime.Cache;
-            return (T)objCache[CacheKey];
+            return (T)cache[CacheKey];
         }
         #endregion
 
@@ -32,10 +31,9 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="CacheKey">键</param>
         /// <param name="objObject">值</param>
-        public static void SetCache(string CacheKey, object objObject)
+        public static void SetCache(this Cache cache, string CacheKey, object objObject)
         {
-            System.Web.Caching.Cache objCache = HttpRuntime.Cache;
-            objCache.Insert(CacheKey, objObject);
+            cache.Insert(CacheKey, objObject);
         }
 
         /// <summary>
@@ -45,11 +43,10 @@ namespace Masuit.Tools.Net
         /// <param name="objObject">值</param>
         /// <param name="Timeout">过期时间</param>
         /// <exception cref="ArgumentNullException"><paramref name="cacheKey"/>"/> is <c>null</c>.</exception>
-        public static void SetCache(string cacheKey, object objObject, TimeSpan Timeout)
+        public static void SetCache(this Cache cache, string cacheKey, object objObject, TimeSpan Timeout)
         {
             if (cacheKey == null) throw new ArgumentNullException(nameof(cacheKey));
-            System.Web.Caching.Cache objCache = HttpRuntime.Cache;
-            objCache.Insert(cacheKey, objObject, null, DateTime.MaxValue, Timeout, System.Web.Caching.CacheItemPriority.NotRemovable, null);
+            cache.Insert(cacheKey, objObject, null, DateTime.MaxValue, Timeout, CacheItemPriority.NotRemovable, null);
         }
 
         /// <summary>
@@ -59,10 +56,9 @@ namespace Masuit.Tools.Net
         /// <param name="objObject">值</param>
         /// <param name="absoluteExpiration">绝对过期时间</param>
         /// <param name="slidingExpiration">滑动过期时间</param>
-        public static void SetCache(string CacheKey, object objObject, DateTime absoluteExpiration, TimeSpan slidingExpiration)
+        public static void SetCache(this Cache cache, string CacheKey, object objObject, DateTime absoluteExpiration, TimeSpan slidingExpiration)
         {
-            System.Web.Caching.Cache objCache = HttpRuntime.Cache;
-            objCache.Insert(CacheKey, objObject, null, absoluteExpiration, slidingExpiration);
+            cache.Insert(CacheKey, objObject, null, absoluteExpiration, slidingExpiration);
         }
         #endregion
 
@@ -71,22 +67,17 @@ namespace Masuit.Tools.Net
         /// 移除指定数据缓存
         /// </summary>
         /// <param name="CacheKey">键</param>
-        public static void RemoveAllCache(string CacheKey)
-        {
-            System.Web.Caching.Cache _cache = HttpRuntime.Cache;
-            _cache.Remove(CacheKey);
-        }
+        public static void RemoveAllCache(this Cache cache, string CacheKey) => cache.Remove(CacheKey);
 
         /// <summary>
         /// 移除全部缓存
         /// </summary>
-        public static void RemoveAllCache()
+        public static void RemoveAllCache(this Cache cache)
         {
-            System.Web.Caching.Cache _cache = HttpRuntime.Cache;
-            IDictionaryEnumerator CacheEnum = _cache.GetEnumerator();
+            IDictionaryEnumerator CacheEnum = cache.GetEnumerator();
             while (CacheEnum.MoveNext())
             {
-                _cache.Remove(CacheEnum.Key.ToString());
+                cache.Remove(CacheEnum.Key.ToString());
             }
         }
         #endregion

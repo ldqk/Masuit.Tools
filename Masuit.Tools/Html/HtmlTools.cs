@@ -18,47 +18,6 @@ namespace Masuit.Tools.Html
     /// </summary>
     public static partial class HtmlTools
     {
-        #region 获得发表日期、编码
-        /// <summary>
-        /// 获得发表日期、编码
-        /// </summary>
-        /// <param name="sContent">内容</param>
-        /// <param name="sRegex">正则表达式</param>
-        /// <returns>日期</returns>
-        public static DateTime GetCreateDate(string sContent, string sRegex)
-        {
-            DateTime dt = System.DateTime.Now;
-
-            Regex re = new Regex(sRegex, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
-            Match mc = re.Match(sContent);
-            if (mc.Success)
-            {
-                try
-                {
-                    int iYear = int.Parse(mc.Groups["Year"].Value);
-                    int iMonth = int.Parse(mc.Groups["Month"].Value);
-                    int iDay = int.Parse(mc.Groups["Day"].Value);
-                    int iHour = dt.Hour;
-                    int iMinute = dt.Minute;
-
-                    string sHour = mc.Groups["Hour"].Value;
-                    string sMintue = mc.Groups["Mintue"].Value;
-
-                    if (sHour != "")
-                        iHour = int.Parse(sHour);
-                    if (sMintue != "")
-                        iMinute = int.Parse(sMintue);
-
-                    dt = new DateTime(iYear, iMonth, iDay, iHour, iMinute, 0);
-                }
-                catch
-                {
-                }
-            }
-            return dt;
-        }
-        #endregion 获得发表日期
-
         #region 防止html的xss净化器
         /// <summary>
         /// 标准的防止html的xss净化器
@@ -1192,7 +1151,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="sHtml">html</param>
         /// <returns>纯文本</returns>
-        public static string GetTxtFromHtml(string sHtml)
+        public static string GetTxtFromHtml(this string sHtml)
         {
             string del = @"<head[^>]*>[\s\S]*?</head>";
             string content = RemoveByReg(sHtml, del);
@@ -1221,7 +1180,7 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="sHtml">html源代码</param>
         /// <returns>从html中过滤出文本，不过保留换行符号</returns>
-        public static string GetTxtFromHtml2(string sHtml)
+        public static string GetTxtFromHtml2(this string sHtml)
         {
             string del = @"<head[^>]*>[\s\S]*?</head>";
             string content = RemoveByReg(sHtml, del);
