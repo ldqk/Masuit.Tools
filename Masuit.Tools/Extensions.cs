@@ -294,6 +294,7 @@ namespace Masuit.Tools
 
         #endregion
 
+        #region Map
         /// <summary>
         /// 映射到目标类型(浅克隆)
         /// </summary>
@@ -335,10 +336,7 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型</returns>
-        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new()
-        {
-            return await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
-        }
+        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
 
         /// <summary>
         /// 复制一个新的对象
@@ -352,21 +350,19 @@ namespace Masuit.Tools
             dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
             return dest;
         }
+
         /// <summary>
         /// 复制一个新的对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static async Task<T> CopyAsync<T>(this T source) where T : new()
+        public static async Task<T> CopyAsync<T>(this T source) where T : new() => await Task.Run(() =>
         {
-            return await Task.Run(() =>
-            {
-                T dest = new T();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
-                return dest;
-            });
-        }
+            T dest = new T();
+            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            return dest;
+        });
 
         /// <summary>
         /// 映射到目标类型的集合
@@ -376,13 +372,14 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this object[] source) where TDestination : new()
         {
-            foreach (var o in source)
+            foreach(var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
                 yield return dest;
             }
         }
+
         /// <summary>
         /// 映射到目标类型的集合
         /// </summary>
@@ -394,7 +391,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
+                foreach(var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -412,13 +409,14 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this IList<dynamic> source) where TDestination : new()
         {
-            foreach (var o in source)
+            foreach(var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
                 yield return dest;
             }
         }
+
         /// <summary>
         /// 映射到目标类型的集合
         /// </summary>
@@ -430,7 +428,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
+                foreach(var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -448,13 +446,14 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
         {
-            foreach (var o in source)
+            foreach(var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
                 yield return dest;
             }
         }
+
         /// <summary>
         /// 映射到目标类型的集合
         /// </summary>
@@ -466,7 +465,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
+                foreach(var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -475,7 +474,8 @@ namespace Masuit.Tools
                 return list;
             });
         }
-
+        #endregion
+        
         /// <summary>
         /// 转换成json字符串
         /// </summary>
@@ -1360,5 +1360,12 @@ namespace Masuit.Tools
         {
             return object.ReferenceEquals(_this, o);
         }
+
+        /// <summary>
+        /// 判断字符串是否为空
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
     }
 }

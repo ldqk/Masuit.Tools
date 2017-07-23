@@ -925,7 +925,7 @@ namespace Masuit.Tools.Media
         /// <summary>
         /// 压缩到指定尺寸
         /// </summary>
-        /// <param name="oldfile">原文件</param>
+        /// <param name="img"></param>
         /// <param name="newfile">新文件</param>
         public static bool Compress(this Image img, string newfile)
         {

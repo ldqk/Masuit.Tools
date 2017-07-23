@@ -30,7 +30,7 @@ namespace Masuit.Tools.Logging
                     foreach (var logItem in LogQueue)
                     {
                         string logPath = logItem.Item1;
-                        string logMergeContent = String.Concat(logItem.Item2, Environment.NewLine, "-----------------------------------------------------------", Environment.NewLine);
+                        string logMergeContent = String.Concat(logItem.Item2, Environment.NewLine, "----------------------------------------------------------------------------------------------------------------------", Environment.NewLine);
                         string[] logArr = temp.FirstOrDefault(d => d[0].Equals(logPath));
                         if (logArr != null)
                         {
@@ -70,6 +70,7 @@ namespace Masuit.Tools.Logging
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source}  {info}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
+
         /// <summary>
         /// 写入Info级别的日志
         /// </summary>
@@ -81,6 +82,7 @@ namespace Masuit.Tools.Logging
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source.FullName}  {info}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
+
         /// <summary>
         /// 写入Info级别的日志
         /// </summary>
@@ -119,11 +121,35 @@ namespace Masuit.Tools.Logging
         /// 写入error级别日志
         /// </summary>
         /// <param name="source">异常源的类型</param>
+        /// <param name="error">异常信息</param>
+        public static void Error(Type source, string error)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+
+        /// <summary>
+        /// 写入error级别日志
+        /// </summary>
+        /// <param name="source">异常源的类型</param>
         /// <param name="error">异常对象</param>
         public static void Error(string source, Exception error)
         {
             string logPath = GetLogPath();
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.StackTrace}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+
+        /// <summary>
+        /// 写入error级别日志
+        /// </summary>
+        /// <param name="source">异常源的类型</param>
+        /// <param name="error">异常信息</param>
+        public static void Error(string source, string error)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
 
@@ -138,6 +164,7 @@ namespace Masuit.Tools.Logging
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source}  {debug}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
+
         /// <summary>
         /// 写入debug级别日志
         /// </summary>
@@ -149,6 +176,7 @@ namespace Masuit.Tools.Logging
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source.FullName}  {debug}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
+
         /// <summary>
         /// 写入debug级别日志
         /// </summary>
@@ -188,10 +216,35 @@ namespace Masuit.Tools.Logging
         /// </summary>
         /// <param name="source">异常源的类型</param>
         /// <param name="fatal">异常对象</param>
+        public static void Fatal(Type source, string fatal)
+        {
+
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+
+        /// <summary>
+        /// 写入fatal级别日志
+        /// </summary>
+        /// <param name="source">异常源的类型</param>
+        /// <param name="fatal">异常对象</param>
         public static void Fatal(string source, Exception fatal)
         {
             string logPath = GetLogPath();
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.StackTrace}";
+            LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
+        }
+
+        /// <summary>
+        /// 写入fatal级别日志
+        /// </summary>
+        /// <param name="source">异常源的类型</param>
+        /// <param name="fatal">异常对象</param>
+        public static void Fatal(string source, string fatal)
+        {
+            string logPath = GetLogPath();
+            string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
         }
 

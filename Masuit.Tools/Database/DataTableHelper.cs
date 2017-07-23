@@ -222,6 +222,7 @@ namespace Masuit.Tools.Database
         /// 1) a,b,c,d,e<br/>
         /// 2) a|int,b|string,c|bool,d|decimal<br/>
         /// </summary>
+        /// <param name="dt"></param>
         /// <param name="nameString">字符列表</param>
         /// <returns>内存表</returns>
         public static DataTable CreateTable(this DataTable dt, string nameString)

@@ -17,6 +17,7 @@ namespace Masuit.Tools.Net
         /// 获取数据缓存
         /// </summary>
         /// <typeparam name="T">返回的类型</typeparam>
+        /// <param name="cache"></param>
         /// <param name="CacheKey">键</param>
         public static T GetCache<T>(this Cache cache, string CacheKey)
         {
@@ -29,6 +30,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 设置数据缓存
         /// </summary>
+        /// <param name="cache"></param>
         /// <param name="CacheKey">键</param>
         /// <param name="objObject">值</param>
         public static void SetCache(this Cache cache, string CacheKey, object objObject)
@@ -39,6 +41,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 设置数据缓存
         /// </summary>
+        /// <param name="cache"></param>
         /// <param name="cacheKey">键</param>
         /// <param name="objObject">值</param>
         /// <param name="Timeout">过期时间</param>
@@ -52,6 +55,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 设置当前应用程序指定CacheKey的Cache值
         /// </summary>
+        /// <param name="cache"></param>
         /// <param name="CacheKey">键</param>
         /// <param name="objObject">值</param>
         /// <param name="absoluteExpiration">绝对过期时间</param>
@@ -63,9 +67,11 @@ namespace Masuit.Tools.Net
         #endregion
 
         #region   移除缓存
+
         /// <summary>
         /// 移除指定数据缓存
         /// </summary>
+        /// <param name="cache"></param>
         /// <param name="CacheKey">键</param>
         public static void RemoveAllCache(this Cache cache, string CacheKey) => cache.Remove(CacheKey);
 

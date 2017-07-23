@@ -327,6 +327,7 @@ namespace Masuit.Tools.Reflection
         /// <summary>
         /// 根据资源名称获取图片资源流
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="resourceName">资源的名称</param>
         /// <returns>数据流</returns>
         public static Stream GetImageResource(this Assembly _, string resourceName)

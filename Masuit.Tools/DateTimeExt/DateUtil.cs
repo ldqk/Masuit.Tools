@@ -84,6 +84,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 返回本年有多少天
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="iYear">年份</param>
         /// <returns>本年的天数</returns>
         public static int GetDaysOfYear(this DateTime _, int iYear)
@@ -122,6 +123,7 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         /// <summary>本月有多少天</summary>
+        /// <param name="_"></param>
         /// <param name="iYear">年</param>
         /// <param name="month">月</param>
         /// <returns>天数</returns>

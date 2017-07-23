@@ -42,6 +42,7 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 写Session
         /// </summary>
+        /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
         public static void SetSession(this HttpSessionState session, string key, dynamic value) => session.Add(key, value);
@@ -54,6 +55,7 @@ namespace Masuit.Tools.Net
         /// 获取Session
         /// </summary>
         /// <typeparam name="T">对象</typeparam>
+        /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
         public static T GetSession<T>(this HttpSessionState session, string key) => (T)session[key];

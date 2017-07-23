@@ -35,9 +35,11 @@ namespace Masuit.Tools.DateTimeExt
         #endregion
 
         #region 返回每月的第一天和最后一天
+
         /// <summary>
         ///  返回每月的第一天和最后一天
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="month">月份</param>
         /// <param name="firstDay">第一天</param>
         /// <param name="lastDay">最后一天</param>
@@ -153,6 +155,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 把秒转换成分钟
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="Second">秒数</param>
         /// <returns>分钟数</returns>
         public static int SecondToMinute(this DateTime _, int Second)
@@ -163,9 +166,11 @@ namespace Masuit.Tools.DateTimeExt
         #endregion
 
         #region 返回某年某月最后一天
+
         /// <summary>
         /// 返回某年某月最后一天
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="year">年份</param>
         /// <param name="month">月份</param>
         /// <returns>日</returns>
@@ -417,6 +422,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// PHP的时间转换成C#中的DateTime
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="time">php的时间</param>
         /// <returns>C#的时间</returns>
         public static System.DateTime PhpTime2CsharpTime(this DateTime _, long time)

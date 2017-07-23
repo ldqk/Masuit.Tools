@@ -12,6 +12,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 获取某一年有多少周
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="year">年份</param>
         /// <returns>该年周数</returns>
         public static int GetWeekAmount(this DateTime _, int year)
@@ -51,6 +52,7 @@ namespace Masuit.Tools.DateTimeExt
         /// 周始 out dtWeekStart
         /// 周终 out dtWeekeEnd
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="nYear">年份</param>
         /// <param name="nNumWeek">第几周</param>
         /// <param name="dtWeekStart">开始日期</param>
@@ -66,6 +68,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 得到一年中的某周的起始日和截止日    周一到周五  工作日
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="nYear">年份</param>
         /// <param name="nNumWeek">第几周</param>
         /// <param name="dtWeekStart">开始日期</param>

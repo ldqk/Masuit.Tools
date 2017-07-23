@@ -111,6 +111,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获取指定页面的HTML代码
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="url">指定页面的路径</param>
         /// <param name="postData">post 提交的字符串</param>
         /// <param name="isPost">是否以post方式发送请求</param>
@@ -182,6 +183,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获取HTML
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="url">地址</param>
         /// <param name="cookieContainer">Cookie集合</param>
         public static string GetHtml(this HttpWebRequest _, string url, CookieContainer cookieContainer)
@@ -223,17 +225,19 @@ namespace Masuit.Tools.Html
         #endregion
 
         #region 2、获取字符流
-        /// <summary>
-        /// 2.1获取字符流
-        /// </summary>
-        ///---------------------------------------------------------------------------------------------------------------
-        /// 示例:
-        /// System.Net.CookieContainer cookie = new System.Net.CookieContainer(); 
-        /// Stream s = HttpHelper.GetStream("http://www.baidu.com", cookie);
-        /// picVerify.Image = Image.FromStream(s);
-        ///---------------------------------------------------------------------------------------------------------------
+
+        ///  <summary>
+        ///  2.1获取字符流
+        ///  </summary>
+        /// ---------------------------------------------------------------------------------------------------------------
+        ///  示例:
+        ///  System.Net.CookieContainer cookie = new System.Net.CookieContainer(); 
+        ///  Stream s = HttpHelper.GetStream("http://www.baidu.com", cookie);
+        ///  picVerify.Image = Image.FromStream(s);
+        /// ---------------------------------------------------------------------------------------------------------------
+        /// <param name="_"></param>
         /// <param name="url">地址</param>
-        /// <param name="cookieContainer">cookieContainer</param>
+        ///  <param name="cookieContainer">cookieContainer</param>
         public static Stream GetStream(this HttpWebRequest _, string url, CookieContainer cookieContainer)
         {
             currentTry++;
@@ -483,9 +487,11 @@ namespace Masuit.Tools.Html
         #endregion
 
         #region 6、抓取远程页面内容
+
         /// <summary>
         /// 6.1以GET方式抓取远程页面内容
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="tUrl">URL</param>
         public static string Get_Http(this HttpWebRequest _, string tUrl)
         {
@@ -515,6 +521,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 6.2以POST方式抓取远程页面内容
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="url">URL</param>
         /// <param name="postData">参数列表</param>
         /// <param name="encodeType">编码类型</param>
@@ -677,9 +684,11 @@ namespace Masuit.Tools.Html
         #endregion
 
         #region 获取URL编码
+
         /// <summary>
         /// 获取URL编码
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="url">URL</param>
         /// <returns>编码类型</returns>
         public static string GetEncoding(this HttpWebRequest _, string url)
@@ -744,6 +753,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 判断URL是否有效
         /// </summary>
+        /// <param name="_"></param>
         /// <param name="url">待判断的URL，可以是网页以及图片链接等</param>
         /// <returns>200为正确，其余为大致网页错误代码</returns>
         public static int GetUrlError(this HttpWebRequest _, string url)
@@ -807,6 +817,7 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获取Cookie集合
         /// </summary>
+        /// <param name="cookie"></param>
         /// <param name="cookieString">Cookie的键</param>
         /// <returns>Cookie键值集合</returns>
         public static CookieCollection GetCookieCollection(this CookieCollection cookie, string cookieString)
