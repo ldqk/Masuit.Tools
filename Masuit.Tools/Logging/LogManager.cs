@@ -17,7 +17,7 @@ namespace Masuit.Tools.Logging
     {
         static readonly ConcurrentQueue<Tuple<string, string>> LogQueue = new ConcurrentQueue<Tuple<string, string>>();
 
-        static readonly Task WriteTask;
+        private static readonly Task WriteTask;
 
         static LogManager()
         {
@@ -55,9 +55,9 @@ namespace Masuit.Tools.Logging
         private static AutoResetEvent Pause = new AutoResetEvent(false);
 
         /// <summary>
-        /// 日志存放目录
+        /// 日志存放目录，默认日志放在当前应用程序运行目录下的logs文件夹中
         /// </summary>
-        public static string LogDirectory { get; set; } = AppDomain.CurrentDomain.BaseDirectory;
+        public static string LogDirectory { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
 
         /// <summary>
         /// 写入Info级别的日志
@@ -218,7 +218,6 @@ namespace Masuit.Tools.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(Type source, string fatal)
         {
-
             string logPath = GetLogPath();
             string logContent = $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal}";
             LogQueue.Enqueue(new Tuple<string, string>(logPath, logContent));
@@ -295,9 +294,10 @@ namespace Masuit.Tools.Logging
                 {
                     File.CreateText(logPath).Close();
                 }
-                StreamWriter sw = File.AppendText(logPath);
-                sw.Write(logContent);
-                sw.Close();
+                using (StreamWriter sw = File.AppendText(logPath))
+                {
+                    sw.Write(logContent);
+                }
             }
             catch (Exception)
             {

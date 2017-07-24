@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -16,7 +13,7 @@ namespace Masuit.Tools
     /// </summary>
     public static class Extensions
     {
-        #region Sync
+        #region SyncForEach
 
         /// <summary>
         /// 遍历数组
@@ -191,7 +188,7 @@ namespace Masuit.Tools
 
         #endregion
 
-        #region Async
+        #region AsyncForEach
 
         /// <summary>
         /// 遍历数组
@@ -295,6 +292,7 @@ namespace Masuit.Tools
         #endregion
 
         #region Map
+
         /// <summary>
         /// 映射到目标类型(浅克隆)
         /// </summary>
@@ -307,6 +305,7 @@ namespace Masuit.Tools
             dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
             return dest;
         }
+
         /// <summary>
         /// 映射到目标类型(浅克隆)
         /// </summary>
@@ -330,6 +329,7 @@ namespace Masuit.Tools
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型</returns>
         public static TDestination Map<TDestination>(this object source) where TDestination : new() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
+
         /// <summary>
         /// 映射到目标类型(深克隆)
         /// </summary>
@@ -372,7 +372,7 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this object[] source) where TDestination : new()
         {
-            foreach(var o in source)
+            foreach (var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -391,7 +391,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach(var o in source)
+                foreach (var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -409,7 +409,7 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this IList<dynamic> source) where TDestination : new()
         {
-            foreach(var o in source)
+            foreach (var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -428,7 +428,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach(var o in source)
+                foreach (var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -446,7 +446,7 @@ namespace Masuit.Tools
         /// <returns>目标类型集合</returns>
         public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
         {
-            foreach(var o in source)
+            foreach (var o in source)
             {
                 var dest = new TDestination();
                 dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -465,7 +465,7 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 IList<TDestination> list = new List<TDestination>();
-                foreach(var o in source)
+                foreach (var o in source)
                 {
                     var dest = new TDestination();
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
@@ -474,14 +474,16 @@ namespace Masuit.Tools
                 return list;
             });
         }
+
         #endregion
-        
+
         /// <summary>
         /// 转换成json字符串
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source);
+
         /// <summary>
         /// 转换成json字符串
         /// </summary>
@@ -489,7 +491,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source));
 
-        #region UBB转HTML
+        #region UBB、HTML互转
 
         /// <summary>
         /// UBB代码处理函数
@@ -852,10 +854,6 @@ namespace Masuit.Tools
         /// <returns>输出html字符串</returns>
         public static async Task<string> UbbToHtmlAsync(this string ubbStr) => await Task.Run(() => UbbToHtml(ubbStr));
 
-        #endregion
-
-        #region UBB转HTML方式2
-
         /// <summary>
         /// UBB转HTML方式2
         /// </summary>
@@ -1012,10 +1010,6 @@ namespace Masuit.Tools
         /// <returns>HTML代码</returns>
         public static async Task<string> UbbToHtml2Async(this string ubbStr) => await Task.Run(() => UbbToHtml2(ubbStr));
 
-        #endregion
-
-        #region Html转UBB
-
         /// <summary>
         /// Html转UBB
         /// </summary>
@@ -1055,6 +1049,7 @@ namespace Masuit.Tools
             chr = Regex.Replace(chr, @"<center>—— 以下是引用 ——<table border='1' width='80%' cellpadding='10' cellspacing='0' ><tr><td>$1</td></tr></table></center>", @"[quote](?<x>.*)[/quote]", RegexOptions.IgnoreCase);
             return chr;
         }
+
         /// <summary>
         /// Html转UBB
         /// </summary>
@@ -1064,18 +1059,7 @@ namespace Masuit.Tools
 
         #endregion
 
-        #region 生成安全的html代码
-
-        /// <summary>
-        /// 生成安全的html代码
-        /// </summary>
-        /// <param name="html">源html</param>
-        /// <returns>安全化后的html</returns>
-        public static string ConvertToSecurityHtml(this string html) => Regex.Replace(html, @"<script[.\s\S]+?<\/script>|<link.*>|<style.*<\/style>", "");
-
-        #endregion
-
-        #region 字符串转int
+        #region 数字互转
 
         /// <summary>
         /// 字符串转int
@@ -1094,9 +1078,22 @@ namespace Masuit.Tools
             }
         }
 
-        #endregion
-
-        #region 字符串转double
+        /// <summary>
+        /// 字符串转long
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>int类型的数字</returns>
+        public static long ToInt64(this string s)
+        {
+            try
+            {
+                return Convert.ToInt64(s);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
 
         /// <summary>
         /// 字符串转double
@@ -1115,17 +1112,78 @@ namespace Masuit.Tools
             }
         }
 
-        #endregion
+        /// <summary>
+        /// 字符串转decimal
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>int类型的数字</returns>
+        public static decimal ToDecimal(this string s)
+        {
+            try
+            {
+                return Convert.ToDecimal(s);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// 字符串转decimal
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>int类型的数字</returns>
+        public static decimal ToDecimal(this double s)
+        {
+            try
+            {
+                return Convert.ToDecimal(s);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// 字符串转double
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>double类型的数据</returns>
+        public static double ToDouble(this decimal s)
+        {
+            try
+            {
+                return Convert.ToDouble(s);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
 
         /// <summary>
         /// 将double转换成int
         /// </summary>
         /// <param name="num">double类型</param>
         /// <returns>int类型</returns>
-        public static int DoubleToInt32(this double num)
+        public static int ToInt32(this double num)
         {
             return (int)Math.Floor(num);
         }
+
+        /// <summary>
+        /// 将double转换成int
+        /// </summary>
+        /// <param name="num">double类型</param>
+        /// <returns>int类型</returns>
+        public static int ToInt32(this decimal num)
+        {
+            return (int)Math.Floor(num);
+        }
+
+        #endregion
 
         #region 检测字符串中是否包含列表中的关键词
 
@@ -1356,10 +1414,7 @@ namespace Masuit.Tools
         /// <param name="_this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o)
-        {
-            return object.ReferenceEquals(_this, o);
-        }
+        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
 
         /// <summary>
         /// 判断字符串是否为空
@@ -1367,5 +1422,23 @@ namespace Masuit.Tools
         /// <param name="s"></param>
         /// <returns></returns>
         public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
+
+        /// <summary>
+        /// 类型直转
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T To<T>(this IConvertible value)
+        {
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
     }
 }
