@@ -1440,5 +1440,22 @@ namespace Masuit.Tools
                 return default(T);
             }
         }
+
+        /// <summary>
+        /// 字符串转时间
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static DateTime ToDateTime(this string value)
+        {
+            try
+            {
+                return DateTime.Parse(value);
+            }
+            catch
+            {
+                return default(DateTime);
+            }
+        }
     }
 }
