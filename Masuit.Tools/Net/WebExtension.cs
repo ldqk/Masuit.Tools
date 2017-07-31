@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.SessionState;
 using Masuit.Tools.Models;
-using Masuit.Tools.Strings;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools.Net
@@ -24,7 +21,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T">EF上下文容器对象</typeparam>
         /// <returns>EF上下文容器对象</returns>
-        public static T GetDbContext<T>(this DbContext _) where T : DbContext, new()
+        public static T GetDbContext<T>() where T : new()
         {
             T db;
             if (CallContext.GetData("db") == null) //由于CallContext比HttpContext先存在，所以首选CallContext为线程内唯一对象
