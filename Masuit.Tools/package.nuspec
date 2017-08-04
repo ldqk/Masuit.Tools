@@ -24,8 +24,6 @@
     <dependencies>
          <group targetFramework="net45">
             <dependency id="AngleSharp" version="0.9.9" />
-            <dependency id="EntityFramework" version="6.1.3" />
-            <dependency id="EntityFramework.zh-Hans" version="6.1.3" />
             <dependency id="HtmlSanitizer" version="3.4.156" />
             <dependency id="Newtonsoft.Json" version="10.0.3" />
             <dependency id="SharpZipLib" version="0.86.0" />
