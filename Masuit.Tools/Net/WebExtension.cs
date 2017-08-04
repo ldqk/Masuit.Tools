@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.SessionState;
 using Masuit.Tools.Models;
 using Newtonsoft.Json;
@@ -32,9 +33,18 @@ namespace Masuit.Tools.Net
             db = (T)CallContext.GetData("db");
             return db;
         }
+
         #endregion
 
         #region 写Session
+
+        /// <summary>
+        /// 写Session
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        public static void SetSession(this HttpSessionStateBase session, string key, dynamic value) => session.Add(key, value);
 
         /// <summary>
         /// 写Session
@@ -47,6 +57,15 @@ namespace Masuit.Tools.Net
         #endregion
 
         #region 获取Session
+
+        /// <summary>
+        /// 获取Session
+        /// </summary>
+        /// <typeparam name="T">对象</typeparam>
+        /// <param name="session"></param>
+        /// <param name="key">键</param>
+        /// <returns>对象</returns>
+        public static T GetSession<T>(this HttpSessionStateBase session, string key) => (T)session[key];
 
         /// <summary>
         /// 获取Session
