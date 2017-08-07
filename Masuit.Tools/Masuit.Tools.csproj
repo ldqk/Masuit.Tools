@@ -79,7 +79,6 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Files\Compress.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
-    <Compile Include="Files\FileTree.cs" />
     <Compile Include="Files\INIFile.cs" />
     <Compile Include="Html\HtmlHelper.cs" />
     <Compile Include="Html\HtmlTools.cs" />
@@ -101,7 +100,7 @@
     <Compile Include="Models\IPData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashEncode.cs" />
-    <Compile Include="Security\RSACryption.cs" />
+    <Compile Include="Security\RSACrypt.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
     <Compile Include="Win32\Windows.cs" />

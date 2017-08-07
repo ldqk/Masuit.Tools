@@ -29,13 +29,10 @@ namespace Masuit.Tools.DateTimeExt
         public static string ReadFileFromEmbedded(string fileWholeName)
         {
             //文件属性-生成操作-嵌入的资源
-            string result;
-
             using (TextReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(fileWholeName)))
             {
-                result = reader.ReadToEnd();
+                return reader.ReadToEnd();
             }
-            return result;
         }
 
         #region 结构、日期对象
@@ -692,26 +689,21 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>日期信息</returns>
         public static StructDateFullInfo GetDateTidyInfo(this DateTime d)
         {
-            StructDateFullInfo dayinfo = new StructDateFullInfo();
+            var dayinfo = new StructDateFullInfo();
             structDate day = GetLunar(d);
-
             dayinfo.IsLeap = day.isLeap;
-
             dayinfo.Year = d.Year;
             dayinfo.Cyear = day.year;
             dayinfo.Scyear = animals[(day.year - 4) % 12];
             dayinfo.CyearCyl = Cyclical(day.yearCyl); //干支年
-
             dayinfo.Month = d.Month;
             dayinfo.Cmonth = day.month;
             dayinfo.Scmonth = cMonthName[day.month];
             dayinfo.CmonthCyl = Cyclical(day.monthCyl); //干支月
-
             dayinfo.Day = d.Day;
             dayinfo.Cday = day.day;
             dayinfo.Scday = GetCDay(day.day); //日子
             dayinfo.CdayCyl = Cyclical(day.dayCyl); //干支日
-
             switch (d.DayOfWeek)
             {
                 case DayOfWeek.Sunday:

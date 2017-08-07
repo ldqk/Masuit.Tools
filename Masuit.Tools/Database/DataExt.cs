@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Reflection;
 
 namespace Masuit.Tools.Database
 {
     /// <summary>
-    /// 日期操作扩展类
+    /// SqlDataReader扩展类
     /// </summary>
     public static class DataExt
     {

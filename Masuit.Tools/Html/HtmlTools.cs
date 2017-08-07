@@ -436,10 +436,6 @@ namespace Masuit.Tools.Html
             {//2007images/modecss.css
                 sReturnUrl = sUrl + sRelativeUrl.Trim();
             }
-            else
-            {
-                sRelativeUrl = sUrl;
-            }
             return sReturnUrl;
         }
 
@@ -560,7 +556,6 @@ namespace Masuit.Tools.Html
             }
 
             //图片路径
-            //sFormartted = _ReplaceUrl("<img[^>]+src\\s*=\\s*(?:'(?<src>[^']+)'|\"(?<src>[^\"]+)\"|(?<src>[^>\\s]+))\\s*[^>]*>", "src", sFormartted,sPageUrl);
             sFormartted = _ReplaceUrl("<img[\\s\\S]+?src\\s*=\\s*(?:'(?<src>[^']+)'|\"(?<src>[^\"]+)\"|(?<src>[^>\\s]+))\\s*[^>]*>", "src", sFormartted, sPageUrl);
             //反防盗链
             string domain = GetDomain(sPageUrl);

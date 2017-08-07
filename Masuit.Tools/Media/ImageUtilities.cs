@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.Media
@@ -29,7 +29,9 @@ namespace Masuit.Tools.Media
             //创建目录
             string dir = Path.GetDirectoryName(fileSaveUrl);
             if (!Directory.Exists(dir))
+            {
                 Directory.CreateDirectory(dir);
+            }
 
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
             Image initImage = Image.FromStream(fromFile, true);
@@ -49,8 +51,8 @@ namespace Masuit.Tools.Media
                 if (initWidth != initHeight)
                 {
                     //截图对象
-                    Image pickedImage = null;
-                    Graphics pickedG = null;
+                    Image pickedImage;
+                    Graphics pickedG;
 
                     //宽大于高的横图
                     if (initWidth > initHeight)
@@ -174,8 +176,8 @@ namespace Masuit.Tools.Media
                 else
                 {
                     //裁剪对象
-                    Image pickedImage = null;
-                    Graphics pickedG = null;
+                    Image pickedImage;
+                    Graphics pickedG;
 
                     //定位
                     Rectangle fromR = new Rectangle(0, 0, 0, 0); //原图裁剪定位
@@ -560,7 +562,7 @@ namespace Masuit.Tools.Media
         public static bool GetPicThumbnail(this Image image, string dFile, int dHeight, int dWidth, int flag = 100)
         {
             ImageFormat tFormat = image.RawFormat;
-            int sW = 0, sH = 0;
+            int sW, sH;
             //按比例缩放
             Size temSize = new Size(image.Width, image.Height);
             if ((temSize.Width > dHeight) || (temSize.Width > dWidth)) //将**改成c#中的或者操作符号
@@ -591,23 +593,13 @@ namespace Masuit.Tools.Media
                 g.DrawImage(image, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
                 g.Dispose();
                 //以下代码为保存图片时，设置压缩质量
-                EncoderParameters ep = new EncoderParameters();
+                var ep = new EncoderParameters();
                 long[] qy = new long[1];
                 qy[0] = flag; //设置压缩的比例1-100
-                EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
-                ep.Param[0] = eParam;
+                ep.Param[0] = new EncoderParameter(Encoder.Quality, qy);
                 ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
-                ImageCodecInfo jpegICIinfo = null;
-                for (int x = 0; x < arrayICI.Length; x++)
-                {
-                    if (arrayICI[x].FormatDescription.Equals("JPEG"))
-                    {
-                        jpegICIinfo = arrayICI[x];
-                        break;
-                    }
-                }
-
-                if (jpegICIinfo != null) ob.Save(dFile, jpegICIinfo, ep); //dFile是压缩后的新路径
+                ImageCodecInfo jpegIcIinfo = arrayICI.FirstOrDefault(t => t.FormatDescription.Equals("JPEG"));
+                if (jpegIcIinfo != null) ob.Save(dFile, jpegIcIinfo, ep); //dFile是压缩后的新路径
                 else ob.Save(dFile, tFormat);
                 return true;
             }
@@ -661,8 +653,6 @@ namespace Masuit.Tools.Media
                         y = (originalImage.Height - oh) / 2;
                     }
                     break;
-                default:
-                    break;
             }
 
             //新建一个bmp图片
@@ -713,16 +703,16 @@ namespace Masuit.Tools.Media
         public static Bitmap LDPic(this Bitmap mybm, int width, int height, int val)
         {
             Bitmap bm = new Bitmap(width, height); //初始化一个记录经过处理后的图片对象
-            int x, y, resultR, resultG, resultB; //x、y是循环次数，后面三个是记录红绿蓝三个值的
+            int x, y; //x、y是循环次数，后面三个是记录红绿蓝三个值的
             Color pixel;
             for (x = 0; x < width; x++)
             {
                 for (y = 0; y < height; y++)
                 {
                     pixel = mybm.GetPixel(x, y); //获取当前像素的值
-                    resultR = pixel.R + val; //检查红色值会不会超出[0, 255]
-                    resultG = pixel.G + val; //检查绿色值会不会超出[0, 255]
-                    resultB = pixel.B + val; //检查蓝色值会不会超出[0, 255]
+                    var resultR = pixel.R + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
+                    var resultG = pixel.G + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
+                    var resultB = pixel.B + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
                     bm.SetPixel(x, y, Color.FromArgb(resultR, resultG, resultB)); //绘图
                 }
             }
@@ -768,22 +758,20 @@ namespace Masuit.Tools.Media
         /// 浮雕处理
         /// </summary>
         /// <param name="oldBitmap">原始图片</param>
-        /// <param name="Width">原始图片的长度</param>
-        /// <param name="Height">原始图片的高度</param>
-        public static Bitmap Relief(this Bitmap oldBitmap, int Width, int Height)
+        /// <param name="width">原始图片的长度</param>
+        /// <param name="height">原始图片的高度</param>
+        public static Bitmap Relief(this Bitmap oldBitmap, int width, int height)
         {
-            Bitmap newBitmap = new Bitmap(Width, Height);
-            Color color1, color2;
-            for (int x = 0; x < Width - 1; x++)
+            Bitmap newBitmap = new Bitmap(width, height);
+            for (int x = 0; x < width - 1; x++)
             {
-                for (int y = 0; y < Height - 1; y++)
+                for (int y = 0; y < height - 1; y++)
                 {
-                    int r = 0, g = 0, b = 0;
-                    color1 = oldBitmap.GetPixel(x, y);
-                    color2 = oldBitmap.GetPixel(x + 1, y + 1);
-                    r = Math.Abs(color1.R - color2.R + 128);
-                    g = Math.Abs(color1.G - color2.G + 128);
-                    b = Math.Abs(color1.B - color2.B + 128);
+                    var color1 = oldBitmap.GetPixel(x, y);
+                    var color2 = oldBitmap.GetPixel(x + 1, y + 1);
+                    var r = Math.Abs(color1.R - color2.R + 128);
+                    var g = Math.Abs(color1.G - color2.G + 128);
+                    var b = Math.Abs(color1.B - color2.B + 128);
                     if (r > 255) r = 255;
                     if (r < 0) r = 0;
                     if (g > 255) g = 255;

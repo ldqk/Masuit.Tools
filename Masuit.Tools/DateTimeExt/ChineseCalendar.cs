@@ -17,10 +17,7 @@ namespace Masuit.Tools.DateTimeExt
         /// 获取农历当前日期
         /// </summary>
         /// <returns>当前农历日期</returns>
-        public static string GetChineseDateTimeNow(this DateTime dt)
-        {
-            return GetChineseDateTime(dt);
-        }
+        public static string GetChineseDateTimeNow(this DateTime dt) => GetChineseDateTime(dt);
 
         /// <summary>
         /// 根据公历获取农历日期
@@ -32,12 +29,9 @@ namespace Masuit.Tools.DateTimeExt
             int lyear = cCalendar.GetYear(datetime);
             int lmonth = cCalendar.GetMonth(datetime);
             int lday = cCalendar.GetDayOfMonth(datetime);
-
             //获取闰月， 0 则表示没有闰月
             int leapMonth = cCalendar.GetLeapMonth(lyear);
-
             bool isleap = false;
-
             if (leapMonth > 0)
             {
                 if (leapMonth == lmonth)
@@ -74,10 +68,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="datetime">公历日期</param>
         /// <returns>生肖</returns>
-        public static string GetShengXiao(this DateTime datetime)
-        {
-            return shengxiao[cCalendar.GetTerrestrialBranch(cCalendar.GetSexagenaryYear(datetime)) - 1];
-        }
+        public static string GetShengXiao(this DateTime datetime) => shengxiao[cCalendar.GetTerrestrialBranch(cCalendar.GetSexagenaryYear(datetime)) - 1];
 
         #region 农历年
 
@@ -110,7 +101,6 @@ namespace Masuit.Tools.DateTimeExt
                 int dzIndex = (year - 4) % 12;
                 return string.Concat(tiangan[tgIndex], dizhi[dzIndex], "[", shengxiao[dzIndex], "]");
             }
-
             throw new ArgumentOutOfRangeException("无效的年份!");
         }
 
@@ -135,7 +125,6 @@ namespace Masuit.Tools.DateTimeExt
             {
                 return months[month - 1];
             }
-
             throw new ArgumentOutOfRangeException("无效的月份!");
         }
 
@@ -163,12 +152,8 @@ namespace Masuit.Tools.DateTimeExt
                 {
                     return string.Concat(days1[(day - 1) / 10], days[(day - 1) % 10]);
                 }
-                else
-                {
-                    return string.Concat(days[(day - 1) / 10], days1[1]);
-                }
+                return string.Concat(days[(day - 1) / 10], days1[1]);
             }
-
             throw new ArgumentOutOfRangeException("无效的日!");
         }
 

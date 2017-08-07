@@ -58,40 +58,28 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="fs">源文件流</param>
         /// <returns>MD5 值16进制字符串</returns>
-        public static string GetFileMD5(this FileStream fs)
-        {
-            return HashFile(fs, "md5");
-        }
+        public static string GetFileMD5(this FileStream fs) => HashFile(fs, "md5");
 
         /// <summary>
         /// 计算文件的 MD5 值
         /// </summary>
         /// <param name="fs">源文件流</param>
         /// <returns>MD5 值16进制字符串</returns>
-        public static Task<string> GetFileMD5Async(this FileStream fs)
-        {
-            return HashFileAsync(fs, "md5");
-        }
+        public static Task<string> GetFileMD5Async(this FileStream fs) => HashFileAsync(fs, "md5");
 
         /// <summary>
         /// 计算文件的 sha1 值
         /// </summary>
         /// <param name="fs">源文件流</param>
         /// <returns>sha1 值16进制字符串</returns>
-        public static string GetFileSha1(this Stream fs)
-        {
-            return HashFile(fs, "sha1");
-        }
+        public static string GetFileSha1(this Stream fs) => HashFile(fs, "sha1");
 
         /// <summary>
         /// 计算文件的 sha1 值
         /// </summary>
         /// <param name="fs">源文件流</param>
         /// <returns>sha1 值16进制字符串</returns>
-        public static Task<string> GetFileSha1Async(this FileStream fs)
-        {
-            return HashFileAsync(fs, "sha1");
-        }
+        public static Task<string> GetFileSha1Async(this FileStream fs) => HashFileAsync(fs, "sha1");
 
         /// <summary>
         /// 计算文件的哈希值
@@ -177,11 +165,6 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 字节数组转换为16进制表示的字符串
         /// </summary>
-        private static string ByteArrayToHexString(byte[] buf)
-        {
-            return BitConverter.ToString(buf).Replace("-", "");
-        }
-
-
+        private static string ByteArrayToHexString(byte[] buf) => BitConverter.ToString(buf).Replace("-", "");
     }
 }

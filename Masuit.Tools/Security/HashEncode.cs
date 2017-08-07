@@ -19,21 +19,20 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 哈希加密一个字符串
         /// </summary>
-        /// <param name="Security">需要加密的字符串</param>
+        /// <param name="security">需要加密的字符串</param>
         /// <returns>加密后的数据</returns>
-        public static string HashEncoding(this string Security)
+        public static string HashEncoding(this string security)
         {
-            byte[] Value;
-            UnicodeEncoding Code = new UnicodeEncoding();
-            byte[] Message = Code.GetBytes(Security);
-            SHA512Managed Arithmetic = new SHA512Managed();
-            Value = Arithmetic.ComputeHash(Message);
-            Security = "";
-            foreach (byte o in Value)
+            var code = new UnicodeEncoding();
+            byte[] message = code.GetBytes(security);
+            var arithmetic = new SHA512Managed();
+            var value = arithmetic.ComputeHash(message);
+            var sb = new StringBuilder();
+            foreach (byte o in value)
             {
-                Security += (int)o + "O";
+                sb.Append((int)o + "O");
             }
-            return Security;
+            return sb.ToString();
         }
     }
 }

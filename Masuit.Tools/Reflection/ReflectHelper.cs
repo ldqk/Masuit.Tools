@@ -53,106 +53,94 @@ namespace Masuit.Tools.Reflection
             {
                 throw new InvalidProgramException(string.Concat("函数/方法 [", funName, "] 在指定类型(", refType.ToString(), ")中不存在！"));
             }
-            else
+            MethodInfo targetMethod = null;
+            StringBuilder pb = new StringBuilder();
+            foreach (MemberInfo mi in mis)
             {
-                MethodInfo targetMethod = null;
-                StringBuilder pb = new StringBuilder();
-                foreach (MemberInfo mi in mis)
+                if (mi.MemberType != MemberTypes.Method)
                 {
-                    if (mi.MemberType != MemberTypes.Method)
+                    if (mi.MemberType == MemberTypes.Property)
                     {
-                        if (mi.MemberType == MemberTypes.Property)
+                        #region 调用属性方法Get
+                        targetMethod = ((PropertyInfo)mi).GetGetMethod();
+                        break;
+                        #endregion
+                    }
+                    throw new InvalidProgramException(string.Concat("[", funName, "] 不是有效的函数/属性方法！"));
+                }
+
+                #region 检查函数参数和数据类型 绑定正确的函数到目标调用
+
+                MethodInfo curMethod = (MethodInfo)mi;
+                ParameterInfo[] pis = curMethod.GetParameters();
+                if (pis.Length == funParams.Length)
+                {
+                    var validParamsLen = true;
+
+                    pb = new StringBuilder();
+                    bool paramFlag = true;
+                    int paramIdx = 0;
+
+                    #region 检查数据类型 设置validParamsType是否有效
+                    foreach (ParameterInfo pi in pis)
+                    {
+                        pb.AppendFormat("Parameter {0}: Type={1}, Name={2}\n", paramIdx, pi.ParameterType, pi.Name);
+
+                        //不对Null和接受Object类型的参数检查
+                        if (funParams[paramIdx] != null && pi.ParameterType != typeof(object) && (pi.ParameterType != funParams[paramIdx].GetType()))
                         {
-                            #region 调用属性方法Get
-                            targetMethod = ((PropertyInfo)mi).GetGetMethod();
-                            break;
+                            #region 检查类型是否兼容
+                            try
+                            {
+                                funParams[paramIdx] = Convert.ChangeType(funParams[paramIdx], pi.ParameterType);
+                            }
+                            catch (Exception)
+                            {
+                                paramFlag = false;
+                            }
                             #endregion
+                            //break;
                         }
-                        else
-                        {
-                            throw new InvalidProgramException(string.Concat("[", funName, "] 不是有效的函数/属性方法！"));
-                        }
+                        ++paramIdx;
+                    }
+                    #endregion
+
+                    bool validParamsType;
+                    if (paramFlag)
+                    {
+                        validParamsType = true;
                     }
                     else
                     {
-                        #region 检查函数参数和数据类型 绑定正确的函数到目标调用
-                        bool validParamsLen = false, validParamsType = false;
-
-                        MethodInfo curMethod = (MethodInfo)mi;
-                        ParameterInfo[] pis = curMethod.GetParameters();
-                        if (pis.Length == funParams.Length)
-                        {
-                            validParamsLen = true;
-
-                            pb = new StringBuilder();
-                            bool paramFlag = true;
-                            int paramIdx = 0;
-
-                            #region 检查数据类型 设置validParamsType是否有效
-                            foreach (ParameterInfo pi in pis)
-                            {
-                                pb.AppendFormat("Parameter {0}: Type={1}, Name={2}\n", paramIdx, pi.ParameterType, pi.Name);
-
-                                //不对Null和接受Object类型的参数检查
-                                if (funParams[paramIdx] != null && pi.ParameterType != typeof(object) && (pi.ParameterType != funParams[paramIdx].GetType()))
-                                {
-                                    #region 检查类型是否兼容
-                                    try
-                                    {
-                                        funParams[paramIdx] = Convert.ChangeType(funParams[paramIdx], pi.ParameterType);
-                                    }
-                                    catch (Exception)
-                                    {
-                                        paramFlag = false;
-                                    }
-                                    #endregion
-                                    //break;
-                                }
-                                ++paramIdx;
-                            }
-                            #endregion
-
-                            if (paramFlag)
-                            {
-                                validParamsType = true;
-                            }
-                            else
-                            {
-                                continue;
-                            }
-
-                            if (validParamsLen && validParamsType)
-                            {
-                                targetMethod = curMethod;
-                                break;
-                            }
-                        }
-                        #endregion
+                        continue;
                     }
-                }
-
-                if (targetMethod != null)
-                {
-                    object objReturn = null;
-                    #region 兼顾效率和兼容重载函数调用
-                    try
+                    if (validParamsLen && validParamsType)
                     {
-                        object objInstance = System.Activator.CreateInstance(refType, objInitial);
-                        objReturn = targetMethod.Invoke(objInstance, BindingFlags.InvokeMethod, Type.DefaultBinder, funParams,
-                            System.Globalization.CultureInfo.InvariantCulture);
+                        targetMethod = curMethod;
+                        break;
                     }
-                    catch (Exception)
-                    {
-                        objReturn = refType.InvokeMember(funName, BindingFlags.InvokeMethod, Type.DefaultBinder, null, funParams);
-                    }
-                    #endregion
-                    return (T)objReturn;
                 }
-                else
-                {
-                    throw new InvalidProgramException(string.Concat("函数/方法 [", refType.ToString(), ".", funName, "(args ...) ] 参数长度和数据类型不正确！\n 引用参数信息参考：\n", pb.ToString()));
-                }
+                #endregion
             }
+
+            if (targetMethod != null)
+            {
+                object objReturn = null;
+                #region 兼顾效率和兼容重载函数调用
+                try
+                {
+                    object objInstance = Activator.CreateInstance(refType, objInitial);
+                    objReturn = targetMethod.Invoke(objInstance, BindingFlags.InvokeMethod, Type.DefaultBinder, funParams,
+                        System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch (Exception)
+                {
+                    objReturn = refType.InvokeMember(funName, BindingFlags.InvokeMethod, Type.DefaultBinder, null, funParams);
+                }
+                #endregion
+                return (T)objReturn;
+            }
+            throw new InvalidProgramException(string.Concat("函数/方法 [", refType.ToString(), ".", funName, "(args ...) ] 参数长度和数据类型不正确！\n 引用参数信息参考：\n", pb.ToString()));
         }
 
         /// <summary>
@@ -179,7 +167,7 @@ namespace Masuit.Tools.Reflection
         public static Bitmap LoadBitmap(this Type assemblyType, string resourceHolder, string imageName)
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
-            ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
+            var rm = new ResourceManager(resourceHolder, thisAssembly);
             return (Bitmap)rm.GetObject(imageName);
         }
 

@@ -56,7 +56,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="value">保存的值</param>
         /// <param name="expiry">过期时间</param>
         /// <returns>是否保存成功</returns>
-        public bool StringSet(string key, string value, TimeSpan? expiry = default(TimeSpan?))
+        public bool SetString(string key, string value, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
             return Do(db => db.StringSet(key, value, expiry));
@@ -67,7 +67,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="keyValues">键值对</param>
         /// <returns>是否保存成功</returns>
-        public bool StringSet(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
+        public bool SetString(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
             List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
                 keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
@@ -82,7 +82,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="obj">值</param>
         /// <param name="expiry">过期时间</param>
         /// <returns>是否保存成功</returns>
-        public bool StringSet<T>(string key, T obj, TimeSpan? expiry = default(TimeSpan?))
+        public bool SetString<T>(string key, T obj, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
             string json = ConvertJson(obj);
@@ -94,7 +94,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <returns>值</returns>
-        public string StringGet(string key)
+        public string GetString(string key)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.StringGet(key));
@@ -105,7 +105,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="listKey">键集合</param>
         /// <returns>值集合</returns>
-        public RedisValue[] StringGet(List<string> listKey)
+        public RedisValue[] GetString(List<string> listKey)
         {
             List<string> newKeys = listKey.Select(AddSysCustomKey).ToList();
             return Do(db => db.StringGet(ConvertRedisKeys(newKeys)));
@@ -117,7 +117,7 @@ namespace Masuit.Tools.NoSQL
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
         /// <returns>实例对象</returns>
-        public T StringGet<T>(string key)
+        public T GetString<T>(string key)
         {
             key = AddSysCustomKey(key);
             return Do(db => ConvertObj<T>(db.StringGet(key)));
@@ -158,7 +158,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="value">保存的值</param>
         /// <param name="expiry">过期时间</param>
         /// <returns>是否保存成功</returns>
-        public async Task<bool> StringSetAsync(string key, string value, TimeSpan? expiry = default(TimeSpan?))
+        public async Task<bool> SetStringAsync(string key, string value, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
             return await Do(db => db.StringSetAsync(key, value, expiry));
@@ -169,7 +169,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="keyValues">键值对</param>
         /// <returns>是否保存成功</returns>
-        public async Task<bool> StringSetAsync(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
+        public async Task<bool> SetStringAsync(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
             List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
                 keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
@@ -184,7 +184,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="obj">需要被缓存的对象</param>
         /// <param name="expiry">过期时间</param>
         /// <returns>是否保存成功</returns>
-        public async Task<bool> StringSetAsync<T>(string key, T obj, TimeSpan? expiry = default(TimeSpan?))
+        public async Task<bool> SetStringAsync<T>(string key, T obj, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
             string json = ConvertJson(obj);
@@ -196,7 +196,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <returns>值</returns>
-        public async Task<string> StringGetAsync(string key)
+        public async Task<string> GetStringAsync(string key)
         {
             key = AddSysCustomKey(key);
             return await Do(db => db.StringGetAsync(key));
@@ -207,10 +207,10 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="listKey">键集合</param>
         /// <returns>值集合</returns>
-        public async Task<RedisValue[]> StringGetAsync(List<string> listKey)
+        public Task<RedisValue[]> GetStringAsync(List<string> listKey)
         {
             List<string> newKeys = listKey.Select(AddSysCustomKey).ToList();
-            return await Do(db => db.StringGetAsync(ConvertRedisKeys(newKeys)));
+            return Do(db => db.StringGetAsync(ConvertRedisKeys(newKeys)));
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Masuit.Tools.NoSQL
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
         /// <returns>实例对象</returns>
-        public async Task<T> StringGetAsync<T>(string key)
+        public async Task<T> GetStringAsync<T>(string key)
         {
             key = AddSysCustomKey(key);
             string result = await Do(db => db.StringGetAsync(key));
@@ -232,10 +232,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="val">可以为负</param>
         /// <returns>增长后的值</returns>
-        public async Task<double> StringIncrementAsync(string key, double val = 1)
+        public Task<double> IncrementStringAsync(string key, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.StringIncrementAsync(key, val));
+            return Do(db => db.StringIncrementAsync(key, val));
         }
 
         /// <summary>
@@ -244,10 +244,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="val">可以为负</param>
         /// <returns>减少后的值</returns>
-        public async Task<double> StringDecrementAsync(string key, double val = 1)
+        public Task<double> DecrementStringAsync(string key, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.StringDecrementAsync(key, val));
+            return Do(db => db.StringDecrementAsync(key, val));
         }
 
         #endregion 异步方法
@@ -278,7 +278,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
         /// <returns>是否存储成功</returns>
-        public bool HashSet<T>(string key, string dataKey, T t)
+        public bool SetHash<T>(string key, string dataKey, T t)
         {
             key = AddSysCustomKey(key);
             return Do(db =>
@@ -294,7 +294,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <returns>是否移除成功</returns>
-        public bool HashDelete(string key, string dataKey)
+        public bool DeleteHash(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.HashDelete(key, dataKey));
@@ -306,7 +306,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKeys">对象的字段集合</param>
         /// <returns>数量</returns>
-        public long HashDelete(string key, List<RedisValue> dataKeys)
+        public long DeleteHash(string key, List<RedisValue> dataKeys)
         {
             key = AddSysCustomKey(key);
             //List<RedisValue> dataKeys1 = new List<RedisValue>() {"1","2"};
@@ -320,7 +320,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <returns>对象实例</returns>
-        public T HashGet<T>(string key, string dataKey)
+        public T GetHash<T>(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
             return Do(db =>
@@ -337,7 +337,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>增长后的值</returns>
-        public double HashIncrement(string key, string dataKey, double val = 1)
+        public double IncrementHash(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.HashIncrement(key, dataKey, val));
@@ -350,7 +350,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>减少后的值</returns>
-        public double HashDecrement(string key, string dataKey, double val = 1)
+        public double DecrementHash(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.HashDecrement(key, dataKey, val));
@@ -382,10 +382,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <returns>是否缓存成功</returns>
-        public async Task<bool> HashExistsAsync(string key, string dataKey)
+        public Task<bool> ExistsHashAsync(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashExistsAsync(key, dataKey));
+            return Do(db => db.HashExistsAsync(key, dataKey));
         }
 
         /// <summary>
@@ -396,10 +396,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
         /// <returns>是否存储成功</returns>
-        public async Task<bool> HashSetAsync<T>(string key, string dataKey, T t)
+        public Task<bool> SetHashAsync<T>(string key, string dataKey, T t)
         {
             key = AddSysCustomKey(key);
-            return await Do(db =>
+            return Do(db =>
             {
                 string json = ConvertJson(t);
                 return db.HashSetAsync(key, dataKey, json);
@@ -412,10 +412,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <returns>是否移除成功</returns>
-        public async Task<bool> HashDeleteAsync(string key, string dataKey)
+        public Task<bool> DeleteHashAsync(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashDeleteAsync(key, dataKey));
+            return Do(db => db.HashDeleteAsync(key, dataKey));
         }
 
         /// <summary>
@@ -424,11 +424,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKeys">对象的字段集合</param>
         /// <returns>数量</returns>
-        public async Task<long> HashDeleteAsync(string key, List<RedisValue> dataKeys)
+        public Task<long> DeleteHashAsync(string key, List<RedisValue> dataKeys)
         {
             key = AddSysCustomKey(key);
-            //List<RedisValue> dataKeys1 = new List<RedisValue>() {"1","2"};
-            return await Do(db => db.HashDeleteAsync(key, dataKeys.ToArray()));
+            return Do(db => db.HashDeleteAsync(key, dataKeys.ToArray()));
         }
 
         /// <summary>
@@ -438,7 +437,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <returns>对象实例</returns>
-        public async Task<T> HashGeAsync<T>(string key, string dataKey)
+        public async Task<T> GetHashAsync<T>(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
             string value = await Do(db => db.HashGetAsync(key, dataKey));
@@ -452,10 +451,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>增长后的值</returns>
-        public async Task<double> HashIncrementAsync(string key, string dataKey, double val = 1)
+        public Task<double> IncrementHashAsync(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashIncrementAsync(key, dataKey, val));
+            return Do(db => db.HashIncrementAsync(key, dataKey, val));
         }
 
         /// <summary>
@@ -465,10 +464,10 @@ namespace Masuit.Tools.NoSQL
         /// <param name="dataKey">对象的字段</param>
         /// <param name="val">可以为负</param>
         /// <returns>减少后的值</returns>
-        public async Task<double> HashDecrementAsync(string key, string dataKey, double val = 1)
+        public Task<double> DecrementHashAsync(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashDecrementAsync(key, dataKey, val));
+            return Do(db => db.HashDecrementAsync(key, dataKey, val));
         }
 
         /// <summary>
@@ -498,7 +497,7 @@ namespace Masuit.Tools.NoSQL
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public void ListRemove<T>(string key, T value)
+        public void RemoveList<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
             Do(db => db.ListRemove(key, ConvertJson(value)));
@@ -596,10 +595,10 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public async Task<long> ListRemoveAsync<T>(string key, T value)
+        public Task<long> RemoveListAsync<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.ListRemoveAsync(key, ConvertJson(value)));
+            return Do(db => db.ListRemoveAsync(key, ConvertJson(value)));
         }
 
         /// <summary>
@@ -690,7 +689,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="value">值</param>
         /// <param name="score">排序号</param>
-        public bool SortedSetAdd<T>(string key, T value, double score)
+        public bool AddSortedSet<T>(string key, T value, double score)
         {
             key = AddSysCustomKey(key);
             return Do(redis => redis.SortedSetAdd(key, ConvertJson<T>(value), score));
@@ -701,7 +700,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public bool SortedSetRemove<T>(string key, T value)
+        public bool RemoveSortedSet<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
             return Do(redis => redis.SortedSetRemove(key, ConvertJson(value)));
@@ -712,7 +711,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <returns>数据集合</returns>
-        public List<T> SortedSetRangeByRank<T>(string key)
+        public List<T> SetRangeSortedByRank<T>(string key)
         {
             key = AddSysCustomKey(key);
             return Do(redis =>
@@ -727,7 +726,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">键</param>
         /// <returns>数量</returns>
-        public long SortedSetLength(string key)
+        public long SetSortedLength(string key)
         {
             key = AddSysCustomKey(key);
             return Do(redis => redis.SortedSetLength(key));
@@ -794,7 +793,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="key">redis key</param>
         /// <returns>是否删除成功</returns>
-        public bool KeyDelete(string key)
+        public bool DeleteKey(string key)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.KeyDelete(key));
@@ -805,7 +804,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="keys">rediskey</param>
         /// <returns>成功删除的个数</returns>
-        public long KeyDelete(List<string> keys)
+        public long DeleteKey(List<string> keys)
         {
             List<string> newKeys = keys.Select(AddSysCustomKey).ToList();
             return Do(db => db.KeyDelete(ConvertRedisKeys(newKeys)));
@@ -828,19 +827,19 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">旧的键</param>
         /// <param name="newKey">新的键</param>
         /// <returns>处理结果</returns>
-        public bool KeyRename(string key, string newKey)
+        public bool RenameKey(string key, string newKey)
         {
             key = AddSysCustomKey(key);
             return Do(db => db.KeyRename(key, newKey));
         }
 
         /// <summary>
-        /// 设置Key的时间
+        /// 设置Key的过期时间
         /// </summary>
         /// <param name="key">键</param>
         /// <param name="expiry">过期时间</param>
         /// <returns>处理结果</returns>
-        public bool KeyExpire(string key, TimeSpan? expiry = default(TimeSpan?))
+        public bool Expire(string key, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
             return Do(db => db.KeyExpire(key, expiry));
@@ -962,8 +961,7 @@ namespace Masuit.Tools.NoSQL
 
         private string ConvertJson<T>(T value)
         {
-            string result = value is string ? value.ToString() : JsonConvert.SerializeObject(value);
-            return result;
+            return JsonConvert.SerializeObject(value);
         }
 
         private T ConvertObj<T>(RedisValue value)

@@ -33,7 +33,7 @@ namespace Masuit.Tools.DateTimeExt
             {
                 return fDateTime;
             }
-            System.DateTime s = Convert.ToDateTime(fDateTime);
+            var s = Convert.ToDateTime(fDateTime);
             return s.ToString(formatStr);
         }
 
@@ -89,7 +89,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>本年的天数</returns>
         public static int GetDaysOfYear(this DateTime _, int iYear)
         {
-            int cnt = 0;
+            int cnt;
             if (IsRuYear(iYear))
             {
                 //闰年多 1 天 即：2 月为 29 天
@@ -316,25 +316,6 @@ namespace Masuit.Tools.DateTimeExt
             return week;
         }
 
-        /// <summary>判断当前日期所属的年份是否是闰年，私有函数</summary>
-        /// <param name="idt">日期</param>
-        /// <returns>是闰年：True ，不是闰年：False</returns>
-        private static bool IsRuYear(DateTime idt)
-        {
-            //形式参数为日期类型 
-            //例如：2003-12-12
-            var n = idt.Year;
-
-            if ((n % 400 == 0) || (n % 4 == 0 && n % 100 != 0))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         /// <summary>判断当前年份是否是闰年，私有函数</summary>
         /// <param name="iYear">年份</param>
         /// <returns>是闰年：True ，不是闰年：False</returns>
@@ -352,65 +333,6 @@ namespace Masuit.Tools.DateTimeExt
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// 将输入的字符串转化为日期。如果字符串的格式非法，则返回当前日期。
-        /// </summary>
-        /// <param name="strInput">输入字符串</param>
-        /// <returns>日期对象</returns>
-        public static System.DateTime ConvertStringToDate(this string strInput)
-        {
-            System.DateTime oDateTime;
-
-            try
-            {
-                oDateTime = System.DateTime.Parse(strInput);
-            }
-            catch (Exception)
-            {
-                oDateTime = System.DateTime.Today;
-            }
-
-            return oDateTime;
-        }
-
-        /// <summary>
-        /// 将日期对象转化为格式字符串
-        /// </summary>
-        /// <param name="oDateTime">日期对象</param>
-        /// <param name="strFormat">
-        /// 格式：
-        ///		"SHORTDATE"===短日期
-        ///		"LONGDATE"==长日期
-        ///		其它====自定义格式
-        /// </param>
-        /// <returns>日期字符串</returns>
-        public static string ConvertDateToString(this DateTime oDateTime, string strFormat)
-        {
-            string strDate = "";
-
-            try
-            {
-                switch (strFormat.ToUpper())
-                {
-                    case "SHORTDATE":
-                        strDate = oDateTime.ToShortDateString();
-                        break;
-                    case "LONGDATE":
-                        strDate = oDateTime.ToLongDateString();
-                        break;
-                    default:
-                        strDate = oDateTime.ToString(strFormat);
-                        break;
-                }
-            }
-            catch (Exception)
-            {
-                strDate = oDateTime.ToShortDateString();
-            }
-
-            return strDate;
         }
 
         /// <summary>

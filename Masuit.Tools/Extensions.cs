@@ -1457,5 +1457,17 @@ namespace Masuit.Tools
                 return default(DateTime);
             }
         }
+
+        /// <summary>
+        /// 根据正则替换
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regex">正则表达式</param>
+        /// <param name="replacement">新内容</param>
+        /// <returns></returns>
+        public static string Replace(this string input, Regex regex, string replacement)
+        {
+            return regex.Replace(input, replacement);
+        }
     }
 }

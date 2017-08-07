@@ -17,6 +17,7 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>返回Datatable 增加字段 identityid </returns>
+        /// <exception cref="DuplicateNameException">The collection already has a column with the specified name. (The comparison is not case-sensitive.) </exception>
         public static DataTable AddIdentityColumn(this DataTable dt)
         {
             if (!dt.Columns.Contains("identityid"))
@@ -49,17 +50,15 @@ namespace Masuit.Tools.Database
         /// <typeparam name="T">实体 T </typeparam>
         /// <param name="table">datatable</param>
         /// <returns>强类型的数据集合</returns>
-        public static IList<T> DataTableToList<T>(this DataTable table)
-            where T : class
+        public static IList<T> DataTableToList<T>(this DataTable table) where T : class
         {
             if (!IsHaveRows(table))
                 return new List<T>();
 
             IList<T> list = new List<T>();
-            T model = default(T);
             foreach (DataRow dr in table.Rows)
             {
-                model = Activator.CreateInstance<T>();
+                var model = Activator.CreateInstance<T>();
 
                 foreach (DataColumn dc in dr.Table.Columns)
                 {
@@ -71,7 +70,6 @@ namespace Masuit.Tools.Database
                         pi.SetValue(model, drValue, null);
                     }
                 }
-
                 list.Add(model);
             }
             return list;
@@ -83,48 +81,39 @@ namespace Masuit.Tools.Database
         /// <typeparam name="T">实体</typeparam>
         /// <param name="list"> 实体列表</param>
         /// <returns>映射为数据表</returns>
-        public static DataTable ListToDataTable<T>(this IList<T> list)
-            where T : class
+        /// <exception cref="OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
+        public static DataTable ListToDataTable<T>(this IList<T> list) where T : class
         {
             if (list == null || list.Count <= 0)
             {
                 return null;
             }
-            DataTable dt = new DataTable(typeof(T).Name);
-            DataColumn column;
-            DataRow row;
-
+            var dt = new DataTable(typeof(T).Name);
             PropertyInfo[] myPropertyInfo = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
             int length = myPropertyInfo.Length;
             bool createColumn = true;
-
             foreach (T t in list)
             {
                 if (t == null)
                 {
                     continue;
                 }
-
-                row = dt.NewRow();
+                var row = dt.NewRow();
                 for (int i = 0; i < length; i++)
                 {
                     PropertyInfo pi = myPropertyInfo[i];
                     string name = pi.Name;
                     if (createColumn)
                     {
-                        column = new DataColumn(name, pi.PropertyType);
+                        var column = new DataColumn(name, pi.PropertyType);
                         dt.Columns.Add(column);
                     }
-
                     row[name] = pi.GetValue(t, null);
                 }
-
                 if (createColumn)
                 {
                     createColumn = false;
                 }
-
                 dt.Rows.Add(row);
             }
             return dt;
@@ -153,12 +142,11 @@ namespace Masuit.Tools.Database
             List<string> propertyNameList = new List<string>();
             if (propertyName != null)
                 propertyNameList.AddRange(propertyName);
-
             DataTable result = new DataTable();
             if (list.Count > 0)
             {
                 PropertyInfo[] propertys = list[0].GetType().GetProperties();
-                foreach (PropertyInfo pi in propertys)
+                propertys.ForEach(pi =>
                 {
                     if (propertyNameList.Count == 0)
                     {
@@ -171,30 +159,29 @@ namespace Masuit.Tools.Database
                             result.Columns.Add(pi.Name, pi.PropertyType);
                         }
                     }
-                }
-
-                for (int i = 0; i < list.Count; i++)
+                });
+                list.ForEach(item =>
                 {
                     ArrayList tempList = new ArrayList();
                     foreach (PropertyInfo pi in propertys)
                     {
                         if (propertyNameList.Count == 0)
                         {
-                            object obj = pi.GetValue(list[i], null);
+                            object obj = pi.GetValue(item, null);
                             tempList.Add(obj);
                         }
                         else
                         {
                             if (propertyNameList.Contains(pi.Name))
                             {
-                                object obj = pi.GetValue(list[i], null);
+                                object obj = pi.GetValue(item, null);
                                 tempList.Add(obj);
                             }
                         }
                     }
                     object[] array = tempList.ToArray();
                     result.LoadDataRow(array, true);
-                }
+                });
             }
             return result;
         }
@@ -208,8 +195,7 @@ namespace Masuit.Tools.Database
         {
             if (nameList.Count <= 0)
                 return null;
-
-            DataTable myDataTable = new DataTable();
+            var myDataTable = new DataTable();
             foreach (string columnName in nameList)
             {
                 myDataTable.Columns.Add(columnName, typeof(string));
@@ -380,21 +366,14 @@ namespace Masuit.Tools.Database
         /// <returns>过滤后的内存表</returns>
         public static DataTable FilterDataTable(this DataTable dt, string condition)
         {
-            if (condition.Trim()?.Length == 0)
+            if (condition.Trim().Length == 0)
             {
                 return dt;
             }
-            else
-            {
-                DataTable newdt = new DataTable();
-                newdt = dt.Clone();
-                DataRow[] dr = dt.Select(condition);
-                for (int i = 0; i < dr.Length; i++)
-                {
-                    newdt.ImportRow((DataRow)dr[i]);
-                }
-                return newdt;
-            }
+            var newdt = dt.Clone();
+            DataRow[] dr = dt.Select(condition);
+            dr.ForEach(t => newdt.ImportRow(t));
+            return newdt;
         }
     }
 }

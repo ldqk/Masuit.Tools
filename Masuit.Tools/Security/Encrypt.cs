@@ -446,6 +446,26 @@ namespace Masuit.Tools.Security
         public static string MDString2(this string message) => MDString(MDString(message));
 
         /// <summary>
+        /// MD5 三次加密算法
+        /// </summary>
+        /// <param name="s">需要加密的字符串</param>
+        /// <returns>MD5字符串</returns>
+        public static string MDString3(this string s)
+        {
+            MD5 md5 = MD5.Create();
+            byte[] bytes = Encoding.ASCII.GetBytes(s);
+            byte[] bytes1 = md5.ComputeHash(bytes);
+            byte[] bytes2 = md5.ComputeHash(bytes1);
+            byte[] bytes3 = md5.ComputeHash(bytes2);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in bytes3)
+            {
+                sb.Append(item.ToString("x").PadLeft(2, '0'));
+            }
+            return sb.ToString();
+        }
+        /// <summary>
         ///     对字符串进行MD5加盐加密
         /// </summary>
         /// <param name="message">需要加密的字符串</param>
@@ -461,6 +481,27 @@ namespace Masuit.Tools.Security
         /// <returns>加密后的结果</returns>
         public static string MDString2(this string message, string salt) => MDString(MDString(message + salt), salt);
 
+        /// <summary>
+        /// MD5 三次加密算法
+        /// </summary>
+        /// <param name="s">需要加密的字符串</param>
+        /// <param name="salt">盐</param>
+        /// <returns>MD5字符串</returns>
+        public static string MDString3(this string s, string salt)
+        {
+            MD5 md5 = MD5.Create();
+            byte[] bytes = Encoding.ASCII.GetBytes(s + salt);
+            byte[] bytes1 = md5.ComputeHash(bytes);
+            byte[] bytes2 = md5.ComputeHash(bytes1);
+            byte[] bytes3 = md5.ComputeHash(bytes2);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in bytes3)
+            {
+                sb.Append(item.ToString("x").PadLeft(2, '0'));
+            }
+            return sb.ToString();
+        }
         #endregion
 
         #region 获取文件的MD5值
