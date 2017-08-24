@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
 using Masuit.Tools.Models;
@@ -229,32 +229,59 @@ namespace Masuit.Tools.Net
         #region 获取客户端IP地址信息
 
         /// <summary>
-        /// 获取客户端IP地址信息
+        /// 根据IP地址获取详细地理信息
         /// </summary>
-        /// <param name="ip">IP地址</param>
-        /// <returns>详细的地理位置、运营商信息</returns>
-        public static async Task<IPData> GetIPAddressInfoAsync(this string ip)
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public static Tuple<string, List<string>> GetIPAddressInfoAsync(this string ip)
         {
-            var client = new HttpClient();
             bool isIpAddress;
             Match match = ip.MatchInetAddress(out isIpAddress); //IP地址正则
             if (isIpAddress)
             {
-                try
+                string ak = "89772e94509a9b903724e247cbc175c2";
+                HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
+                string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
+                var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
+                if (ipAddress.Status == 0)
                 {
-                    string ipData = await client.GetStringAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}"); //根据API地址获取
-                    var ipAddress = JsonConvert.DeserializeObject<INetAddress>(ipData); //IP地址对象变量声明
-                    return ipAddress?.data ?? new INetAddress { data = { region = "未能获取到IP地址信息" } }.data; //如果发生异常，则构造一个空对象;
+                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                    string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                    PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
+                    if (address.Status == 0)
+                    {
+                        string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance}米";
+                        List<string> pois = new List<string>();
+                        address.AddressResult.Pois.ForEach(p => { pois.Add($"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance}米"); });
+                        return new Tuple<string, List<string>>(detail, pois);
+                    }
                 }
-                catch (Exception)
+                else
                 {
-                    return new INetAddress { data = { region = "未能获取到IP地址信息" } }.data; //如果发生异常，则构造一个空对象
+                    client.BaseAddress = new Uri("http://ip.taobao.com");
+                    string result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                    if (taobaoIp.Code == 0)
+                    {
+                        return new Tuple<string, List<string>>(taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City, new List<string>());
+                    }
                 }
+                return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
             }
-
-            return new INetAddress { data = { region = "IP地址格式不正确" } }.data; //如果发生异常，则构造一个空对象
+            return new Tuple<string, List<string>>($"{ip}不是一个合法的IP地址", new List<string>());
         }
 
+        /// <summary>
+        /// 根据IP地址获取ISP
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public static string GetISP(this string ip)
+        {
+            HttpClient client = new HttpClient() { BaseAddress = new Uri($"https://api.asilu.com") };
+            string result = client.GetStringAsync($"/ip/?ip={ip}").Result;
+            return JsonConvert.DeserializeObject<IspInfo>(result).ISPName;
+        }
         #endregion
     }
 }

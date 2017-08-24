@@ -83,6 +83,10 @@
     <Compile Include="Html\HtmlHelper.cs" />
     <Compile Include="Html\HtmlTools.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Models\BaiduIP.cs" />
+    <Compile Include="Models\IspInfo.cs" />
+    <Compile Include="Models\PhysicsAddress.cs" />
+    <Compile Include="Models\TaobaoIP.cs" />
     <Compile Include="Net\CacheHelper.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\SocketClient.cs" />
@@ -96,8 +100,6 @@
     <Compile Include="Hardware\SystemInfo.cs" />
     <Compile Include="Media\ImageUtilities.cs" />
     <Compile Include="Models\Email.cs" />
-    <Compile Include="Models\INetAddress.cs" />
-    <Compile Include="Models\IPData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashEncode.cs" />
     <Compile Include="Security\RSACrypt.cs" />
