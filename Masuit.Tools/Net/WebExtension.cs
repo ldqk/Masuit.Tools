@@ -65,8 +65,9 @@ namespace Masuit.Tools.Net
         /// <param name="_"></param>
         /// <param name="obj">需要存的对象</param>
         /// <param name="cookieName">Cookie键，默认为sessionId</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static bool SetByRedis<T>(this HttpSessionState _, T obj, string cookieName = "sessionId")
+        public static bool SetByRedis<T>(this HttpSessionState _, T obj, string cookieName = "sessionId", int expire = 20)
         {
             var sessionId = Guid.NewGuid().ToString();
             if (!string.IsNullOrEmpty(cookieName))
@@ -76,7 +77,7 @@ namespace Masuit.Tools.Net
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
             RedisHelper helper = new RedisHelper(1);
-            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(20)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
 
         /// <summary>
@@ -89,8 +90,9 @@ namespace Masuit.Tools.Net
         /// <param name="_"></param>
         /// <param name="obj">需要存的对象</param>
         /// <param name="cookieName">Cookie键，默认为sessionId</param>
-        /// <returns></returns>
-        public static bool SetByRedis<T>(this HttpSessionStateBase _, T obj, string cookieName = "sessionId")
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns> 
+        public static bool SetByRedis<T>(this HttpSessionStateBase _, T obj, string cookieName = "sessionId", int expire = 20)
         {
             var sessionId = Guid.NewGuid().ToString();
             if (!string.IsNullOrEmpty(cookieName))
@@ -100,8 +102,9 @@ namespace Masuit.Tools.Net
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
             RedisHelper helper = new RedisHelper(1);
-            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(20)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
+
         #endregion
 
         #region 获取Session
@@ -129,15 +132,16 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
-        /// <param name="sessionId"></param>
-        /// <returns></returns>
-        public static T GetByRedis<T>(this HttpSessionState _, string sessionId)
+        /// <param name="key">键</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns> 
+        public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20)
         {
             RedisHelper helper = new RedisHelper(1);
-            if (helper.KeyExists(sessionId))
+            if (helper.KeyExists(key))
             {
-                helper.Expire(sessionId, TimeSpan.FromMinutes(20));
-                return helper.GetString<T>(sessionId);
+                helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return helper.GetString<T>(key);
             }
             return default(T);
         }
@@ -147,33 +151,15 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
-        /// <param name="sessionId"></param>
+        /// <param name="key">键</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static T GetByRedis<T>(this HttpSessionStateBase _, string sessionId)
+        public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20)
         {
             RedisHelper helper = new RedisHelper(1);
-            if (helper.KeyExists(sessionId))
-            {
-                helper.Expire(sessionId, TimeSpan.FromMinutes(20));
-                return helper.GetString<T>(sessionId);
-            }
-            return default(T);
-        }
-
-        /// <summary>
-        /// 从Redis根据Cookie读取到的键取Session值
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="_"></param>
-        /// <param name="cookieName">用于存SessionId的Cookie键</param>
-        /// <returns></returns>
-        public static T GetByCookieRedis<T>(this HttpSessionState _, string cookieName = "sessionId")
-        {
-            RedisHelper helper = new RedisHelper(1);
-            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(20));
+                helper.Expire(key, TimeSpan.FromMinutes(expire));
                 return helper.GetString<T>(key);
             }
             return default(T);
@@ -185,14 +171,35 @@ namespace Masuit.Tools.Net
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
         /// <param name="cookieName">用于存SessionId的Cookie键</param>
-        /// <returns></returns>
-        public static T GetByCookieRedis<T>(this HttpSessionStateBase _, string cookieName = "sessionId")
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns> 
+        public static T GetByCookieRedis<T>(this HttpSessionState _, string cookieName = "sessionId", int expire = 20)
         {
             RedisHelper helper = new RedisHelper(1);
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(20));
+                helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return helper.GetString<T>(key);
+            }
+            return default(T);
+        }
+
+        /// <summary>
+        /// 从Redis根据Cookie读取到的键取Session值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="_"></param>
+        /// <param name="cookieName">用于存SessionId的Cookie键</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns> 
+        public static T GetByCookieRedis<T>(this HttpSessionStateBase _, string cookieName = "sessionId", int expire = 20)
+        {
+            RedisHelper helper = new RedisHelper(1);
+            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            if (helper.KeyExists(key))
+            {
+                helper.Expire(key, TimeSpan.FromMinutes(expire));
                 return helper.GetString<T>(key);
             }
             return default(T);
@@ -219,6 +226,32 @@ namespace Masuit.Tools.Net
         /// <param name="key"></param>
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionStateBase _, string key = "sessionId")
+        {
+            RedisHelper helper = new RedisHelper(1);
+            return helper.DeleteKey(key);
+        }
+
+        /// <summary>
+        /// 从Redis根据Cookie读取到的键移除Session
+        /// </summary>
+        /// <param name="_"></param>
+        /// <param name="cookieName"></param>
+        /// <returns></returns>
+        public static bool RemoveByCookieRedis(this HttpSessionState _, string cookieName = "sessionId")
+        {
+            RedisHelper helper = new RedisHelper(1);
+            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+            return helper.DeleteKey(key);
+        }
+
+        /// <summary>
+        /// 从Redis移除对应键的Session
+        /// </summary>
+        /// <param name="_"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool RemoveByRedis(this HttpSessionState _, string key = "sessionId")
         {
             RedisHelper helper = new RedisHelper(1);
             return helper.DeleteKey(key);
@@ -272,6 +305,35 @@ namespace Masuit.Tools.Net
         }
 
         /// <summary>
+        /// 根据IP地址获取详细地理信息对象
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public static PhysicsAddress GetPhysicsAddressInfoAsync(this string ip)
+        {
+            bool isIpAddress;
+            Match match = ip.MatchInetAddress(out isIpAddress); //IP地址正则
+            if (isIpAddress)
+            {
+                string ak = "89772e94509a9b903724e247cbc175c2";
+                HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
+                string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
+                var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
+                if (ipAddress.Status == 0)
+                {
+                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                    string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                    PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
+                    if (address.Status == 0)
+                    {
+                        return address;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 根据IP地址获取ISP
         /// </summary>
         /// <param name="ip"></param>
@@ -282,6 +344,7 @@ namespace Masuit.Tools.Net
             string result = client.GetStringAsync($"/ip/?ip={ip}").Result;
             return JsonConvert.DeserializeObject<IspInfo>(result).ISPName;
         }
+
         #endregion
     }
 }
