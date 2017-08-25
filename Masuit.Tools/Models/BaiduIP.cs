@@ -2,6 +2,9 @@
 
 namespace Masuit.Tools.Models
 {
+    /// <summary>
+    /// 百度IP接口的信息
+    /// </summary>
     public class BaiduIP
     {
         /// <summary>
@@ -41,6 +44,9 @@ namespace Masuit.Tools.Models
         public LatiLongitude LatiLongitude { get; set; }
     }
 
+    /// <summary>
+    /// 经纬度
+    /// </summary>
     public class LatiLongitude
     {
         /// <summary>

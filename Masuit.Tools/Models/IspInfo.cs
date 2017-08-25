@@ -2,6 +2,9 @@
 
 namespace Masuit.Tools.Models
 {
+    /// <summary>
+    /// ISP信息
+    /// </summary>
     public class IspInfo
     {
         /// <summary>

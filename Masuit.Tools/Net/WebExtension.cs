@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
-using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
 using Masuit.Tools.Models;
@@ -266,10 +265,10 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        public static Tuple<string, List<string>> GetIPAddressInfoAsync(this string ip)
+        public static Tuple<string, List<string>> GetIPAddressInfo(this string ip)
         {
             bool isIpAddress;
-            Match match = ip.MatchInetAddress(out isIpAddress); //IP地址正则
+            ip.MatchInetAddress(out isIpAddress);
             if (isIpAddress)
             {
                 string ak = "89772e94509a9b903724e247cbc175c2";
@@ -309,10 +308,10 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        public static PhysicsAddress GetPhysicsAddressInfoAsync(this string ip)
+        public static PhysicsAddress GetPhysicsAddressInfo(this string ip)
         {
             bool isIpAddress;
-            Match match = ip.MatchInetAddress(out isIpAddress); //IP地址正则
+            ip.MatchInetAddress(out isIpAddress);
             if (isIpAddress)
             {
                 string ak = "89772e94509a9b903724e247cbc175c2";
@@ -342,7 +341,14 @@ namespace Masuit.Tools.Net
         {
             HttpClient client = new HttpClient() { BaseAddress = new Uri($"https://api.asilu.com") };
             string result = client.GetStringAsync($"/ip/?ip={ip}").Result;
-            return JsonConvert.DeserializeObject<IspInfo>(result).ISPName;
+            try
+            {
+                return JsonConvert.DeserializeObject<IspInfo>(result).ISPName;
+            }
+            catch (Exception)
+            {
+                return $"未能找到{ip}的ISP信息";
+            }
         }
 
         #endregion

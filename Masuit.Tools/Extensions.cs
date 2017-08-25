@@ -1459,6 +1459,16 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 字符串转Guid
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Guid ToGuid(this string s)
+        {
+            return Guid.Parse(s);
+        }
+
+        /// <summary>
         /// 根据正则替换
         /// </summary>
         /// <param name="input"></param>

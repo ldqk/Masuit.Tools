@@ -2,6 +2,9 @@
 
 namespace Masuit.Tools.Models
 {
+    /// <summary>
+    /// 淘宝IP接口信息
+    /// </summary>
     public class TaobaoIP
     {
         /// <summary>
@@ -17,6 +20,9 @@ namespace Masuit.Tools.Models
         public IPData IpData { get; set; }
     }
 
+    /// <summary>
+    /// 淘宝IP接口信息
+    /// </summary>
     public class IPData
     {
         /// <summary>
