@@ -1212,6 +1212,17 @@ namespace Masuit.Tools
             return isMatch ? match : null;
         }
 
+        /// <summary>
+        /// 匹配Email
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchEmail(this string s)
+        {
+            MatchEmail(s, out bool success);
+            return success;
+        }
+
         #endregion
 
         #region 匹配完整的URL
@@ -1256,6 +1267,46 @@ namespace Masuit.Tools
             Match match = Regex.Match(s, @"^((\w*):?//)?((\w+)\.|((\S+):(\S+))@)?((\w+)\.(\w+))(:(\d{1,5}))?(/([a-z0-9A-Z-_@{}!+%/]+(\.\w+)?)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]+&?)+)?(/?#[a-z0-9A-Z-_@{}!+%/]+)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]*&?)+)?)?$");
             isMatch = match.Success;
             return isMatch ? match : null;
+        }
+
+        /// <summary>
+        /// 匹配完整格式的URL，支持以下格式的URL,支持中文域名：<br/>
+        /// 支持不带协议名的网址，支持自适应协议的网址，支持完整路径，支持查询参数，支持锚点，支持锚点查询参数，支持16进制编码<br/>
+        /// www.baidu.com <br/>
+        /// www.baidu.com <br/>
+        /// baidu.com <br/>
+        /// //www.baidu.com <br/>
+        /// http://www.baidu.com <br/>
+        /// https://www.baidu.com <br/>
+        /// https://baidu.com <br/>
+        /// ftp://baidu.com <br/>
+        /// ftp://baidu.com/abc/def <br/>
+        /// ftp://admin:123456@baidu.com <br/>
+        /// ftp://admin:123456@baidu.com/abc/def <br/>
+        /// https://baidu.com:8080 <br/>
+        /// https://baidu.com/abc/def <br/>
+        /// https://baidu.com:8080/abc/def <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www <br/>
+        /// https://baidu.com/abc/def/hhh.html?s=w@w{w}!s <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yy+y <br/>
+        /// https://baidu.com/abc/def/hhh.html?s=www&amp;x=yyy <br/>
+        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yyy#top <br/>
+        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA/hhh.html?s=www&amp;x=yyy#top <br/>
+        /// https://baidu.com:8080/abc/def/hi_j+k-mn%ADF%AA?s=www&amp;x=yyy#top/aaa <br/>
+        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&amp;x=yyy#top/aaa/bbb/ccc <br/>
+        /// http://music.163.com/#/my/m/music/empty <br/>
+        /// http://music.163.com/abc/#/my/m/music/empty <br/>
+        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy#/my/m/music/empty <br/>
+        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy/#/my/m/music/empty <br/>
+        /// http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&amp;s=fade&amp;type=1!k <br/>
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchUrl(this string s)
+        {
+            MatchUrl(s, out bool success);
+            return success;
         }
 
         #endregion
@@ -1362,6 +1413,17 @@ namespace Masuit.Tools
             return isMatch ? match : null;
         }
 
+        /// <summary>
+        /// 校验IP地址的正确性，同时支持IPv4和IPv6
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchInetAddress(this string s)
+        {
+            MatchInetAddress(s, out bool success);
+            return success;
+        }
+
         #endregion
 
         #region 校验手机号码的正确性
@@ -1377,6 +1439,17 @@ namespace Masuit.Tools
             Match match = Regex.Match(s, @"^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,6,7,8]))\d{8}$");
             isMatch = match.Success;
             return isMatch ? match : null;
+        }
+
+        /// <summary>
+        /// 匹配手机号码
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchPhoneNumber(this string s)
+        {
+            MatchPhoneNumber(s, out bool success);
+            return success;
         }
 
         #endregion
