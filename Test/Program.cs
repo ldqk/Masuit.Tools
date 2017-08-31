@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml.Serialization;
-using Masuit.Tools;
-using Masuit.Tools.Win32;
+using Masuit.Tools.Html;
 
 namespace Test
 {
@@ -45,7 +40,9 @@ namespace Test
             //"114.114.256.114".MatchInetAddress(out isIP);//False
             //"114.114.114.114".MatchInetAddress(out isIP);//True
             //Console.WriteLine(isIP);
-            Console.WriteLine(WindowsCommand.Execute("help"));
+            //Console.WriteLine(WindowsCommand.Execute("help"));
+            string match = "vawevbgw".MatchRandomImgSrc();
+            Console.WriteLine(match);
             Console.ReadKey();
         }
     }

@@ -434,18 +434,29 @@ namespace Masuit.Tools.Html
 
 
         /// <summary>
-        /// 匹配html的img标签
+        /// 匹配html的所有img标签集合
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static Match MatchImgTag(this string html) => Regex.Match(html, @"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
+        public static MatchCollection MatchImgTags(this string html) => Regex.Matches(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
+
+        /// <summary>
+        /// 匹配html的一个img标签
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static Match MatchImgTag(this string html) => Regex.Match(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
 
         /// <summary>
         /// 获取html中第一个img标签的src
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static string MatchFirstImgSrc(this string html) => MatchImgTag(html).Groups[1].Value;
+        public static string MatchFirstImgSrc(this string html)
+        {
+            MatchCollection collection = MatchImgTags(html);
+            return collection.Count > 0 ? collection[0].Groups["src"].Value : String.Empty;
+        }
 
         /// <summary>
         /// 随机获取html代码中的img标签的src属性
@@ -454,13 +465,16 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            GroupCollection groups = MatchImgTag(html).Groups;
-            string img = groups[new Random().StrictNext(groups.Count)].Value;
-            if (img.StartsWith("<"))
+            MatchCollection collection = MatchImgTags(html);
+            if (collection.Count > 0)
             {
-                return img.MatchImgTag().Groups[1].Value;
+                string img = collection[new Random().StrictNext(collection.Count)].Value;
+                if (img.StartsWith("<"))
+                {
+                    return img.MatchImgTag().Groups["src"].Value;
+                }
             }
-            return img;
+            return String.Empty;
         }
 
         /// <summary>

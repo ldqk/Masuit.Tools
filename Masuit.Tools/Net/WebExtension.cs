@@ -282,9 +282,9 @@ namespace Masuit.Tools.Net
                     PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
                     if (address.Status == 0)
                     {
-                        string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance}米";
+                        string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
                         List<string> pois = new List<string>();
-                        address.AddressResult.Pois.ForEach(p => { pois.Add($"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance}米"); });
+                        address.AddressResult.Pois.ForEach(p => { pois.Add($"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米"); });
                         return new Tuple<string, List<string>>(detail, pois);
                     }
                 }
