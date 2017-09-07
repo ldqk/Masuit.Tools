@@ -5,21 +5,39 @@ using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Web.Script.Serialization;
 
 namespace Masuit.Tools.Hardware
 {
     /// <summary>
-    /// 硬件信息
+    /// 
     /// </summary>
-    public static class SystemInfo
+    /// <param name="s"></param>
+    public delegate void OnLogicalDiskProc(string s);
+
+    /// <summary>
+    /// 硬件信息，部分功能需要C++支持
+    /// </summary>
+    public static partial class SystemInfo
     {
-        private const int GW_HWNDFIRST = 0;
-        private const int GW_HWNDNEXT = 2;
-        private const int GWL_STYLE = -16;
-        private const int WS_VISIBLE = 268435456;
-        private const int WS_BORDER = 8388608;
-        private static readonly PerformanceCounter pcCpuLoad; //CPU计数器 
+        #region 字段
+
+        private const int GwHwndfirst = 0;
+        private const int GwHwndnext = 2;
+        private const int GwlStyle = -16;
+        private const int WsVisible = 268435456;
+        private const int WsBorder = 8388608;
+        private static readonly PerformanceCounter PcCpuLoad; //CPU计数器 
+
+        private static readonly PerformanceCounter MemoryCounter = new PerformanceCounter();
+        private static readonly PerformanceCounter CpuCounter = new PerformanceCounter();
+        private static readonly PerformanceCounter DiskReadCounter = new PerformanceCounter();
+        private static readonly PerformanceCounter DiskWriteCounter = new PerformanceCounter();
+
+        private static readonly string[] InstanceNames;
+        private static readonly PerformanceCounter[] NetRecvCounters;
+        private static readonly PerformanceCounter[] NetSentCounters;
+
+        #endregion
 
         #region 构造函数 
 
@@ -29,9 +47,9 @@ namespace Masuit.Tools.Hardware
         static SystemInfo()
         {
             //初始化CPU计数器 
-            pcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            pcCpuLoad.MachineName = ".";
-            pcCpuLoad.NextValue();
+            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            PcCpuLoad.MachineName = ".";
+            PcCpuLoad.NextValue();
 
             //CPU个数 
             ProcessorCount = Environment.ProcessorCount;
@@ -39,16 +57,31 @@ namespace Masuit.Tools.Hardware
             //获得物理内存 
             ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
             ManagementObjectCollection moc = mc.GetInstances();
-            foreach (ManagementObject mo in moc)
+            foreach (ManagementBaseObject mo in moc)
             {
                 if (mo["TotalPhysicalMemory"] != null)
                 {
                     PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
                 }
             }
+
+            PerformanceCounterCategory cat = new PerformanceCounterCategory("Network Interface");
+            InstanceNames = cat.GetInstanceNames();
+            NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
+            for (int i = 0; i < InstanceNames.Length; i++) NetRecvCounters[i] = new PerformanceCounter();
+
+            NetSentCounters = new PerformanceCounter[InstanceNames.Length];
+            for (int i = 0; i < InstanceNames.Length; i++) NetSentCounters[i] = new PerformanceCounter();
+
+            CompactFormat = false;
         }
 
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool CompactFormat { get; set; }
 
         #region CPU核心 
 
@@ -64,10 +97,7 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 获取CPU占用率 %
         /// </summary>
-        public static float CpuLoad
-        {
-            get { return pcCpuLoad.NextValue(); }
-        }
+        public static float CpuLoad => PcCpuLoad.NextValue();
 
         #endregion
 
@@ -82,12 +112,11 @@ namespace Masuit.Tools.Hardware
             {
                 long availablebytes = 0;
                 ManagementClass mos = new ManagementClass("Win32_OperatingSystem");
-                foreach (ManagementObject mo in mos.GetInstances())
+                foreach (var o in mos.GetInstances())
                 {
-                    if (mo["FreePhysicalMemory"] != null)
-                        availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                    var mo = (ManagementObject)o;
+                    if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
                 }
-
                 return availablebytes;
             }
         }
@@ -108,32 +137,31 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 查找所有应用程序标题 
         /// </summary>
-        /// <param name="Handle">应用程序标题范型</param>
+        /// <param name="handle">应用程序标题范型</param>
         /// <returns>所有应用程序集合</returns>
-        public static ArrayList FindAllApps(int Handle)
+        public static ArrayList FindAllApps(int handle)
         {
-            ArrayList Apps = new ArrayList();
+            ArrayList apps = new ArrayList();
 
-            int hwCurr = GetWindow(Handle, GW_HWNDFIRST);
+            int hwCurr = GetWindow(handle, GwHwndfirst);
 
             while (hwCurr > 0)
             {
-                int IsTask = WS_VISIBLE | WS_BORDER;
-                int lngStyle = GetWindowLongA(hwCurr, GWL_STYLE);
-                bool TaskWindow = (lngStyle & IsTask) == IsTask;
-                if (TaskWindow)
+                int IsTask = WsVisible | WsBorder;
+                int lngStyle = GetWindowLongA(hwCurr, GwlStyle);
+                bool taskWindow = (lngStyle & IsTask) == IsTask;
+                if (taskWindow)
                 {
                     int length = GetWindowTextLength(new IntPtr(hwCurr));
                     StringBuilder sb = new StringBuilder(2 * length + 1);
                     GetWindowText(hwCurr, sb, sb.Capacity);
                     string strTitle = sb.ToString();
-                    if (!string.IsNullOrEmpty(strTitle))
-                        Apps.Add(strTitle);
+                    if (!string.IsNullOrEmpty(strTitle)) apps.Add(strTitle);
                 }
-                hwCurr = GetWindow(hwCurr, GW_HWNDNEXT);
+                hwCurr = GetWindow(hwCurr, GwHwndnext);
             }
 
-            return Apps;
+            return apps;
         }
 
         #endregion
@@ -162,21 +190,21 @@ namespace Masuit.Tools.Hardware
         public static List<CpuInfo> GetCpuInfo()
         {
             List<CpuInfo> list = new List<CpuInfo>();
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            ManagementObjectSearcher MySearcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-            foreach (ManagementObject MyObject in MySearcher.Get())
+            ManagementObjectSearcher mySearcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+            foreach (var o in mySearcher.Get())
             {
+                var myObject = (ManagementObject)o;
                 list.Add(new CpuInfo
                 {
                     CpuLoad = CpuLoad,
                     NumberOfLogicalProcessors = ProcessorCount,
-                    CurrentClockSpeed = MyObject.Properties["CurrentClockSpeed"].Value.ToString(),
-                    Manufacturer = MyObject.Properties["Manufacturer"].Value.ToString(),
-                    MaxClockSpeed = MyObject.Properties["MaxClockSpeed"].Value.ToString(),
-                    Type = MyObject.Properties["Name"].Value.ToString(),
-                    DataWidth = MyObject.Properties["DataWidth"].Value.ToString(),
-                    DeviceID = MyObject.Properties["DeviceID"].Value.ToString(),
-                    NumberOfCores = Convert.ToInt32(MyObject.Properties["NumberOfCores"].Value),
+                    CurrentClockSpeed = myObject.Properties["CurrentClockSpeed"].Value.ToString(),
+                    Manufacturer = myObject.Properties["Manufacturer"].Value.ToString(),
+                    MaxClockSpeed = myObject.Properties["MaxClockSpeed"].Value.ToString(),
+                    Type = myObject.Properties["Name"].Value.ToString(),
+                    DataWidth = myObject.Properties["DataWidth"].Value.ToString(),
+                    DeviceID = myObject.Properties["DeviceID"].Value.ToString(),
+                    NumberOfCores = Convert.ToInt32(myObject.Properties["NumberOfCores"].Value),
                     Temperature = GetCPUTemperature()
                 });
             }
@@ -192,20 +220,15 @@ namespace Masuit.Tools.Hardware
         /// 获取内存信息
         /// </summary>
         /// <returns>内存信息</returns>
-        public static RamInfo GetRamInfo()
+        public static RamInfo GetRamInfo() => new RamInfo
         {
-            MEMORY_INFO MemInfo = new MEMORY_INFO();
-            GlobalMemoryStatus(ref MemInfo);
-            return new RamInfo
-            {
-                MemoryAvailable = MemoryAvailable,
-                PhysicalMemory = PhysicalMemory,
-                TotalPageFile = MemInfo.dwTotalPageFile,
-                AvailablePageFile = MemInfo.dwAvailPageFile,
-                AvailableVirtual = MemInfo.dwAvailVirtual,
-                TotalVirtual = MemInfo.dwTotalVirtual
-            };
-        }
+            MemoryAvailable = GetFreePhysicalMemory(),
+            PhysicalMemory = GetTotalPhysicalMemory(),
+            TotalPageFile = GetTotalVirtualMemory(),
+            AvailablePageFile = GetTotalVirtualMemory() - GetUsedVirtualMemory(),
+            AvailableVirtual = 1 - GetUsageVirtualMemory(),
+            TotalVirtual = 1 - GetUsedPhysicalMemory()
+        };
 
         #endregion
 
@@ -223,8 +246,6 @@ namespace Masuit.Tools.Hardware
 
             foreach (ManagementObject managementObject in vManagementObjectSearcher.Get())
             {
-                string s = new JavaScriptSerializer().Serialize(managementObject.Properties);
-
                 str += managementObject.Properties["CurrentTemperature"].Value.ToString();
             }
 
@@ -235,91 +256,320 @@ namespace Masuit.Tools.Hardware
 
         #endregion
 
-        #region 定义CPU的信息结构
+        #region WMI接口获取CPU使用率
 
         /// <summary>
-        /// 定义CPU的信息结构
+        /// WMI接口获取CPU使用率
         /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct CPU_INFO
+        /// <returns></returns>
+        public static string GetProcessorData()
         {
-#pragma warning disable 1591
-            public uint dwOemId;
-            public uint dwPageSize;
-            public uint lpMinimumApplicationAddress;
-            public uint lpMaximumApplicationAddress;
-            public uint dwActiveProcessorMask;
-            public uint dwNumberOfProcessors;
-            public uint dwProcessorType;
-            public uint dwAllocationGranularity;
-            public uint dwProcessorLevel;
-            public uint dwProcessorRevision;
-#pragma warning restore 1591
+            double d = GetCounterValue(CpuCounter, "Processor", "% Processor Time", "_Total");
+            return CompactFormat ? (int)d + "%" : d.ToString("F") + "%";
         }
 
         #endregion
 
-        #region 定义内存的信息结构
+        #region 获取虚拟内存使用率详情
 
         /// <summary>
-        /// 定义内存的信息结构
+        /// 获取虚拟内存使用率详情
         /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MEMORY_INFO
+        /// <returns></returns>
+        public static string GetMemoryVData()
         {
-#pragma warning disable 1591
-            public uint dwLength;
-            public uint dwMemoryLoad;
-            public uint dwTotalPhys;
-            public uint dwAvailPhys;
-            public uint dwTotalPageFile;
-            public uint dwAvailPageFile;
-            public uint dwTotalVirtual;
-            public uint dwAvailVirtual;
-#pragma warning restore 1591
+            string str;
+            double d = GetCounterValue(MemoryCounter, "Memory", "% Committed Bytes In Use", null);
+            str = d.ToString("F") + "% (";
+
+            d = GetCounterValue(MemoryCounter, "Memory", "Committed Bytes", null);
+            str += FormatBytes(d) + " / ";
+
+            d = GetCounterValue(MemoryCounter, "Memory", "Commit Limit", null);
+            return str + FormatBytes(d) + ") ";
+        }
+
+        /// <summary>
+        /// 获取虚拟内存使用率
+        /// </summary>
+        /// <returns></returns>
+        public static double GetUsageVirtualMemory()
+        {
+            return GetCounterValue(MemoryCounter, "Memory", "% Committed Bytes In Use", null);
+        }
+
+        /// <summary>
+        /// 获取虚拟内存已用大小
+        /// </summary>
+        /// <returns></returns>
+        public static double GetUsedVirtualMemory()
+        {
+            return GetCounterValue(MemoryCounter, "Memory", "Committed Bytes", null);
+        }
+        /// <summary>
+        /// 获取虚拟内存总大小
+        /// </summary>
+        /// <returns></returns>
+        public static double GetTotalVirtualMemory()
+        {
+            return GetCounterValue(MemoryCounter, "Memory", "Commit Limit", null);
         }
 
         #endregion
 
-        #region 定义系统时间的信息结构
+        #region 获取物理内存使用率详情
 
         /// <summary>
-        /// 定义系统时间的信息结构
+        /// 获取物理内存使用率详情描述
         /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SYSTEMTIME_INFO
+        /// <returns></returns>
+        public static string GetMemoryPData()
         {
-#pragma warning disable 1591
-            public ushort wYear;
-            public ushort wMonth;
-            public ushort wDayOfWeek;
-            public ushort wDay;
-            public ushort wHour;
-            public ushort wMinute;
-            public ushort wSecond;
-            public ushort wMilliseconds;
-#pragma warning restore 1591
+            string s = QueryComputerSystem("totalphysicalmemory");
+            double totalphysicalmemory = Convert.ToDouble(s);
+
+            double d = GetCounterValue(MemoryCounter, "Memory", "Available Bytes", null);
+            d = totalphysicalmemory - d;
+
+            s = CompactFormat ? "%" : "% (" + FormatBytes(d) + " / " + FormatBytes(totalphysicalmemory) + ")";
+            d /= totalphysicalmemory;
+            d *= 100;
+            return CompactFormat ? (int)d + s : d.ToString("F") + s;
+        }
+
+        /// <summary>
+        /// 获取物理内存总数，单位B
+        /// </summary>
+        /// <returns></returns>
+        public static double GetTotalPhysicalMemory()
+        {
+            string s = QueryComputerSystem("totalphysicalmemory");
+            return Convert.ToDouble(s);
+        }
+
+        /// <summary>
+        /// 获取空闲的物理内存数，单位B
+        /// </summary>
+        /// <returns></returns>
+        public static double GetFreePhysicalMemory()
+        {
+            return GetCounterValue(MemoryCounter, "Memory", "Available Bytes", null);
+        }
+
+        /// <summary>
+        /// 获取已经使用了的物理内存数，单位B
+        /// </summary>
+        /// <returns></returns>
+        public static double GetUsedPhysicalMemory()
+        {
+            return GetTotalPhysicalMemory() - GetFreePhysicalMemory();
         }
 
         #endregion
+
+        #region 获取硬盘的读写速率
+
+        /// <summary>
+        /// 获取硬盘的读写速率
+        /// </summary>
+        /// <param name="dd">读或写</param>
+        /// <returns></returns>
+        public static double GetDiskData(DiskData dd) => dd == DiskData.Read ? GetCounterValue(DiskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") : dd == DiskData.Write ? GetCounterValue(DiskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") : dd == DiskData.ReadAndWrite ? GetCounterValue(DiskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") + GetCounterValue(DiskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") : 0;
+
+        #endregion
+
+        #region 获取网络的传输速率
+
+        /// <summary>
+        /// 获取网络的传输速率
+        /// </summary>
+        /// <param name="nd">上传或下载</param>
+        /// <returns></returns>
+        public static double GetNetData(NetData nd)
+        {
+            if (InstanceNames.Length == 0) return 0;
+
+            double d = 0;
+            for (int i = 0; i < InstanceNames.Length; i++) d += nd == NetData.Received ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) : nd == NetData.Sent ? GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : nd == NetData.ReceivedAndSent ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) + GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : 0;
+
+            return d;
+        }
+
+        #endregion
+
+        #region 将速度值格式化成字节单位
+
+        /// <summary>
+        /// 将速度值格式化成字节单位
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string FormatBytes(this double bytes)
+        {
+            int unit = 0;
+            while (bytes > 1024)
+            {
+                bytes /= 1024;
+                ++unit;
+            }
+            string s = CompactFormat ? ((int)bytes).ToString() : bytes.ToString("F") + " ";
+            return s + (Unit)unit;
+        }
+
+        #endregion
+
+        #region 查询计算机系统信息
+
+        /// <summary>
+        /// 查询计算机系统信息
+        /// </summary>
+        /// <param name="type">类型名</param>
+        /// <returns></returns>
+        public static string QueryComputerSystem(string type)
+        {
+            string str = null;
+            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
+            foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
+            return str;
+        }
+
+        #endregion
+
+        #region 获取环境变量
+
+        /// <summary>
+        /// 获取环境变量
+        /// </summary>
+        /// <param name="type">环境变量名</param>
+        /// <returns></returns>
+        public static string QueryEnvironment(string type) => Environment.ExpandEnvironmentVariables(type);
+
+        #endregion
+
+        #region 获取磁盘空间
+
+        /// <summary>
+        /// 获取磁盘可用空间
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, string> DiskFree()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+            foreach (ManagementObject objMgmt in objCS.Get())
+            {
+                var device = objMgmt["DeviceID"];
+                if (null != device)
+                {
+                    var space = objMgmt["FreeSpace"];
+                    if (null != space)
+                    {
+                        dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                    }
+                }
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 获取磁盘总空间
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, string> DiskTotalSpace()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+            foreach (ManagementObject objMgmt in objCS.Get())
+            {
+                var device = objMgmt["DeviceID"];
+                if (null != device)
+                {
+                    var space = objMgmt["Size"];
+                    if (null != space)
+                    {
+                        dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                    }
+                }
+            }
+            return dic;
+        }
+
+
+        /// <summary>
+        /// 获取磁盘已用空间
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, string> DiskUsedSpace()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+            foreach (ManagementObject objMgmt in objCS.Get())
+            {
+                var device = objMgmt["DeviceID"];
+                if (null != device)
+                {
+                    var free = objMgmt["FreeSpace"];
+                    var total = objMgmt["Size"];
+                    if (null != total)
+                    {
+                        dic.Add(device.ToString(), FormatBytes(double.Parse(total.ToString()) - free.ToString().ToDouble()));
+                    }
+                }
+            }
+            return dic;
+        }
+
+        /// <summary>
+        /// 获取磁盘使用率
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<string, double> DiskUsage()
+        {
+            Dictionary<string, double> dic = new Dictionary<string, double>();
+            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+            foreach (ManagementObject objMgmt in objCS.Get())
+            {
+                var device = objMgmt["DeviceID"];
+                if (null != device)
+                {
+                    var free = objMgmt["FreeSpace"];
+                    var total = objMgmt["Size"];
+                    if (null != total && total.ToString().ToDouble() > 0)
+                    {
+                        dic.Add(device.ToString(), 1 - free.ToString().ToDouble() / total.ToString().ToDouble());
+                    }
+                }
+            }
+            return dic;
+        }
+
+        #endregion
+
+        private static double GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
+        {
+            pc.CategoryName = categoryName;
+            pc.CounterName = counterName;
+            pc.InstanceName = instanceName;
+            return pc.NextValue();
+        }
 
         #region Win32API声明 
 
 #pragma warning disable 1591
         [DllImport("kernel32")]
-        public static extern void GetWindowsDirectory(StringBuilder WinDir, int count);
+        public static extern void GetWindowsDirectory(StringBuilder winDir, int count);
 
         [DllImport("kernel32")]
-        public static extern void GetSystemDirectory(StringBuilder SysDir, int count);
+        public static extern void GetSystemDirectory(StringBuilder sysDir, int count);
 
         [DllImport("kernel32")]
         public static extern void GetSystemInfo(ref CPU_INFO cpuinfo);
 
         [DllImport("kernel32")]
-        public static extern void GlobalMemoryStatus(ref MEMORY_INFO meminfo);
+        public static extern void GlobalMemoryStatus(ref MemoryInfo meminfo);
 
         [DllImport("kernel32")]
-        public static extern void GetSystemTime(ref SYSTEMTIME_INFO stinfo);
+        public static extern void GetSystemTime(ref SystemtimeInfo stinfo);
 
         [DllImport("IpHlpApi.dll")]
         public static extern uint GetIfTable(byte[] pIfTable, ref uint pdwSize, bool bOrder);
@@ -337,92 +587,6 @@ namespace Masuit.Tools.Hardware
         [DllImport("user32", CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 #pragma warning restore 1591
-
-        #endregion
-
-
-
-        #region CPU
-
-        /// <summary>
-        /// CPU模型
-        /// </summary>
-        public class CpuInfo
-        {
-            /// <summary>
-            /// 设备ID端口
-            /// </summary>
-            public string DeviceID { get; set; }
-
-            /// <summary>
-            /// CPU型号 
-            /// </summary>
-            public string Type { get; set; }
-
-            /// <summary>
-            /// CPU厂商
-            /// </summary>
-            public string Manufacturer { get; set; }
-
-            /// <summary>
-            /// CPU最大睿频
-            /// </summary>
-            public string MaxClockSpeed { get; set; }
-
-            /// <summary>
-            /// CPU的时钟频率
-            /// </summary>
-            public string CurrentClockSpeed { get; set; }
-
-            /// <summary>
-            /// CPU核心数
-            /// </summary>
-            public int NumberOfCores { get; set; }
-
-            /// <summary>
-            /// 逻辑处理器核心数
-            /// </summary>
-            public int NumberOfLogicalProcessors { get; set; }
-
-            /// <summary>
-            /// CPU使用率
-            /// </summary>
-            public double CpuLoad { get; set; }
-
-            /// <summary>
-            /// CPU位宽
-            /// </summary>
-            public string DataWidth { get; set; }
-
-            /// <summary>
-            /// 核心温度
-            /// </summary>
-            public double Temperature { get; set; }
-        }
-
-        #endregion
-
-        #region RAM
-
-        /// <summary>
-        /// 内存条模型
-        /// </summary>
-        public class RamInfo
-        {
-#pragma warning disable 1591
-            public double MemoryAvailable { get; set; }
-            public double PhysicalMemory { get; set; }
-            public double TotalPageFile { get; set; }
-            public double AvailablePageFile { get; set; }
-            public double TotalVirtual { get; set; }
-            public double AvailableVirtual { get; set; }
-
-            public double MemoryUsage
-            {
-                get { return (1 - MemoryAvailable / PhysicalMemory) * 100; }
-            }
-#pragma warning restore 1591
-        }
 
         #endregion
     }

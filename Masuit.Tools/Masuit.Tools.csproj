@@ -80,6 +80,14 @@
     <Compile Include="Files\Compress.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
     <Compile Include="Files\INIFile.cs" />
+    <Compile Include="Hardware\CpuInfo.cs" />
+    <Compile Include="Hardware\CPU_INFO.cs" />
+    <Compile Include="Hardware\DiskData.cs" />
+    <Compile Include="Hardware\MemoryInfo.cs" />
+    <Compile Include="Hardware\NetData.cs" />
+    <Compile Include="Hardware\RamInfo.cs" />
+    <Compile Include="Hardware\SystemtimeInfo.cs" />
+    <Compile Include="Hardware\Unit.cs" />
     <Compile Include="Html\HtmlHelper.cs" />
     <Compile Include="Html\HtmlTools.cs" />
     <Compile Include="Logging\LogManager.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using Masuit.Tools.Html;
 
 namespace Test
 {
@@ -41,8 +40,9 @@ namespace Test
             //"114.114.114.114".MatchInetAddress(out isIP);//True
             //Console.WriteLine(isIP);
             //Console.WriteLine(WindowsCommand.Execute("help"));
-            string match = "vawevbgw".MatchRandomImgSrc();
-            Console.WriteLine(match);
+            //string match = "vawevbgw".MatchRandomImgSrc();
+            //Console.WriteLine(match);
+
             Console.ReadKey();
         }
     }
