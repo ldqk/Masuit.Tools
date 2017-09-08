@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Net
 {
@@ -130,8 +131,9 @@ namespace Masuit.Tools.Net
                 {
                     file.Delete();
                 }
-                catch
+                catch (Exception e)
                 {
+                    LogManager.Error(e);
                 }
             }
         }
@@ -278,8 +280,9 @@ namespace Masuit.Tools.Net
                 Uri u = new Uri(url);
                 domain = u.Host;
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
             string[] cks = GetCKS(ck);
             for (int i = 0; i < cks.Length; i++)
@@ -296,8 +299,9 @@ namespace Masuit.Tools.Net
                         c.Domain = domain;
                         cc.Add(c);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        LogManager.Error(e);
                     }
                 }
             }
@@ -364,7 +368,11 @@ namespace Masuit.Tools.Net
                     return false;
                 }).ConfigureAwait(false);
             }
-            catch { return false; }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return false;
+            }
         }
         #endregion
 
@@ -395,8 +403,9 @@ namespace Masuit.Tools.Net
             {
                 url = url.Remove(url.IndexOf("?"));
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
             try
             {
@@ -408,8 +417,9 @@ namespace Masuit.Tools.Net
                     res.Add(baseDomain);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
             return res;
         }

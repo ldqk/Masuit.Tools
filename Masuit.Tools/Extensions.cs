@@ -1089,7 +1089,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToInt64(s);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return 0;
             }
@@ -1106,7 +1106,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToDouble(s);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return 0;
             }

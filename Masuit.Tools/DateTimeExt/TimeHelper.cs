@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.DateTimeExt
 {
@@ -323,8 +324,9 @@ namespace Masuit.Tools.DateTimeExt
                     else dateDiff = ts.Minutes + "分钟前";
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
             return dateDiff;
         }

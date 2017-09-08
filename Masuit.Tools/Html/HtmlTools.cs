@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using Ganss.XSS;
+using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Html
 {
@@ -879,7 +880,6 @@ namespace Masuit.Tools.Html
                 XmlNodeList nodes = xml.SelectNodes("/rss/channel/item");
                 if (nodes.Count > 0)
                 {
-                    //for (int i = 0; i < nodes.Count; i++)
                     for (int i = nodes.Count - 1; i >= 0; i--)
                     {
                         try
@@ -888,15 +888,17 @@ namespace Masuit.Tools.Html
                             listResult.Add(sLink, nodes[i].SelectSingleNode("title").InnerText);
                             lisDes.Add(sLink, nodes[i].SelectSingleNode("description").InnerText);
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            LogManager.Error(e);
                         }
                     }
                     return listResult;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
 
             //RSS1.0（RDF）
@@ -916,16 +918,18 @@ namespace Masuit.Tools.Html
                             listResult.Add(sLink, nodes[i].SelectSingleNode("rss:title", nsMgr).InnerText);
                             lisDes.Add(sLink, nodes[i].SelectSingleNode("rss:description", nsMgr).InnerText);
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            LogManager.Error(e);
                         }
                         //listResult.Add("<a href=\"" + nodes[i].SelectSingleNode("rss:link",nsMgr).InnerText + "\">" + nodes[i].SelectSingleNode("rss:title",nsMgr).InnerText + "</a>");
                     }
                     return listResult;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
 
             //RSS ATOM
@@ -944,16 +948,18 @@ namespace Masuit.Tools.Html
                             listResult.Add(sLink, nodes[i].SelectSingleNode("atom:title", nsMgr).InnerText);
                             lisDes.Add(sLink, nodes[i].SelectSingleNode("atom:content", nsMgr).InnerText);
                         }
-                        catch
+                        catch (Exception e)
                         {
+                            LogManager.Error(e);
                         }
                         //listResult.Add("<a href=\"" + nodes[i].SelectSingleNode("atom:link",nsMgr).Attributes["href"].InnerText + "\">" + nodes[i].SelectSingleNode("atom:title",nsMgr).InnerText + "</a>");
                     }
                     return listResult;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
 
             return listResult;
@@ -974,8 +980,9 @@ namespace Masuit.Tools.Html
                 xml.LoadXml(sContent.Trim());
                 title = xml.SelectSingleNode("/rss/channel/title").InnerText;
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
 
             return title;
@@ -1376,8 +1383,9 @@ ReCatch:
                     count = stream.Read(buffer, 0, BUFFSIZE);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
 
             return (byte[])arBuffer.ToArray(System.Type.GetType("System.Byte"));
@@ -1403,8 +1411,9 @@ ReCatch:
                     sHead += sKey + ":" + headers[sKey] + "\r\n";
                 }
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
             }
             return sHead;
         }
@@ -1548,8 +1557,9 @@ ReCatch:
                     sock.Shutdown(SocketShutdown.Both);
                     sock.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    LogManager.Error(e);
                 }
             }
             finally
@@ -1559,8 +1569,9 @@ ReCatch:
                     sock.Shutdown(SocketShutdown.Both);
                     sock.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    LogManager.Error(e);
                 }
             }
             return listResult;

@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
+using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Net
 {
@@ -36,8 +37,9 @@ namespace Masuit.Tools.Net
                 Socket socket = listener.AcceptSocket();
                 return socket;
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }
@@ -54,8 +56,9 @@ namespace Masuit.Tools.Net
                 TcpClient client = listener.AcceptTcpClient();
                 return client.GetStream();
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }
@@ -77,8 +80,9 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.Client;
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }
@@ -97,8 +101,9 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.Client;
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }
@@ -116,8 +121,9 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.GetStream();
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }
@@ -136,8 +142,9 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.GetStream();
             }
-            catch
+            catch (Exception e)
             {
+                LogManager.Error(e);
                 return null;
             }
         }

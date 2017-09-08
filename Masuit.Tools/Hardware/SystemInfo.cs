@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
+using Masuit.Tools.Logging;
 using Microsoft.Win32;
 
 namespace Masuit.Tools.Hardware
@@ -56,25 +57,32 @@ namespace Masuit.Tools.Hardware
             ProcessorCount = Environment.ProcessorCount;
 
             //获得物理内存 
-            ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-            ManagementObjectCollection moc = mc.GetInstances();
-            foreach (ManagementBaseObject mo in moc)
+            try
             {
-                if (mo["TotalPhysicalMemory"] != null)
+                ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
+                ManagementObjectCollection moc = mc.GetInstances();
+                foreach (ManagementBaseObject mo in moc)
                 {
-                    PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
+                    if (mo["TotalPhysicalMemory"] != null)
+                    {
+                        PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
+                    }
                 }
+
+                PerformanceCounterCategory cat = new PerformanceCounterCategory("Network Interface");
+                InstanceNames = cat.GetInstanceNames();
+                NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
+                for (int i = 0; i < InstanceNames.Length; i++) NetRecvCounters[i] = new PerformanceCounter();
+
+                NetSentCounters = new PerformanceCounter[InstanceNames.Length];
+                for (int i = 0; i < InstanceNames.Length; i++) NetSentCounters[i] = new PerformanceCounter();
+
+                CompactFormat = false;
             }
-
-            PerformanceCounterCategory cat = new PerformanceCounterCategory("Network Interface");
-            InstanceNames = cat.GetInstanceNames();
-            NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
-            for (int i = 0; i < InstanceNames.Length; i++) NetRecvCounters[i] = new PerformanceCounter();
-
-            NetSentCounters = new PerformanceCounter[InstanceNames.Length];
-            for (int i = 0; i < InstanceNames.Length; i++) NetSentCounters[i] = new PerformanceCounter();
-
-            CompactFormat = false;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+            }
         }
 
         #endregion
@@ -111,14 +119,22 @@ namespace Masuit.Tools.Hardware
         {
             get
             {
-                long availablebytes = 0;
-                ManagementClass mos = new ManagementClass("Win32_OperatingSystem");
-                foreach (var o in mos.GetInstances())
+                try
                 {
-                    var mo = (ManagementObject)o;
-                    if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                    long availablebytes = 0;
+                    ManagementClass mos = new ManagementClass("Win32_OperatingSystem");
+                    foreach (var o in mos.GetInstances())
+                    {
+                        var mo = (ManagementObject)o;
+                        if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                    }
+                    return availablebytes;
                 }
-                return availablebytes;
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
+                    return 0;
+                }
             }
         }
 
@@ -175,9 +191,17 @@ namespace Masuit.Tools.Hardware
         /// <returns>CPU的数量</returns>
         public static int GetCpuCount()
         {
-            ManagementClass m = new ManagementClass("Win32_Processor");
-            ManagementObjectCollection mn = m.GetInstances();
-            return mn.Count;
+            try
+            {
+                ManagementClass m = new ManagementClass("Win32_Processor");
+                ManagementObjectCollection mn = m.GetInstances();
+                return mn.Count;
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return 0;
+            }
         }
 
         #endregion
@@ -190,27 +214,35 @@ namespace Masuit.Tools.Hardware
         /// <returns>CPU信息</returns>
         public static List<CpuInfo> GetCpuInfo()
         {
-            List<CpuInfo> list = new List<CpuInfo>();
-            ManagementObjectSearcher mySearcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-            foreach (var o in mySearcher.Get())
+            try
             {
-                var myObject = (ManagementObject)o;
-                list.Add(new CpuInfo
+                List<CpuInfo> list = new List<CpuInfo>();
+                ManagementObjectSearcher mySearcher = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+                foreach (var o in mySearcher.Get())
                 {
-                    CpuLoad = CpuLoad,
-                    NumberOfLogicalProcessors = ProcessorCount,
-                    CurrentClockSpeed = myObject.Properties["CurrentClockSpeed"].Value.ToString(),
-                    Manufacturer = myObject.Properties["Manufacturer"].Value.ToString(),
-                    MaxClockSpeed = myObject.Properties["MaxClockSpeed"].Value.ToString(),
-                    Type = myObject.Properties["Name"].Value.ToString(),
-                    DataWidth = myObject.Properties["DataWidth"].Value.ToString(),
-                    DeviceID = myObject.Properties["DeviceID"].Value.ToString(),
-                    NumberOfCores = Convert.ToInt32(myObject.Properties["NumberOfCores"].Value),
-                    Temperature = GetCPUTemperature()
-                });
-            }
+                    var myObject = (ManagementObject)o;
+                    list.Add(new CpuInfo
+                    {
+                        CpuLoad = CpuLoad,
+                        NumberOfLogicalProcessors = ProcessorCount,
+                        CurrentClockSpeed = myObject.Properties["CurrentClockSpeed"].Value.ToString(),
+                        Manufacturer = myObject.Properties["Manufacturer"].Value.ToString(),
+                        MaxClockSpeed = myObject.Properties["MaxClockSpeed"].Value.ToString(),
+                        Type = myObject.Properties["Name"].Value.ToString(),
+                        DataWidth = myObject.Properties["DataWidth"].Value.ToString(),
+                        DeviceID = myObject.Properties["DeviceID"].Value.ToString(),
+                        NumberOfCores = Convert.ToInt32(myObject.Properties["NumberOfCores"].Value),
+                        Temperature = GetCPUTemperature()
+                    });
+                }
 
-            return list;
+                return list;
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new List<CpuInfo>();
+            }
         }
 
         #endregion
@@ -241,18 +273,23 @@ namespace Masuit.Tools.Hardware
         /// <returns>CPU温度</returns>
         public static double GetCPUTemperature()
         {
-            string str = "";
-
-            ManagementObjectSearcher vManagementObjectSearcher = new ManagementObjectSearcher(@"root\WMI", @"select * from MSAcpi_ThermalZoneTemperature");
-
-            foreach (ManagementObject managementObject in vManagementObjectSearcher.Get())
+            try
             {
-                str += managementObject.Properties["CurrentTemperature"].Value.ToString();
+                string str = "";
+                ManagementObjectSearcher vManagementObjectSearcher = new ManagementObjectSearcher(@"root\WMI", @"select * from MSAcpi_ThermalZoneTemperature");
+                foreach (ManagementObject managementObject in vManagementObjectSearcher.Get())
+                {
+                    str += managementObject.Properties["CurrentTemperature"].Value.ToString();
+                }
+                //这就是CPU的温度了
+                double temp = (double.Parse(str) - 2732) / 10;
+                return Math.Round(temp, 2);
             }
-
-            //这就是CPU的温度了
-            double temp = (double.Parse(str) - 2732) / 10;
-            return Math.Round(temp, 2);
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return 0;
+            }
         }
 
         #endregion
@@ -405,23 +442,31 @@ namespace Masuit.Tools.Hardware
         public static IList<string> GetMacAddress()
         {
             //获取网卡硬件地址       
-            IList<string> list = new List<string>();
-            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            using (mc)
+            try
             {
-                ManagementObjectCollection moc = mc.GetInstances();
-                using (moc)
+                IList<string> list = new List<string>();
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using (mc)
                 {
-                    foreach (ManagementObject mo in moc)
+                    ManagementObjectCollection moc = mc.GetInstances();
+                    using (moc)
                     {
-                        if ((bool)mo["IPEnabled"])
+                        foreach (ManagementObject mo in moc)
                         {
-                            list.Add(mo["MacAddress"].ToString());
+                            if ((bool)mo["IPEnabled"])
+                            {
+                                list.Add(mo["MacAddress"].ToString());
+                            }
                         }
                     }
                 }
+                return list;
             }
-            return list;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new List<string>();
+            }
         }
 
         /// <summary>
@@ -431,26 +476,34 @@ namespace Masuit.Tools.Hardware
         public static IList<string> GetIPAddress()
         {
             //获取IP地址        
-            IList<string> list = new List<string>();
-            var st = "";
-            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-            using (mc)
+            try
             {
-                ManagementObjectCollection moc = mc.GetInstances();
-                using (moc)
+                IList<string> list = new List<string>();
+                var st = "";
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using (mc)
                 {
-                    foreach (ManagementObject mo in moc)
+                    ManagementObjectCollection moc = mc.GetInstances();
+                    using (moc)
                     {
-                        if ((bool)mo["IPEnabled"])
+                        foreach (ManagementObject mo in moc)
                         {
-                            st = mo["IpAddress"].ToString();
-                            var ar = (Array)(mo.Properties["IpAddress"].Value);
-                            st = ar.GetValue(0).ToString();
-                            list.Add(st);
+                            if ((bool)mo["IPEnabled"])
+                            {
+                                st = mo["IpAddress"].ToString();
+                                var ar = (Array)(mo.Properties["IpAddress"].Value);
+                                st = ar.GetValue(0).ToString();
+                                list.Add(st);
+                            }
                         }
+                        return list;
                     }
-                    return list;
                 }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new List<string>();
             }
         }
         /// <summary>
@@ -491,10 +544,18 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static string QueryComputerSystem(string type)
         {
-            string str = null;
-            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
-            foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
-            return str;
+            try
+            {
+                string str = null;
+                ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
+                foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
+                return str;
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return String.Empty;
+            }
         }
 
         #endregion
@@ -518,21 +579,29 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static Dictionary<string, string> DiskFree()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-            foreach (ManagementObject objMgmt in objCS.Get())
+            try
             {
-                var device = objMgmt["DeviceID"];
-                if (null != device)
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+                foreach (ManagementObject objMgmt in objCS.Get())
                 {
-                    var space = objMgmt["FreeSpace"];
-                    if (null != space)
+                    var device = objMgmt["DeviceID"];
+                    if (null != device)
                     {
-                        dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                        var space = objMgmt["FreeSpace"];
+                        if (null != space)
+                        {
+                            dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                        }
                     }
                 }
+                return dic;
             }
-            return dic;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new Dictionary<string, string>();
+            }
         }
 
         /// <summary>
@@ -541,21 +610,29 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static Dictionary<string, string> DiskTotalSpace()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-            foreach (ManagementObject objMgmt in objCS.Get())
+            try
             {
-                var device = objMgmt["DeviceID"];
-                if (null != device)
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+                foreach (ManagementObject objMgmt in objCS.Get())
                 {
-                    var space = objMgmt["Size"];
-                    if (null != space)
+                    var device = objMgmt["DeviceID"];
+                    if (null != device)
                     {
-                        dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                        var space = objMgmt["Size"];
+                        if (null != space)
+                        {
+                            dic.Add(device.ToString(), FormatBytes(double.Parse(space.ToString())));
+                        }
                     }
                 }
+                return dic;
             }
-            return dic;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new Dictionary<string, string>();
+            }
         }
 
 
@@ -565,22 +642,30 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static Dictionary<string, string> DiskUsedSpace()
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-            foreach (ManagementObject objMgmt in objCS.Get())
+            try
             {
-                var device = objMgmt["DeviceID"];
-                if (null != device)
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+                foreach (ManagementObject objMgmt in objCS.Get())
                 {
-                    var free = objMgmt["FreeSpace"];
-                    var total = objMgmt["Size"];
-                    if (null != total)
+                    var device = objMgmt["DeviceID"];
+                    if (null != device)
                     {
-                        dic.Add(device.ToString(), FormatBytes(double.Parse(total.ToString()) - free.ToString().ToDouble()));
+                        var free = objMgmt["FreeSpace"];
+                        var total = objMgmt["Size"];
+                        if (null != total)
+                        {
+                            dic.Add(device.ToString(), FormatBytes(double.Parse(total.ToString()) - free.ToString().ToDouble()));
+                        }
                     }
                 }
+                return dic;
             }
-            return dic;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new Dictionary<string, string>();
+            }
         }
 
         /// <summary>
@@ -589,22 +674,30 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static Dictionary<string, double> DiskUsage()
         {
-            Dictionary<string, double> dic = new Dictionary<string, double>();
-            ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-            foreach (ManagementObject objMgmt in objCS.Get())
+            try
             {
-                var device = objMgmt["DeviceID"];
-                if (null != device)
+                Dictionary<string, double> dic = new Dictionary<string, double>();
+                ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
+                foreach (ManagementObject objMgmt in objCS.Get())
                 {
-                    var free = objMgmt["FreeSpace"];
-                    var total = objMgmt["Size"];
-                    if (null != total && total.ToString().ToDouble() > 0)
+                    var device = objMgmt["DeviceID"];
+                    if (null != device)
                     {
-                        dic.Add(device.ToString(), 1 - free.ToString().ToDouble() / total.ToString().ToDouble());
+                        var free = objMgmt["FreeSpace"];
+                        var total = objMgmt["Size"];
+                        if (null != total && total.ToString().ToDouble() > 0)
+                        {
+                            dic.Add(device.ToString(), 1 - free.ToString().ToDouble() / total.ToString().ToDouble());
+                        }
                     }
                 }
+                return dic;
             }
-            return dic;
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return new Dictionary<string, double>();
+            }
         }
 
         #endregion
