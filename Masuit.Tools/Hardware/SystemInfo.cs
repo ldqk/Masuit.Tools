@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Win32;
 
 namespace Masuit.Tools.Hardware
 {
@@ -397,6 +398,69 @@ namespace Masuit.Tools.Hardware
 
         #endregion
 
+        /// <summary>
+        /// 获取网卡硬件地址
+        /// </summary>
+        /// <returns></returns>
+        public static IList<string> GetMacAddress()
+        {
+            //获取网卡硬件地址       
+            IList<string> list = new List<string>();
+            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            using (mc)
+            {
+                ManagementObjectCollection moc = mc.GetInstances();
+                using (moc)
+                {
+                    foreach (ManagementObject mo in moc)
+                    {
+                        if ((bool)mo["IPEnabled"])
+                        {
+                            list.Add(mo["MacAddress"].ToString());
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 获取IP地址 
+        /// </summary>
+        /// <returns></returns>
+        public static IList<string> GetIPAddress()
+        {
+            //获取IP地址        
+            IList<string> list = new List<string>();
+            var st = "";
+            ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            using (mc)
+            {
+                ManagementObjectCollection moc = mc.GetInstances();
+                using (moc)
+                {
+                    foreach (ManagementObject mo in moc)
+                    {
+                        if ((bool)mo["IPEnabled"])
+                        {
+                            st = mo["IpAddress"].ToString();
+                            var ar = (Array)(mo.Properties["IpAddress"].Value);
+                            st = ar.GetValue(0).ToString();
+                            list.Add(st);
+                        }
+                    }
+                    return list;
+                }
+            }
+        }
+        /// <summary>
+        /// 获取操作系统版本
+        /// </summary>
+        /// <returns></returns>
+        public static string GetOsVersion()
+        {
+            return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
+        }
         #region 将速度值格式化成字节单位
 
         /// <summary>
