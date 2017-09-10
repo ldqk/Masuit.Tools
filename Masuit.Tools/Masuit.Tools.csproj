@@ -56,6 +56,7 @@
       <HintPath>..\packages\StackExchange.Redis.1.2.4\lib\net45\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -65,7 +66,6 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +113,7 @@
     <Compile Include="Security\RSACrypt.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
+    <Compile Include="Systems\EnumExt.cs" />
     <Compile Include="Win32\Windows.cs" />
     <Compile Include="Win32\WindowsCommand.cs" />
   </ItemGroup>

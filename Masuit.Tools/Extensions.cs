@@ -1072,7 +1072,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToInt32(s);
             }
-            catch (Exception)
+            catch
             {
                 return 0;
             }
@@ -1089,7 +1089,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToInt64(s);
             }
-            catch (Exception e)
+            catch
             {
                 return 0;
             }
@@ -1106,7 +1106,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToDouble(s);
             }
-            catch (Exception e)
+            catch
             {
                 return 0;
             }
@@ -1123,7 +1123,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToDecimal(s);
             }
-            catch (Exception)
+            catch
             {
                 return 0;
             }
@@ -1140,7 +1140,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToDecimal(s);
             }
-            catch (Exception)
+            catch
             {
                 return 0;
             }
@@ -1157,7 +1157,7 @@ namespace Masuit.Tools
             {
                 return Convert.ToDouble(s);
             }
-            catch (Exception)
+            catch
             {
                 return 0;
             }
@@ -1181,6 +1181,26 @@ namespace Masuit.Tools
         public static int ToInt32(this decimal num)
         {
             return (int)Math.Floor(num);
+        }
+
+        /// <summary>
+        /// 将int转换成double
+        /// </summary>
+        /// <param name="num">int类型</param>
+        /// <returns>int类型</returns>
+        public static double ToDouble(this int num)
+        {
+            return num * 1.0;
+        }
+
+        /// <summary>
+        /// 将int转换成decimal
+        /// </summary>
+        /// <param name="num">int类型</param>
+        /// <returns>int类型</returns>
+        public static decimal ToDecimal(this int num)
+        {
+            return (decimal)(num * 1.0);
         }
 
         #endregion
