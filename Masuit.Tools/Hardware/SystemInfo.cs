@@ -503,7 +503,7 @@ namespace Masuit.Tools.Hardware
             catch (Exception e)
             {
                 LogManager.Error(e);
-                return new List<string>();
+                return new List<string>() { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" };
             }
         }
         /// <summary>
@@ -512,7 +512,15 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static string GetOsVersion()
         {
-            return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
+            try
+            {
+                return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+            }
         }
         #region 将速度值格式化成字节单位
 
@@ -554,7 +562,7 @@ namespace Masuit.Tools.Hardware
             catch (Exception e)
             {
                 LogManager.Error(e);
-                return String.Empty;
+                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
 
@@ -600,7 +608,7 @@ namespace Masuit.Tools.Hardware
             catch (Exception e)
             {
                 LogManager.Error(e);
-                return new Dictionary<string, string>();
+                return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
             }
         }
 
@@ -664,7 +672,7 @@ namespace Masuit.Tools.Hardware
             catch (Exception e)
             {
                 LogManager.Error(e);
-                return new Dictionary<string, string>();
+                return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
             }
         }
 
@@ -696,7 +704,7 @@ namespace Masuit.Tools.Hardware
             catch (Exception e)
             {
                 LogManager.Error(e);
-                return new Dictionary<string, double>();
+                return new Dictionary<string, double>() { { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 } };
             }
         }
 

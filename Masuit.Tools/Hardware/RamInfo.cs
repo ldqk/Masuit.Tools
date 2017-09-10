@@ -13,10 +13,7 @@
         public double TotalVirtual { get; set; }
         public double AvailableVirtual { get; set; }
 
-        public double MemoryUsage
-        {
-            get { return (1 - MemoryAvailable / PhysicalMemory) * 100; }
-        }
+        public double MemoryUsage => (1 - MemoryAvailable / PhysicalMemory) * 100;
 #pragma warning restore 1591
     }
 }

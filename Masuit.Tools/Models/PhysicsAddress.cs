@@ -138,7 +138,7 @@ namespace Masuit.Tools.Models
         /// 距离
         /// </summary>
         [JsonProperty("distance")]
-        public string Distance { get; set; }
+        public string Distance { get; set; } = "0";
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ namespace Masuit.Tools.Models
         /// 距离
         /// </summary>
         [JsonProperty("distance")]
-        public string Distance { get; set; }
+        public string Distance { get; set; } = "0";
 
         /// <summary>
         /// 建筑物名字
