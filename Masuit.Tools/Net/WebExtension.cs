@@ -44,7 +44,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public static void Set(this HttpSessionStateBase session, string key, dynamic value) => session.Add(key, value);
+        public static void Set(this HttpSessionStateBase session, string key, dynamic value) => session[key] = value;
 
         /// <summary>
         /// 写Session
@@ -52,7 +52,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <param name="value">值</param>
-        public static void Set(this HttpSessionState session, string key, dynamic value) => session.Add(key, value);
+        public static void Set(this HttpSessionState session, string key, dynamic value) => session[key] = value;
 
         /// <summary>
         /// 将Session存到Redis，需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作，如：<br/>
