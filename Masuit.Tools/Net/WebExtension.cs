@@ -347,6 +347,13 @@ namespace Masuit.Tools.Net
             }
             catch (Exception)
             {
+                client.BaseAddress = new Uri("http://ip.taobao.com");
+                result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                if (taobaoIp.Code == 0)
+                {
+                    return taobaoIp.IpData.Isp;
+                }
                 return $"未能找到{ip}的ISP信息";
             }
         }

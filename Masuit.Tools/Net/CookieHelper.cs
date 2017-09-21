@@ -370,7 +370,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return false;
             }
         }

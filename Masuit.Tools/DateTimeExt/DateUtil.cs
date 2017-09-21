@@ -351,7 +351,6 @@ namespace Masuit.Tools.DateTimeExt
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return false;
             }
         }

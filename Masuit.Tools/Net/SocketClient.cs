@@ -39,7 +39,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -58,7 +57,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -82,7 +80,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -103,7 +100,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -123,7 +119,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -144,7 +139,6 @@ namespace Masuit.Tools.Net
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }

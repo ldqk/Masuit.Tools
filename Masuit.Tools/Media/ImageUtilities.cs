@@ -500,7 +500,6 @@ namespace Masuit.Tools.Media
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -530,7 +529,6 @@ namespace Masuit.Tools.Media
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -817,7 +815,6 @@ namespace Masuit.Tools.Media
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return null;
             }
         }
@@ -952,7 +949,6 @@ namespace Masuit.Tools.Media
             }
             catch (Exception e)
             {
-                LogManager.Error(e);
                 return false;
             }
         }
@@ -1027,5 +1023,33 @@ namespace Masuit.Tools.Media
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 将dataUri保存为图片
+        /// </summary>
+        /// <param name="source">dataUri数据源</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">操作失败。</exception>
+        public static Bitmap SaveDataUriAsImageFile(this string source)
+        {
+            string strbase64 = source.Substring(source.IndexOf(',') + 1);
+            strbase64 = strbase64.Trim('\0');
+            Bitmap bmp2;
+            byte[] arr = Convert.FromBase64String(strbase64);
+            using (var ms = new MemoryStream(arr))
+            {
+                var bmp = new Bitmap(ms);
+                //新建第二个bitmap类型的bmp2变量。
+                bmp2 = new Bitmap(bmp, bmp.Width, bmp.Height);
+                //将第一个bmp拷贝到bmp2中
+                Graphics draw = Graphics.FromImage(bmp2);
+                using (draw)
+                {
+                    draw.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
+                }
+            }
+            return bmp2;
+        }
     } //end class
 }
