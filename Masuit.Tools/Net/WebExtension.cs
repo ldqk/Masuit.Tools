@@ -337,6 +337,16 @@ namespace Masuit.Tools.Net
                         return address;
                     }
                 }
+                else
+                {
+                    client = new HttpClient {BaseAddress = new Uri("http://ip.taobao.com")};
+                    var result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                    if (taobaoIp.Code == 0)
+                    {
+                        return new PhysicsAddress() { Status = 0, AddressResult = new AddressResult() { FormattedAddress = taobaoIp.IpData.Country, AddressComponent = new AddressComponent() { Province = taobaoIp.IpData.Region } } };
+                    }
+                }
             }
             return null;
         }

@@ -1,4 +1,6 @@
 ﻿using System;
+using Masuit.Tools.Models;
+using Masuit.Tools.Net;
 
 namespace Test
 {
@@ -42,6 +44,7 @@ namespace Test
             //Console.WriteLine(WindowsCommand.Execute("help"));
             //string match = "vawevbgw".MatchRandomImgSrc();
             //Console.WriteLine(match);
+            PhysicsAddress address = "4.2.2.1".GetPhysicsAddressInfo();
 
             Console.ReadKey();
         }
