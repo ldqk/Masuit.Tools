@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
@@ -271,7 +272,11 @@ namespace Masuit.Tools.Net
             ip.MatchInetAddress(out isIpAddress);
             if (isIpAddress)
             {
-                string ak = "89772e94509a9b903724e247cbc175c2";
+                string ak = ConfigurationManager.AppSettings["BaiduAK"];
+                if (string.IsNullOrEmpty(ak))
+                {
+                    throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
+                }
                 HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
                 string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
                 var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
@@ -314,7 +319,11 @@ namespace Masuit.Tools.Net
             ip.MatchInetAddress(out isIpAddress);
             if (isIpAddress)
             {
-                string ak = "89772e94509a9b903724e247cbc175c2";
+                string ak = ConfigurationManager.AppSettings["BaiduAK"];
+                if (string.IsNullOrEmpty(ak))
+                {
+                    throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
+                }
                 HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
                 string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
                 var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
