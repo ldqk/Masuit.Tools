@@ -97,6 +97,7 @@
     <Compile Include="Models\TaobaoIP.cs" />
     <Compile Include="Net\CacheHelper.cs" />
     <Compile Include="Net\CookieHelper.cs" />
+    <Compile Include="Net\FtpClient.cs" />
     <Compile Include="Net\SocketClient.cs" />
     <Compile Include="NoSQL\RedisConnectionHelp.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />

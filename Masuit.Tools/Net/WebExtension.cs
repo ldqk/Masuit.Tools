@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.SessionState;
+using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
 using Newtonsoft.Json;
@@ -278,30 +279,37 @@ namespace Masuit.Tools.Net
                     throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
                 }
                 HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
-                string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
-                var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
-                if (ipAddress.Status == 0)
+                try
                 {
-                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
-                    string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
-                    PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
-                    if (address.Status == 0)
+                    string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
+                    var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
+                    if (ipAddress.Status == 0)
                     {
-                        string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
-                        List<string> pois = new List<string>();
-                        address.AddressResult.Pois.ForEach(p => { pois.Add($"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米"); });
-                        return new Tuple<string, List<string>>(detail, pois);
+                        LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                        string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                        PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
+                        if (address.Status == 0)
+                        {
+                            string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
+                            List<string> pois = new List<string>();
+                            address.AddressResult.Pois.ForEach(p => { pois.Add($"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米"); });
+                            return new Tuple<string, List<string>>(detail, pois);
+                        }
+                    }
+                    else
+                    {
+                        client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") };
+                        string result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                        TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                        if (taobaoIp.Code == 0)
+                        {
+                            return new Tuple<string, List<string>>(taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City, new List<string>());
+                        }
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    client.BaseAddress = new Uri("http://ip.taobao.com");
-                    string result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
-                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
-                    if (taobaoIp.Code == 0)
-                    {
-                        return new Tuple<string, List<string>>(taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City, new List<string>());
-                    }
+                    LogManager.Error(e);
                 }
                 return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
             }
@@ -325,27 +333,34 @@ namespace Masuit.Tools.Net
                     throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
                 }
                 HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
-                string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
-                var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
-                if (ipAddress.Status == 0)
+                try
                 {
-                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
-                    string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
-                    PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
-                    if (address.Status == 0)
+                    string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
+                    var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(ipJson);
+                    if (ipAddress.Status == 0)
                     {
-                        return address;
+                        LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                        string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                        PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
+                        if (address.Status == 0)
+                        {
+                            return address;
+                        }
+                    }
+                    else
+                    {
+                        client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") };
+                        var result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                        TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                        if (taobaoIp.Code == 0)
+                        {
+                            return new PhysicsAddress() { Status = 0, AddressResult = new AddressResult() { FormattedAddress = taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City, AddressComponent = new AddressComponent() { Province = taobaoIp.IpData.Region }, Pois = new List<Pois>() } };
+                        }
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    client = new HttpClient {BaseAddress = new Uri("http://ip.taobao.com")};
-                    var result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
-                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
-                    if (taobaoIp.Code == 0)
-                    {
-                        return new PhysicsAddress() { Status = 0, AddressResult = new AddressResult() { FormattedAddress = taobaoIp.IpData.Country, AddressComponent = new AddressComponent() { Province = taobaoIp.IpData.Region } } };
-                    }
+                    LogManager.Error(e);
                 }
             }
             return null;
@@ -366,12 +381,19 @@ namespace Masuit.Tools.Net
             }
             catch (Exception)
             {
-                client.BaseAddress = new Uri("http://ip.taobao.com");
-                result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
-                TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
-                if (taobaoIp.Code == 0)
+                client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") };
+                try
                 {
-                    return taobaoIp.IpData.Isp;
+                    result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                    if (taobaoIp.Code == 0)
+                    {
+                        return taobaoIp.IpData.Isp;
+                    }
+                }
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
                 }
                 return $"未能找到{ip}的ISP信息";
             }
