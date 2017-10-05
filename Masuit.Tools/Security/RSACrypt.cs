@@ -5,33 +5,39 @@ using System.Text;
 
 namespace Masuit.Tools.Security
 {
+    /// <summary>
+    /// RSA密钥对
+    /// </summary>
+    public struct RsaKey
+    {
+        /// <summary>
+        /// 公钥
+        /// </summary>
+        public string PublicKey;
+
+        /// <summary>
+        /// 私钥
+        /// </summary>
+        public string PrivateKey;
+    }
     /// <summary> 
     /// RSA加密解密及RSA签名和验证
     /// </summary> 
-    public static class RSACrypt
+    public static class RsaCrypt
     {
         #region RSA 加密解密 
 
         #region RSA 的密钥产生 
 
         /// <summary>
-        /// RSA产生私钥
+        /// 生成 RSA 公钥和私钥
         /// </summary>
-        /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAPrivateKey()
+        public static RsaKey GenerateRsaKeys()
         {
-            var rsa = new RSACryptoServiceProvider();
-            return rsa.ToXmlString(true);
-        }
-
-        /// <summary>
-        /// RSA产生公钥
-        /// </summary>
-        /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAPublicKey()
-        {
-            var rsa = new RSACryptoServiceProvider();
-            return rsa.ToXmlString(false);
+            using (var rsa = new RSACryptoServiceProvider())
+            {
+                return new RsaKey { PrivateKey = rsa.ToXmlString(true), PublicKey = rsa.ToXmlString(false) };
+            }
         }
 
         #endregion

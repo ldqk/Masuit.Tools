@@ -152,7 +152,7 @@ namespace Masuit.Tools.Net
         public static string GetCookieValue(string cookiename)
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies[cookiename];
-            string str = String.Empty;
+            string str = null;
             if (cookie != null)
             {
                 str = cookie.Value;

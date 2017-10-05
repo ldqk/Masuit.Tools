@@ -62,21 +62,16 @@ namespace Masuit.Tools.Models
                 return mailMessage;
             }
         }
-        SmtpClient GetSmtpClient
+        SmtpClient GetSmtpClient => new SmtpClient
         {
-            get
-            {
-                return new SmtpClient
-                {
-                    UseDefaultCredentials = false,
-                    Credentials = new System.Net.NetworkCredential(Username, Password),
-                    DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network,
-                    Host = SmtpServer,
-                    Port = SmtpPort,
-                    EnableSsl = EnableSsl,
-                };
-            }
-        }
+            UseDefaultCredentials = false,
+            Credentials = new System.Net.NetworkCredential(Username, Password),
+            DeliveryMethod = SmtpDeliveryMethod.Network,
+            Host = SmtpServer,
+            Port = SmtpPort,
+            EnableSsl = EnableSsl,
+        };
+
         //回调方法
         Action<string> actionSendCompletedCallback = null;
 
@@ -87,29 +82,41 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public void SendAsync(Action<string> completedCallback)
         {
-            SmtpClient smtpClient = GetSmtpClient;
-            MailMessage mailMessage = GetClient;
-            if (smtpClient == null || mailMessage == null) return;
-            Subject = Subject;
-            Body = Body;
-            EnableSsl = false;
-            //发送邮件回调方法
-            actionSendCompletedCallback = completedCallback;
-            smtpClient.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
-            try
+            using (SmtpClient smtpClient = GetSmtpClient)
             {
-                smtpClient.SendAsync(mailMessage, "true");//异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-            finally
-            {
-                smtpClient = null;
-                mailMessage = null;
+                using (MailMessage mailMessage = GetClient)
+                {
+                    if (smtpClient == null || mailMessage == null) return;
+                    Subject = Subject;
+                    Body = Body;
+                    EnableSsl = false;
+                    //发送邮件回调方法
+                    actionSendCompletedCallback = completedCallback;
+                    smtpClient.SendCompleted += SendCompletedCallback;
+                    smtpClient.SendAsync(mailMessage, "true"); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
+                }
             }
         }
+
+        /// <summary>
+        /// 使用同步发送邮件
+        /// </summary>
+        public void Send()
+        {
+            using (SmtpClient smtpClient = GetSmtpClient)
+            {
+                using (MailMessage mailMessage = GetClient)
+                {
+                    if (smtpClient == null || mailMessage == null) return;
+                    Subject = Subject;
+                    Body = Body;
+                    EnableSsl = false;
+                    //发送邮件回调方法
+                    smtpClient.Send(mailMessage); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
+                }
+            }
+        }
+
         /// <summary>
         /// 异步操作完成后执行回调方法
         /// </summary>
