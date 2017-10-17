@@ -379,23 +379,27 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static string GetISP(this string ip)
         {
-            using (var client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") })
+            if (ip.MatchInetAddress())
             {
-                try
+                using (var client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") })
                 {
-                    var result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
-                    TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
-                    if (taobaoIp.Code == 0)
+                    try
                     {
-                        return taobaoIp.IpData.Isp;
+                        var result = client.GetStringAsync($"/service/getIpInfo.php?ip={ip}").Result;
+                        TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result);
+                        if (taobaoIp.Code == 0)
+                        {
+                            return taobaoIp.IpData.Isp;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
                     }
                 }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
+                return $"未能找到{ip}的ISP信息";
             }
-            return $"未能找到{ip}的ISP信息";
+            return $"{ip}不是一个合法的IP";
         }
 
         #endregion
