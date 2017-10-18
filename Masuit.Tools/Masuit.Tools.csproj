@@ -120,7 +120,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="package.nuspec" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DateTimeExt\CCalendarData.xml" />
