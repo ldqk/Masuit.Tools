@@ -5,10 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="DateTimeExt\CCalendarData.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.9" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.181" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>

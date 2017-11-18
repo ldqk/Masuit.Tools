@@ -34,10 +34,11 @@ namespace Masuit.Tools.Models
         /// 收件人，多个收件人用英文逗号隔开
         /// </summary>
         public string Tos { get; set; }
+
         /// <summary>
-        /// 是否启用SSL
+        /// 是否启用SSL，默认已启用
         /// </summary>
-        public bool EnableSsl { get; set; }
+        public bool EnableSsl { get; set; } = true;
         /// <summary>
         /// 邮件消息对象
         /// </summary>
@@ -65,11 +66,11 @@ namespace Masuit.Tools.Models
         SmtpClient GetSmtpClient => new SmtpClient
         {
             UseDefaultCredentials = false,
-            Credentials = new System.Net.NetworkCredential(Username, Password),
-            DeliveryMethod = SmtpDeliveryMethod.Network,
+            EnableSsl = EnableSsl,
             Host = SmtpServer,
             Port = SmtpPort,
-            EnableSsl = EnableSsl,
+            Credentials = new System.Net.NetworkCredential(Username, Password),
+            DeliveryMethod = SmtpDeliveryMethod.Network,
         };
 
         //回调方法
@@ -89,7 +90,7 @@ namespace Masuit.Tools.Models
                     if (smtpClient == null || mailMessage == null) return;
                     Subject = Subject;
                     Body = Body;
-                    EnableSsl = false;
+                    //EnableSsl = false;
                     //发送邮件回调方法
                     actionSendCompletedCallback = completedCallback;
                     smtpClient.SendCompleted += SendCompletedCallback;
@@ -110,8 +111,7 @@ namespace Masuit.Tools.Models
                     if (smtpClient == null || mailMessage == null) return;
                     Subject = Subject;
                     Body = Body;
-                    EnableSsl = false;
-                    //发送邮件回调方法
+                    //EnableSsl = false;
                     smtpClient.Send(mailMessage); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
                 }
             }
