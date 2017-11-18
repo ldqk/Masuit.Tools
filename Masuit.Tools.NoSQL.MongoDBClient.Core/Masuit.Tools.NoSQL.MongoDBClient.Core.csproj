@@ -2,6 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.7.7</Version>
+    <Authors>懒得勤快</Authors>
+    <Company>masuit.com</Company>
+    <Description>包含MongoDB的所有的增删查改。
+客户端类采用单例模式进行封装，所以只需要调用MongoDbClient.GetInstance()即可使用。</Description>
+    <Copyright>Copyright © 懒得勤快</Copyright>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+    <PackageTags>Masuit.Tools</PackageTags>
+    <PackageReleaseNotes>如有问题请联系QQ:1170397736，或者到项目的github反馈问题。</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

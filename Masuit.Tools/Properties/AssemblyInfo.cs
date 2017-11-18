@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Masuit.Tools")]
 [assembly: AssemblyDescription("懒得勤快")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("懒得勤快")]
+[assembly: AssemblyCompany("masuit.com")]
 [assembly: AssemblyProduct("Masuit.Tools")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright ©  懒得勤快")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
