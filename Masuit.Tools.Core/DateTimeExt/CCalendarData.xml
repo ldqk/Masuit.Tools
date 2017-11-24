@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<HELLO>
+
+  <!-- 公历节日开始 -->
+  <AD>
+    <feast day="0101" name="元旦" sayhello="yes">
+      <hello>新年好！祝您在新的一年里身体健康，事业进步！</hello>
+      <!-- 从网站根目录算起 -->
+      <img>./img/theme/0101.gif</img>
+    </feast>
+    <feast day="0202" name="世界湿地日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0210" name="国际气象节" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0214" name="情人节" sayhello="yes">
+      <hello>祝天下有情人终成眷属！</hello>
+      <img></img>
+    </feast>
+    <feast day="0301" name="世界图书日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0303" name="全国爱耳日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0305" name="学雷锋纪念日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0308" name="妇女节" sayhello="yes">
+      <hello>妇女能顶半边天，谁说女子不如男！</hello>
+      <img></img>
+    </feast>
+    <feast day="0312" name="植树节" sayhello="yes">
+      <hello>植树造林，功德无量。</hello>
+      <img>./img/theme/0312.gif</img>
+    </feast>
+    <feast day="0314" name="国际警察日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0315" name="消费者权益日" sayhello="no">
+      <img>./img/theme/temp.gif</img>
+      <hello></hello>
+    </feast>
+    <feast day="0316" name="手拉手情系贫困地区全国行动日" sayhello="no">
+      <img>./img/theme/temp.gif</img>
+      <hello></hello>
+    </feast>
+    <feast day="0317" name="国际航海日" sayhello="no">
+      <img>./img/theme/temp.gif</img>
+      <hello></hello>
+    </feast>
+    <feast day="0318" name="全国科技人才活动日" sayhello="no">
+      <img>./img/theme/temp.gif</img>
+      <hello></hello>
+    </feast>
+    <feast day="0321" name="世界睡眠日 世界森林日 世界儿歌日 消除种族歧视国际日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0322" name="世界水日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0323" name="世界气象日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0324" name="世界防治结核病日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0401" name="愚人节" sayhello="no">
+      <img>./img/theme/temp.gif</img>
+      <hello></hello>
+    </feast>
+    <feast day="0407" name="世界卫生日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0422" name="世界地球日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0425" name="国际秘书节" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0501" name="劳动节" sayhello="yes">
+      <hello>今天是劳动节，怎么，您还在劳动吗？</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0504" name="青年节" sayhello="yes">
+      <hello>美哉，我少年中国，与天不老！壮哉，我中国少年，与国无疆！</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0505" name="全国碘缺乏病日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0508" name="世界红十字日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0512" name="护士节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0515" name="国际家庭日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0517" name="世界电信日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0518" name="国际博物馆日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0519" name="全国助残日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0520" name="全国学生营养日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0522" name="国际生物多样性日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0523" name="国际牛奶日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0531" name="世界无烟日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0601" name="儿童节" sayhello="yes">
+      <hello>祝您儿童节快乐！</hello>
+      <img>./img/theme/0601.gif</img>
+    </feast>
+    <feast day="0605" name="世界环境日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0606" name="全国爱眼日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0617" name="防治荒漠化和干旱日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0623" name="国际奥林匹克日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0625" name="全国土地日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0626" name="国际禁毒日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0701" name="建党节 香港回归纪念" sayhello="yes">
+      <hello>庆祝中国共产党成立_YEARS_周年！</hello>
+      <startyear>1921</startyear>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0707" name="七七卢沟桥事变" sayhello="yes">
+      <hello>1937年7月7日，卢沟桥事变，全面抗战开始。</hello>
+      <startyear>1937</startyear>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0711" name="世界人口日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0801" name="建军节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0908" name="国际扫盲日 国际新闻工作者团体日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0909" name="毛泽东逝世纪念" sayhello="yes">
+      <hello>伟大领袖毛泽东主席逝世_YEARS_周年。</hello>
+      <startyear>1976</startyear>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0910" name="中国教师节" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0916" name="国际臭氧层保护日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0918" name="九一八事变" sayhello="yes">
+      <img></img>
+      <hello>１９３１年９月１８日，日本帝国主义对我国沈阳北大营的中国驻军发动武装进攻，接着对我国东北地区进行大规模武装侵略。</hello>
+    </feast>
+    <feast day="0920" name="全国爱牙日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0921" name="国际和平日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0927" name="世界旅游日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="0928" name="国际聋人日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1001" name="国庆节" sayhello="yes">
+      <hello>热烈庆祝中华人民共和国成立_YEARS_周年！</hello>
+      <startyear>1949</startyear>
+      <img>./img/theme/1001.gif</img>
+    </feast>
+    <feast day="1001" name="老人节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="1001" name="国际音乐日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1004" name="世界动物日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1008" name="全国高血压日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1009" name="世界邮政日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1010" name="世界精神卫生日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1014" name="世界标准日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1015" name="国际盲人节" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1016" name="世界粮食日" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1017" name="世界消除贫困日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1022" name="世界传统医药日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1024" name="联合国日" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="1031" name="万圣节" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1108" name="中国记者日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1109" name="消防宣传日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1112" name="孙中山诞辰纪念" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="1114" name="世界糖尿病日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1117" name="国际大学生节" sayhello="no">
+      <img></img>
+      <hello></hello>
+    </feast>
+    <feast day="1201" name="世界艾滋病日" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="1203" name="世界残疾人日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1209" name="世界足球日" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1213" name="南京大屠杀纪念日" sayhello="yes">
+      <hello>南京大屠杀_YEARS_周年。1937年12月13日，日军占领南京，进行长达6周的血腥大屠杀，杀害我军民30余万人。</hello>
+      <startyear>1937</startyear>
+      <img></img>
+    </feast>
+    <feast day="1220" name="澳门回归纪念" sayhello="no">
+      <hello></hello>
+      <img></img>
+    </feast>
+    <feast day="1224" name="圣诞节平安夜" sayhello="yes">
+      <hello>We wish you a merry christmas。</hello>
+      <img>./img/theme/1225.gif</img>
+    </feast>
+    <feast day="1225" name="圣诞节" sayhello="yes">
+      <hello>圣诞快乐。</hello>
+      <img>./img/theme/1225.gif</img>
+    </feast>
+  </AD>
+  <!-- 公历节日结束 -->
+
+  <!-- 农历节日开始 -->
+  <LUNAR>
+    <feast day="0101" name="春节" sayhello="yes">
+      <hello>恭喜发财！新年进步！万事如意！</hello>
+      <img>./img/theme/spring.gif</img>
+    </feast>
+    <feast day="0115" name="元宵节" sayhello="yes">
+      <hello>年年元夜时，花市灯如昼。月上柳梢头，人约黄昏后。</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0505" name="端午节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0707" name="七夕情人节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0715" name="中元节" sayhello="no">
+      <hello></hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0815" name="中秋节" sayhello="yes">
+      <hello>海上升明月 天涯共此时</hello>
+      <img>./img/theme/c815.gif</img>
+    </feast>
+    <feast day="0909" name="重阳节" sayhello="yes">
+      <hello>人生易老天难老，岁岁重阳。今又重阳，战地黄花分外香。</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="1208" name="腊八节" sayhello="yes">
+      <hello>谁愿意跟我去侠客岛喝腊八粥？</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+    <feast day="0100" name="除夕" sayhello="yes">
+      <hello>炮竹声中一岁除，春风送暖入屠苏。千家万户瞳瞳日，总把新桃换旧符。</hello>
+      <img>./img/theme/temp.gif</img>
+    </feast>
+  </LUNAR>
+  <!-- 农历节日结束 -->
+
+  <!-- 普通日子开始 -->
+  <NORMAL>
+    <day time1="2301" time2="2359" sayhello="yes">
+      <hello>深夜了！您应该休息了。</hello>
+      <img>./img/theme/latenight.gif</img>
+    </day>
+    <day time1="1901" time2="2300" sayhello="yes">
+      <hello>晚上好！还在工作吗？</hello>
+      <img>./img/theme/night.gif</img>
+    </day>
+    <day time1="1801" time2="1900" sayhello="yes">
+      <hello>傍晚好！是时候吃晚饭了。</hello>
+      <img>./img/theme/dusk.gif</img>
+    </day>
+    <day time1="1301" time2="1800" sayhello="yes">
+      <hello>下午好！要振作精神哦！</hello>
+      <img>./img/theme/afternoon.gif</img>
+    </day>
+    <day time1="1201" time2="1300" sayhello="yes">
+      <hello>中午好！吃过午饭了吗？</hello>
+      <img>./img/theme/midday.gif</img>
+    </day>
+    <day time1="0901" time2="1200" sayhello="yes">
+      <hello>上午好！努力工作哦！</hello>
+      <img>./img/theme/ackemma.gif</img>
+    </day>
+    <day time1="0601" time2="0900" sayhello="yes">
+      <hello>早上好！休息得好吗？</hello>
+      <img>./img/theme/morning.gif</img>
+    </day>
+    <day time1="0000" time2="0600" sayhello="yes">
+      <hello>深夜了！您应该休息了。</hello>
+      <img>./img/theme/latenight.gif</img>
+    </day>
+  </NORMAL>
+  <!-- 普通日子结束 -->
+
+</HELLO>

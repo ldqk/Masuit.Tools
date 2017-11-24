@@ -24,10 +24,10 @@
     <dependencies>
          <group targetFramework="net45">
             <dependency id="AngleSharp" version="0.9.9" />
-            <dependency id="HtmlSanitizer" version="3.4.156" />
-            <dependency id="Newtonsoft.Json" version="10.0.3" />
+            <dependency id="HtmlSanitizer" version="4.0.181" />
+            <dependency id="Newtonsoft.Json" version="9.0.1" />
             <dependency id="SharpZipLib" version="0.86.0" />
-            <dependency id="StackExchange.Redis" version="1.2.4" />
+            <dependency id="StackExchange.Redis" version="1.2.0" />
          </group>
       </dependencies>
   </metadata>

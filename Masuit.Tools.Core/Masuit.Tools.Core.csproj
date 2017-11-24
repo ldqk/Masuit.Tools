@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.7.7</Version>
+    <Authors>懒得勤快</Authors>
+    <Company>masuit.com</Company>
+    <Description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，html处理，验证码、NoSql等常用封装。
+
+示例代码：
+
+1.检验字符串是否是Email
+
+bool isEmail="1170397736@qq.com".MatchEmail();
+
+2.获取CPU核心数
+
+int core = SystemInfo.GetCpuCount();
+
+3.大文件操作
+
+FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
+{
+
+//fs.CopyToFile(@"D:\1.bak");//同步复制大文件
+
+fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
+
+string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
+
+}
+
+4.html的防XSS处理：
+
+string html = @"<link href="/Content/font-awesome/css" rel="stylesheet" />
+
+<!--[if IE 7]>
+
+<link href='/Content/font-awesome-ie7.min.css' rel='stylesheet'/>
+
+<![endif]-->
+
+<script src="/Scripts/modernizr"></script>
+
+<div id="searchBox" role="search">
+
+<form action="/packages" method="get">
+
+<span class="user-actions"><a href="/users/account/LogOff">退出</a></span>
+
+<input name="q" id="searchBoxInput" />
+
+<input id="searchBoxSubmit" type="submit" value="Submit" />
+
+</form>
+
+</div>";
+
+string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
+
+5.整理操作系统的内存：
+
+Windows.ClearMemorySilent();
+
+......</Description>
+    <Copyright>Copyright © 懒得勤快</Copyright>
+    <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+    <PackageTags>Masuit.Tools</PackageTags>
+    <PackageReleaseNotes>如有问题请联系QQ:1170397736，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="DateTimeExt\CCalendarData.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.181" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Configuration.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
