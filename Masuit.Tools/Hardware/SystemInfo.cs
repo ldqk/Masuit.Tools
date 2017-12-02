@@ -539,6 +539,22 @@ namespace Masuit.Tools.Hardware
         #region 查询计算机系统信息
 
         /// <summary>
+        /// 获取计算机开机时间
+        /// </summary>
+        /// <returns>datetime</returns>
+        public static DateTime BootTime()
+        {
+            var query = new SelectQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem WHERE Primary='true'");
+            var searcher = new ManagementObjectSearcher(query);
+
+            foreach (ManagementObject mo in searcher.Get())
+            {
+                return ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
+            }
+            return DateTime.Now - TimeSpan.FromMilliseconds(Environment.TickCount & Int32.MaxValue);
+        }
+
+        /// <summary>
         /// 查询计算机系统信息
         /// </summary>
         /// <param name="type">类型名</param>
