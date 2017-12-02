@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -154,6 +155,60 @@ namespace Masuit.Tools.Files
             return false;
         }
 
+        /// <summary>
+        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// </summary>
+        /// <param name="files">多个文件路径，文件或文件夹</param>
+        /// <returns>文件流</returns>
+        public static byte[] ZipStream(List<string> files)
+        {
+            List<string> fileList = new List<string>();
+
+            void GetFilesRecurs(string path)
+            {
+                //遍历目标文件夹的所有文件
+                foreach (string fileName in Directory.GetFiles(path))
+                {
+                    fileList.Add(fileName);
+                }
+
+                //遍历目标文件夹的所有文件夹
+                foreach (string directory in Directory.GetDirectories(path))
+                {
+                    GetFilesRecurs(directory);
+                }
+            }
+            MemoryStream ms = new MemoryStream();
+            byte[] buffer;
+            using (ZipFile f = ICSharpCode.SharpZipLib.Zip.ZipFile.Create(ms))
+            {
+                f.BeginUpdate();
+                string dirname = null;
+                files.ForEach(s =>
+                {
+                    if (Directory.Exists(s))
+                    {
+                        GetFilesRecurs(s);
+                    }
+                    else
+                    {
+                        fileList.Add(s);
+                        dirname = Path.GetDirectoryName(s);
+                    }
+                });
+                if (string.IsNullOrEmpty(dirname))
+                {
+                    dirname = Directory.GetParent(fileList[0]).FullName;
+                }
+                f.NameTransform = new ZipNameTransform(dirname); //通过这个名称格式化器，可以将里面的文件名进行一些处理。默认情况下，会自动根据文件的路径在zip中创建有关的文件夹。  
+                fileList.ForEach(s => { f.Add(s); });
+                f.CommitUpdate();
+                buffer = new byte[ms.Length];
+                ms.Position = 0;
+                ms.Read(buffer, 0, buffer.Length);
+            }
+            return buffer;
+        }
         #endregion
 
         #region 解压
@@ -216,13 +271,11 @@ namespace Masuit.Tools.Files
         private static bool ZipFileDictory(string folderToZip, ZipOutputStream s, string parentFolderName)
         {
             bool res = true;
-            string[] folders, filenames;
-            ZipEntry entry = null;
             Crc32 crc = new Crc32();
-            entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/"));
+            var entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/"));
             s.PutNextEntry(entry);
             s.Flush();
-            filenames = Directory.GetFiles(folderToZip);
+            var filenames = Directory.GetFiles(folderToZip);
             foreach (string file in filenames)
             {
                 using (FileStream fs = File.OpenRead(file))
@@ -240,7 +293,7 @@ namespace Masuit.Tools.Files
                     s.Write(buffer, 0, buffer.Length);
                 }
             }
-            folders = Directory.GetDirectories(folderToZip);
+            var folders = Directory.GetDirectories(folderToZip);
             foreach (string folder in folders)
             {
                 if (!ZipFileDictory(folder, s, Path.Combine(parentFolderName, Path.GetFileName(folderToZip))))
