@@ -1468,17 +1468,15 @@ ReCatch:
         /// <exception cref="Exception"> </exception>
         public static List<KeyValuePair<int, string>> GetHtmlByUrlList(List<KeyValuePair<int, string>> listUrl, string sCoding)
         {
-            int iTimeOut = int.Parse(System.Configuration.ConfigurationManager.AppSettings["SocketTimeOut"]);
+            int iTimeOut = 120000;
             StringBuilder sbHtml = new StringBuilder();
             List<KeyValuePair<int, string>> listResult = new List<KeyValuePair<int, string>>();
-            int nBytes = 0;
             Socket sock = null;
-            IPHostEntry ipHostInfo = null;
             try
             {
                 // 初始化				
                 Uri site = new Uri(listUrl[0].Value);
-                ipHostInfo = System.Net.Dns.GetHostEntry(site.Host);
+                var ipHostInfo = Dns.GetHostEntry(site.Host);
                 IPAddress ipAddress = ipHostInfo.AddressList[0];
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, site.Port);
                 sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -1496,6 +1494,7 @@ ReCatch:
                         "Host: " + site.Host + "\r\n\r\n" + '\0';
                     // 发送
                     byte[] msg = Encoding.GetEncoding(sCoding).GetBytes(sendMsg);
+                    int nBytes;
                     if ((nBytes = sock.Send(msg)) == 0)
                     {
                         sock.Shutdown(SocketShutdown.Both);

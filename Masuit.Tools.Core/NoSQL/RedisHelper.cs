@@ -949,7 +949,7 @@ namespace Masuit.Tools.NoSQL
 
         private string AddSysCustomKey(string oldKey)
         {
-            var prefixKey = CustomKey ?? RedisConnectionHelp.SysCustomKey;
+            var prefixKey = CustomKey ?? String.Empty;
             return prefixKey + oldKey;
         }
 

@@ -14,9 +14,9 @@ namespace Masuit.Tools.Security
     {
         #region DES对称加密解密
         /// <summary>
-        /// 加密密钥，需要在config配置文件中AppSettings节点中配置desSecret值，若未配置，默认取“masuit”的MD5值
+        /// 加密密钥，需要在config配置文件中配置desSecret值，若未配置，默认取“masuit”的MD5值
         /// </summary>
-        public static string DEFAULT_ENCRYPT_KEY = ConfigurationManager.AppSettings["desSecret"] ?? "masuit".MDString2();
+        public static string DEFAULT_ENCRYPT_KEY = "masuit".MDString2();
 
         /// <summary>
         /// 使用默认加密

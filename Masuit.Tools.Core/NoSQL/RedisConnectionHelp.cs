@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Configuration;
 using StackExchange.Redis;
 
 namespace Masuit.Tools.NoSQL
@@ -11,17 +10,12 @@ namespace Masuit.Tools.NoSQL
     public static class RedisConnectionHelp
     {
         /// <summary>
-        /// 系统自定义Key前缀
-        /// </summary>
-        public static readonly string SysCustomKey = ConfigurationManager.AppSettings["redisKey"] ?? "";
-
-        /// <summary>
-        /// Redis服务器连接字符串，在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，如：<br/>
+        /// Redis服务器连接字符串，默认为：127.0.0.1:6379,allowadmin=true，如：<br/>
         /// &lt;connectionStrings&gt;<br/>
         ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
         /// &lt;/connectionStrings&gt;
         /// </summary>
-        public static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true";
+        public static string RedisConnectionString => "127.0.0.1:6379,allowadmin=true";
 
         private static readonly object Locker = new object();
         private static ConnectionMultiplexer _instance;

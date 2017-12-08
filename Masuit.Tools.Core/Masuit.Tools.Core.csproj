@@ -82,10 +82,4 @@ Windows.ClearMemorySilent();
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Configuration">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7\System.Configuration.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
