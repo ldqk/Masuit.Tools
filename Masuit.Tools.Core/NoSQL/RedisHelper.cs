@@ -22,10 +22,7 @@ namespace Masuit.Tools.NoSQL
         #region 构造函数
 
         /// <summary>
-        /// 构造函数，使用该构造函数需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作，如：<br/>
-        /// &lt;connectionStrings&gt;<br/>
-        ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
-        /// &lt;/connectionStrings&gt;
+        /// 构造函数，使用该构造函数需要先配置链接字符串，连接字符串通过RedisConnectionHelp.RedisConnectionString属性进行获取，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作<br/>
         /// </summary>
         /// <param name="dbNum">数据库编号</param>
         public RedisHelper(int dbNum = 0) : this(dbNum, null)

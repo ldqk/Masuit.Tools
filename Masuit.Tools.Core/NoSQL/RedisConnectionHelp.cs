@@ -11,9 +11,6 @@ namespace Masuit.Tools.NoSQL
     {
         /// <summary>
         /// Redis服务器连接字符串，默认为：127.0.0.1:6379,allowadmin=true，如：<br/>
-        /// &lt;connectionStrings&gt;<br/>
-        ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
-        /// &lt;/connectionStrings&gt;
         /// </summary>
         public static string RedisConnectionString => "127.0.0.1:6379,allowadmin=true";
 
