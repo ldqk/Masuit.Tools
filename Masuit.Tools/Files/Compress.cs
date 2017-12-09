@@ -342,7 +342,6 @@ namespace Masuit.Tools.Files
         {
             if (!File.Exists(fileToZip))
                 throw new FileNotFoundException("指定要压缩的文件: " + fileToZip + " 不存在!");
-            ZipEntry ZipEntry = null;
             bool res = true;
             FileStream ZipFile = File.OpenRead(fileToZip);
             byte[] buffer = new byte[ZipFile.Length];
@@ -352,8 +351,8 @@ namespace Masuit.Tools.Files
             {
                 using (ZipOutputStream ZipStream = new ZipOutputStream(ZipFile))
                 {
-                    ZipEntry = new ZipEntry(Path.GetFileName(fileToZip));
-                    ZipStream.PutNextEntry(ZipEntry);
+                    var zipEntry = new ZipEntry(Path.GetFileName(fileToZip));
+                    ZipStream.PutNextEntry(zipEntry);
                     ZipStream.SetLevel(level);
                     ZipStream.Write(buffer, 0, buffer.Length);
                 }

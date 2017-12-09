@@ -39,7 +39,7 @@ namespace Masuit.Tools.Files
             using (FileStream fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 byte[] buf = new byte[bufferSize];
-                int len = 0;
+                int len;
                 await Task.Run(() =>
                 {
                     using (fs)
