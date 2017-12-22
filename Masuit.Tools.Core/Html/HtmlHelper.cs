@@ -454,8 +454,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchFirstImgSrc(this string html)
         {
-            MatchCollection collection = MatchImgTags(html);
-            return collection.Count > 0 ? collection[0].Groups["src"].Value : String.Empty;
+            return Regex.Match(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>").Groups[1].Value;
         }
 
         /// <summary>
@@ -465,14 +464,10 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            MatchCollection collection = MatchImgTags(html);
+            MatchCollection collection = Regex.Matches(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>");
             if (collection.Count > 0)
             {
-                string img = collection[new Random().StrictNext(collection.Count)].Value;
-                if (img.StartsWith("<"))
-                {
-                    return img.MatchImgTag().Groups["src"].Value;
-                }
+                return collection[new Random().StrictNext(collection.Count)].Groups[1].Value;
             }
             return String.Empty;
         }
