@@ -11,12 +11,6 @@ using Microsoft.Win32;
 namespace Masuit.Tools.Hardware
 {
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="s"></param>
-    public delegate void OnLogicalDiskProc(string s);
-
-    /// <summary>
     /// 硬件信息，部分功能需要C++支持
     /// </summary>
     public static partial class SystemInfo
@@ -87,9 +81,6 @@ namespace Masuit.Tools.Hardware
 
         #endregion
 
-        /// <summary>
-        /// 
-        /// </summary>
         public static bool CompactFormat { get; set; }
 
         #region CPU核心 
@@ -130,7 +121,7 @@ namespace Masuit.Tools.Hardware
                     }
                     return availablebytes;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return 0;
                 }
@@ -196,7 +187,7 @@ namespace Masuit.Tools.Hardware
                 ManagementObjectCollection mn = m.GetInstances();
                 return mn.Count;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -236,7 +227,7 @@ namespace Masuit.Tools.Hardware
 
                 return list;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<CpuInfo>();
             }
@@ -282,7 +273,7 @@ namespace Masuit.Tools.Hardware
                 double temp = (double.Parse(str) - 2732) / 10;
                 return Math.Round(temp, 2);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 0;
             }
@@ -458,7 +449,7 @@ namespace Masuit.Tools.Hardware
                 }
                 return list;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<string>();
             }
@@ -495,7 +486,7 @@ namespace Masuit.Tools.Hardware
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<string>() { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" };
             }
@@ -510,7 +501,7 @@ namespace Masuit.Tools.Hardware
             {
                 return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
@@ -568,7 +559,7 @@ namespace Masuit.Tools.Hardware
                 foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
                 return str;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
@@ -613,7 +604,7 @@ namespace Masuit.Tools.Hardware
                 }
                 return dic;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
             }
@@ -643,7 +634,7 @@ namespace Masuit.Tools.Hardware
                 }
                 return dic;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new Dictionary<string, string>();
             }
@@ -675,7 +666,7 @@ namespace Masuit.Tools.Hardware
                 }
                 return dic;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
             }
@@ -706,7 +697,7 @@ namespace Masuit.Tools.Hardware
                 }
                 return dic;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new Dictionary<string, double>() { { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 } };
             }

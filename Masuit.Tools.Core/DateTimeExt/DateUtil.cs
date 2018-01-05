@@ -1,7 +1,6 @@
 ﻿using System;
-using Masuit.Tools.Logging;
 
-namespace Masuit.Tools.DateTimeExt
+namespace Masuit.Tools.Core.DateTimeExt
 {
     /// <summary>
     /// 日期操作工具类
@@ -330,10 +329,7 @@ namespace Masuit.Tools.DateTimeExt
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
@@ -349,7 +345,7 @@ namespace Masuit.Tools.DateTimeExt
                 if (oDate.CompareTo(DateTime.Parse("1800-1-1")) > 0) return true;
                 return false;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }

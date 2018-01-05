@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Net
 {
@@ -37,7 +36,7 @@ namespace Masuit.Tools.Net
                 Socket socket = listener.AcceptSocket();
                 return socket;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -55,7 +54,7 @@ namespace Masuit.Tools.Net
                 TcpClient client = listener.AcceptTcpClient();
                 return client.GetStream();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -78,7 +77,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.Client;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -98,7 +97,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.Client;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -117,7 +116,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.GetStream();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -137,7 +136,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.GetStream();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

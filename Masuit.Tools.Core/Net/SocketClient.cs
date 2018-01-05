@@ -6,9 +6,8 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
-using Masuit.Tools.Logging;
 
-namespace Masuit.Tools.Net
+namespace Masuit.Tools.Core.Net
 {
     /// <summary>
     /// Socket客户端操作类
@@ -37,7 +36,7 @@ namespace Masuit.Tools.Net
                 Socket socket = listener.AcceptSocket();
                 return socket;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -55,7 +54,7 @@ namespace Masuit.Tools.Net
                 TcpClient client = listener.AcceptTcpClient();
                 return client.GetStream();
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -78,7 +77,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.Client;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -98,7 +97,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.Client;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -117,7 +116,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.GetStream();
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -137,7 +136,7 @@ namespace Masuit.Tools.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.GetStream();
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
@@ -156,12 +155,11 @@ namespace Masuit.Tools.Net
         public static byte[] ReceiveFixData(this Socket socket, int size)
         {
             int offset = 0;
-            int recv = 0;
             int dataleft = size;
             byte[] msg = new byte[size];
             while (dataleft > 0)
             {
-                recv = socket.Receive(msg, offset, dataleft, 0);
+                var recv = socket.Receive(msg, offset, dataleft, 0);
                 if (recv == 0)
                     break;
                 offset += recv;

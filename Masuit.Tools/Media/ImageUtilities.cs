@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Media
 {
@@ -498,7 +497,7 @@ namespace Masuit.Tools.Media
                 g.Dispose();
                 return bmpOut;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -527,7 +526,7 @@ namespace Masuit.Tools.Media
                 g.Dispose();
                 return b;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -813,7 +812,7 @@ namespace Masuit.Tools.Media
                     }).ConfigureAwait(false);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -947,7 +946,7 @@ namespace Masuit.Tools.Media
                 outBmp.Dispose();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

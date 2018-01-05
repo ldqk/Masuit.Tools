@@ -392,9 +392,9 @@ namespace Masuit.Tools.Net
                             return taobaoIp.IpData.Isp;
                         }
                     }
-                    catch (Exception e)
+                    catch
                     {
-
+                        // ignored
                     }
                 }
                 return $"未能找到{ip}的ISP信息";

@@ -368,7 +368,7 @@ namespace Masuit.Tools.Net
                     return false;
                 }).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
