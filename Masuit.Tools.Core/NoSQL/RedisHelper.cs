@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
-namespace Masuit.Tools.NoSQL
+namespace Masuit.Tools.Core.NoSQL
 {
     /// <summary>
     /// Redis操作

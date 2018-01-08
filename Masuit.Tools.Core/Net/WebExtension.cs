@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using Masuit.Tools.Core.Config;
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.Net;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools.Core.Net
@@ -37,7 +37,6 @@ namespace Masuit.Tools.Core.Net
 
         #region 获取客户端IP地址信息
 
-        private static IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", true).Build();
         /// <summary>
         /// 根据IP地址获取详细地理信息
         /// </summary>
@@ -48,7 +47,11 @@ namespace Masuit.Tools.Core.Net
             ip.MatchInetAddress(out var isIpAddress);
             if (isIpAddress)
             {
-                string ak = config["AppSettings:BaiduAK"];
+                if (CoreConfig.Configuration is null)
+                {
+                    throw new Exception("未注入IConfiguration，请先在Startup.cs的构造函数中为Masuit.Tools.Core.Config.CoreConfig.Configuration赋值");
+                }
+                string ak = CoreConfig.Configuration["AppSettings:BaiduAK"];
                 if (string.IsNullOrEmpty(ak))
                 {
                     throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
@@ -105,7 +108,11 @@ namespace Masuit.Tools.Core.Net
             ip.MatchInetAddress(out var isIpAddress);
             if (isIpAddress)
             {
-                string ak = config["AppSettings:BaiduAK"];
+                if (CoreConfig.Configuration is null)
+                {
+                    throw new Exception("未注入IConfiguration，请先在Startup.cs的构造函数中为Masuit.Tools.Core.Config.CoreConfig.Configuration赋值");
+                }
+                string ak = CoreConfig.Configuration["AppSettings:BaiduAK"];
                 if (string.IsNullOrEmpty(ak))
                 {
                     throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中的AppSettings节点下添加BaiduAK配置节(注意大小写)");

@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using StackExchange.Redis;
 
-namespace Masuit.Tools.NoSQL
+namespace Masuit.Tools.Core.NoSQL
 {
     /// <summary>
     /// ConnectionMultiplexer对象管理帮助类
@@ -25,14 +25,12 @@ namespace Masuit.Tools.NoSQL
         {
             get
             {
-                if (_instance == null)
+                if (_instance != null) return _instance;
+                lock (Locker)
                 {
-                    lock (Locker)
+                    if (_instance == null || !_instance.IsConnected)
                     {
-                        if (_instance == null || !_instance.IsConnected)
-                        {
-                            _instance = GetManager();
-                        }
+                        _instance = GetManager();
                     }
                 }
                 return _instance;

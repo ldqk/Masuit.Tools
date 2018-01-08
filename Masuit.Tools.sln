@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tools\Masuit.Tools.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
 EndProject
@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.NoSQL.MongoDBClient", "Masuit.Tools.NoSQL.MongoDBClient\Masuit.Tools.NoSQL.MongoDBClient.csproj", "{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.NoSQL.MongoDBClient.Core", "Masuit.Tools.NoSQL.MongoDBClient.Core\Masuit.Tools.NoSQL.MongoDBClient.Core.csproj", "{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient.Core", "Masuit.Tools.NoSQL.MongoDBClient.Core\Masuit.Tools.NoSQL.MongoDBClient.Core.csproj", "{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
