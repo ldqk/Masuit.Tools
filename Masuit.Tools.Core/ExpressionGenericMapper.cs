@@ -45,5 +45,49 @@ namespace Masuit.Tools.Core
 
             return ((Func<TSource, TDestination>)func)(source); //拼装是一次性的
         }
+        /// <summary>
+        /// 集合映射
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TDestination> Map<TSource, TDestination>(this IEnumerable<TSource> source)
+        {
+            foreach (TSource s in source)
+            {
+                yield return s.Map<TSource, TDestination>();
+            }
+        }
+
+        /// <summary>
+        /// 集合映射
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TDestination> Map<TSource, TDestination>(this IList<TSource> source)
+        {
+            foreach (TSource s in source)
+            {
+                yield return s.Map<TSource, TDestination>();
+            }
+        }
+
+        /// <summary>
+        /// 集合映射
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TDestination"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TDestination> Map<TSource, TDestination>(this ICollection<TSource> source)
+        {
+            foreach (TSource s in source)
+            {
+                yield return s.Map<TSource, TDestination>();
+            }
+        }
     }
 }
