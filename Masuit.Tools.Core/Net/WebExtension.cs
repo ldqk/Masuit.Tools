@@ -4,7 +4,6 @@ using System.Net.Http;
 using Masuit.Tools.Core.Config;
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
-using Masuit.Tools.Net;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools.Core.Net
@@ -17,20 +16,54 @@ namespace Masuit.Tools.Core.Net
         #region 获取线程内唯一的EF上下文对象
 
         /// <summary>
-        /// 获取线程内唯一的EF上下文对象
+        /// 获取线程内唯一的EF上下文对象，.NetCore中获取EF数据上下文对象，需要通过依赖注入的方式，请考虑在自己的项目中通过Masuit.Tools提供的CallContext对象实现获取线程内唯一的EF上下文对象，示例代码：
+        /// <para>public static DataContext GetDbContext()</para>
+        /// <para>{</para>
+        /// <para>    DataContext db;</para>
+        /// <para>    if (CallContext&lt;DataContext>.GetData("db") is null)</para>
+        /// <para>    {</para>
+        /// <para>        DbContextOptions&lt;DataContext> dbContextOption = new DbContextOptions&lt;DataContext>();</para>
+        /// <para>        DbContextOptionsBuilder&lt;DataContext> dbContextOptionBuilder = new DbContextOptionsBuilder&lt;DataContext>(dbContextOption);</para>
+        /// <para>        db = new DataContext(dbContextOptionBuilder.UseSqlServer(CommonHelper.ConnectionString).Options);</para>
+        /// <para>        CallContext&lt;DataContext>.SetData("db", db);</para>
+        /// <para>    }</para>
+        /// <para>    db = CallContext&lt;DataContext>.GetData("db");</para>
+        /// <para>    return db;</para>
+        /// <para>}</para>
         /// </summary>
         /// <typeparam name="T">EF上下文容器对象</typeparam>
         /// <returns>EF上下文容器对象</returns>
+        [Obsolete(@".NetCore中获取EF数据上下文对象，需要通过依赖注入的方式，请考虑在自己的项目中通过Masuit.Tools提供的CallContext对象实现获取线程内唯一的EF上下文对象，示例代码：
+        public static DataContext GetDbContext()
+        {
+            DataContext db;
+            if (CallContext<DataContext>.GetData(""db"") is null)
+            {
+                DbContextOptions<DataContext> dbContextOption = new DbContextOptions<DataContext>();
+                DbContextOptionsBuilder<DataContext> dbContextOptionBuilder = new DbContextOptionsBuilder<DataContext>(dbContextOption);
+                db = new DataContext(dbContextOptionBuilder.UseSqlServer(CommonHelper.ConnectionString).Options);
+                CallContext<DataContext>.SetData(""db"", db);
+            }
+            db = CallContext<DataContext>.GetData(""db"");
+            return db;
+        }")]
         public static T GetDbContext<T>() where T : new()
         {
-            T db;
-            if (CallContext<T>.GetData("db") == null)
-            {
-                db = new T();
-                CallContext<T>.SetData("db", db);
-            }
-            db = CallContext<T>.GetData("db");
-            return db;
+            throw new Exception(@".NetCore中获取EF数据上下文对象，需要通过依赖注入的方式，请考虑在自己的项目中通过Masuit.Tools提供的CallContext对象实现获取线程内唯一的EF上下文对象，示例代码：
+                                        public static DataContext GetDbContext()
+                                        {
+                                            DataContext db;
+                                            if (CallContext<DataContext>.GetData(""db"") is null)
+                                            {
+                                                DbContextOptions<DataContext> dbContextOption = new DbContextOptions<DataContext>();
+                                                DbContextOptionsBuilder<DataContext> dbContextOptionBuilder = new DbContextOptionsBuilder<DataContext>(dbContextOption);
+                                                db = new DataContext(dbContextOptionBuilder.UseSqlServer(CommonHelper.ConnectionString).Options);
+                                                CallContext<DataContext>.SetData(""db"", db);
+                                            }
+                                            db = CallContext<DataContext>.GetData(""db"");
+                                            return db;
+                                        }
+        ");
         }
 
         #endregion
