@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Masuit.Tools.Net
+namespace Masuit.Tools.Core.Net
 {
     /// <summary>
     /// 取线程内唯一对象
