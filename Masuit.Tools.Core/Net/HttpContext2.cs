@@ -10,7 +10,7 @@ namespace Masuit.Tools.Core.Net
         private static IHttpContextAccessor _accessor;
 
         /// <summary>
-        /// 获取当前禽求上下文
+        /// 获取当前禽求上下文，使用前需要在Startup中注入，ConfigureServices方法中：services.AddHttpContextAccessor();，Configure方法中：app.UseStaticHttpContext();
         /// </summary>
         public static HttpContext Current => _accessor.HttpContext;
 

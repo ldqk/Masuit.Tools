@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.8.4</Version>
+    <Version>1.8.5</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
     <Description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，html处理，验证码、NoSql等常用封装。
@@ -13,11 +13,19 @@
 
 bool isEmail="1170397736@qq.com".MatchEmail();
 
-2.获取CPU核心数
+2.获取线程内唯一对象
 
-int core = SystemInfo.GetCpuCount();
+CallContext&lt;T&gt;.GetData("db");
 
-3.大文件操作
+3.获取当前请求上下文
+
+var context=HttpContext2.Current;
+
+4.获取IP详细地理信息
+
+var address="114.114.114.114".GetPhysicsAddress();
+
+5.大文件操作
 
 FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
@@ -31,39 +39,34 @@ string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
 
 }
 
-4.html的防XSS处理：
+6.html的防XSS处理：
 
-string html = @"<link href="/Content/font-awesome/css" rel="stylesheet" />
+string html = @"&lt;link href="/Content/font-awesome/css" rel="stylesheet" /&gt;
 
-<!--[if IE 7]>
+&lt;!--[if IE 7]&gt;
 
-<link href='/Content/font-awesome-ie7.min.css' rel='stylesheet'/>
+&lt;link href='/Content/font-awesome-ie7.min.css' rel='stylesheet'/&gt;
 
-<![endif]-->
+&lt;![endif]--&gt;
 
-<script src="/Scripts/modernizr"></script>
+&lt;script src="/Scripts/modernizr"&gt;&lt;/script&gt;
 
-<div id="searchBox" role="search">
+&lt;div id="searchBox" role="search"&gt;
 
-<form action="/packages" method="get">
+&lt;form action="/packages" method="get"&gt;
 
-<span class="user-actions"><a href="/users/account/LogOff">退出</a></span>
+&lt;span class="user-actions"&gt;&lt;a href="/users/account/LogOff"&gt;退出&lt;/a&gt;&lt;/span&gt;
 
-<input name="q" id="searchBoxInput" />
+&lt;input name="q" id="searchBoxInput" /&gt;
 
-<input id="searchBoxSubmit" type="submit" value="Submit" />
+&lt;input id="searchBoxSubmit" type="submit" value="Submit" /&gt;
 
-</form>
+&lt;/form&gt;
 
-</div>";
+&lt;/div&gt;";
 
-string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
-
-5.整理操作系统的内存：
-
-Windows.ClearMemorySilent();
-
-......</Description>
+string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&lt;a href="/users/account/LogOff"&gt;退出&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
+</Description>
     <Copyright>Copyright © 懒得勤快</Copyright>
     <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
     <PackageTags>Masuit.Tools</PackageTags>
