@@ -350,6 +350,19 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 复制到一个现有对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">源对象</param>
+        /// <param name="dest">目标对象</param>
+        /// <returns></returns>
+        public static T CopyTo<T>(this T source, T dest) where T : new()
+        {
+            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            return dest;
+        }
+
+        /// <summary>
         /// 复制一个新的对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
