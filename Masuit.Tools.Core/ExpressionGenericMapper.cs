@@ -43,8 +43,14 @@ namespace Masuit.Tools.Core
                 func = lambda.Compile();
             }
 
+            if (source == null)
+            {
+                return default(TDestination);
+            }
+
             return ((Func<TSource, TDestination>)func)(source); //拼装是一次性的
         }
+
         /// <summary>
         /// 集合映射
         /// </summary>

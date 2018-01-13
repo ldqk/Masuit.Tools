@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Masuit.Tools;
 
 namespace Test
@@ -47,8 +46,11 @@ namespace Test
             //Console.WriteLine(match);
             //PhysicsAddress address = "4.2.2.1".GetPhysicsAddressInfo();
 
-            List<MyClass> mc = new List<MyClass> { new MyClass() { Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() { new MyClass2() { Age = 22, Name = "dddd" } } }, new MyClass() { Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() { new MyClass2() { Age = 22, Name = "dddd" } } }, new MyClass() { Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() { new MyClass2() { Age = 22, Name = "dddd" } } }, new MyClass() { Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() { new MyClass2() { Age = 22, Name = "dddd" } } } };
-            List<MyClass2> list = mc.Map<MyClass, MyClass2>().ToList();
+            //List<MyClass> mc = new List<MyClass> {new MyClass() {Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() {new MyClass2() {Age = 22, Name = "dddd"}}}, new MyClass() {Name = "aaa", Age = 10, MyClass3 = new MyClass3()}, new MyClass() {Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() {new MyClass2() {Age = 22, Name = "dddd"}}}, new MyClass() {Name = "aaa", Age = 10, MyClass3 = new MyClass3(), MyClass2s = new List<MyClass2>() {new MyClass2() {Age = 22, Name = "dddd"}}}};
+            //List<MyClass2> list = mc.Map<MyClass, MyClass2>().ToList();
+
+            MyClass mc = null;
+            MyClass2 mc2 = mc.Map<MyClass, MyClass2>();
 
             Console.ReadKey();
         }
@@ -66,12 +68,12 @@ namespace Test
     {
         public string Name { get; set; }
         public int Age { get; set; }
-
+        public MyClass3 MyClass3 { get; set; }
+        public List<MyClass2> MyClass2s { get; set; }
     }
 
     public class MyClass3
     {
         public string MyProperty { get; set; }
-
     }
 }
