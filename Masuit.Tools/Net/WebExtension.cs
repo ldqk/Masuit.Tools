@@ -8,6 +8,7 @@ using System.Web.SessionState;
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
+using Masuit.Tools.Security;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools.Net
@@ -40,6 +41,7 @@ namespace Masuit.Tools.Net
 
         #region 写Session
 
+        static RedisHelper helper = new RedisHelper(1);
         /// <summary>
         /// 写Session
         /// </summary>
@@ -68,16 +70,19 @@ namespace Masuit.Tools.Net
         /// <param name="cookieName">Cookie键，默认为sessionId</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static bool SetByRedis<T>(this HttpSessionState _, T obj, string cookieName = "sessionId", int expire = 20)
+        public static bool SetByRedis<T>(this HttpSessionState _, T obj, string cookieName = "sessionId", int expire = 20) where T : class
         {
-            var sessionId = Guid.NewGuid().ToString();
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
+            var sessionId = Guid.NewGuid().ToString().AESEncrypt();
             if (!string.IsNullOrEmpty(cookieName))
             {
                 //如果cookieName为null，则不调用Cookie存储
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            RedisHelper helper = new RedisHelper(1);
             return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
 
@@ -93,16 +98,19 @@ namespace Masuit.Tools.Net
         /// <param name="cookieName">Cookie键，默认为sessionId</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static bool SetByRedis<T>(this HttpSessionStateBase _, T obj, string cookieName = "sessionId", int expire = 20)
+        public static bool SetByRedis<T>(this HttpSessionStateBase _, T obj, string cookieName = "sessionId", int expire = 20) where T : class
         {
-            var sessionId = Guid.NewGuid().ToString();
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
+            var sessionId = Guid.NewGuid().ToString().AESEncrypt();
             if (!string.IsNullOrEmpty(cookieName))
             {
                 //如果cookieName为null，则不调用Cookie存储
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            RedisHelper helper = new RedisHelper(1);
             return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
 
@@ -136,9 +144,8 @@ namespace Masuit.Tools.Net
         /// <param name="key">键</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20)
+        public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20) where T : class
         {
-            RedisHelper helper = new RedisHelper(1);
             if (helper.KeyExists(key))
             {
                 helper.Expire(key, TimeSpan.FromMinutes(expire));
@@ -155,9 +162,8 @@ namespace Masuit.Tools.Net
         /// <param name="key">键</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20)
+        public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20) where T : class
         {
-            RedisHelper helper = new RedisHelper(1);
             if (helper.KeyExists(key))
             {
                 helper.Expire(key, TimeSpan.FromMinutes(expire));
@@ -174,10 +180,14 @@ namespace Masuit.Tools.Net
         /// <param name="cookieName">用于存SessionId的Cookie键</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static T GetByCookieRedis<T>(this HttpSessionState _, string cookieName = "sessionId", int expire = 20)
+        public static T GetByCookieRedis<T>(this HttpSessionState _, string cookieName = "sessionId", int expire = 20) where T : class
         {
-            RedisHelper helper = new RedisHelper(1);
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            if (string.IsNullOrEmpty(key)) return default(T);
             if (helper.KeyExists(key))
             {
                 helper.Expire(key, TimeSpan.FromMinutes(expire));
@@ -194,10 +204,14 @@ namespace Masuit.Tools.Net
         /// <param name="cookieName">用于存SessionId的Cookie键</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static T GetByCookieRedis<T>(this HttpSessionStateBase _, string cookieName = "sessionId", int expire = 20)
+        public static T GetByCookieRedis<T>(this HttpSessionStateBase _, string cookieName = "sessionId", int expire = 20) where T : class
         {
-            RedisHelper helper = new RedisHelper(1);
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            if (string.IsNullOrEmpty(key)) return default(T);
             if (helper.KeyExists(key))
             {
                 helper.Expire(key, TimeSpan.FromMinutes(expire));
@@ -214,8 +228,12 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByCookieRedis(this HttpSessionStateBase _, string cookieName = "sessionId")
         {
-            RedisHelper helper = new RedisHelper(1);
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
             return helper.DeleteKey(key);
         }
@@ -228,7 +246,6 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionStateBase _, string key = "sessionId")
         {
-            RedisHelper helper = new RedisHelper(1);
             return helper.DeleteKey(key);
         }
 
@@ -240,8 +257,12 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByCookieRedis(this HttpSessionState _, string cookieName = "sessionId")
         {
-            RedisHelper helper = new RedisHelper(1);
+            if (HttpContext.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
+            if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
             return helper.DeleteKey(key);
         }
@@ -254,7 +275,6 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionState _, string key = "sessionId")
         {
-            RedisHelper helper = new RedisHelper(1);
             return helper.DeleteKey(key);
         }
 
@@ -336,6 +356,7 @@ namespace Masuit.Tools.Net
                 }
                 using (HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") })
                 {
+                    client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
                     try
                     {
                         string ipJson = client.GetStringAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").Result;
