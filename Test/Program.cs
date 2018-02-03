@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Masuit.Tools.Hardware;
 
 namespace Test
 {
@@ -51,6 +52,8 @@ namespace Test
             //MyClass mc = null;
             //MyClass2 mc2 = mc.Map<MyClass, MyClass2>();
 
+            string s = SystemInfo.GetLocalUsedIP();
+            Console.WriteLine(s);
             Console.ReadKey();
         }
     }
