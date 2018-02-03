@@ -383,9 +383,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
+        public Int64 DeleteMany<T>(String collection, BsonDocument document)
+        {
+            DeleteResult result = Database.GetCollection<T>(collection).DeleteMany(document);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按BsonDocument条件删除
+        /// </summary>
+        /// <param name="collection">集合名称</param>
+        /// <param name="document">文档</param>
+        /// <returns></returns>
         public Int64 Delete(String collection, BsonDocument document)
         {
             DeleteResult result = Database.GetCollection<BsonDocument>(collection).DeleteOne(document);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按BsonDocument条件删除
+        /// </summary>
+        /// <param name="collection">集合名称</param>
+        /// <param name="document">文档</param>
+        /// <returns></returns>
+        public Int64 DeleteMany(String collection, BsonDocument document)
+        {
+            DeleteResult result = Database.GetCollection<BsonDocument>(collection).DeleteMany(document);
             return result.DeletedCount;
         }
 
@@ -407,9 +431,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
+        public async Task<long> DeleteManyAsync<T>(String collection, BsonDocument document)
+        {
+            DeleteResult result = await Database.GetCollection<T>(collection).DeleteManyAsync(document);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按BsonDocument条件删除
+        /// </summary>
+        /// <param name="collection">集合名称</param>
+        /// <param name="document">文档</param>
+        /// <returns></returns>
         public async Task<long> DeleteAsync(String collection, BsonDocument document)
         {
             DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteOneAsync(document);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按BsonDocument条件删除
+        /// </summary>
+        /// <param name="collection">集合名称</param>
+        /// <param name="document">文档</param>
+        /// <returns></returns>
+        public async Task<long> DeleteManyAsync(String collection, BsonDocument document)
+        {
+            DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteManyAsync(document);
             return result.DeletedCount;
         }
 
@@ -431,9 +479,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="json">json字符串</param>
         /// <returns></returns>
+        public Int64 DeleteMany<T>(String collName, String json)
+        {
+            var result = Database.GetCollection<T>(collName).DeleteMany(json);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按json字符串删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="json">json字符串</param>
+        /// <returns></returns>
         public Int64 Delete(String collName, String json)
         {
             var result = Database.GetCollection<BsonDocument>(collName).DeleteOne(json);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按json字符串删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="json">json字符串</param>
+        /// <returns></returns>
+        public Int64 DeleteMany(String collName, String json)
+        {
+            var result = Database.GetCollection<BsonDocument>(collName).DeleteMany(json);
             return result.DeletedCount;
         }
 
@@ -455,9 +527,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="json">json字符串</param>
         /// <returns></returns>
+        public async Task<long> DeleteManyAsync<T>(String collName, String json)
+        {
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(json);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按json字符串删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="json">json字符串</param>
+        /// <returns></returns>
         public async Task<long> DeleteAsync(String collName, String json)
         {
             var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(json);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按json字符串删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="json">json字符串</param>
+        /// <returns></returns>
+        public async Task<long> DeleteManyAsync(String collName, String json)
+        {
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(json);
             return result.DeletedCount;
         }
 
@@ -479,9 +575,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
+        public Int64 DeleteMany<T>(String collName, Expression<Func<T, Boolean>> predicate)
+        {
+            var result = Database.GetCollection<T>(collName).DeleteMany(predicate);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按条件表达式删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="predicate">条件表达式</param>
+        /// <returns></returns>
         public Int64 Delete(String collName, Expression<Func<BsonDocument, Boolean>> predicate)
         {
             var result = Database.GetCollection<BsonDocument>(collName).DeleteOne(predicate);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按条件表达式删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="predicate">条件表达式</param>
+        /// <returns></returns>
+        public Int64 DeleteMany(String collName, Expression<Func<BsonDocument, Boolean>> predicate)
+        {
+            var result = Database.GetCollection<BsonDocument>(collName).DeleteMany(predicate);
             return result.DeletedCount;
         }
 
@@ -503,9 +623,33 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
+        public async Task<long> DeleteManyAsync<T>(String collName, Expression<Func<T, Boolean>> predicate)
+        {
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(predicate);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按条件表达式删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="predicate">条件表达式</param>
+        /// <returns></returns>
         public async Task<long> DeleteAsync(String collName, Expression<Func<BsonDocument, Boolean>> predicate)
         {
             var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(predicate);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按条件表达式删除
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="predicate">条件表达式</param>
+        /// <returns></returns>
+        public async Task<long> DeleteManyAsync(String collName, Expression<Func<BsonDocument, Boolean>> predicate)
+        {
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(predicate);
             return result.DeletedCount;
         }
 
@@ -529,9 +673,35 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
+        public Int64 DeleteMany<T>(String collName, FilterDefinition<T> filter)
+        {
+            var result = Database.GetCollection<T>(collName).DeleteMany(filter);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按检索条件删除
+        /// 建议用Builders&lt;T&gt;构建复杂的查询条件
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="filter">条件</param>
+        /// <returns></returns>
         public Int64 Delete(String collName, FilterDefinition<BsonDocument> filter)
         {
             var result = Database.GetCollection<BsonDocument>(collName).DeleteOne(filter);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按检索条件删除
+        /// 建议用Builders&lt;T&gt;构建复杂的查询条件
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="filter">条件</param>
+        /// <returns></returns>
+        public Int64 DeleteMany(String collName, FilterDefinition<BsonDocument> filter)
+        {
+            var result = Database.GetCollection<BsonDocument>(collName).DeleteMany(filter);
             return result.DeletedCount;
         }
 
@@ -555,9 +725,35 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
+        public async Task<long> DeleteManyAsync<T>(String collName, FilterDefinition<T> filter)
+        {
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(filter);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按检索条件删除
+        /// 建议用Builders&lt;T&gt;构建复杂的查询条件
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="filter">条件</param>
+        /// <returns></returns>
         public async Task<long> DeleteAsync(String collName, FilterDefinition<BsonDocument> filter)
         {
             var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(filter);
+            return result.DeletedCount;
+        }
+
+        /// <summary>
+        /// 按检索条件删除
+        /// 建议用Builders&lt;T&gt;构建复杂的查询条件
+        /// </summary>
+        /// <param name="collName">集合名称</param>
+        /// <param name="filter">条件</param>
+        /// <returns></returns>
+        public async Task<long> DeleteManyAsync(String collName, FilterDefinition<BsonDocument> filter)
+        {
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(filter);
             return result.DeletedCount;
         }
 
