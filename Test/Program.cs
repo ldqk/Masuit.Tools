@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Masuit.Tools.Hardware;
 
 namespace Test
 {
@@ -52,7 +52,11 @@ namespace Test
             //MyClass mc = null;
             //MyClass2 mc2 = mc.Map<MyClass, MyClass2>();
 
-            string s = SystemInfo.GetLocalUsedIP();
+            //string s = SystemInfo.GetLocalUsedIP();
+            //Console.WriteLine(s);
+
+            ConcurrentDictionary<string, string> dic = new ConcurrentDictionary<string, string>();
+            dic.TryGetValue("aa", out var s);
             Console.WriteLine(s);
             Console.ReadKey();
         }
