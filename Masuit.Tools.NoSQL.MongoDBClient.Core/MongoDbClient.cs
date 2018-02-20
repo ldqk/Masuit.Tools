@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,8 +13,8 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
     {
         public MongoClient Client { get; set; }
         public IMongoDatabase Database { get; set; }
-        private static readonly object LockObj = new object();
-        private static MongoDbClient Instance { get; set; }
+        private static ConcurrentDictionary<string, MongoDbClient> InstancePool { get; set; } = new ConcurrentDictionary<string, MongoDbClient>();
+
         private MongoDbClient(string url, string database)
         {
             Client = new MongoClient(url);
@@ -28,17 +29,13 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public static MongoDbClient GetInstance(string url, string database)
         {
-            if (Instance == null)
+            InstancePool.TryGetValue(url + database, out var instance);
+            if (instance is null)
             {
-                lock (LockObj)
-                {
-                    if (Instance == null)
-                    {
-                        Instance = new MongoDbClient(url, database);
-                    }
-                }
+                instance = new MongoDbClient(url, database);
+                InstancePool.TryAdd(url + database, instance);
             }
-            return Instance;
+            return instance;
         }
 
         /// <summary>
