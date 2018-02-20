@@ -525,7 +525,8 @@ namespace Masuit.Tools.Hardware
         /// 运行一个控制台程序并返回其输出参数。  
         /// </summary>  
         /// <param name="filename">程序名</param>  
-        /// <param name="arguments">输入参数</param>  
+        /// <param name="arguments">输入参数</param>
+        /// <param name="recordLog">是否记录日志</param>
         /// <returns></returns>  
         public static string RunApp(string filename, string arguments, bool recordLog)
         {
