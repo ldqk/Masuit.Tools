@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Masuit.Tools.Hardware;
+using Masuit.Tools;
 
 namespace Test
 {
@@ -51,10 +51,14 @@ namespace Test
 
             //MyClass mc = null;
             //MyClass2 mc2 = mc.Map<MyClass, MyClass2>();
-
-            string s = SystemInfo.GetLocalUsedIP();
-            Console.WriteLine(s);
-            Console.ReadKey();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
+            for (int i = 0; i < 100000; i++)
+            {
+                string s = string.Empty.CreateShortToken(100);
+                Console.WriteLine(s);
+                dic.Add(s, s);
+            }
+            //Console.ReadKey();
         }
     }
 

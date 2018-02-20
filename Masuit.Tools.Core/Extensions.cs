@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Masuit.Tools.Security;
+using Masuit.Tools.Win32;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools
@@ -1555,6 +1557,26 @@ namespace Masuit.Tools
         public static string Replace(this string input, Regex regex, string replacement)
         {
             return regex.Replace(input, replacement);
+        }
+
+        /// <summary>
+        /// 生成唯一短字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为10，最小长度为9，最大长度为32</param>
+        /// <returns></returns>
+        public static string CreateShortToken(this string str, int length = 10)
+        {
+            string temp = Guid.NewGuid().ToString("N").MDString();
+            if (length <= 32)
+            {
+                if (length < 9)
+                {
+                    length = 9;
+                }
+                temp = temp.Substring(new Random().StrictNext(32 - length), length);
+            }
+            return temp;
         }
     }
 }
