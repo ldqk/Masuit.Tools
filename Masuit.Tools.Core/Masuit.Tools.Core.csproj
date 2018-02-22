@@ -85,7 +85,7 @@ string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&l
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
   </ItemGroup>

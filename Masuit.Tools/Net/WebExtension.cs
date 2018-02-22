@@ -234,7 +234,7 @@ namespace Masuit.Tools.Net
             }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return true;
-            HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+            HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
             return helper.DeleteKey(key);
         }
 
