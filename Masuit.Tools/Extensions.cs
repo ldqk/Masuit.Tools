@@ -199,45 +199,10 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
-
-        /// <summary>
-        /// 遍历IEnumerable
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        public static async void ForEachAsync(this IEnumerable<dynamic> objs, Action<object> action)
-        {
-            await Task.Run(() =>
-            {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
-            });
-        }
-
-        /// <summary>
-        /// 遍历集合
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        public static async void ForEachAsync(this IList<dynamic> objs, Action<object> action)
-        {
-            await Task.Run(() =>
-            {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
-            });
-        }
-
+        
         /// <summary>
         /// 遍历数组
         /// </summary>
@@ -248,10 +213,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 
@@ -265,10 +227,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 
@@ -282,10 +241,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 

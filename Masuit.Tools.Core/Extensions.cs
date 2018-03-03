@@ -33,7 +33,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="objs"></param>
         /// <param name="action">回调方法</param>
-        public static void ForEach(this IEnumerable<dynamic> objs, Action<object> action)
+        public static void ForEach(this IEnumerable<object> objs, Action<object> action)
         {
             foreach (var o in objs)
             {
@@ -46,7 +46,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="objs"></param>
         /// <param name="action">回调方法</param>
-        public static void ForEach(this IList<dynamic> objs, Action<object> action)
+        public static void ForEach(this IList<object> objs, Action<object> action)
         {
             foreach (var o in objs)
             {
@@ -117,7 +117,7 @@ namespace Masuit.Tools
         /// <param name="action">回调方法</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IEnumerable<T> ForEach<T>(this IEnumerable<dynamic> objs, Func<object, T> action)
+        public static IEnumerable<T> ForEach<T>(this IEnumerable<object> objs, Func<object, T> action)
         {
             foreach (var o in objs)
             {
@@ -132,7 +132,7 @@ namespace Masuit.Tools
         /// <param name="action">回调方法</param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IEnumerable<T> ForEach<T>(this IList<dynamic> objs, Func<object, T> action)
+        public static IEnumerable<T> ForEach<T>(this IList<object> objs, Func<object, T> action)
         {
             foreach (var o in objs)
             {
@@ -199,45 +199,10 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
-
-        /// <summary>
-        /// 遍历IEnumerable
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        public static async void ForEachAsync(this IEnumerable<dynamic> objs, Action<object> action)
-        {
-            await Task.Run(() =>
-            {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
-            });
-        }
-
-        /// <summary>
-        /// 遍历集合
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        public static async void ForEachAsync(this IList<dynamic> objs, Action<object> action)
-        {
-            await Task.Run(() =>
-            {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
-            });
-        }
-
+        
         /// <summary>
         /// 遍历数组
         /// </summary>
@@ -248,10 +213,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 
@@ -265,10 +227,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 
@@ -282,10 +241,7 @@ namespace Masuit.Tools
         {
             await Task.Run(() =>
             {
-                foreach (var o in objs)
-                {
-                    action(o);
-                }
+                Parallel.ForEach(objs, action);
             });
         }
 
@@ -420,7 +376,7 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型集合</returns>
-        public static IEnumerable<TDestination> ToList<TDestination>(this IList<dynamic> source) where TDestination : new()
+        public static IEnumerable<TDestination> ToList<TDestination>(this IList<object> source) where TDestination : new()
         {
             foreach (var o in source)
             {
@@ -436,7 +392,7 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型集合</returns>
-        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IList<dynamic> source) where TDestination : new()
+        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IList<object> source) where TDestination : new()
         {
             return await Task.Run(() =>
             {
@@ -457,7 +413,7 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型集合</returns>
-        public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
+        public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<object> source) where TDestination : new()
         {
             foreach (var o in source)
             {
@@ -473,7 +429,7 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型集合</returns>
-        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
+        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IEnumerable<object> source) where TDestination : new()
         {
             return await Task.Run(() =>
             {
