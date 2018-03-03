@@ -499,7 +499,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source);
+        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
         /// <summary>
         /// 转换成json字符串
