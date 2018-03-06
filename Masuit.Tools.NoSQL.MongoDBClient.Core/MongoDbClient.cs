@@ -999,7 +999,28 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     return mgr.CreateOne(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
                 }
             }
-            return String.Empty;
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// 创建索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public async Task<string> CreateIndexAsync(string collection, string index, bool asc = true)
+        {
+            IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
+            var list = mgr.List();
+            while (list.MoveNext())
+            {
+                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
+                {
+                    return await mgr.CreateOneAsync(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+                }
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -1016,6 +1037,19 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         }
 
         /// <summary>
+        /// 更新索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public async Task<string> UpdateIndexAsync(string collection, string index, bool asc = true)
+        {
+            IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
+            return await mgr.CreateOneAsync(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+        }
+
+        /// <summary>
         /// 删除索引
         /// </summary>
         /// <param name="collection">集合名</param>
@@ -1024,6 +1058,17 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public void DropIndex(string collection, string index)
         {
             Database.GetCollection<BsonDocument>(collection).Indexes.DropOne(index);
+        }
+
+        /// <summary>
+        /// 删除索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <returns></returns>
+        public void DropIndexAsync(string collection, string index)
+        {
+            Database.GetCollection<BsonDocument>(collection).Indexes.DropOneAsync(index);
         }
 
         /// <summary>
@@ -1049,6 +1094,28 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         }
 
         /// <summary>
+        /// 创建索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="key"></param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public async Task<string> CreateIndexAsync<T>(string collection, string index, Expression<Func<T, object>> key, bool asc = true)
+        {
+            IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
+            var list = mgr.List();
+            while (list.MoveNext())
+            {
+                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
+                {
+                    return await mgr.CreateOneAsync(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+                }
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
         /// 更新索引
         /// </summary>
         /// <param name="collection">集合名</param>
@@ -1059,6 +1126,19 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         {
             IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
             return mgr.CreateOne(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+        }
+
+        /// <summary>
+        /// 更新索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="key"></param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public async Task<string> UpdateIndexAsync<T>(string collection, Expression<Func<T, object>> key, bool asc = true)
+        {
+            IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
+            return await mgr.CreateOneAsync(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
         }
 
         #endregion
