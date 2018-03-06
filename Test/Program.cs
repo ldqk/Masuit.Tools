@@ -1,6 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Masuit.Tools;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Masuit.Tools.NoSQL.MongoDBClient;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Test
 {
@@ -51,12 +53,21 @@ namespace Test
 
             //MyClass mc = null;
             //MyClass2 mc2 = mc.Map<MyClass, MyClass2>();
-            Dictionary<string, object> dic = new Dictionary<string, object>();
-            for (int i = 0; i < 100000; i++)
+            //Dictionary<string, object> dic = new Dictionary<string, object>();
+            //for (int i = 0; i < 100000; i++)
+            //{
+            //    string s = string.Empty.CreateShortToken(100);
+            //    Console.WriteLine(s);
+            //    dic.Add(s, s);
+            //}
+
+            var list = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.List();
+            while (list.MoveNext())
             {
-                string s = string.Empty.CreateShortToken(100);
-                Console.WriteLine(s);
-                dic.Add(s, s);
+                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith("AccountId")))
+                {
+                    string index = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending(doc => doc["AccountId"]));
+                }
             }
             //Console.ReadKey();
         }

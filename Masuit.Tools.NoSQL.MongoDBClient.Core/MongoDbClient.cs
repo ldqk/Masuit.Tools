@@ -978,5 +978,89 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         }
 
         #endregion
+
+        #region 索引
+
+        /// <summary>
+        /// 创建索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public string CreateIndex(string collection, string index, bool asc = true)
+        {
+            IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
+            var list = mgr.List();
+            while (list.MoveNext())
+            {
+                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
+                {
+                    return mgr.CreateOne(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+                }
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
+        /// 更新索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public string UpdateIndex(string collection, string index, bool asc = true)
+        {
+            IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
+            return mgr.CreateOne(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+        }
+
+        /// <summary>
+        /// 删除索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <returns></returns>
+        public void DropIndex(string collection, string index)
+        {
+            Database.GetCollection<BsonDocument>(collection).Indexes.DropOne(index);
+        }
+
+        /// <summary>
+        /// 创建索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="index">索引键</param>
+        /// <param name="key"></param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public string CreateIndex<T>(string collection, string index, Expression<Func<T, object>> key, bool asc = true)
+        {
+            IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
+            var list = mgr.List();
+            while (list.MoveNext())
+            {
+                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
+                {
+                    return mgr.CreateOne(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+                }
+            }
+            return String.Empty;
+        }
+
+        /// <summary>
+        /// 更新索引
+        /// </summary>
+        /// <param name="collection">集合名</param>
+        /// <param name="key"></param>
+        /// <param name="asc"></param>
+        /// <returns></returns>
+        public string UpdateIndex<T>(string collection, Expression<Func<T, object>> key, bool asc = true)
+        {
+            IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
+            return mgr.CreateOne(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+        }
+
+        #endregion
     }
 }
