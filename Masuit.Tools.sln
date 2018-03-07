@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tools\Masuit.Tools.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient.Core", "Masuit.Tools.NoSQL.MongoDBClient.Core\Masuit.Tools.NoSQL.MongoDBClient.Core.csproj", "{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{0084ADDC-41F2-4452-BAF1-170B7F5213F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0084ADDC-41F2-4452-BAF1-170B7F5213F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0084ADDC-41F2-4452-BAF1-170B7F5213F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0084ADDC-41F2-4452-BAF1-170B7F5213F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0084ADDC-41F2-4452-BAF1-170B7F5213F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

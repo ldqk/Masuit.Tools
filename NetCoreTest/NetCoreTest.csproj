@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />
+    <ProjectReference Include="..\Masuit.Tools.NoSQL.MongoDBClient.Core\Masuit.Tools.NoSQL.MongoDBClient.Core.csproj" />
+  </ItemGroup>
+
+</Project>
