@@ -14,10 +14,41 @@ namespace Masuit.Tools.NoSQL
     {
         private int DbNum { get; }
         private readonly ConnectionMultiplexer _conn;
+
         /// <summary>
         /// 自定义键
         /// </summary>
         public string CustomKey;
+
+        /// <summary>
+        /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
+        /// </summary>
+        public event EventHandler<ConnectionFailedEventArgs> ConnectionFailed;
+
+        /// <summary>
+        /// 重新建立连接之前的错误
+        /// </summary>
+        public event EventHandler<ConnectionFailedEventArgs> ConnectionRestored;
+
+        /// <summary>
+        /// 发生错误时
+        /// </summary>
+        public event EventHandler<RedisErrorEventArgs> ErrorMessage;
+
+        /// <summary>
+        /// 配置更改时
+        /// </summary>
+        public event EventHandler<EndPointEventArgs> ConfigurationChanged;
+
+        /// <summary>
+        /// 更改集群时
+        /// </summary>
+        public event EventHandler<HashSlotMovedEventArgs> HashSlotMoved;
+
+        /// <summary>
+        /// redis类库错误时
+        /// </summary>
+        public event EventHandler<InternalErrorEventArgs> InternalError;
 
         #region 构造函数
 
@@ -40,7 +71,13 @@ namespace Masuit.Tools.NoSQL
         public RedisHelper(int dbNum = 0, string readWriteHosts = "127.0.0.1:6379,allowadmin=true")
         {
             DbNum = dbNum;
-            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionHelp.Instance : RedisConnectionHelp.GetConnectionMultiplexer(readWriteHosts);
+            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionManager.Instance : RedisConnectionManager.GetConnectionMultiplexer(readWriteHosts);
+            _conn.ConfigurationChanged += ConfigurationChanged;
+            _conn.ConnectionFailed += ConnectionFailed;
+            _conn.ConnectionRestored += ConnectionRestored;
+            _conn.ErrorMessage += ErrorMessage;
+            _conn.HashSlotMoved += HashSlotMoved;
+            _conn.InternalError += InternalError;
         }
 
         /// <summary>
@@ -116,8 +153,12 @@ namespace Masuit.Tools.NoSQL
         /// <returns>值</returns>
         public string GetString(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(db => db.StringGet(key));
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                return Do(db => db.StringGet(key));
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -139,8 +180,12 @@ namespace Masuit.Tools.NoSQL
         /// <returns>实例对象</returns>
         public T GetString<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(db => ConvertObj<T>(db.StringGet(key)));
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                return Do(db => ConvertObj<T>(db.StringGet(key)));
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -218,8 +263,12 @@ namespace Masuit.Tools.NoSQL
         /// <returns>值</returns>
         public async Task<string> GetStringAsync(string key)
         {
-            key = AddSysCustomKey(key);
-            return await Do(db => db.StringGetAsync(key));
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                return await Do(db => db.StringGetAsync(key));
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -241,9 +290,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>实例对象</returns>
         public async Task<T> GetStringAsync<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            string result = await Do(db => db.StringGetAsync(key));
-            return ConvertObj<T>(result);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                string result = await Do(db => db.StringGetAsync(key));
+                return ConvertObj<T>(result);
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -342,12 +395,16 @@ namespace Masuit.Tools.NoSQL
         /// <returns>对象实例</returns>
         public T GetHash<T>(string key, string dataKey)
         {
-            key = AddSysCustomKey(key);
-            return Do(db =>
+            if (KeyExists(key))
             {
-                string value = db.HashGet(key, dataKey);
-                return ConvertObj<T>(value);
-            });
+                key = AddSysCustomKey(key);
+                return Do(db =>
+                {
+                    string value = db.HashGet(key, dataKey);
+                    return ConvertObj<T>(value);
+                });
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -459,9 +516,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>对象实例</returns>
         public async Task<T> GetHashAsync<T>(string key, string dataKey)
         {
-            key = AddSysCustomKey(key);
-            string value = await Do(db => db.HashGetAsync(key, dataKey));
-            return ConvertObj<T>(value);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                string value = await Do(db => db.HashGetAsync(key, dataKey));
+                return ConvertObj<T>(value);
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -531,12 +592,16 @@ namespace Masuit.Tools.NoSQL
         /// <returns>数据集</returns>
         public List<T> ListRange<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(redis =>
+            if (KeyExists(key))
             {
-                var values = redis.ListRange(key);
-                return ConvetList<T>(values);
-            });
+                key = AddSysCustomKey(key);
+                return Do(redis =>
+                {
+                    var values = redis.ListRange(key);
+                    return ConvetList<T>(values);
+                });
+            }
+            return new List<T>();
         }
 
         /// <summary>
@@ -559,12 +624,16 @@ namespace Masuit.Tools.NoSQL
         /// <returns>值</returns>
         public T ListRightPop<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(db =>
-             {
-                 var value = db.ListRightPop(key);
-                 return ConvertObj<T>(value);
-             });
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                return Do(db =>
+                {
+                    var value = db.ListRightPop(key);
+                    return ConvertObj<T>(value);
+                });
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -587,12 +656,16 @@ namespace Masuit.Tools.NoSQL
         /// <returns>对象实例</returns>
         public T ListLeftPop<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(db =>
+            if (KeyExists(key))
             {
-                var value = db.ListLeftPop(key);
-                return ConvertObj<T>(value);
-            });
+                key = AddSysCustomKey(key);
+                return Do(db =>
+                {
+                    var value = db.ListLeftPop(key);
+                    return ConvertObj<T>(value);
+                });
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -629,9 +702,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>数据集合</returns>
         public async Task<List<T>> ListRangeAsync<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            var values = await Do(redis => redis.ListRangeAsync(key));
-            return ConvetList<T>(values);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                var values = await Do(redis => redis.ListRangeAsync(key));
+                return ConvetList<T>(values);
+            }
+            return new List<T>();
         }
 
         /// <summary>
@@ -654,9 +731,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>对象实例</returns>
         public async Task<T> ListRightPopAsync<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            var value = await Do(db => db.ListRightPopAsync(key));
-            return ConvertObj<T>(value);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                var value = await Do(db => db.ListRightPopAsync(key));
+                return ConvertObj<T>(value);
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -679,9 +760,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>实例对象</returns>
         public async Task<T> ListLeftPopAsync<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            var value = await Do(db => db.ListLeftPopAsync(key));
-            return ConvertObj<T>(value);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                var value = await Do(db => db.ListLeftPopAsync(key));
+                return ConvertObj<T>(value);
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -733,12 +818,16 @@ namespace Masuit.Tools.NoSQL
         /// <returns>数据集合</returns>
         public List<T> SetRangeSortedByRank<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            return Do(redis =>
+            if (KeyExists(key))
             {
-                var values = redis.SortedSetRangeByRank(key);
-                return ConvetList<T>(values);
-            });
+                key = AddSysCustomKey(key);
+                return Do(redis =>
+                {
+                    var values = redis.SortedSetRangeByRank(key);
+                    return ConvetList<T>(values);
+                });
+            }
+            return new List<T>();
         }
 
         /// <summary>
@@ -786,9 +875,13 @@ namespace Masuit.Tools.NoSQL
         /// <returns>数据集合</returns>
         public async Task<List<T>> SortedSetRangeByRankAsync<T>(string key)
         {
-            key = AddSysCustomKey(key);
-            var values = await Do(redis => redis.SortedSetRangeByRankAsync(key));
-            return ConvetList<T>(values);
+            if (KeyExists(key))
+            {
+                key = AddSysCustomKey(key);
+                var values = await Do(redis => redis.SortedSetRangeByRankAsync(key));
+                return ConvetList<T>(values);
+            }
+            return new List<T>();
         }
 
         /// <summary>

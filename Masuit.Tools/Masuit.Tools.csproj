@@ -101,7 +101,7 @@
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\FtpClient.cs" />
     <Compile Include="Net\SocketClient.cs" />
-    <Compile Include="NoSQL\RedisConnectionHelp.cs" />
+    <Compile Include="NoSQL\RedisConnectionManager.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
     <Compile Include="Reflection\ReflectHelper.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
