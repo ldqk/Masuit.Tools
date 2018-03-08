@@ -17,11 +17,11 @@ namespace Masuit.Tools.Logging
     {
         static readonly ConcurrentQueue<Tuple<string, string>> LogQueue = new ConcurrentQueue<Tuple<string, string>>();
 
-        private static readonly Task WriteTask;
+        public static event Action<string> Event;
 
         static LogManager()
         {
-            WriteTask = new Task(obj =>
+            var writeTask = new Task(obj =>
             {
                 while (true)
                 {
@@ -30,6 +30,7 @@ namespace Masuit.Tools.Logging
                     foreach (var logItem in LogQueue)
                     {
                         string logPath = logItem.Item1;
+                        Event?.Invoke(logItem.Item2);
                         string logMergeContent = String.Concat(logItem.Item2, Environment.NewLine, "----------------------------------------------------------------------------------------------------------------------", Environment.NewLine);
                         string[] logArr = temp.FirstOrDefault(d => d[0].Equals(logPath));
                         if (logArr != null)
@@ -49,7 +50,7 @@ namespace Masuit.Tools.Logging
                     }
                 }
             }, null, TaskCreationOptions.LongRunning);
-            WriteTask.Start();
+            writeTask.Start();
         }
 
         private static AutoResetEvent Pause => new AutoResetEvent(false);
@@ -57,7 +58,7 @@ namespace Masuit.Tools.Logging
         /// <summary>
         /// 日志存放目录，默认日志放在当前应用程序运行目录下的logs文件夹中
         /// </summary>
-        public static string LogDirectory { get; set; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        public static string LogDirectory { get; set; } = Path.Combine(AppContext.BaseDirectory, "Logs");
 
         /// <summary>
         /// 写入Info级别的日志
@@ -215,6 +216,7 @@ namespace Masuit.Tools.Logging
                 }
                 using (StreamWriter sw = File.AppendText(logPath))
                 {
+                    Event(logContent);
                     sw.Write(logContent);
                 }
             }

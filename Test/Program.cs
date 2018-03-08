@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Masuit.Tools.NoSQL.MongoDBClient;
-using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using System;
+using System.Collections.Generic;
+using Masuit.Tools.Logging;
 
 namespace Test
 {
@@ -61,15 +59,32 @@ namespace Test
             //    dic.Add(s, s);
             //}
 
-            var list = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.List();
-            while (list.MoveNext())
+            //var list = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.List();
+            //while (list.MoveNext())
+            //{
+            //    if (!list.Current.Any(doc => doc["name"].AsString.StartsWith("AccountId")))
+            //    {
+            //        string index = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending(doc => doc["AccountId"]));
+            //    }
+            //}
+            LogManager.Event += s =>
             {
-                if (!list.Current.Any(doc => doc["name"].AsString.StartsWith("AccountId")))
+                if (s.Contains("ERROR") || s.Contains("FATAL"))
                 {
-                    string index = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending(doc => doc["AccountId"]));
+                    Console.ForegroundColor = ConsoleColor.Red;
                 }
-            }
-            //Console.ReadKey();
+                if (s.Contains("DEBUG"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                Console.WriteLine(s);
+                Console.ForegroundColor = ConsoleColor.White;
+            };
+            LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
+            LogManager.Debug("bbbbbbbbbbbbbbbbb");
+            LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
+            LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
+            Console.ReadKey();
         }
     }
 

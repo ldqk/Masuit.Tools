@@ -40,6 +40,26 @@ namespace Masuit.Tools.Core.NoSQL
             _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionHelp.Instance : RedisConnectionHelp.GetConnectionMultiplexer(readWriteHosts);
         }
 
+        /// <summary>
+        /// 从对象池获取默认实例
+        /// </summary>
+        /// <param name="db">数据库的编号</param>
+        /// <returns></returns>
+        public static RedisHelper GetInstance(int db = 0)
+        {
+            return new RedisHelper(db);
+        }
+
+        /// <summary>
+        /// 从对象池获取默认实例
+        /// </summary>
+        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="db">数据库的编号</param>
+        /// <returns></returns>
+        public static RedisHelper GetInstance(string conn = "127.0.0.1:6379,allowadmin=true", int db = 0)
+        {
+            return new RedisHelper(db, conn);
+        }
         #endregion 构造函数
 
         #region String
