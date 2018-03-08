@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Masuit.Tools.Logging;
 
 namespace Test
 {
@@ -67,23 +66,23 @@ namespace Test
             //        string index = MongoDbClient.GetInstance("mongodb://192.168.3.238:27017", "AccountBalance").Database.GetCollection<BsonDocument>("201803-NEO").Indexes.CreateOne(Builders<BsonDocument>.IndexKeys.Ascending(doc => doc["AccountId"]));
             //    }
             //}
-            LogManager.Event += s =>
-            {
-                if (s.Contains("ERROR") || s.Contains("FATAL"))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                }
-                if (s.Contains("DEBUG"))
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                Console.WriteLine(s);
-                Console.ForegroundColor = ConsoleColor.White;
-            };
-            LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
-            LogManager.Debug("bbbbbbbbbbbbbbbbb");
-            LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
-            LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
+            //LogManager.Event += s =>
+            //{
+            //    if (s.Contains("ERROR") || s.Contains("FATAL"))
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Red;
+            //    }
+            //    if (s.Contains("DEBUG"))
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Green;
+            //    }
+            //    Console.WriteLine(s);
+            //    Console.ForegroundColor = ConsoleColor.White;
+            //};
+            //LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
+            //LogManager.Debug("bbbbbbbbbbbbbbbbb");
+            //LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
+            //LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
             Console.ReadKey();
         }
     }
