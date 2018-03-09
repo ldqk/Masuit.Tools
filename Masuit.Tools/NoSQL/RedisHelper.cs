@@ -59,16 +59,16 @@ namespace Masuit.Tools.NoSQL
         /// &lt;/connectionStrings&gt;
         /// </summary>
         /// <param name="dbNum">数据库编号</param>
-        public RedisHelper(int dbNum = 0) : this(dbNum, null)
+        public RedisHelper(int dbNum = 0) : this("127.0.0.1:6379,allowadmin=true", dbNum)
         {
         }
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="dbNum">数据库的编号</param>
         /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
-        public RedisHelper(int dbNum = 0, string readWriteHosts = "127.0.0.1:6379,allowadmin=true")
+        /// <param name="dbNum">数据库的编号</param>
+        public RedisHelper(string readWriteHosts, int dbNum = 0)
         {
             DbNum = dbNum;
             _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionManager.Instance : RedisConnectionManager.GetConnectionMultiplexer(readWriteHosts);
@@ -96,9 +96,9 @@ namespace Masuit.Tools.NoSQL
         /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
         /// <param name="db">数据库的编号</param>
         /// <returns></returns>
-        public static RedisHelper GetInstance(string conn = "127.0.0.1:6379,allowadmin=true", int db = 0)
+        public static RedisHelper GetInstance(string conn, int db = 0)
         {
-            return new RedisHelper(db, conn);
+            return new RedisHelper(conn, db);
         }
         #endregion 构造函数
 
