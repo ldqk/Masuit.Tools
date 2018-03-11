@@ -8,16 +8,16 @@ namespace Masuit.Tools.Systems
     /// 定长队列
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class LimitedConcurrentQueue<T> : ConcurrentQueue<T>
+    public class ConcurrentLimitedQueue<T> : ConcurrentQueue<T>
     {
         public int Limit { get; set; }
 
-        public LimitedConcurrentQueue(int limit)
+        public ConcurrentLimitedQueue(int limit)
         {
             Limit = limit;
         }
 
-        public LimitedConcurrentQueue(IEnumerable<T> list) : base(list)
+        public ConcurrentLimitedQueue(IEnumerable<T> list) : base(list)
         {
             Limit = list.Count();
         }
