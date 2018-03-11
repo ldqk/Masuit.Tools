@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Masuit.Tools.Security;
@@ -202,7 +203,7 @@ namespace Masuit.Tools
                 Parallel.ForEach(objs, action);
             });
         }
-        
+
         /// <summary>
         /// 遍历数组
         /// </summary>
@@ -1548,6 +1549,20 @@ namespace Masuit.Tools
                 temp = temp.Substring(new Random().StrictNext(32 - length), length);
             }
             return temp;
+        }
+
+        /// <summary>
+        /// 按字段去重
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> hash = new HashSet<TKey>();
+            return source.Where(p => hash.Add(keySelector(p)));
         }
     }
 }
