@@ -113,6 +113,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashEncode.cs" />
     <Compile Include="Security\RSACrypt.cs" />
+    <Compile Include="Systems\ConcurrentLimitedQueue.cs" />
+    <Compile Include="Systems\LimitedQueue.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
     <Compile Include="Systems\EnumExt.cs" />

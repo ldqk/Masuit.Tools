@@ -83,10 +83,17 @@ namespace Test
             //LogManager.Debug("bbbbbbbbbbbbbbbbb");
             //LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
             //LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
+
+
             Console.ReadKey();
         }
     }
 
+    public class Banlance
+    {
+        public string Name { get; set; }
+        public int Amount { get; set; }
+    }
     public class MyClass
     {
         public string Name { get; set; }
