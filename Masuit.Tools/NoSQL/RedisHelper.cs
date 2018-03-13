@@ -59,7 +59,7 @@ namespace Masuit.Tools.NoSQL
         /// &lt;/connectionStrings&gt;
         /// </summary>
         /// <param name="dbNum">数据库编号</param>
-        public RedisHelper(int dbNum = 0) : this("127.0.0.1:6379,allowadmin=true", dbNum)
+        public RedisHelper(int dbNum = 0) : this(null, dbNum)
         {
         }
 
