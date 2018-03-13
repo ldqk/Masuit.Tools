@@ -8,7 +8,7 @@ using System.Threading;
 using System.Web;
 using Masuit.Tools.Win32;
 
-namespace Masuit.Tools.Html
+namespace Masuit.Tools.Core.Html
 {
     /// <summary>
     ///1、获取HTML<br/>
@@ -454,7 +454,13 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchFirstImgSrc(this string html)
         {
-            return Regex.Match(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>").Groups[1].Value;
+            string src = Regex.Match(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>").Groups[1].Value;
+            int index = src.IndexOf("\"", StringComparison.Ordinal);
+            if (index > 0)
+            {
+                src = src.Substring(0, index);
+            }
+            return src;
         }
 
         /// <summary>
@@ -467,7 +473,13 @@ namespace Masuit.Tools.Html
             MatchCollection collection = Regex.Matches(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>");
             if (collection.Count > 0)
             {
-                return collection[new Random().StrictNext(collection.Count)].Groups[1].Value;
+                string src = collection[new Random().StrictNext(collection.Count)].Groups[1].Value;
+                int index = src.IndexOf("\"", StringComparison.Ordinal);
+                if (index > 0)
+                {
+                    src = src.Substring(0, index);
+                }
+                return src;
             }
             return String.Empty;
         }

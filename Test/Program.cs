@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Masuit.Tools;
 
 namespace Test
 {
@@ -84,7 +85,7 @@ namespace Test
             //LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
             //LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
 
-
+            bool b = "a.z@1.cn".MatchEmail();
             Console.ReadKey();
         }
     }
