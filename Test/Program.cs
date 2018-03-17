@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Masuit.Tools;
+using Masuit.Tools.NoSQL;
 
 namespace Test
 {
@@ -85,7 +88,17 @@ namespace Test
             //LogManager.Error(typeof(object), "bbbbbbbbbbbbbbbbb");
             //LogManager.Info("aaaaaaaaaaaaaaaaaaaaaaaaa");
 
-            bool b = "a.z@1.cn".MatchEmail();
+            //bool b = "a.z@1.cn".MatchEmail();
+
+            RedisHelper redisHelper = RedisHelper.GetInstance("127.0.0.1:6379,synctimeout=1000");
+            redisHelper.SetString("balance", 100);
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            Parallel.Invoke(() => { Parallel.For(0, 100000, i => { redisHelper.StringIncrement("balance"); }); }, () => Parallel.For(0, 100000, i => { redisHelper.StringIncrement("balance", -1); }));
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            GC.Collect();
+            GC.SuppressFinalize(redisHelper);
             Console.ReadKey();
         }
     }

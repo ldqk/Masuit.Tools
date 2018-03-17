@@ -11,7 +11,7 @@ namespace Masuit.Tools.NoSQL
     /// <summary>
     /// Redis操作
     /// </summary>
-    public class RedisHelper
+    public class RedisHelper : IDisposable
     {
         private int DbNum { get; }
         private readonly ConnectionMultiplexer _conn;
@@ -1100,5 +1100,12 @@ namespace Masuit.Tools.NoSQL
         }
 
         #endregion 辅助方法
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose()
+        {
+            _conn?.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 }

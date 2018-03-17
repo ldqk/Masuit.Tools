@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Configuration;
+using System.Runtime.Remoting.Messaging;
+using System.Threading.Tasks;
+using Masuit.Tools.Systems;
 using StackExchange.Redis;
 
 namespace Masuit.Tools.NoSQL
@@ -18,9 +21,9 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true";
 
-        private static readonly object Locker = new object();
-        private static ConnectionMultiplexer _instance;
-        private static readonly ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache = new ConcurrentDictionary<string, ConnectionMultiplexer>();
+        //private static readonly object Locker = new object();
+        //private static ConnectionMultiplexer _instance;
+        private static readonly ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>> ConnectionCache = new ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>>();
 
         /// <summary>
         /// 单例获取
@@ -29,17 +32,22 @@ namespace Masuit.Tools.NoSQL
         {
             get
             {
-                if (_instance == null)
+                var queue = ConnectionCache.GetOrAdd(RedisConnectionString, new ConcurrentLimitedQueue<ConnectionMultiplexer>(32));
+                if (queue.IsEmpty)
                 {
-                    lock (Locker)
+                    Parallel.For(0, queue.Limit, i =>
                     {
-                        if (_instance == null || !_instance.IsConnected)
-                        {
-                            _instance = GetManager();
-                        }
-                    }
+                        queue.Enqueue(GetManager(RedisConnectionString));
+                    });
                 }
-                return _instance;
+                ConnectionMultiplexer multiplexer;
+                if (CallContext.GetData(RedisConnectionString) == null)
+                {
+                    queue.TryDequeue(out multiplexer);
+                    CallContext.SetData(RedisConnectionString, multiplexer);
+                }
+                multiplexer = (ConnectionMultiplexer)CallContext.GetData(RedisConnectionString);
+                return multiplexer;
             }
         }
 
@@ -50,11 +58,22 @@ namespace Masuit.Tools.NoSQL
         /// <returns>连接对象</returns>
         public static ConnectionMultiplexer GetConnectionMultiplexer(string connectionString)
         {
-            if (!ConnectionCache.ContainsKey(connectionString))
+            var queue = ConnectionCache.GetOrAdd(connectionString, new ConcurrentLimitedQueue<ConnectionMultiplexer>(32));
+            if (queue.IsEmpty)
             {
-                ConnectionCache[connectionString] = GetManager(connectionString);
+                Parallel.For(0, queue.Limit, i =>
+                {
+                    queue.Enqueue(GetManager(connectionString));
+                });
             }
-            return ConnectionCache[connectionString];
+            ConnectionMultiplexer multiplexer;
+            if (CallContext.GetData(connectionString) == null)
+            {
+                queue.TryDequeue(out multiplexer);
+                CallContext.SetData(connectionString, multiplexer);
+            }
+            multiplexer = (ConnectionMultiplexer)CallContext.GetData(connectionString);
+            return multiplexer;
         }
 
         private static ConnectionMultiplexer GetManager(string connectionString = null)
