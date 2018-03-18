@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
+using Masuit.Tools.Systems;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -14,9 +16,16 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public MongoClient Client { get; set; }
         public IMongoDatabase Database { get; set; }
         private static ConcurrentDictionary<string, MongoDbClient> InstancePool { get; set; } = new ConcurrentDictionary<string, MongoDbClient>();
+        private static ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>> InstanceQueue { get; set; } = new ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>>();
         private MongoDbClient(string url, string database)
         {
             Client = new MongoClient(url);
+            Database = Client.GetDatabase(database);
+        }
+
+        private MongoDbClient(MongoClientSettings settings, string database)
+        {
+            Client = new MongoClient(settings);
             Database = Client.GetDatabase(database);
         }
 
@@ -34,6 +43,32 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                 instance = new MongoDbClient(url, database);
                 InstancePool.TryAdd(url + database, instance);
             }
+            return instance;
+        }
+
+        /// <summary>
+        /// 获取mongo线程内唯一对象
+        /// </summary>
+        /// <param name="url">连接字符串</param>
+        /// <param name="database">数据库</param>
+        /// <returns></returns>
+        public static MongoDbClient ThreadLocalInstance(string url, string database)
+        {
+            var queue = InstanceQueue.GetOrAdd(url + database, new ConcurrentLimitedQueue<MongoDbClient>(32));
+            if (queue.IsEmpty)
+            {
+                Parallel.For(0, queue.Limit, i =>
+                {
+                    queue.Enqueue(new MongoDbClient(url, database));
+                });
+            }
+            MongoDbClient instance;
+            if (CallContext.GetData(url + database) == null)
+            {
+                queue.TryDequeue(out instance);
+                CallContext.SetData(url + database, instance);
+            }
+            instance = (MongoDbClient)CallContext.GetData(url + database);
             return instance;
         }
 

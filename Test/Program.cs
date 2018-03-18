@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Masuit.Tools;
-using Masuit.Tools.NoSQL;
+using Masuit.Tools.NoSQL.MongoDBClient;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Test
 {
@@ -90,16 +90,11 @@ namespace Test
 
             //bool b = "a.z@1.cn".MatchEmail();
 
-            RedisHelper redisHelper = RedisHelper.GetInstance("127.0.0.1:6379,synctimeout=1000");
-            redisHelper.SetString("balance", 100);
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            Parallel.Invoke(() => { Parallel.For(0, 100000, i => { redisHelper.StringIncrement("balance"); }); }, () => Parallel.For(0, 100000, i => { redisHelper.StringIncrement("balance", -1); }));
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            GC.Collect();
-            GC.SuppressFinalize(redisHelper);
-            Console.ReadKey();
+            MongoDbClient mc = MongoDbClient.ThreadLocalInstance("mongodb://127.0.0.1:27000,127.0.0.1:27001,127.0.0.1:27002/?slaveOk=true;maxPoolSize=100000;minPoolSize=32", "repl");
+            Parallel.For(0, 100000, i => mc.InsertOne("repl",new { name = "aa", value = 100 }));
+            Parallel.For(0, 100000, i => mc.GetMany("repl",Builders<BsonDocument>.Filter.Eq(doc => doc["value"], 100)).ToList());
+
+            //Console.ReadKey();
         }
     }
 

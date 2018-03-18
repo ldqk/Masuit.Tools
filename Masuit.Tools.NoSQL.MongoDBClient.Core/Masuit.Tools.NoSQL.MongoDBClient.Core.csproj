@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.8.5</Version>
+    <Version>1.8.6</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
     <Description>包含MongoDB的所有的增删查改。
@@ -13,8 +13,8 @@
     <PackageTags>Masuit.Tools</PackageTags>
     <PackageReleaseNotes>如有问题请联系QQ:1170397736，或者到项目的github反馈问题。</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.8.5.0</AssemblyVersion>
-    <FileVersion>1.8.5.0</FileVersion>
+    <AssemblyVersion>1.8.6.0</AssemblyVersion>
+    <FileVersion>1.8.6.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

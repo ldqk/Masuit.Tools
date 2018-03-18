@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Masuit.Tools.NoSQL;
+using System.Collections.Generic;
+using Masuit.Tools.NoSQL.MongoDBClient;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace NetCoreTest
 {
@@ -10,7 +10,6 @@ namespace NetCoreTest
     {
         static void Main(string[] args)
         {
-            
             Console.WriteLine("ok");
         }
     }
