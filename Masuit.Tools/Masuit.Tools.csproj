@@ -42,7 +42,7 @@
       <HintPath>..\..\MyBlogs\packages\AngleSharp.0.9.9.2\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer, Version=3.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlSanitizer.4.0.183\lib\net45\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\..\MyBlogs\packages\HtmlSanitizer.4.0.185\lib\net45\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -100,6 +100,8 @@
     <Compile Include="Net\CacheHelper.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\FtpClient.cs" />
+    <Compile Include="Net\MultiThreadDownloader.cs" />
+    <Compile Include="Net\PartialDownloader.cs" />
     <Compile Include="Net\SocketClient.cs" />
     <Compile Include="NoSQL\RedisConnectionManager.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
