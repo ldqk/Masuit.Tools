@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Configuration;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using Masuit.Tools.Systems;
 using StackExchange.Redis;
@@ -21,12 +20,10 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true";
 
-        //private static readonly object Locker = new object();
-        //private static ConnectionMultiplexer _instance;
         private static readonly ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>> ConnectionCache = new ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>>();
 
         /// <summary>
-        /// 单例获取
+        /// 对象池获取线程内唯一对象
         /// </summary>
         public static ConnectionMultiplexer Instance
         {
@@ -40,13 +37,7 @@ namespace Masuit.Tools.NoSQL
                         queue.Enqueue(GetManager(RedisConnectionString));
                     });
                 }
-                ConnectionMultiplexer multiplexer;
-                if (CallContext.GetData(RedisConnectionString) == null)
-                {
-                    queue.TryDequeue(out multiplexer);
-                    CallContext.SetData(RedisConnectionString, multiplexer);
-                }
-                multiplexer = (ConnectionMultiplexer)CallContext.GetData(RedisConnectionString);
+                queue.TryDequeue(out var multiplexer);
                 return multiplexer;
             }
         }
@@ -66,13 +57,7 @@ namespace Masuit.Tools.NoSQL
                     queue.Enqueue(GetManager(connectionString));
                 });
             }
-            ConnectionMultiplexer multiplexer;
-            if (CallContext.GetData(connectionString) == null)
-            {
-                queue.TryDequeue(out multiplexer);
-                CallContext.SetData(connectionString, multiplexer);
-            }
-            multiplexer = (ConnectionMultiplexer)CallContext.GetData(connectionString);
+            queue.TryDequeue(out var multiplexer);
             return multiplexer;
         }
 

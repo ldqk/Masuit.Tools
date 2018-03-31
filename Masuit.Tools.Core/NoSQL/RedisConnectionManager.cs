@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Masuit.Tools.Core.Net;
 using Masuit.Tools.Core.Systems;
 using StackExchange.Redis;
 
@@ -26,7 +25,7 @@ namespace Masuit.Tools.Core.NoSQL
         private static readonly ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>> ConnectionCache = new ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>>();
 
         /// <summary>
-        /// 单例获取
+        /// 对象池获取线程内唯一对象
         /// </summary>
         public static ConnectionMultiplexer Instance
         {
@@ -40,13 +39,7 @@ namespace Masuit.Tools.Core.NoSQL
                         queue.Enqueue(GetManager(RedisConnectionString));
                     });
                 }
-                ConnectionMultiplexer multiplexer;
-                if (CallContext<ConnectionMultiplexer>.GetData(RedisConnectionString) == null)
-                {
-                    queue.TryDequeue(out multiplexer);
-                    CallContext<ConnectionMultiplexer>.SetData(RedisConnectionString, multiplexer);
-                }
-                multiplexer = CallContext<ConnectionMultiplexer>.GetData(RedisConnectionString);
+                queue.TryDequeue(out var multiplexer);
                 return multiplexer;
             }
         }
@@ -66,13 +59,7 @@ namespace Masuit.Tools.Core.NoSQL
                     queue.Enqueue(GetManager(connectionString));
                 });
             }
-            ConnectionMultiplexer multiplexer;
-            if (CallContext<ConnectionMultiplexer>.GetData(connectionString) == null)
-            {
-                queue.TryDequeue(out multiplexer);
-                CallContext<ConnectionMultiplexer>.SetData(connectionString, multiplexer);
-            }
-            multiplexer = CallContext<ConnectionMultiplexer>.GetData(connectionString);
+            queue.TryDequeue(out var multiplexer);
             return multiplexer;
         }
 

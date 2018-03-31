@@ -41,7 +41,7 @@ namespace Masuit.Tools.Net
 
         #region 写Session
 
-        static RedisHelper helper = new RedisHelper(1);
+        private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
         /// <summary>
         /// 写Session
         /// </summary>
@@ -83,7 +83,7 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            return Helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            return helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            return Helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
         }
 
         #endregion
@@ -146,10 +146,10 @@ namespace Masuit.Tools.Net
         /// <returns></returns> 
         public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20) where T : class
         {
-            if (helper.KeyExists(key))
+            if (Helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return helper.GetString<T>(key);
+                Helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return Helper.GetString<T>(key);
             }
             return default(T);
         }
@@ -164,10 +164,10 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20) where T : class
         {
-            if (helper.KeyExists(key))
+            if (Helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return helper.GetString<T>(key);
+                Helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return Helper.GetString<T>(key);
             }
             return default(T);
         }
@@ -188,10 +188,10 @@ namespace Masuit.Tools.Net
             }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return default(T);
-            if (helper.KeyExists(key))
+            if (Helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return helper.GetString<T>(key);
+                Helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return Helper.GetString<T>(key);
             }
             return default(T);
         }
@@ -212,10 +212,10 @@ namespace Masuit.Tools.Net
             }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return default(T);
-            if (helper.KeyExists(key))
+            if (Helper.KeyExists(key))
             {
-                helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return helper.GetString<T>(key);
+                Helper.Expire(key, TimeSpan.FromMinutes(expire));
+                return Helper.GetString<T>(key);
             }
             return default(T);
         }
@@ -235,7 +235,7 @@ namespace Masuit.Tools.Net
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            return helper.DeleteKey(key);
+            return Helper.DeleteKey(key);
         }
 
         /// <summary>
@@ -246,7 +246,7 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionStateBase _, string key = "sessionId")
         {
-            return helper.DeleteKey(key);
+            return Helper.DeleteKey(key);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Masuit.Tools.Net
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            return helper.DeleteKey(key);
+            return Helper.DeleteKey(key);
         }
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionState _, string key = "sessionId")
         {
-            return helper.DeleteKey(key);
+            return Helper.DeleteKey(key);
         }
 
         #endregion
