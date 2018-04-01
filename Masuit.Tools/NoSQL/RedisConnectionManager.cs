@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Configuration;
-using System.Threading.Tasks;
-using Masuit.Tools.Systems;
 using StackExchange.Redis;
 
 namespace Masuit.Tools.NoSQL
@@ -20,7 +18,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true";
 
-        private static readonly ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>> ConnectionCache = new ConcurrentDictionary<string, ConcurrentLimitedQueue<ConnectionMultiplexer>>();
+        private static readonly ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache = new ConcurrentDictionary<string, ConnectionMultiplexer>();
 
         /// <summary>
         /// 对象池获取线程内唯一对象
@@ -29,15 +27,7 @@ namespace Masuit.Tools.NoSQL
         {
             get
             {
-                var queue = ConnectionCache.GetOrAdd(RedisConnectionString, new ConcurrentLimitedQueue<ConnectionMultiplexer>(32));
-                if (queue.IsEmpty)
-                {
-                    Parallel.For(0, queue.Limit, i =>
-                    {
-                        queue.Enqueue(GetManager(RedisConnectionString));
-                    });
-                }
-                queue.TryDequeue(out var multiplexer);
+                var multiplexer = ConnectionCache.GetOrAdd(RedisConnectionString, GetManager(RedisConnectionString));
                 return multiplexer;
             }
         }
@@ -49,15 +39,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>连接对象</returns>
         public static ConnectionMultiplexer GetConnectionMultiplexer(string connectionString)
         {
-            var queue = ConnectionCache.GetOrAdd(connectionString, new ConcurrentLimitedQueue<ConnectionMultiplexer>(32));
-            if (queue.IsEmpty)
-            {
-                Parallel.For(0, queue.Limit, i =>
-                {
-                    queue.Enqueue(GetManager(connectionString));
-                });
-            }
-            queue.TryDequeue(out var multiplexer);
+            var multiplexer = ConnectionCache.GetOrAdd(connectionString, GetManager(RedisConnectionString));
             return multiplexer;
         }
 

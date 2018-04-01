@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 // 方法是按如下所示使用“*”: :
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.9.5.1")]
-[assembly: AssemblyFileVersion("1.9.5.1")]
+[assembly: AssemblyVersion("1.9.5.2")]
+[assembly: AssemblyFileVersion("1.9.5.2")]
 [assembly: NeutralResourcesLanguage("zh-CN")]
 
