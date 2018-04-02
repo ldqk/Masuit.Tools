@@ -80,6 +80,10 @@ string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&l
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NoSQL\RedisConnectionManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.9.1" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.183" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
