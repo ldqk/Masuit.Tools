@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Masuit.Tools.Core.NoSQL;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -11,10 +11,19 @@ namespace Masuit.Tools.NoSQL
     /// <summary>
     /// Redis操作
     /// </summary>
-    public class RedisHelper
+    public class RedisHelper : IDisposable
     {
         private int DbNum { get; }
         private readonly ConnectionMultiplexer _conn;
+
+        /// <summary>
+        /// Redis服务器连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
+        /// </summary>
+        public static string RedisConnectionString
+        {
+            get => "127.0.0.1:6379,allowadmin=true";
+            set { }
+        }
 
         /// <summary>
         /// 自定义键
@@ -51,6 +60,10 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public event EventHandler<InternalErrorEventArgs> InternalError;
 
+        /// <summary>
+        /// 静态连接池
+        /// </summary>
+        public static ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache { get; set; } = new ConcurrentDictionary<string, ConnectionMultiplexer>();
         #region 构造函数
 
         /// <summary>
@@ -72,23 +85,63 @@ namespace Masuit.Tools.NoSQL
         public RedisHelper(string readWriteHosts, int dbNum = 0)
         {
             DbNum = dbNum;
-            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionManager.Instance : RedisConnectionManager.GetConnectionMultiplexer(readWriteHosts);
+            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(RedisConnectionString)) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
+            _conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
+            _conn.ConnectionFailed += MuxerConnectionFailed;
             _conn.ConnectionFailed += ConnectionFailed;
+            _conn.ConnectionRestored += MuxerConnectionRestored;
             _conn.ConnectionRestored += ConnectionRestored;
+            _conn.ErrorMessage += MuxerErrorMessage;
             _conn.ErrorMessage += ErrorMessage;
+            _conn.HashSlotMoved += MuxerHashSlotMoved;
             _conn.HashSlotMoved += HashSlotMoved;
+            _conn.InternalError += MuxerInternalError;
             _conn.InternalError += InternalError;
         }
 
         /// <summary>
-        /// 从对象池获取默认实例
+        /// 构造函数
+        /// </summary>
+        /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="dbNum">数据库的编号</param>
+        private RedisHelper(string readWriteHosts, int dbNum, int _)
+        {
+            DbNum = dbNum;
+            readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? RedisConnectionString : readWriteHosts;
+            _conn = ConnectionCache.GetOrAdd(readWriteHosts, ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts)));
+            _conn.ConfigurationChanged += MuxerConfigurationChanged;
+            _conn.ConfigurationChanged += ConfigurationChanged;
+            _conn.ConnectionFailed += MuxerConnectionFailed;
+            _conn.ConnectionFailed += ConnectionFailed;
+            _conn.ConnectionRestored += MuxerConnectionRestored;
+            _conn.ConnectionRestored += ConnectionRestored;
+            _conn.ErrorMessage += MuxerErrorMessage;
+            _conn.ErrorMessage += ErrorMessage;
+            _conn.HashSlotMoved += MuxerHashSlotMoved;
+            _conn.HashSlotMoved += HashSlotMoved;
+            _conn.InternalError += MuxerInternalError;
+            _conn.InternalError += InternalError;
+        }
+
+        /// <summary>
+        /// 获取新实例
         /// </summary>
         /// <param name="db">数据库的编号</param>
         /// <returns></returns>
         public static RedisHelper GetInstance(int db = 0)
         {
             return new RedisHelper(db);
+        }
+
+        /// <summary>
+        /// 获取单例
+        /// </summary>
+        /// <param name="db">数据库的编号</param>
+        /// <returns></returns>
+        public static RedisHelper GetSingleInstance(int db = 0)
+        {
+            return new RedisHelper(null, db, 0);
         }
 
         /// <summary>
@@ -101,6 +154,18 @@ namespace Masuit.Tools.NoSQL
         {
             return new RedisHelper(conn, db);
         }
+
+        /// <summary>
+        /// 获取单例
+        /// </summary>
+        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="db">数据库的编号</param>
+        /// <returns></returns>
+        public static RedisHelper GetSingleInstance(string conn, int db = 0)
+        {
+            return new RedisHelper(conn, db, 0);
+        }
+
         #endregion 构造函数
 
         #region String
@@ -1101,5 +1166,74 @@ namespace Masuit.Tools.NoSQL
 
         #endregion 辅助方法
 
+        #region 事件
+
+        /// <summary>
+        /// 配置更改时
+        /// </summary>
+        /// <param name="sender">触发者</param>
+        /// <param name="e">事件参数</param>
+        private static void MuxerConfigurationChanged(object sender, EndPointEventArgs e)
+        {
+            Console.WriteLine("Configuration changed: " + e.EndPoint);
+        }
+
+        /// <summary>
+        /// 发生错误时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void MuxerErrorMessage(object sender, RedisErrorEventArgs e)
+        {
+            Console.WriteLine("ErrorMessage: " + e.Message);
+        }
+
+        /// <summary>
+        /// 重新建立连接之前的错误
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void MuxerConnectionRestored(object sender, ConnectionFailedEventArgs e)
+        {
+            Console.WriteLine("ConnectionRestored: " + e.EndPoint);
+        }
+
+        /// <summary>
+        /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void MuxerConnectionFailed(object sender, ConnectionFailedEventArgs e)
+        {
+            Console.WriteLine("重新连接：Endpoint failed: " + e.EndPoint + ", " + e.FailureType + (e.Exception == null ? "" : (", " + e.Exception.Message)));
+        }
+
+        /// <summary>
+        /// 更改集群
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void MuxerHashSlotMoved(object sender, HashSlotMovedEventArgs e)
+        {
+            Console.WriteLine("HashSlotMoved:NewEndPoint" + e.NewEndPoint + ", OldEndPoint" + e.OldEndPoint);
+        }
+
+        /// <summary>
+        /// redis类库错误
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void MuxerInternalError(object sender, InternalErrorEventArgs e)
+        {
+            Console.WriteLine("InternalError:Message" + e.Exception.Message);
+        }
+
+        #endregion 事件
+
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose()
+        {
+            _conn.Dispose();
+        }
     }
 }
