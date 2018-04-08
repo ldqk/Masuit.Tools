@@ -41,7 +41,7 @@ namespace Masuit.Tools.Net
 
         #region 写Session
 
-        private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
+        //private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
         /// <summary>
         /// 写Session
         /// </summary>
@@ -83,7 +83,11 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            return Helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            }
         }
 
         /// <summary>
@@ -111,7 +115,10 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie(cookieName, sessionId);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            return Helper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+            }
         }
 
         #endregion
@@ -146,12 +153,15 @@ namespace Masuit.Tools.Net
         /// <returns></returns> 
         public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20) where T : class
         {
-            if (Helper.KeyExists(key))
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                Helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return Helper.GetString<T>(key);
+                if (redisHelper.KeyExists(key))
+                {
+                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetString<T>(key);
+                }
+                return default(T);
             }
-            return default(T);
         }
 
         /// <summary>
@@ -164,12 +174,15 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20) where T : class
         {
-            if (Helper.KeyExists(key))
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                Helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return Helper.GetString<T>(key);
+                if (redisHelper.KeyExists(key))
+                {
+                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetString<T>(key);
+                }
+                return default(T);
             }
-            return default(T);
         }
 
         /// <summary>
@@ -188,10 +201,13 @@ namespace Masuit.Tools.Net
             }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return default(T);
-            if (Helper.KeyExists(key))
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                Helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return Helper.GetString<T>(key);
+                if (redisHelper.KeyExists(key))
+                {
+                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetString<T>(key);
+                }
             }
             return default(T);
         }
@@ -212,12 +228,15 @@ namespace Masuit.Tools.Net
             }
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return default(T);
-            if (Helper.KeyExists(key))
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                Helper.Expire(key, TimeSpan.FromMinutes(expire));
-                return Helper.GetString<T>(key);
+                if (redisHelper.KeyExists(key))
+                {
+                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetString<T>(key);
+                }
+                return default(T);
             }
-            return default(T);
         }
 
         /// <summary>
@@ -235,7 +254,10 @@ namespace Masuit.Tools.Net
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            return Helper.DeleteKey(key);
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.DeleteKey(key);
+            }
         }
 
         /// <summary>
@@ -246,7 +268,10 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionStateBase _, string key = "sessionId")
         {
-            return Helper.DeleteKey(key);
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.DeleteKey(key);
+            }
         }
 
         /// <summary>
@@ -264,7 +289,10 @@ namespace Masuit.Tools.Net
             var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
             if (string.IsNullOrEmpty(key)) return true;
             HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            return Helper.DeleteKey(key);
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.DeleteKey(key);
+            }
         }
 
         /// <summary>
@@ -275,7 +303,10 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static bool RemoveByRedis(this HttpSessionState _, string key = "sessionId")
         {
-            return Helper.DeleteKey(key);
+            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            {
+                return redisHelper.DeleteKey(key);
+            }
         }
 
         #endregion

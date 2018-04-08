@@ -78,17 +78,17 @@ namespace Masuit.Tools.NoSQL
         {
             DbNum = dbNum;
             _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true")) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
-            _conn.ConfigurationChanged += MuxerConfigurationChanged;
+            //_conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
-            _conn.ConnectionFailed += MuxerConnectionFailed;
+            //_conn.ConnectionFailed += MuxerConnectionFailed;
             _conn.ConnectionFailed += ConnectionFailed;
-            _conn.ConnectionRestored += MuxerConnectionRestored;
+            //_conn.ConnectionRestored += MuxerConnectionRestored;
             _conn.ConnectionRestored += ConnectionRestored;
-            _conn.ErrorMessage += MuxerErrorMessage;
+            //_conn.ErrorMessage += MuxerErrorMessage;
             _conn.ErrorMessage += ErrorMessage;
-            _conn.HashSlotMoved += MuxerHashSlotMoved;
+            //_conn.HashSlotMoved += MuxerHashSlotMoved;
             _conn.HashSlotMoved += HashSlotMoved;
-            _conn.InternalError += MuxerInternalError;
+            //_conn.InternalError += MuxerInternalError;
             _conn.InternalError += InternalError;
         }
 
@@ -102,17 +102,17 @@ namespace Masuit.Tools.NoSQL
             DbNum = dbNum;
             readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true" : readWriteHosts;
             _conn = ConnectionCache.GetOrAdd(readWriteHosts, ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts)));
-            _conn.ConfigurationChanged += MuxerConfigurationChanged;
+            //_conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
-            _conn.ConnectionFailed += MuxerConnectionFailed;
+            //_conn.ConnectionFailed += MuxerConnectionFailed;
             _conn.ConnectionFailed += ConnectionFailed;
-            _conn.ConnectionRestored += MuxerConnectionRestored;
+            //_conn.ConnectionRestored += MuxerConnectionRestored;
             _conn.ConnectionRestored += ConnectionRestored;
-            _conn.ErrorMessage += MuxerErrorMessage;
+            //_conn.ErrorMessage += MuxerErrorMessage;
             _conn.ErrorMessage += ErrorMessage;
-            _conn.HashSlotMoved += MuxerHashSlotMoved;
+            //_conn.HashSlotMoved += MuxerHashSlotMoved;
             _conn.HashSlotMoved += HashSlotMoved;
-            _conn.InternalError += MuxerInternalError;
+            //_conn.InternalError += MuxerInternalError;
             _conn.InternalError += InternalError;
         }
 
@@ -1160,65 +1160,65 @@ namespace Masuit.Tools.NoSQL
 
         #region 事件
 
-        /// <summary>
-        /// 配置更改时
-        /// </summary>
-        /// <param name="sender">触发者</param>
-        /// <param name="e">事件参数</param>
-        private static void MuxerConfigurationChanged(object sender, EndPointEventArgs e)
-        {
-            Console.WriteLine("Configuration changed: " + e.EndPoint);
-        }
+        ///// <summary>
+        ///// 配置更改时
+        ///// </summary>
+        ///// <param name="sender">触发者</param>
+        ///// <param name="e">事件参数</param>
+        //private static void MuxerConfigurationChanged(object sender, EndPointEventArgs e)
+        //{
+        //    Console.WriteLine("Configuration changed: " + e.EndPoint);
+        //}
 
-        /// <summary>
-        /// 发生错误时
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void MuxerErrorMessage(object sender, RedisErrorEventArgs e)
-        {
-            Console.WriteLine("ErrorMessage: " + e.Message);
-        }
+        ///// <summary>
+        ///// 发生错误时
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private static void MuxerErrorMessage(object sender, RedisErrorEventArgs e)
+        //{
+        //    Console.WriteLine("ErrorMessage: " + e.Message);
+        //}
 
-        /// <summary>
-        /// 重新建立连接之前的错误
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void MuxerConnectionRestored(object sender, ConnectionFailedEventArgs e)
-        {
-            Console.WriteLine("ConnectionRestored: " + e.EndPoint);
-        }
+        ///// <summary>
+        ///// 重新建立连接之前的错误
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private static void MuxerConnectionRestored(object sender, ConnectionFailedEventArgs e)
+        //{
+        //    Console.WriteLine("ConnectionRestored: " + e.EndPoint);
+        //}
 
-        /// <summary>
-        /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void MuxerConnectionFailed(object sender, ConnectionFailedEventArgs e)
-        {
-            Console.WriteLine("重新连接：Endpoint failed: " + e.EndPoint + ", " + e.FailureType + (e.Exception == null ? "" : (", " + e.Exception.Message)));
-        }
+        ///// <summary>
+        ///// 连接失败 ， 如果重新连接成功你将不会收到这个通知
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private static void MuxerConnectionFailed(object sender, ConnectionFailedEventArgs e)
+        //{
+        //    Console.WriteLine("重新连接：Endpoint failed: " + e.EndPoint + ", " + e.FailureType + (e.Exception == null ? "" : (", " + e.Exception.Message)));
+        //}
 
-        /// <summary>
-        /// 更改集群
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void MuxerHashSlotMoved(object sender, HashSlotMovedEventArgs e)
-        {
-            Console.WriteLine("HashSlotMoved:NewEndPoint" + e.NewEndPoint + ", OldEndPoint" + e.OldEndPoint);
-        }
+        ///// <summary>
+        ///// 更改集群
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private static void MuxerHashSlotMoved(object sender, HashSlotMovedEventArgs e)
+        //{
+        //    Console.WriteLine("HashSlotMoved:NewEndPoint" + e.NewEndPoint + ", OldEndPoint" + e.OldEndPoint);
+        //}
 
-        /// <summary>
-        /// redis类库错误
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void MuxerInternalError(object sender, InternalErrorEventArgs e)
-        {
-            Console.WriteLine("InternalError:Message" + e.Exception.Message);
-        }
+        ///// <summary>
+        ///// redis类库错误
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private static void MuxerInternalError(object sender, InternalErrorEventArgs e)
+        //{
+        //    Console.WriteLine("InternalError:Message" + e.Exception.Message);
+        //}
 
         #endregion 事件
 
