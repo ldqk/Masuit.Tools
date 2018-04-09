@@ -355,6 +355,10 @@ namespace Masuit.Tools.Net
                     client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
                     var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
                     {
+                        if (t.IsFaulted)
+                        {
+                            return null;
+                        }
                         var res = await t;
                         if (res.IsSuccessStatusCode)
                         {
@@ -375,6 +379,10 @@ namespace Masuit.Tools.Net
                                 {
                                     return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
                                     {
+                                        if (tt.IsFaulted)
+                                        {
+                                            return null;
+                                        }
                                         var result = await tt;
                                         if (result.IsSuccessStatusCode)
                                         {
@@ -410,6 +418,10 @@ namespace Masuit.Tools.Net
                 {
                     var task = client.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
                     {
+                        if (t.IsFaulted)
+                        {
+                            return $"未能找到{ip}的ISP信息";
+                        }
                         var result = await t;
                         TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
                         if (taobaoIp.Code == 0)
