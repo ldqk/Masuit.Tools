@@ -59,9 +59,9 @@ namespace Masuit.Tools.NoSQL
         #region 构造函数
 
         /// <summary>
-        /// 构造函数，使用该构造函数需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作，如：<br/>
+        /// 构造函数，使用该构造函数需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true,abortConnect=false”进行操作，如：<br/>
         /// &lt;connectionStrings&gt;<br/>
-        ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
+        ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true,abortConnect=false"/&gt;<br/>
         /// &lt;/connectionStrings&gt;
         /// </summary>
         /// <param name="dbNum">数据库编号</param>
@@ -72,12 +72,12 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="dbNum">数据库的编号</param>
         public RedisHelper(string readWriteHosts, int dbNum = 0)
         {
             DbNum = dbNum;
-            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true")) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
+            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false")) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
             //_conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
             //_conn.ConnectionFailed += MuxerConnectionFailed;
@@ -95,12 +95,12 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="dbNum">数据库的编号</param>
         private RedisHelper(string readWriteHosts, int dbNum, int _)
         {
             DbNum = dbNum;
-            readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true" : readWriteHosts;
+            readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false" : readWriteHosts;
             _conn = ConnectionCache.GetOrAdd(readWriteHosts, ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts)));
             //_conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
@@ -139,7 +139,7 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// 从对象池获取默认实例
         /// </summary>
-        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="db">数据库的编号</param>
         /// <returns></returns>
         public static RedisHelper GetInstance(string conn, int db = 0)
@@ -150,7 +150,7 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// 获取单例
         /// </summary>
-        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true</param>
+        /// <param name="conn">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="db">数据库的编号</param>
         /// <returns></returns>
         public static RedisHelper GetSingleInstance(string conn, int db = 0)
