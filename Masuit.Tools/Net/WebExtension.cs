@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Remoting.Messaging;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
 using Masuit.Tools.Models;
@@ -318,12 +319,12 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        public static Tuple<string, List<string>> GetIPAddressInfo(this string ip)
+        public static async Task<Tuple<string, List<string>>> GetIPAddressInfo(this string ip)
         {
             ip.MatchInetAddress(out var isIpAddress);
             if (isIpAddress)
             {
-                var address = GetPhysicsAddressInfo(ip);
+                var address = await GetPhysicsAddressInfo(ip);
                 if (address.Status == 0)
                 {
                     string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
@@ -340,7 +341,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <param name="ip"></param>
         /// <returns></returns>
-        public static PhysicsAddress GetPhysicsAddressInfo(this string ip)
+        public static async Task<PhysicsAddress> GetPhysicsAddressInfo(this string ip)
         {
             ip.MatchInetAddress(out var isIpAddress);
             if (isIpAddress)
@@ -355,7 +356,7 @@ namespace Masuit.Tools.Net
                     client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
                     var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
                     {
-                        if (t.IsFaulted)
+                        if (t.IsFaulted || t.IsCanceled)
                         {
                             return null;
                         }
@@ -379,7 +380,7 @@ namespace Masuit.Tools.Net
                                 {
                                     return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
                                     {
-                                        if (tt.IsFaulted)
+                                        if (tt.IsFaulted || tt.IsCanceled)
                                         {
                                             return null;
                                         }
@@ -389,7 +390,19 @@ namespace Masuit.Tools.Net
                                             TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
                                             if (taobaoIp.Code == 0)
                                             {
-                                                return new PhysicsAddress() { Status = 0, AddressResult = new AddressResult() { FormattedAddress = taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City, AddressComponent = new AddressComponent() { Province = taobaoIp.IpData.Region }, Pois = new List<Pois>() } };
+                                                return new PhysicsAddress()
+                                                {
+                                                    Status = 0,
+                                                    AddressResult = new AddressResult()
+                                                    {
+                                                        FormattedAddress = taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City,
+                                                        AddressComponent = new AddressComponent()
+                                                        {
+                                                            Province = taobaoIp.IpData.Region
+                                                        },
+                                                        Pois = new List<Pois>()
+                                                    }
+                                                };
                                             }
                                         }
                                         return null;
@@ -399,7 +412,7 @@ namespace Masuit.Tools.Net
                         }
                         return null;
                     });
-                    return task.Result.Result;
+                    return await await task;
                 }
             }
             return null;
