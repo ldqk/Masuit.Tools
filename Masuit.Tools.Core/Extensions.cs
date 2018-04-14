@@ -327,12 +327,13 @@ namespace Masuit.Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static async Task<T> CopyAsync<T>(this T source) where T : new() => await Task.Run(() =>
-        {
-            T dest = new T();
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
-            return dest;
-        });
+        public static async Task<T> CopyAsync<T>(this T source) where T : new() =>
+            await Task.Run(() =>
+            {
+                T dest = new T();
+                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                return dest;
+            });
 
         /// <summary>
         /// 映射到目标类型的集合
@@ -367,6 +368,7 @@ namespace Masuit.Tools
                     dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
                     list.Add(dest);
                 }
+
                 return list;
             });
         }
@@ -452,7 +454,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source);
+        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
 
         /// <summary>
         /// 转换成json字符串
@@ -1317,17 +1319,20 @@ namespace Masuit.Tools
                 {
                     return false; //数字验证  
                 }
+
                 string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
                 if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
                     return false; //省份验证  
                 }
+
                 string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
                 DateTime time;
                 if (!DateTime.TryParse(birth, out time))
                 {
                     return false; //生日验证  
                 }
+
                 string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
                 string[] wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
                 char[] ai = s.Remove(17).ToCharArray();
@@ -1336,14 +1341,17 @@ namespace Masuit.Tools
                 {
                     sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
                 }
+
                 int y;
                 Math.DivRem(sum, 11, out y);
                 if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
                 {
                     return false; //校验码验证  
                 }
+
                 return true; //符合GB11643-1999标准  
             }
+
             if (s.Length == 15)
             {
                 long n;
@@ -1351,19 +1359,23 @@ namespace Masuit.Tools
                 {
                     return false; //数字验证  
                 }
+
                 string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
                 if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
                     return false; //省份验证  
                 }
+
                 string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
                 DateTime time;
                 if (DateTime.TryParse(birth, out time) == false)
                 {
                     return false; //生日验证  
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -1400,6 +1412,7 @@ namespace Masuit.Tools
                     }
                 }
             }
+
             return isMatch ? match : null;
         }
 

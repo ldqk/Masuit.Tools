@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Masuit.Tools.NoSQL;
 
 namespace Test
 {
@@ -8,11 +9,9 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            Parallel.For(0, 100, i =>
-                 {
-                     var result = Test().Result;
-                 });
-            Console.WriteLine(Count);
+            RedisHelper redisHelper = RedisHelper.GetInstance();
+            redisHelper.SetHash("test", "name", "zhangsan");
+            Console.WriteLine("ok");
             Console.ReadKey();
         }
 

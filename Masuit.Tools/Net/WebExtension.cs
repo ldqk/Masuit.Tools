@@ -67,27 +67,26 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
+        /// <param name="key">键</param>
         /// <param name="obj">需要存的对象</param>
-        /// <param name="cookieName">Cookie键，默认为sessionId</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static bool SetByRedis<T>(this HttpSessionState _, T obj, string cookieName = "sessionId", int expire = 20) where T : class
+        public static bool SetByRedis<T>(this HttpSessionState _, string key, T obj, int expire = 20) where T : class
         {
             if (HttpContext.Current is null)
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-            var sessionId = Guid.NewGuid().ToString().AESEncrypt();
-            if (!string.IsNullOrEmpty(cookieName))
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                //如果cookieName为null，则不调用Cookie存储
-                HttpCookie cookie = new HttpCookie(cookieName, sessionId);
+                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+                HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-
             using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                return redisHelper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
             }
         }
 
@@ -99,26 +98,26 @@ namespace Masuit.Tools.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
+        /// <param name="key">键</param>
         /// <param name="obj">需要存的对象</param>
-        /// <param name="cookieName">Cookie键，默认为sessionId</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static bool SetByRedis<T>(this HttpSessionStateBase _, T obj, string cookieName = "sessionId", int expire = 20) where T : class
+        public static bool SetByRedis<T>(this HttpSessionStateBase _, string key, T obj, int expire = 20) where T : class
         {
             if (HttpContext.Current is null)
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-            var sessionId = Guid.NewGuid().ToString().AESEncrypt();
-            if (!string.IsNullOrEmpty(cookieName))
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                //如果cookieName为null，则不调用Cookie存储
-                HttpCookie cookie = new HttpCookie(cookieName, sessionId);
+                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+                HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
             using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
             {
-                return redisHelper.SetString(sessionId, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
             }
         }
 
@@ -154,15 +153,25 @@ namespace Masuit.Tools.Net
         /// <returns></returns> 
         public static T GetByRedis<T>(this HttpSessionState _, string key, int expire = 20) where T : class
         {
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            if (HttpContext.Current is null)
             {
-                if (redisHelper.KeyExists(key))
-                {
-                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
-                    return redisHelper.GetString<T>(key);
-                }
-                return default(T);
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
+
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (!string.IsNullOrEmpty(sessionKey))
+            {
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    if (redisHelper.KeyExists(sessionKey))
+                    {
+                        redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                        return redisHelper.GetHash<T>(sessionKey, key);
+                    }
+                    return default(T);
+                }
+            }
+            return default(T);
         }
 
         /// <summary>
@@ -175,90 +184,51 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static T GetByRedis<T>(this HttpSessionStateBase _, string key, int expire = 20) where T : class
         {
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-            {
-                if (redisHelper.KeyExists(key))
-                {
-                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
-                    return redisHelper.GetString<T>(key);
-                }
-                return default(T);
-            }
-        }
-
-        /// <summary>
-        /// 从Redis根据Cookie读取到的键取Session值
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="_"></param>
-        /// <param name="cookieName">用于存SessionId的Cookie键</param>
-        /// <param name="expire">过期时间，默认20分钟</param>
-        /// <returns></returns> 
-        public static T GetByCookieRedis<T>(this HttpSessionState _, string cookieName = "sessionId", int expire = 20) where T : class
-        {
             if (HttpContext.Current is null)
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
-            if (string.IsNullOrEmpty(key)) return default(T);
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (!string.IsNullOrEmpty(sessionKey))
             {
-                if (redisHelper.KeyExists(key))
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
-                    return redisHelper.GetString<T>(key);
+                    if (redisHelper.KeyExists(sessionKey))
+                    {
+                        redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                        return redisHelper.GetHash<T>(sessionKey, key);
+                    }
+                    return default(T);
                 }
             }
             return default(T);
         }
 
         /// <summary>
-        /// 从Redis根据Cookie读取到的键取Session值
+        /// 从Redis移除对应键的Session
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="_"></param>
-        /// <param name="cookieName">用于存SessionId的Cookie键</param>
-        /// <param name="expire">过期时间，默认20分钟</param>
-        /// <returns></returns> 
-        public static T GetByCookieRedis<T>(this HttpSessionStateBase _, string cookieName = "sessionId", int expire = 20) where T : class
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool RemoveByRedis(this HttpSessionStateBase _, string key)
         {
             if (HttpContext.Current is null)
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
-            if (string.IsNullOrEmpty(key)) return default(T);
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (!string.IsNullOrEmpty(sessionKey))
             {
-                if (redisHelper.KeyExists(key))
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.Expire(key, TimeSpan.FromMinutes(expire));
-                    return redisHelper.GetString<T>(key);
+                    if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                    {
+                        return redisHelper.DeleteHash(sessionKey, key);
+                    }
                 }
-                return default(T);
             }
-        }
-
-        /// <summary>
-        /// 从Redis根据Cookie读取到的键移除Session
-        /// </summary>
-        /// <param name="_"></param>
-        /// <param name="cookieName"></param>
-        /// <returns></returns>
-        public static bool RemoveByCookieRedis(this HttpSessionStateBase _, string cookieName = "sessionId")
-        {
-            if (HttpContext.Current is null)
-            {
-                throw new Exception("请确保此方法调用是在同步线程中执行！");
-            }
-            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
-            if (string.IsNullOrEmpty(key)) return true;
-            HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-            {
-                return redisHelper.DeleteKey(key);
-            }
+            return false;
         }
 
         /// <summary>
@@ -267,47 +237,24 @@ namespace Masuit.Tools.Net
         /// <param name="_"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static bool RemoveByRedis(this HttpSessionStateBase _, string key = "sessionId")
-        {
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-            {
-                return redisHelper.DeleteKey(key);
-            }
-        }
-
-        /// <summary>
-        /// 从Redis根据Cookie读取到的键移除Session
-        /// </summary>
-        /// <param name="_"></param>
-        /// <param name="cookieName"></param>
-        /// <returns></returns>
-        public static bool RemoveByCookieRedis(this HttpSessionState _, string cookieName = "sessionId")
+        public static bool RemoveByRedis(this HttpSessionState _, string key)
         {
             if (HttpContext.Current is null)
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-            var key = HttpContext.Current.Request.Cookies[cookieName]?.Value;
-            if (string.IsNullOrEmpty(key)) return true;
-            HttpContext.Current.Request.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
+            if (!string.IsNullOrEmpty(sessionKey))
             {
-                return redisHelper.DeleteKey(key);
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                    {
+                        return redisHelper.DeleteHash(sessionKey, key);
+                    }
+                }
             }
-        }
-
-        /// <summary>
-        /// 从Redis移除对应键的Session
-        /// </summary>
-        /// <param name="_"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static bool RemoveByRedis(this HttpSessionState _, string key = "sessionId")
-        {
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-            {
-                return redisHelper.DeleteKey(key);
-            }
+            return false;
         }
 
         #endregion
