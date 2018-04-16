@@ -89,18 +89,7 @@ namespace Masuit.Tools.Core.DateTimeExt
         /// <returns>本年的天数</returns>
         public static int GetDaysOfYear(this DateTime _, int iYear)
         {
-            int cnt;
-            if (IsRuYear(iYear))
-            {
-                //闰年多 1 天 即：2 月为 29 天
-                cnt = 366;
-            }
-            else
-            {
-                //非闰年少1天 即：2 月为 28 天
-                cnt = 365;
-            }
-            return cnt;
+            return IsRuYear(iYear) ? 366 : 365;
         }
 
         /// <summary>本年有多少天</summary>
@@ -136,17 +125,7 @@ namespace Masuit.Tools.Core.DateTimeExt
                     days = 31;
                     break;
                 case 2:
-                    if (IsRuYear(iYear))
-                    {
-                        //闰年多 1 天 即：2 月为 29 天
-                        days = 29;
-                    }
-                    else
-                    {
-                        //--非闰年少1天 即：2 月为 28 天
-                        days = 28;
-                    }
-
+                    days = IsRuYear(iYear) ? 29 : 28;
                     break;
                 case 3:
                     days = 31;
@@ -188,9 +167,9 @@ namespace Masuit.Tools.Core.DateTimeExt
             //--------------------------------//
             //从dt中取得当前的年，月信息  --//
             //--------------------------------//
-            int month, days = 0;
+            int days = 0;
             var year = dt.Year;
-            month = dt.Month;
+            var month = dt.Month;
 
             //--利用年月信息，得到当前月的天数信息。
             switch (month)
@@ -199,17 +178,7 @@ namespace Masuit.Tools.Core.DateTimeExt
                     days = 31;
                     break;
                 case 2:
-                    if (IsRuYear(year))
-                    {
-                        //闰年多 1 天 即：2 月为 29 天
-                        days = 29;
-                    }
-                    else
-                    {
-                        //--非闰年少1天 即：2 月为 28 天
-                        days = 28;
-                    }
-
+                    days = IsRuYear(year) ? 29 : 28;
                     break;
                 case 3:
                     days = 31;
@@ -325,11 +294,7 @@ namespace Masuit.Tools.Core.DateTimeExt
             //例如：2003
             var n = iYear;
 
-            if ((n % 400 == 0) || (n % 4 == 0 && n % 100 != 0))
-            {
-                return true;
-            }
-            return false;
+            return n % 400 == 0 || n % 4 == 0 && n % 100 != 0;
         }
 
         /// <summary>
@@ -339,16 +304,8 @@ namespace Masuit.Tools.Core.DateTimeExt
         /// <returns>True/False</returns>
         public static bool IsDateTime(this string strDate)
         {
-            try
-            {
-                DateTime oDate = DateTime.Parse(strDate);
-                if (oDate.CompareTo(DateTime.Parse("1800-1-1")) > 0) return true;
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
+            DateTime.TryParse(strDate, out var result);
+            return result.CompareTo(DateTime.Parse("1800-1-1")) > 0;
         }
     }
 }

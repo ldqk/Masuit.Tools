@@ -303,9 +303,6 @@ namespace Masuit.Tools.Win32
             {
                 return "unknow ";
             }
-            finally
-            {
-            }
         }
 
         string GetDiskID()

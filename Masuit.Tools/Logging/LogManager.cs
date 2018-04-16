@@ -223,6 +223,7 @@ namespace Masuit.Tools.Logging
             }
             catch (Exception)
             {
+                // ignored
             }
         }
     }

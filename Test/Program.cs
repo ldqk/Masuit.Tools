@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Masuit.Tools.NoSQL;
 
 namespace Test
 {
@@ -9,10 +10,11 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            RedisHelper redisHelper = RedisHelper.GetInstance();
-            redisHelper.SetHash("test", "name", "zhangsan");
-            Console.WriteLine("ok");
-            Console.ReadKey();
+            var httpClient = new HttpClient() { BaseAddress = new Uri("http://www.hbtswl.com") };
+            httpClient.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Mozilla/5.0"));
+            var res = httpClient.GetAsync("/").Result;
+            var statusCode = res.StatusCode;
+            Console.WriteLine(statusCode);
         }
 
         public static ConcurrentDictionary<string, object> LockDic { get; set; } = new ConcurrentDictionary<string, object>();

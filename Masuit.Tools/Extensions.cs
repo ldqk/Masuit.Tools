@@ -1042,14 +1042,8 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
-            try
-            {
-                return Convert.ToInt32(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            int.TryParse(s, out int result);
+            return result;
         }
 
         /// <summary>
@@ -1059,14 +1053,8 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static long ToInt64(this string s)
         {
-            try
-            {
-                return Convert.ToInt64(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            long.TryParse(s, out var result);
+            return result;
         }
 
         /// <summary>
@@ -1076,14 +1064,8 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
-            try
-            {
-                return Convert.ToDouble(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            double.TryParse(s, out var result);
+            return result;
         }
 
         /// <summary>
@@ -1093,14 +1075,8 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this string s)
         {
-            try
-            {
-                return Convert.ToDecimal(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            decimal.TryParse(s, out var result);
+            return result;
         }
 
         /// <summary>
@@ -1110,14 +1086,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this double s)
         {
-            try
-            {
-                return Convert.ToDecimal(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            return new decimal(s);
         }
 
         /// <summary>
@@ -1127,14 +1096,7 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this decimal s)
         {
-            try
-            {
-                return Convert.ToDouble(s);
-            }
-            catch
-            {
-                return 0;
-            }
+            return (double)s;
         }
 
         /// <summary>
@@ -1316,8 +1278,7 @@ namespace Masuit.Tools
         {
             if (s.Length == 18)
             {
-                long n;
-                if (long.TryParse(s.Remove(17), out n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
                 {
                     return false; //数字验证  
                 }
@@ -1356,8 +1317,7 @@ namespace Masuit.Tools
 
             if (s.Length == 15)
             {
-                long n;
-                if (long.TryParse(s, out n) == false || n < Math.Pow(10, 14))
+                if (long.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
                 {
                     return false; //数字验证  
                 }
@@ -1369,8 +1329,7 @@ namespace Masuit.Tools
                 }
 
                 string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
-                DateTime time;
-                if (DateTime.TryParse(birth, out time) == false)
+                if (DateTime.TryParse(birth, out _) == false)
                 {
                     return false; //生日验证  
                 }
@@ -1499,14 +1458,8 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static DateTime ToDateTime(this string value)
         {
-            try
-            {
-                return DateTime.Parse(value);
-            }
-            catch
-            {
-                return default(DateTime);
-            }
+            DateTime.TryParse(value, out var result);
+            return result;
         }
 
         /// <summary>

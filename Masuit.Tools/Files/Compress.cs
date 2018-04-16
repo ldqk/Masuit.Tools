@@ -23,10 +23,8 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static void PackFiles(string filename, string directory)
         {
-            FastZip fz = new FastZip();
-            fz.CreateEmptyDirectories = true;
+            FastZip fz = new FastZip { CreateEmptyDirectories = true };
             fz.CreateZip(filename, directory, true, "");
-            fz = null;
         }
 
         /// <summary>
@@ -36,8 +34,7 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static async void PackFilesAsync(string filename, string directory)
         {
-            FastZip fz = new FastZip();
-            fz.CreateEmptyDirectories = true;
+            FastZip fz = new FastZip { CreateEmptyDirectories = true };
             await Task.Run(() =>
             {
                 fz.CreateZip(filename, directory, true, "");
@@ -71,11 +68,10 @@ namespace Masuit.Tools.Files
                     {
                         using (FileStream streamWriter = File.Create(dir + theEntry.Name))
                         {
-                            int size = 2048;
                             byte[] data = new byte[2048];
                             while (true)
                             {
-                                size = s.Read(data, 0, data.Length);
+                                var size = s.Read(data, 0, data.Length);
                                 if (size > 0)
                                     streamWriter.Write(data, 0, size);
                                 else
@@ -112,11 +108,10 @@ namespace Masuit.Tools.Files
                         {
                             using (FileStream streamWriter = File.Create(dir + theEntry.Name))
                             {
-                                int size = 2048;
                                 byte[] data = new byte[2048];
                                 while (true)
                                 {
-                                    size = s.Read(data, 0, data.Length);
+                                    var size = s.Read(data, 0, data.Length);
                                     if (size > 0)
                                         streamWriter.Write(data, 0, size);
                                     else
@@ -143,16 +138,14 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 压缩
         /// </summary>
-        /// <param name="FileToZip">待压缩的文件目录或文件</param>
-        /// <param name="ZipedFile">生成的目标文件</param>
+        /// <param name="fileToZip">待压缩的文件目录或文件</param>
+        /// <param name="zipedFile">生成的目标文件</param>
         /// <param name="level">压缩级别，默认值6</param>
-        public static bool Zip(string FileToZip, string ZipedFile, int level = 6)
+        public static bool Zip(string fileToZip, string zipedFile, int level = 6)
         {
-            if (Directory.Exists(FileToZip))
-                return ZipFileDictory(FileToZip, ZipedFile, level);
-            if (File.Exists(FileToZip))
-                return ZipFile(FileToZip, ZipedFile, level);
-            return false;
+            if (Directory.Exists(fileToZip))
+                return ZipFileDictory(fileToZip, zipedFile, level);
+            return File.Exists(fileToZip) && ZipFile(fileToZip, zipedFile, level);
         }
 
         /// <summary>
@@ -216,23 +209,22 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 解压
         /// </summary>
-        /// <param name="FileToUpZip">待解压的文件</param>
-        /// <param name="ZipedFolder">解压目标存放目录</param>
-        public static void UnZip(string FileToUpZip, string ZipedFolder)
+        /// <param name="fileToUpZip">待解压的文件</param>
+        /// <param name="zipedFolder">解压目标存放目录</param>
+        public static void UnZip(string fileToUpZip, string zipedFolder)
         {
-            if (!File.Exists(FileToUpZip))
+            if (!File.Exists(fileToUpZip))
                 return;
-            if (!Directory.Exists(ZipedFolder))
-                Directory.CreateDirectory(ZipedFolder);
-            ZipEntry theEntry = null;
-            string fileName;
-            using (ZipInputStream s = new ZipInputStream(File.OpenRead(FileToUpZip)))
+            if (!Directory.Exists(zipedFolder))
+                Directory.CreateDirectory(zipedFolder);
+            using (ZipInputStream s = new ZipInputStream(File.OpenRead(fileToUpZip)))
             {
+                ZipEntry theEntry;
                 while ((theEntry = s.GetNextEntry()) != null)
                 {
                     if (theEntry.Name != string.Empty)
                     {
-                        fileName = Path.Combine(ZipedFolder, theEntry.Name);
+                        var fileName = Path.Combine(zipedFolder, theEntry.Name);
                         if (fileName.EndsWith("/") || fileName.EndsWith("\\"))
                         {
                             Directory.CreateDirectory(fileName);
@@ -240,11 +232,10 @@ namespace Masuit.Tools.Files
                         }
                         using (FileStream streamWriter = File.Create(fileName))
                         {
-                            int size = 2048;
                             byte[] data = new byte[2048];
                             while (true)
                             {
-                                size = s.Read(data, 0, data.Length);
+                                var size = s.Read(data, 0, data.Length);
                                 if (size > 0)
                                     streamWriter.Write(data, 0, size);
                                 else
@@ -270,7 +261,6 @@ namespace Masuit.Tools.Files
         /// <param name="parentFolderName">父级文件夹</param>
         private static bool ZipFileDictory(string folderToZip, ZipOutputStream s, string parentFolderName)
         {
-            bool res = true;
             Crc32 crc = new Crc32();
             var entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/"));
             s.PutNextEntry(entry);
@@ -282,10 +272,11 @@ namespace Masuit.Tools.Files
                 {
                     byte[] buffer = new byte[fs.Length];
                     fs.Read(buffer, 0, buffer.Length);
-                    entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/" + Path.GetFileName(file)));
-                    entry.DateTime = DateTime.Now;
-                    entry.Size = fs.Length;
-                    fs.Close();
+                    entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/" + Path.GetFileName(file)))
+                    {
+                        DateTime = DateTime.Now,
+                        Size = fs.Length
+                    };
                     crc.Reset();
                     crc.Update(buffer);
                     entry.Crc = crc.Value;
@@ -300,7 +291,7 @@ namespace Masuit.Tools.Files
                     return false;
             }
 
-            return res;
+            return true;
         }
 
         #endregion
@@ -310,18 +301,18 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 压缩目录
         /// </summary>
-        /// <param name="FolderToZip">待压缩的文件夹，全路径格式</param>
-        /// <param name="ZipedFile">压缩后的文件名，全路径格式</param>
+        /// <param name="folderToZip">待压缩的文件夹，全路径格式</param>
+        /// <param name="zipedFile">压缩后的文件名，全路径格式</param>
         /// <param name="level">压缩等级</param>
-        private static bool ZipFileDictory(string FolderToZip, string ZipedFile, int level)
+        private static bool ZipFileDictory(string folderToZip, string zipedFile, int level)
         {
             bool res;
-            if (!Directory.Exists(FolderToZip))
+            if (!Directory.Exists(folderToZip))
                 return false;
-            using (ZipOutputStream s = new ZipOutputStream(File.Create(ZipedFile)))
+            using (ZipOutputStream s = new ZipOutputStream(File.Create(zipedFile)))
             {
                 s.SetLevel(level);
-                res = ZipFileDictory(FolderToZip, s, "");
+                res = ZipFileDictory(folderToZip, s, "");
                 s.Finish();
             }
             return res;
@@ -342,22 +333,21 @@ namespace Masuit.Tools.Files
         {
             if (!File.Exists(fileToZip))
                 throw new FileNotFoundException("指定要压缩的文件: " + fileToZip + " 不存在!");
-            bool res = true;
-            FileStream ZipFile = File.OpenRead(fileToZip);
-            byte[] buffer = new byte[ZipFile.Length];
-            ZipFile.Read(buffer, 0, buffer.Length);
-            ZipFile = File.Create(zipedFile);
-            using (ZipFile)
+            FileStream zipFile = File.OpenRead(fileToZip);
+            byte[] buffer = new byte[zipFile.Length];
+            zipFile.Read(buffer, 0, buffer.Length);
+            zipFile = File.Create(zipedFile);
+            using (zipFile)
             {
-                using (ZipOutputStream ZipStream = new ZipOutputStream(ZipFile))
+                using (ZipOutputStream zipStream = new ZipOutputStream(zipFile))
                 {
                     var zipEntry = new ZipEntry(Path.GetFileName(fileToZip));
-                    ZipStream.PutNextEntry(zipEntry);
-                    ZipStream.SetLevel(level);
-                    ZipStream.Write(buffer, 0, buffer.Length);
+                    zipStream.PutNextEntry(zipEntry);
+                    zipStream.SetLevel(level);
+                    zipStream.Write(buffer, 0, buffer.Length);
                 }
             }
-            return res;
+            return true;
         }
 
         #endregion
@@ -380,20 +370,28 @@ namespace Masuit.Tools.Files
         /// <param name="dirpath">初始目录</param>
         public static void EnZip(string zipname, string zippath, string dirpath)
         {
-            the_Reg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRAR.exe\Shell\Open\Command");
-            the_Obj = the_Reg.GetValue("");
-            the_rar = the_Obj.ToString();
-            the_Reg.Close();
-            the_rar = the_rar.Substring(1, the_rar.Length - 7);
-            the_Info = " a  " + zipname + " " + zippath;
-            the_StartInfo = new ProcessStartInfo();
-            the_StartInfo.FileName = the_rar;
-            the_StartInfo.Arguments = the_Info;
-            the_StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            the_StartInfo.WorkingDirectory = dirpath;
-            the_Process = new Process();
-            the_Process.StartInfo = the_StartInfo;
-            the_Process.Start();
+            _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRAR.exe\Shell\Open\Command");
+            if (_theReg != null)
+            {
+                _theObj = _theReg.GetValue("");
+                _theRar = _theObj.ToString();
+                _theReg?.Close();
+            }
+
+            _theRar = _theRar.Substring(1, _theRar.Length - 7);
+            _theInfo = " a  " + zipname + " " + zippath;
+            _theStartInfo = new ProcessStartInfo
+            {
+                FileName = _theRar,
+                Arguments = _theInfo,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                WorkingDirectory = dirpath
+            };
+            _theProcess = new Process
+            {
+                StartInfo = _theStartInfo
+            };
+            _theProcess.Start();
         }
 
         #endregion
@@ -407,31 +405,39 @@ namespace Masuit.Tools.Files
         /// <param name="zippath">要解压的文件路径</param>
         public static void DeZip(string zipname, string zippath)
         {
-            the_Reg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRar.exe\Shell\Open\Command");
-            the_Obj = the_Reg.GetValue("");
-            the_rar = the_Obj.ToString();
-            the_Reg.Close();
-            the_rar = the_rar.Substring(1, the_rar.Length - 7);
-            the_Info = " X " + zipname + " " + zippath;
-            the_StartInfo = new ProcessStartInfo();
-            the_StartInfo.FileName = the_rar;
-            the_StartInfo.Arguments = the_Info;
-            the_StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            the_Process = new Process();
-            the_Process.StartInfo = the_StartInfo;
-            the_Process.Start();
+            _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRar.exe\Shell\Open\Command");
+            if (_theReg != null)
+            {
+                _theObj = _theReg.GetValue("");
+                _theRar = _theObj.ToString();
+                _theReg.Close();
+            }
+
+            _theRar = _theRar.Substring(1, _theRar.Length - 7);
+            _theInfo = " X " + zipname + " " + zippath;
+            _theStartInfo = new ProcessStartInfo
+            {
+                FileName = _theRar,
+                Arguments = _theInfo,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            _theProcess = new Process
+            {
+                StartInfo = _theStartInfo
+            };
+            _theProcess.Start();
         }
 
         #endregion
 
         #region 私有变量
 
-        private static string the_rar;
-        private static RegistryKey the_Reg;
-        private static object the_Obj;
-        private static string the_Info;
-        private static ProcessStartInfo the_StartInfo;
-        private static Process the_Process;
+        private static string _theRar;
+        private static RegistryKey _theReg;
+        private static object _theObj;
+        private static string _theInfo;
+        private static ProcessStartInfo _theStartInfo;
+        private static Process _theProcess;
 
         #endregion
     }

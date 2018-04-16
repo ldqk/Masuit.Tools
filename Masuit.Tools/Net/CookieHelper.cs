@@ -274,29 +274,23 @@ namespace Masuit.Tools.Net
         public static CookieCollection GetCK(string ck, string url)
         {
             CookieCollection cc = new CookieCollection();
-            string domain = "";
-            try
-            {
-                Uri u = new Uri(url);
-                domain = u.Host;
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
-            }
+            Uri u = new Uri(url);
+            var domain = u.Host;
             string[] cks = GetCKS(ck);
-            for (int i = 0; i < cks.Length; i++)
+            foreach (var t in cks)
             {
-                if (cks[i].IndexOf("=") > -1)
+                if (t.IndexOf("=") > -1)
                 {
                     try
                     {
-                        string n = cks[i].Substring(0, cks[i].IndexOf("="));
-                        string v = cks[i].Substring(cks[i].IndexOf("=") + 1);
-                        System.Net.Cookie c = new System.Net.Cookie();
-                        c.Name = n.Trim();
-                        c.Value = v.Trim();
-                        c.Domain = domain;
+                        string n = t.Substring(0, t.IndexOf("="));
+                        string v = t.Substring(t.IndexOf("=") + 1);
+                        Cookie c = new Cookie
+                        {
+                            Name = n.Trim(),
+                            Value = v.Trim(),
+                            Domain = domain
+                        };
                         cc.Add(c);
                     }
                     catch (Exception e)
@@ -354,24 +348,17 @@ namespace Masuit.Tools.Net
         /// <returns>Cookie集合中是否包含指定的Cookie</returns>
         public static async Task<bool> IncludeCKAsync(this List<string> cks, string ck)
         {
-            try
+            return await Task.Run(() =>
             {
-                return await Task.Run(() =>
+                foreach (string t in cks)
                 {
-                    foreach (string t in cks)
+                    if (t.ToLower().Trim().IndexOf(ck.Remove(ck.IndexOf('=') + 1).Trim().ToLower(), StringComparison.Ordinal) != -1)
                     {
-                        if (t.ToLower().Trim().IndexOf(ck.Remove(ck.IndexOf('=') + 1).Trim().ToLower(), StringComparison.Ordinal) != -1)
-                        {
-                            return true;
-                        }
+                        return true;
                     }
-                    return false;
-                }).ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
+                }
                 return false;
-            }
+            }).ConfigureAwait(false);
         }
         #endregion
 
@@ -398,27 +385,13 @@ namespace Masuit.Tools.Net
         public static List<string> GetDomains(string url)
         {
             List<string> res = new List<string>();
-            try
+            url = url.Remove(url.IndexOf("?"));
+            Uri uri = new Uri(url);
+            string baseDomain = uri.Scheme + "://" + uri.Host;
+            foreach (var t in uri.Segments)
             {
-                url = url.Remove(url.IndexOf("?"));
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
-            }
-            try
-            {
-                Uri uri = new Uri(url);
-                string baseDomain = uri.Scheme + "://" + uri.Host;
-                for (int i = 0; i < uri.Segments.Length; i++)
-                {
-                    baseDomain += uri.Segments[i];
-                    res.Add(baseDomain);
-                }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+                baseDomain += t;
+                res.Add(baseDomain);
             }
             return res;
         }

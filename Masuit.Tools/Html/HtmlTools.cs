@@ -1135,7 +1135,6 @@ namespace Masuit.Tools.Html
             try
             {
                 Uri baseUri = new Uri(sUrl);
-
                 return baseUri.Scheme + "://" + baseUri.Authority;
             }
             catch
@@ -1304,7 +1303,7 @@ namespace Masuit.Tools.Html
                 }
                 catch (ArgumentException)
                 {//指定的编码不可识别
-                    content = System.Text.Encoding.GetEncoding("gb2312").GetString(buffer);
+                    content = Encoding.GetEncoding("gb2312").GetString(buffer);
                 }
 
                 //content = CText.RemoveByReg(content, @"<!--[\s\S]*?-->");
@@ -1513,7 +1512,7 @@ ReCatch:
                         }
                         catch (Exception Ex)
                         {
-                            string str = Ex.Message;
+                            //string str = Ex.Message;
                             nBytes = -1;
                         }
                         if (nBytes <= 0) break;
@@ -1544,13 +1543,13 @@ ReCatch:
                     } while (nBytes > 0);
 
                     listResult.Add(new KeyValuePair<int, string>(kvUrl.Key, sbHtml.ToString()));
-                    sbHtml = null;
+                    //sbHtml = null;
                     sbHtml = new StringBuilder();
                 }
             }
             catch (Exception Ex)
             {
-                string s = Ex.Message;
+                //string s = Ex.Message;
                 try
                 {
                     sock.Shutdown(SocketShutdown.Both);

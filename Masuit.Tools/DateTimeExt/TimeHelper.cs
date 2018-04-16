@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.DateTimeExt
 {
@@ -310,23 +309,16 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>时间差</returns>
         public static string DateDiff(this DateTime dateTime1, DateTime dateTime2)
         {
-            string dateDiff = null;
-            try
+            string dateDiff;
+            TimeSpan ts = dateTime2 - dateTime1;
+            if (ts.Days >= 1)
             {
-                TimeSpan ts = dateTime2 - dateTime1;
-                if (ts.Days >= 1)
-                {
-                    dateDiff = dateTime1.Month + "月" + dateTime1.Day + "日";
-                }
-                else
-                {
-                    if (ts.Hours > 1) dateDiff = ts.Hours + "小时前";
-                    else dateDiff = ts.Minutes + "分钟前";
-                }
+                dateDiff = dateTime1.Month + "月" + dateTime1.Day + "日";
             }
-            catch (Exception e)
+            else
             {
-                LogManager.Error(e);
+                if (ts.Hours > 1) dateDiff = ts.Hours + "小时前";
+                else dateDiff = ts.Minutes + "分钟前";
             }
             return dateDiff;
         }

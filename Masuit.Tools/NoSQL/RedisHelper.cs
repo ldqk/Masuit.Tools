@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Masuit.Tools.Systems;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -12,10 +13,10 @@ namespace Masuit.Tools.NoSQL
     /// <summary>
     /// Redis操作
     /// </summary>
-    public class RedisHelper : IDisposable
+    public class RedisHelper : Disposable
     {
         private int DbNum { get; }
-        private readonly ConnectionMultiplexer _conn;
+        private ConnectionMultiplexer _conn;
 
         /// <summary>
         /// 自定义键
@@ -1253,10 +1254,10 @@ namespace Masuit.Tools.NoSQL
 
         #endregion 事件
 
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose()
+        public override void Dispose(bool disposing)
         {
-            _conn.Dispose();
+            _conn?.Dispose();
+            _conn = null;
         }
     }
 }
