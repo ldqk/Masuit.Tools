@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
+using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
 using Masuit.Tools.Security;
@@ -84,9 +85,17 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            _[key] = obj;
+            try
             {
-                return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -115,9 +124,17 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+            _[key] = obj;
+            try
             {
-                return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
 
@@ -161,15 +178,27 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                var obj = _.Get<T>(key);
+                if (obj == null)
                 {
-                    if (redisHelper.KeyExists(sessionKey))
+                    try
                     {
-                        redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
-                        return redisHelper.GetHash<T>(sessionKey, key);
+                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                        {
+                            if (redisHelper.KeyExists(sessionKey))
+                            {
+                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                                return redisHelper.GetHash<T>(sessionKey, key);
+                            }
+                            return default(T);
+                        }
                     }
-                    return default(T);
+                    catch
+                    {
+                        return default(T);
+                    }
                 }
+                return obj;
             }
             return default(T);
         }
@@ -192,15 +221,27 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                var obj = _.Get<T>(key);
+                if (obj == null)
                 {
-                    if (redisHelper.KeyExists(sessionKey))
+                    try
                     {
-                        redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
-                        return redisHelper.GetHash<T>(sessionKey, key);
+                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                        {
+                            if (redisHelper.KeyExists(sessionKey))
+                            {
+                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                                return redisHelper.GetHash<T>(sessionKey, key);
+                            }
+                            return default(T);
+                        }
                     }
-                    return default(T);
+                    catch
+                    {
+                        return default(T);
+                    }
                 }
+                return obj;
             }
             return default(T);
         }
@@ -220,12 +261,20 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                _[key] = null;
+                try
                 {
-                    if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                     {
-                        return redisHelper.DeleteHash(sessionKey, key);
+                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                        {
+                            return redisHelper.DeleteHash(sessionKey, key);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
                 }
             }
             return false;
@@ -246,12 +295,20 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                _[key] = null;
+                try
                 {
-                    if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                     {
-                        return redisHelper.DeleteHash(sessionKey, key);
+                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                        {
+                            return redisHelper.DeleteHash(sessionKey, key);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
                 }
             }
             return false;
