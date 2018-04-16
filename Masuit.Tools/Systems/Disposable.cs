@@ -13,6 +13,10 @@ namespace Masuit.Tools.Systems
 
         public void Dispose()
         {
+            if (isDisposed)
+            {
+                return;
+            }
             Dispose(true);
             isDisposed = true;
             GC.SuppressFinalize(this);
