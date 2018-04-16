@@ -178,7 +178,7 @@ namespace Masuit.Tools.Core.Logging
                 Directory.CreateDirectory(logDir);
             }
             string extension = ".log";
-            string fileNameNotExt = String.Concat(DateTime.Now.ToString("yyyyMMdd"));
+            string fileNameNotExt = DateTime.Now.ToString("yyyyMMdd");
             string fileNamePattern = string.Concat(fileNameNotExt, "(*)", extension);
             List<string> filePaths = Directory.GetFiles(logDir, fileNamePattern, SearchOption.TopDirectoryOnly).ToList();
 
