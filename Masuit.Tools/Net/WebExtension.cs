@@ -85,7 +85,11 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            _[key] = obj;
+
+            if (_ != null)
+            {
+                _[key] = obj;
+            }
             try
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
@@ -124,7 +128,11 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            _[key] = obj;
+            if (_ != null)
+            {
+                _[key] = obj;
+            }
+
             try
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
@@ -178,8 +186,13 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                var obj = _.Get<T>(key);
-                if (obj == null)
+                T obj = default(T);
+                if (_ != default(T))
+                {
+                    obj = _.Get<T>(key);
+                }
+
+                if (obj == default(T))
                 {
                     try
                     {
@@ -221,7 +234,12 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                var obj = _.Get<T>(key);
+                T obj = default(T);
+                if (_ != default(T))
+                {
+                    obj = _.Get<T>(key);
+                }
+
                 if (obj == null)
                 {
                     try
@@ -261,7 +279,11 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                _[key] = null;
+                if (_ != null)
+                {
+                    _[key] = null;
+                }
+
                 try
                 {
                     using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
@@ -295,7 +317,11 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
-                _[key] = null;
+                if (_ != null)
+                {
+                    _[key] = null;
+                }
+
                 try
                 {
                     using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
