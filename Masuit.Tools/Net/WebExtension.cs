@@ -198,7 +198,7 @@ namespace Masuit.Tools.Net
                     {
                         using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                         {
-                            if (redisHelper.KeyExists(sessionKey))
+                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
                                 redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
@@ -246,7 +246,7 @@ namespace Masuit.Tools.Net
                     {
                         using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                         {
-                            if (redisHelper.KeyExists(sessionKey))
+                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
                                 redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
