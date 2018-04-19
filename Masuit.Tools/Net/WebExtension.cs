@@ -94,7 +94,7 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.SetHashAsync(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
@@ -137,7 +137,7 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.SetHashAsync(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
@@ -200,7 +200,7 @@ namespace Masuit.Tools.Net
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
-                                redisHelper.ExpireAsync(sessionKey, TimeSpan.FromMinutes(expire));
+                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
                             return default(T);
@@ -248,7 +248,7 @@ namespace Masuit.Tools.Net
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
-                                redisHelper.ExpireAsync(sessionKey, TimeSpan.FromMinutes(expire));
+                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
                             return default(T);
@@ -290,7 +290,7 @@ namespace Masuit.Tools.Net
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
-                            redisHelper.DeleteHashAsync(sessionKey, key);
+                            redisHelper.DeleteHash(sessionKey, key);
                         }
                     }
                 }
@@ -327,7 +327,7 @@ namespace Masuit.Tools.Net
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
-                            redisHelper.DeleteHashAsync(sessionKey, key);
+                            redisHelper.DeleteHash(sessionKey, key);
                         }
                     }
                 }

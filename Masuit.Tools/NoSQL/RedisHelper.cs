@@ -23,6 +23,8 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public string CustomKey;
 
+        public static string DefaultConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false";
+
         /// <summary>
         /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
         /// </summary>
@@ -78,7 +80,7 @@ namespace Masuit.Tools.NoSQL
         public RedisHelper(string readWriteHosts, int dbNum = 0)
         {
             DbNum = dbNum;
-            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false")) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
+            _conn = string.IsNullOrWhiteSpace(readWriteHosts) ? ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(DefaultConnectionString)) : ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts));
             //_conn.ConfigurationChanged += MuxerConfigurationChanged;
             _conn.ConfigurationChanged += ConfigurationChanged;
             //_conn.ConnectionFailed += MuxerConnectionFailed;
@@ -98,23 +100,24 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="dbNum">数据库的编号</param>
+        /// <param name="_"></param>
         private RedisHelper(string readWriteHosts, int dbNum, int _)
         {
             DbNum = dbNum;
-            readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false" : readWriteHosts;
+            readWriteHosts = string.IsNullOrWhiteSpace(readWriteHosts) ? DefaultConnectionString : readWriteHosts;
             _conn = ConnectionCache.GetOrAdd(readWriteHosts, ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(readWriteHosts)));
-            //_conn.ConfigurationChanged += MuxerConfigurationChanged;
-            _conn.ConfigurationChanged += ConfigurationChanged;
-            //_conn.ConnectionFailed += MuxerConnectionFailed;
-            _conn.ConnectionFailed += ConnectionFailed;
-            //_conn.ConnectionRestored += MuxerConnectionRestored;
-            _conn.ConnectionRestored += ConnectionRestored;
-            //_conn.ErrorMessage += MuxerErrorMessage;
-            _conn.ErrorMessage += ErrorMessage;
-            //_conn.HashSlotMoved += MuxerHashSlotMoved;
-            _conn.HashSlotMoved += HashSlotMoved;
-            //_conn.InternalError += MuxerInternalError;
-            _conn.InternalError += InternalError;
+            ////_conn.ConfigurationChanged += MuxerConfigurationChanged;
+            //_conn.ConfigurationChanged += ConfigurationChanged;
+            ////_conn.ConnectionFailed += MuxerConnectionFailed;
+            //_conn.ConnectionFailed += ConnectionFailed;
+            ////_conn.ConnectionRestored += MuxerConnectionRestored;
+            //_conn.ConnectionRestored += ConnectionRestored;
+            ////_conn.ErrorMessage += MuxerErrorMessage;
+            //_conn.ErrorMessage += ErrorMessage;
+            ////_conn.HashSlotMoved += MuxerHashSlotMoved;
+            //_conn.HashSlotMoved += HashSlotMoved;
+            ////_conn.InternalError += MuxerInternalError;
+            //_conn.InternalError += InternalError;
         }
 
         /// <summary>
@@ -285,7 +288,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> SetStringAsync(string key, string value, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.StringSetAsync(key, value, expiry));
+            return await Do(async db => await db.StringSetAsync(key, value, expiry));
         }
 
         /// <summary>
@@ -297,7 +300,7 @@ namespace Masuit.Tools.NoSQL
         {
             List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
                 keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
-            return await Do(db => db.StringSetAsync(newkeyValues.ToArray()));
+            return await Do(async db => await db.StringSetAsync(newkeyValues.ToArray()));
         }
 
         /// <summary>
@@ -312,7 +315,7 @@ namespace Masuit.Tools.NoSQL
         {
             key = AddSysCustomKey(key);
             string json = ConvertJson(obj);
-            return await Do(db => db.StringSetAsync(key, json, expiry));
+            return await Do(async db => await db.StringSetAsync(key, json, expiry));
         }
 
         /// <summary>
@@ -325,7 +328,7 @@ namespace Masuit.Tools.NoSQL
             if (KeyExists(key))
             {
                 key = AddSysCustomKey(key);
-                return await Do(db => db.StringGetAsync(key));
+                return await Do(async db => await db.StringGetAsync(key));
             }
             return string.Empty;
         }
@@ -338,7 +341,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<RedisValue[]> GetStringAsync(List<string> listKey)
         {
             List<string> newKeys = listKey.Select(AddSysCustomKey).ToList();
-            return await Do(db => db.StringGetAsync(ConvertRedisKeys(newKeys)));
+            return await Do(async db => await db.StringGetAsync(ConvertRedisKeys(newKeys)));
         }
 
         /// <summary>
@@ -352,7 +355,7 @@ namespace Masuit.Tools.NoSQL
             if (KeyExists(key))
             {
                 key = AddSysCustomKey(key);
-                string result = await Do(db => db.StringGetAsync(key));
+                string result = await Do(async db => await db.StringGetAsync(key));
                 return ConvertObj<T>(result);
             }
             return default(T);
@@ -367,7 +370,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<double> IncrementStringAsync(string key, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.StringIncrementAsync(key, val));
+            return await Do(async db => await db.StringIncrementAsync(key, val));
         }
 
         /// <summary>
@@ -379,7 +382,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<double> DecrementStringAsync(string key, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.StringDecrementAsync(key, val));
+            return await Do(async db => await db.StringDecrementAsync(key, val));
         }
 
         #endregion 异步方法
@@ -537,7 +540,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> ExistsHashAsync(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashExistsAsync(key, dataKey));
+            return await Do(async db => await db.HashExistsAsync(key, dataKey));
         }
 
         /// <summary>
@@ -565,11 +568,12 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
+        /// <param name="expire"></param>
         /// <returns>是否存储成功</returns>
         public async Task<bool> SetHashAsync<T>(string key, string dataKey, T t, TimeSpan expire)
         {
             var b = await SetHashAsync(key, dataKey, t);
-            Expire(key, expire);
+            await ExpireAsync(key, expire);
             return b;
         }
 
@@ -582,7 +586,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> DeleteHashAsync(string key, string dataKey)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashDeleteAsync(key, dataKey));
+            return await Do(async db => await db.HashDeleteAsync(key, dataKey));
         }
 
         /// <summary>
@@ -594,7 +598,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<long> DeleteHashAsync(string key, List<RedisValue> dataKeys)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashDeleteAsync(key, dataKeys.ToArray()));
+            return await Do(async db => await db.HashDeleteAsync(key, dataKeys.ToArray()));
         }
 
         /// <summary>
@@ -609,7 +613,7 @@ namespace Masuit.Tools.NoSQL
             if (KeyExists(key))
             {
                 key = AddSysCustomKey(key);
-                string value = await Do(db => db.HashGetAsync(key, dataKey));
+                string value = await Do(async db => await db.HashGetAsync(key, dataKey));
                 return ConvertObj<T>(value);
             }
             return default(T);
@@ -625,7 +629,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<double> IncrementHashAsync(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashIncrementAsync(key, dataKey, val));
+            return await Do(async db => await db.HashIncrementAsync(key, dataKey, val));
         }
 
         /// <summary>
@@ -638,7 +642,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<double> DecrementHashAsync(string key, string dataKey, double val = 1)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.HashDecrementAsync(key, dataKey, val));
+            return await Do(async db => await db.HashDecrementAsync(key, dataKey, val));
         }
 
         /// <summary>
@@ -650,7 +654,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<List<T>> HashKeysAsync<T>(string key)
         {
             key = AddSysCustomKey(key);
-            RedisValue[] values = await Do(db => db.HashKeysAsync(key));
+            RedisValue[] values = await Do(async db => await db.HashKeysAsync(key));
             return ConvetList<T>(values);
         }
 
@@ -781,7 +785,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<long> RemoveListAsync<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.ListRemoveAsync(key, ConvertJson(value)));
+            return await Do(async db => await db.ListRemoveAsync(key, ConvertJson(value)));
         }
 
         /// <summary>
@@ -810,7 +814,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<long> ListRightPushAsync<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.ListRightPushAsync(key, ConvertJson(value)));
+            return await Do(async db => await db.ListRightPushAsync(key, ConvertJson(value)));
         }
 
         /// <summary>
@@ -824,7 +828,7 @@ namespace Masuit.Tools.NoSQL
             if (KeyExists(key))
             {
                 key = AddSysCustomKey(key);
-                var value = await Do(db => db.ListRightPopAsync(key));
+                var value = await Do(async db => await db.ListRightPopAsync(key));
                 return ConvertObj<T>(value);
             }
             return default(T);
@@ -839,7 +843,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<long> ListLeftPushAsync<T>(string key, T value)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.ListLeftPushAsync(key, ConvertJson(value)));
+            return await Do(async db => await db.ListLeftPushAsync(key, ConvertJson(value)));
         }
 
         /// <summary>
@@ -853,7 +857,7 @@ namespace Masuit.Tools.NoSQL
             if (KeyExists(key))
             {
                 key = AddSysCustomKey(key);
-                var value = await Do(db => db.ListLeftPopAsync(key));
+                var value = await Do(async db => await db.ListLeftPopAsync(key));
                 return ConvertObj<T>(value);
             }
             return default(T);
@@ -887,7 +891,7 @@ namespace Masuit.Tools.NoSQL
         public bool AddSortedSet<T>(string key, T value, double score)
         {
             key = AddSysCustomKey(key);
-            return Do(redis => redis.SortedSetAdd(key, ConvertJson<T>(value), score));
+            return Do(redis => redis.SortedSetAdd(key, ConvertJson(value), score));
         }
 
         /// <summary>
@@ -944,7 +948,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> SortedSetAddAsync<T>(string key, T value, double score)
         {
             key = AddSysCustomKey(key);
-            return await Do(async redis => await redis.SortedSetAddAsync(key, ConvertJson<T>(value), score));
+            return await Do(async redis => await redis.SortedSetAddAsync(key, ConvertJson(value), score));
         }
 
         /// <summary>
@@ -1010,7 +1014,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> DeleteKeyAsync(string key)
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.KeyDeleteAsync(key));
+            return await Do(async db => await db.KeyDeleteAsync(key));
         }
 
         /// <summary>
@@ -1068,7 +1072,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> ExpireAsync(string key, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
-            return await Do(db => db.KeyExpireAsync(key, expiry));
+            return await Do(async db => await db.KeyExpireAsync(key, expiry));
         }
 
         #endregion key
