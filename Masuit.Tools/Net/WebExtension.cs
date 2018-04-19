@@ -72,7 +72,7 @@ namespace Masuit.Tools.Net
         /// <param name="obj">需要存的对象</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static bool SetByRedis<T>(this HttpSessionState _, string key, T obj, int expire = 20) where T : class
+        public static void SetByRedis<T>(this HttpSessionState _, string key, T obj, int expire = 20) where T : class
         {
             if (HttpContext.Current is null)
             {
@@ -94,12 +94,12 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHashAsync(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
             {
-                return false;
+                // ignored
             }
         }
 
@@ -115,7 +115,7 @@ namespace Masuit.Tools.Net
         /// <param name="obj">需要存的对象</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static bool SetByRedis<T>(this HttpSessionStateBase _, string key, T obj, int expire = 20) where T : class
+        public static void SetByRedis<T>(this HttpSessionStateBase _, string key, T obj, int expire = 20) where T : class
         {
             if (HttpContext.Current is null)
             {
@@ -137,12 +137,12 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    return redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHashAsync(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
             {
-                return false;
+                // ignored
             }
         }
 
@@ -200,7 +200,7 @@ namespace Masuit.Tools.Net
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
-                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                                redisHelper.ExpireAsync(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
                             return default(T);
@@ -248,7 +248,7 @@ namespace Masuit.Tools.Net
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                             {
-                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                                redisHelper.ExpireAsync(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
                             return default(T);
@@ -270,7 +270,7 @@ namespace Masuit.Tools.Net
         /// <param name="_"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static bool RemoveByRedis(this HttpSessionStateBase _, string key)
+        public static void RemoveByRedis(this HttpSessionStateBase _, string key)
         {
             if (HttpContext.Current is null)
             {
@@ -290,7 +290,7 @@ namespace Masuit.Tools.Net
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
-                            return redisHelper.DeleteHash(sessionKey, key);
+                            redisHelper.DeleteHashAsync(sessionKey, key);
                         }
                     }
                 }
@@ -299,7 +299,6 @@ namespace Masuit.Tools.Net
                     LogManager.Error(e);
                 }
             }
-            return false;
         }
 
         /// <summary>
@@ -308,7 +307,7 @@ namespace Masuit.Tools.Net
         /// <param name="_"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static bool RemoveByRedis(this HttpSessionState _, string key)
+        public static void RemoveByRedis(this HttpSessionState _, string key)
         {
             if (HttpContext.Current is null)
             {
@@ -328,7 +327,7 @@ namespace Masuit.Tools.Net
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
-                            return redisHelper.DeleteHash(sessionKey, key);
+                            redisHelper.DeleteHashAsync(sessionKey, key);
                         }
                     }
                 }
@@ -337,7 +336,6 @@ namespace Masuit.Tools.Net
                     LogManager.Error(e);
                 }
             }
-            return false;
         }
 
         #endregion
