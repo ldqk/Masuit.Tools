@@ -94,7 +94,7 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
@@ -137,7 +137,7 @@ namespace Masuit.Tools.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.SetHash(sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
@@ -196,6 +196,7 @@ namespace Masuit.Tools.Net
                 {
                     try
                     {
+                        sessionKey = "Session:" + sessionKey;
                         using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
@@ -244,6 +245,7 @@ namespace Masuit.Tools.Net
                 {
                     try
                     {
+                        sessionKey = "Session:" + sessionKey;
                         using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                         {
                             if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
@@ -286,6 +288,7 @@ namespace Masuit.Tools.Net
 
                 try
                 {
+                    sessionKey = "Session:" + sessionKey;
                     using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
@@ -323,6 +326,7 @@ namespace Masuit.Tools.Net
 
                 try
                 {
+                    sessionKey = "Session:" + sessionKey;
                     using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
@@ -338,6 +342,46 @@ namespace Masuit.Tools.Net
             }
         }
 
+        /// <summary>
+        /// Session个数
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public static int SessionCount(this HttpSessionState session)
+        {
+            try
+            {
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    return redisHelper.GetServer().Keys(1, "Session:*").Count();
+                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return 0;
+            }
+        }
+        /// <summary>
+        /// Session个数
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public static int SessionCount(this HttpSessionStateBase session)
+        {
+            try
+            {
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    return redisHelper.GetServer().Keys(1, "Session:*").Count();
+                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return 0;
+            }
+        }
         #endregion
 
         #region 获取客户端IP地址信息
