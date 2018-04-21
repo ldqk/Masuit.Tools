@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Masuit.Tools;
 
 namespace Test
 {
@@ -10,11 +10,13 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            var httpClient = new HttpClient() { BaseAddress = new Uri("http://www.hbtswl.com") };
-            httpClient.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Mozilla/5.0"));
-            var res = httpClient.GetAsync("/").Result;
-            var statusCode = res.StatusCode;
-            Console.WriteLine(statusCode);
+            var dic = new Dictionary<string, string>();
+            for (int i = 0; i < 1000000; i++)
+            {
+                var token = "".CreateShortToken(22);
+                dic.Add(token, token);
+                Console.WriteLine(token);
+            }
         }
 
         public static ConcurrentDictionary<string, object> LockDic { get; set; } = new ConcurrentDictionary<string, object>();

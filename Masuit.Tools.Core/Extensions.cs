@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Masuit.Tools.Security;
-using Masuit.Tools.Win32;
 using Newtonsoft.Json;
 
 namespace Masuit.Tools
@@ -1533,18 +1531,18 @@ namespace Masuit.Tools
         /// 生成唯一短字符串
         /// </summary>
         /// <param name="str"></param>
-        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为10，最小长度为9，最大长度为32</param>
+        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为6，最小长度为5，最大长度为22</param>
         /// <returns></returns>
-        public static string CreateShortToken(this string str, int length = 10)
+        public static string CreateShortToken(this string str, int length = 6)
         {
-            string temp = Guid.NewGuid().ToString("N").MDString();
-            if (length <= 32)
+            var temp = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
+            if (length <= 22)
             {
-                if (length < 9)
+                if (length < 5)
                 {
-                    length = 9;
+                    length = 5;
                 }
-                temp = temp.Substring(new Random().StrictNext(32 - length), length);
+                temp = temp.Substring(0, length);
             }
             return temp;
         }
