@@ -1161,7 +1161,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>服务器实例</returns>
         public IServer GetServer(string hostAndPort = null)
         {
-            return _conn.GetServer(string.IsNullOrEmpty(hostAndPort) ? ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379" : hostAndPort);
+            return _conn.GetServer(string.IsNullOrEmpty(hostAndPort) ? _conn.Configuration : hostAndPort);
         }
 
         /// <summary>
