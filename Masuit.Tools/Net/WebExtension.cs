@@ -67,12 +67,12 @@ namespace Masuit.Tools.Net
         /// &lt;/connectionStrings&gt;
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="_"></param>
+        /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <param name="obj">需要存的对象</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns>
-        public static void SetByRedis<T>(this HttpSessionState _, string key, T obj, int expire = 20) where T : class
+        public static void SetByRedis<T>(this HttpSessionState session, string key, T obj, int expire = 20)
         {
             if (HttpContext.Current is null)
             {
@@ -86,9 +86,9 @@ namespace Masuit.Tools.Net
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
 
-            if (_ != null)
+            if (session != null)
             {
-                _[key] = obj;
+                session[key] = obj;
             }
             try
             {
@@ -110,12 +110,12 @@ namespace Masuit.Tools.Net
         /// &lt;/connectionStrings&gt;
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="_"></param>
+        /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <param name="obj">需要存的对象</param>
         /// <param name="expire">过期时间，默认20分钟</param>
         /// <returns></returns> 
-        public static void SetByRedis<T>(this HttpSessionStateBase _, string key, T obj, int expire = 20) where T : class
+        public static void SetByRedis<T>(this HttpSessionStateBase session, string key, T obj, int expire = 20) where T : class
         {
             if (HttpContext.Current is null)
             {
@@ -128,9 +128,9 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
-            if (_ != null)
+            if (session != null)
             {
-                _[key] = obj;
+                session[key] = obj;
             }
 
             try

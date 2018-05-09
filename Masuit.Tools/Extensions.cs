@@ -1499,7 +1499,7 @@ namespace Masuit.Tools
                 }
                 temp = temp.Substring(0, length);
             }
-            return temp;
+            return temp.ToLower();
         }
 
         /// <summary>
