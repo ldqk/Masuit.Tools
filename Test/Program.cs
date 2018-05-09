@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Masuit.Tools;
+using Masuit.Tools.Systems;
 
 namespace Test
 {
@@ -10,13 +8,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            var dic = new Dictionary<string, string>();
-            for (int i = 0; i < 1000000; i++)
-            {
-                var token = "".CreateShortToken(22);
-                dic.Add(token, token);
-                Console.WriteLine(token);
-            }
+            var redisLock = new RedisLock();
         }
 
         public static ConcurrentDictionary<string, object> LockDic { get; set; } = new ConcurrentDictionary<string, object>();

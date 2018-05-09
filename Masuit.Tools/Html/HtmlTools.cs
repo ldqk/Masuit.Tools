@@ -1470,27 +1470,23 @@ ReCatch:
             int iTimeOut = 120000;
             StringBuilder sbHtml = new StringBuilder();
             List<KeyValuePair<int, string>> listResult = new List<KeyValuePair<int, string>>();
-            Socket sock = null;
-            try
+            // 初始化				
+            Uri site = new Uri(listUrl[0].Value);
+            var ipHostInfo = Dns.GetHostEntry(site.Host);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, site.Port);
+            using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { SendTimeout = iTimeOut, ReceiveTimeout = iTimeOut })
             {
-                // 初始化				
-                Uri site = new Uri(listUrl[0].Value);
-                var ipHostInfo = Dns.GetHostEntry(site.Host);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, site.Port);
-                sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                sock.SendTimeout = iTimeOut;
-                sock.ReceiveTimeout = iTimeOut;
                 sock.Connect(remoteEP);
                 foreach (KeyValuePair<int, string> kvUrl in listUrl)
                 {
                     site = new Uri(kvUrl.Value);
                     string sendMsg = "GET " + HttpUtility.UrlDecode(site.PathAndQuery) + " HTTP/1.1\r\n" +
-                        "Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, application/vnd.ms-powerpoint, */*\r\n" +
-                        "Accept-Language:en-us\r\n" +
-                        "Accept-Encoding:gb2312, deflate\r\n" +
-                        "User-Agent: Mozilla/4.0\r\n" +
-                        "Host: " + site.Host + "\r\n\r\n" + '\0';
+                                     "Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, application/vnd.ms-powerpoint, */*\r\n" +
+                                     "Accept-Language:en-us\r\n" +
+                                     "Accept-Encoding:gb2312, deflate\r\n" +
+                                     "User-Agent: Mozilla/4.0\r\n" +
+                                     "Host: " + site.Host + "\r\n\r\n" + '\0';
                     // 发送
                     byte[] msg = Encoding.GetEncoding(sCoding).GetBytes(sendMsg);
                     int nBytes;
@@ -1510,7 +1506,7 @@ ReCatch:
                         {
                             nBytes = sock.Receive(bytes, bytes.Length - 1, 0);
                         }
-                        catch (Exception Ex)
+                        catch
                         {
                             //string str = Ex.Message;
                             nBytes = -1;
@@ -1546,32 +1542,9 @@ ReCatch:
                     //sbHtml = null;
                     sbHtml = new StringBuilder();
                 }
+                sock.Shutdown(SocketShutdown.Both);
             }
-            catch (Exception Ex)
-            {
-                //string s = Ex.Message;
-                try
-                {
-                    sock.Shutdown(SocketShutdown.Both);
-                    sock.Close();
-                }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
-            }
-            finally
-            {
-                try
-                {
-                    sock.Shutdown(SocketShutdown.Both);
-                    sock.Close();
-                }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
-            }
+
             return listResult;
         }
         #endregion 根据超链接地址获取页面内容

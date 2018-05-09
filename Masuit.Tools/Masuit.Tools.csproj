@@ -120,6 +120,8 @@
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />
     <Compile Include="Systems\EnumExt.cs" />
+    <Compile Include="Systems\Lock.cs" />
+    <Compile Include="Systems\RedisLock.cs" />
     <Compile Include="Win32\Windows.cs" />
     <Compile Include="Win32\WindowsCommand.cs" />
   </ItemGroup>

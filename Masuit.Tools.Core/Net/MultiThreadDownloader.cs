@@ -9,11 +9,26 @@ using System.Threading.Tasks;
 
 namespace Masuit.Tools.Core.Net
 {
+    /// <summary>
+    /// 文件合并改变事件
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public delegate void FileMergeProgressChangedEventHandler(object sender, int e);
+
+    /// <summary>
+    /// 多线程下载器
+    /// </summary>
     public class MultiThreadDownloader
     {
         #region Variables
+        /// <summary>
+        /// 总下载进度更新事件
+        /// </summary>
         public event EventHandler TotalProgressChanged;
+        /// <summary>
+        /// 文件合并事件
+        /// </summary>
         public event FileMergeProgressChangedEventHandler FileMergeProgressChanged;
         private readonly AsyncOperation _aop;
         #endregion
@@ -210,6 +225,10 @@ namespace Masuit.Tools.Core.Net
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// 暂停下载
+        /// </summary>
         public void Pause()
         {
             foreach (var t in PartialDownloaderList)
@@ -221,12 +240,19 @@ namespace Masuit.Tools.Core.Net
             //Setting a Thread.Sleep ensures all downloads are stopped and exit from loop.
             Thread.Sleep(200);
         }
+
+        /// <summary>
+        /// 开始下载
+        /// </summary>
         public void Start()
         {
             Task th = new Task(CreateFirstPartitions);
             th.Start();
         }
 
+        /// <summary>
+        /// 唤醒下载
+        /// </summary>
         public void Resume()
         {
             int count = PartialDownloaderList.Count;
