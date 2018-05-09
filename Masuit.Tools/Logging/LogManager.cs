@@ -17,6 +17,9 @@ namespace Masuit.Tools.Logging
     {
         static readonly ConcurrentQueue<Tuple<string, string>> LogQueue = new ConcurrentQueue<Tuple<string, string>>();
 
+        /// <summary>
+        /// 自定义事件
+        /// </summary>
         public static event Action<string> Event;
         static LogManager()
         {
