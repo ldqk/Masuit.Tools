@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Management;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Masuit.Tools.Hardware;
 
@@ -38,11 +41,11 @@ namespace Masuit.Tools.Win32
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            foreach(Process p in Process.GetProcesses())
+            foreach (Process p in Process.GetProcesses())
             {
-                using(p)
+                using (p)
                 {
-                    if((p.ProcessName.Equals("System")) && (p.ProcessName.Equals("Idle")))
+                    if ((p.ProcessName.Equals("System")) && (p.ProcessName.Equals("Idle")))
                     {
                         //两个系统的关键进程，不整理
                         continue;
@@ -56,6 +59,84 @@ namespace Masuit.Tools.Win32
                         // ignored
                     }
                 }
+            }
+        }
+
+        /// <summary>  
+        /// 获取当前使用的IP  
+        /// </summary>  
+        /// <returns></returns>  
+        public static string GetLocalUsedIP()
+        {
+            string result = RunApp("route", "print", true);
+            Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            if (m.Success)
+            {
+                return m.Groups[2].Value;
+            }
+            try
+            {
+                string ip;
+                using (System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient())
+                {
+                    c.Connect("www.baidu.com", 80);
+                    ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
+                }
+                return ip;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>  
+        /// 运行一个控制台程序并返回其输出参数。  
+        /// </summary>  
+        /// <param name="filename">程序名</param>  
+        /// <param name="arguments">输入参数</param>
+        /// <param name="recordLog">是否在控制台输出日志</param>
+        /// <returns></returns>  
+        public static string RunApp(string filename, string arguments, bool recordLog)
+        {
+            try
+            {
+                if (recordLog)
+                {
+                    Trace.WriteLine(filename + " " + arguments);
+                }
+
+                Process proc = new Process
+                {
+                    StartInfo = {
+                        FileName = filename,
+                        CreateNoWindow = true,
+                        Arguments = arguments,
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false
+                    }
+                };
+                proc.Start();
+
+                using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
+                {
+                    //上面标记的是原文，下面是我自己调试错误后自行修改的  
+                    Thread.Sleep(100);           //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                                                 //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                    if (!proc.HasExited)         //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
+                    {                            //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                        proc.Kill();
+                    }
+                    string txt = sr.ReadToEnd();
+                    if (recordLog)
+                        Trace.WriteLine(txt);
+                    return txt;
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+                return ex.Message;
             }
         }
     }
@@ -129,7 +210,7 @@ namespace Masuit.Tools.Win32
         {
             get
             {
-                if(_instance == null) _instance = new WindowsServer();
+                if (_instance == null) _instance = new WindowsServer();
                 return _instance;
             }
         }
@@ -158,11 +239,11 @@ namespace Masuit.Tools.Win32
             {
                 //获取CPU序列号代码 
                 string cpuInfo = " "; //cpu序列号 
-                using(var mc = new ManagementClass("Win32_Processor"))
+                using (var mc = new ManagementClass("Win32_Processor"))
                 {
-                    foreach(ManagementObject mo in mc.GetInstances())
+                    foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        using(mo)
+                        using (mo)
                         {
                             cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
                         }
@@ -184,9 +265,9 @@ namespace Masuit.Tools.Win32
         {
             try
             {
-                using(var mCpu = new ManagementClass("Win32_Processor"))
+                using (var mCpu = new ManagementClass("Win32_Processor"))
                 {
-                    using(ManagementObjectCollection cpus = mCpu.GetInstances())
+                    using (ManagementObjectCollection cpus = mCpu.GetInstances())
                     {
                         return cpus.Count;
                     }
@@ -205,17 +286,17 @@ namespace Masuit.Tools.Win32
         /// <returns></returns>
         public static string[] GetCpuMHZ()
         {
-            using(var mc = new ManagementClass("Win32_Processor"))
+            using (var mc = new ManagementClass("Win32_Processor"))
             {
-                using(ManagementObjectCollection cpus = mc.GetInstances())
+                using (ManagementObjectCollection cpus = mc.GetInstances())
                 {
                     var MHz = new string[cpus.Count];
                     int c = 0;
-                    using(var mySearch = new ManagementObjectSearcher("select * from Win32_Processor"))
+                    using (var mySearch = new ManagementObjectSearcher("select * from Win32_Processor"))
                     {
-                        foreach(ManagementObject mo in mySearch.Get())
+                        foreach (ManagementObject mo in mySearch.Get())
                         {
-                            using(mo)
+                            using (mo)
                             {
                                 MHz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
                                 c++;
@@ -233,11 +314,11 @@ namespace Masuit.Tools.Win32
         /// <returns></returns>
         public static string GetSizeOfDisk()
         {
-            using(var mc = new ManagementClass("Win32_DiskDrive"))
+            using (var mc = new ManagementClass("Win32_DiskDrive"))
             {
-                foreach(ManagementObject m in mc.GetInstances())
+                foreach (ManagementObject m in mc.GetInstances())
                 {
-                    using(m)
+                    using (m)
                     {
                         return m.Properties["Size"].Value.ToString();
                     }
@@ -252,13 +333,13 @@ namespace Masuit.Tools.Win32
             {
                 //获取网卡硬件地址 
                 string mac = " ";
-                using(var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
+                using (var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
                 {
-                    foreach(ManagementObject mo in mc.GetInstances())
+                    foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        using(mo)
+                        using (mo)
                         {
-                            if((bool) mo["IPEnabled"] == true)
+                            if ((bool)mo["IPEnabled"] == true)
                             {
                                 mac = mo["MacAddress"].ToString();
                                 break;
@@ -280,17 +361,17 @@ namespace Masuit.Tools.Win32
             {
                 //获取IP地址 
                 string st = String.Empty;
-                using(var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
+                using (var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
                 {
-                    foreach(ManagementObject mo in mc.GetInstances())
+                    foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        using(mo)
+                        using (mo)
                         {
-                            if((bool) mo["IPEnabled"] == true)
+                            if ((bool)mo["IPEnabled"] == true)
                             {
                                 //st=mo[ "IpAddress "].ToString(); 
                                 Array ar;
-                                ar = (Array) (mo.Properties["IpAddress"].Value);
+                                ar = (Array)(mo.Properties["IpAddress"].Value);
                                 st = ar.GetValue(0).ToString();
                                 break;
                             }
@@ -311,13 +392,13 @@ namespace Masuit.Tools.Win32
             {
                 //获取硬盘ID 
                 string HDid = String.Empty;
-                using(var mc = new ManagementClass("Win32_DiskDrive"))
+                using (var mc = new ManagementClass("Win32_DiskDrive"))
                 {
-                    foreach(ManagementObject mo in mc.GetInstances())
+                    foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        using(mo)
+                        using (mo)
                         {
-                            HDid = (string) mo.Properties["Model"].Value;
+                            HDid = (string)mo.Properties["Model"].Value;
                         }
                     }
                 }
@@ -338,11 +419,11 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = String.Empty;
-                using(var mc = new ManagementClass("Win32_ComputerSystem"))
+                using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
-                    foreach(ManagementObject mo in mc.GetInstances())
+                    foreach (ManagementObject mo in mc.GetInstances())
                     {
-                        using(mo)
+                        using (mo)
                         {
                             st = mo["UserName"].ToString();
                         }
@@ -361,13 +442,13 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = String.Empty;
-                using(var mc = new ManagementClass("Win32_ComputerSystem"))
+                using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
-                    foreach(var o in mc.GetInstances())
+                    foreach (var o in mc.GetInstances())
                     {
-                        using(o)
+                        using (o)
                         {
-                            var mo = (ManagementObject) o;
+                            var mo = (ManagementObject)o;
                             st = mo["SystemType"].ToString();
                         }
                     }
@@ -385,13 +466,13 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = String.Empty;
-                using(var mc = new ManagementClass("Win32_ComputerSystem"))
+                using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
-                    using(ManagementObjectCollection moc = mc.GetInstances())
+                    using (ManagementObjectCollection moc = mc.GetInstances())
                     {
-                        foreach(var o in moc)
+                        foreach (var o in moc)
                         {
-                            var mo = (ManagementObject) o;
+                            var mo = (ManagementObject)o;
 
                             st = mo["TotalPhysicalMemory"].ToString();
                         }

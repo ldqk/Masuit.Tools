@@ -92,6 +92,8 @@
     <Compile Include="Hardware\Unit.cs" />
     <Compile Include="Html\HtmlHelper.cs" />
     <Compile Include="Html\HtmlTools.cs" />
+    <Compile Include="Linq\LinqExtension.cs" />
+    <Compile Include="Linq\ParameterReplacer.cs" />
     <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Models\BaiduIP.cs" />
     <Compile Include="Models\IspInfo.cs" />
