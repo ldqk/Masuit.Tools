@@ -4,7 +4,10 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.Media
 {
@@ -1049,6 +1052,56 @@ namespace Masuit.Tools.Media
                 }
             }
             return bmp2;
+        }
+
+        /// <summary>
+        /// 上传图片到百度图床
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static async Task<string> UploadImageAsync(Stream stream)
+        {
+            using (HttpClient httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri("https://sp1.baidu.com"),
+            })
+            {
+                httpClient.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Mozilla/5.0"));
+                using (var bc = new StreamContent(stream))
+                {
+                    bc.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                    {
+                        FileName = "1.jpg",
+                        Name = "image"
+                    };
+                    bc.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                    using (var content = new MultipartFormDataContent { bc })
+                    {
+                        return await await httpClient.PostAsync("/70cHazva2gU2pMbgoY3K/n/image?needJson=true", content).ContinueWith(async t =>
+                        {
+                            if (t.IsCanceled || t.IsFaulted)
+                            {
+                                Console.WriteLine("发送请求出错了" + t.Exception);
+                                return string.Empty;
+                            }
+                            var res = await t;
+                            if (res.IsSuccessStatusCode)
+                            {
+                                string s = await res.Content.ReadAsStringAsync();
+                                var token = JObject.Parse(s);
+                                if ((int)token["errno"] == 0)
+                                {
+                                    s = (string)token["data"]["imageUrl"];
+                                    return s;
+                                }
+                                s = (string)token["errmsg"];
+                                return s;
+                            }
+                            return string.Empty;
+                        });
+                    }
+                }
+            }
         }
     } //end class
 }
