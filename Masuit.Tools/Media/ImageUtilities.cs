@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.Media
 {
@@ -1063,7 +1062,7 @@ namespace Masuit.Tools.Media
         {
             using (HttpClient httpClient = new HttpClient()
             {
-                BaseAddress = new Uri("https://sp1.baidu.com"),
+                BaseAddress = new Uri("https://sm.ms"),
             })
             {
                 httpClient.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Mozilla/5.0"));
@@ -1072,12 +1071,12 @@ namespace Masuit.Tools.Media
                     bc.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
                     {
                         FileName = "1.jpg",
-                        Name = "image"
+                        Name = "smfile"
                     };
                     bc.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
                     using (var content = new MultipartFormDataContent { bc })
                     {
-                        return await await httpClient.PostAsync("/70cHazva2gU2pMbgoY3K/n/image?needJson=true", content).ContinueWith(async t =>
+                        return await await httpClient.PostAsync("/api/upload", content).ContinueWith(async t =>
                         {
                             if (t.IsCanceled || t.IsFaulted)
                             {
@@ -1088,13 +1087,13 @@ namespace Masuit.Tools.Media
                             if (res.IsSuccessStatusCode)
                             {
                                 string s = await res.Content.ReadAsStringAsync();
-                                var token = JObject.Parse(s);
-                                if ((int)token["errno"] == 0)
-                                {
-                                    s = (string)token["data"]["imageUrl"];
-                                    return s;
-                                }
-                                s = (string)token["errmsg"];
+                                //var token = JObject.Parse(s);
+                                //if ((int)token["errno"] == 0)
+                                //{
+                                //    s = (string)token["data"]["imageUrl"];
+                                //    return s;
+                                //}
+                                //s = (string)token["errmsg"];
                                 return s;
                             }
                             return string.Empty;
