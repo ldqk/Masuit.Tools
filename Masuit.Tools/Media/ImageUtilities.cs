@@ -647,6 +647,99 @@ namespace Masuit.Tools.Media
             }
         }
 
+        /// <summary>
+        /// 无损压缩图片
+        /// </summary>
+        /// <param name="src">原图片文件流</param>
+        /// <param name="dest">压缩后图片文件流</param>
+        /// <param name="flag">压缩质量（数字越小压缩率越高）1-100</param>
+        /// <param name="size">压缩后图片的最大大小</param>
+        /// <param name="sfsc">是否是第一次调用</param>
+        /// <returns></returns>
+        public static bool CompressImage(Stream src, Stream dest, int flag = 90, int size = 1024, bool sfsc = true)
+        {
+            //如果是第一次调用，原始图像的大小小于要压缩的大小，则直接复制文件，并且返回true
+            if (sfsc && src.Length < size * 1024)
+            {
+                src.CopyTo(dest);
+                return true;
+            }
+
+            using (Image iSource = Image.FromStream(src))
+            {
+                ImageFormat tFormat = iSource.RawFormat;
+                int dHeight = iSource.Height;
+                int dWidth = iSource.Width;
+                int sW, sH;
+                //按比例缩放
+                Size temSize = new Size(iSource.Width, iSource.Height);
+                if (temSize.Width > dHeight || temSize.Width > dWidth)
+                {
+                    if ((temSize.Width * dHeight) > (temSize.Width * dWidth))
+                    {
+                        sW = dWidth;
+                        sH = (dWidth * temSize.Height) / temSize.Width;
+                    }
+                    else
+                    {
+                        sH = dHeight;
+                        sW = (temSize.Width * dHeight) / temSize.Height;
+                    }
+                }
+                else
+                {
+                    sW = temSize.Width;
+                    sH = temSize.Height;
+                }
+
+                using (Bitmap bmp = new Bitmap(dWidth, dHeight))
+                {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        g.Clear(Color.WhiteSmoke);
+                        g.CompositingQuality = CompositingQuality.HighQuality;
+                        g.SmoothingMode = SmoothingMode.HighQuality;
+                        g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        g.DrawImage(iSource, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, iSource.Width, iSource.Height, GraphicsUnit.Pixel);
+                    }
+
+                    //以下代码为保存图片时，设置压缩质量
+                    using (EncoderParameters ep = new EncoderParameters())
+                    {
+                        long[] qy = new long[1];
+                        qy[0] = flag;//设置压缩的比例1-100
+                        using (EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy))
+                        {
+                            ep.Param[0] = eParam;
+                            try
+                            {
+                                ImageCodecInfo[] arrayIci = ImageCodecInfo.GetImageEncoders();
+                                ImageCodecInfo jpegIcIinfo = arrayIci.FirstOrDefault(t => t.FormatDescription.Equals("JPEG"));
+                                if (jpegIcIinfo != null)
+                                {
+                                    bmp.Save(dest, jpegIcIinfo, ep);//dFile是压缩后的新路径
+                                    if (dest.Length > 1024 * size)
+                                    {
+                                        flag = flag - 10;
+                                        CompressImage(src, dest, flag, size, false);
+                                    }
+                                }
+                                else
+                                {
+                                    bmp.Save(dest, tFormat);
+                                }
+                                return true;
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region 缩略图
