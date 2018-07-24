@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using Masuit.Tools.NoSQL.MongoDBClient;
-using MongoDB.Bson;
-using MongoDB.Driver;
+using Masuit.Tools;
+using Masuit.Tools.Core.Logging;
 
 namespace NetCoreTest
 {
@@ -10,7 +8,12 @@ namespace NetCoreTest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("ok");
+            Console.WriteLine(AppContext.BaseDirectory);
+            LogManager.Event += info =>
+              {
+                  Console.WriteLine(info.ToJsonString());
+              };
+            LogManager.Error(new Exception("测试异常"));
         }
     }
 }

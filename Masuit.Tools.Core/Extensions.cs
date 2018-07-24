@@ -452,14 +452,22 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings()
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        });
 
         /// <summary>
         /// 转换成json字符串
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source));
+        public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source, new JsonSerializerSettings()
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            Formatting = Formatting.Indented
+        }));
 
         #region UBB、HTML互转
 
