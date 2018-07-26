@@ -180,7 +180,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Error(Exception error)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
@@ -201,7 +201,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Error(Type source, Exception error)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
@@ -222,7 +222,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Error(Type source, string error)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error,
@@ -243,7 +243,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Error(string source, Exception error)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
@@ -264,7 +264,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Error(string source, string error)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error,
@@ -284,7 +284,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Fatal(Exception fatal)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
@@ -305,7 +305,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Fatal(Type source, Exception fatal)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
@@ -326,7 +326,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Fatal(Type source, string fatal)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal,
@@ -347,7 +347,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Fatal(string source, Exception fatal)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.StackTrace}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
@@ -368,7 +368,7 @@ namespace Masuit.Tools.Core.Logging
         public static void Fatal(string source, string fatal)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal}"));
-            LogInfo log = new LogError()
+            LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal,
