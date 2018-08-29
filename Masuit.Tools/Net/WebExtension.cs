@@ -508,10 +508,13 @@ namespace Masuit.Tools.Net
                             return $"未能找到{ip}的ISP信息";
                         }
                         var result = await t;
-                        TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
-                        if (taobaoIp.Code == 0)
+                        if (result.IsSuccessStatusCode)
                         {
-                            return taobaoIp.IpData.Isp;
+                            TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
+                            if (taobaoIp.Code == 0)
+                            {
+                                return taobaoIp.IpData.Isp;
+                            }
                         }
                         return $"未能找到{ip}的ISP信息";
                     });
