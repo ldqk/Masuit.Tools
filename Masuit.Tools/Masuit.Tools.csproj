@@ -125,6 +125,12 @@
     <Compile Include="Systems\EnumExt.cs" />
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
+    <Compile Include="Validator\ComplexPassword.cs" />
+    <Compile Include="Validator\IsEmailAttribute.cs" />
+    <Compile Include="Validator\IsIPAddressAttribute.cs" />
+    <Compile Include="Validator\IsPhoneAttribute.cs" />
+    <Compile Include="Validator\MaxValueAttribute.cs" />
+    <Compile Include="Validator\MinValueAttribute.cs" />
     <Compile Include="Win32\Windows.cs" />
     <Compile Include="Win32\WindowsCommand.cs" />
   </ItemGroup>
