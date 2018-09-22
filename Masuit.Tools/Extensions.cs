@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Masuit.Tools
 {
@@ -1524,6 +1524,28 @@ namespace Masuit.Tools
         public static double Digits8(this double num)
         {
             return (long)(num * 1E+8) * 1e-8;
+        }
+
+        /// <summary>
+        /// 判断IP地址在不在某个IP地址段
+        /// </summary>
+        /// <param name="input">需要判断的IP地址</param>
+        /// <param name="begin">起始地址</param>
+        /// <param name="ends">结束地址</param>
+        /// <returns></returns>
+        public static bool IpAddressInRange(this string input, string begin, string ends)
+        {
+            if (input.MatchInetAddress() && begin.MatchInetAddress() && ends.MatchInetAddress())
+            {
+                string[] ipStarts = begin.Split('.');
+                string[] ipEnds = ends.Split('.');
+                string[] inputs = input.Split('.');
+                uint start = uint.Parse(ipStarts[0]) << 24 | uint.Parse(ipStarts[1]) << 16 | uint.Parse(ipStarts[2]) << 8 | uint.Parse(ipStarts[3]);
+                uint end = uint.Parse(ipEnds[0]) << 24 | uint.Parse(ipEnds[1]) << 16 | uint.Parse(ipEnds[2]) << 8 | uint.Parse(ipEnds[3]);
+                uint current = uint.Parse(inputs[0]) << 24 | uint.Parse(inputs[1]) << 16 | uint.Parse(inputs[2]) << 8 | uint.Parse(inputs[3]);
+                return current >= start && current <= end;
+            }
+            return false;
         }
     }
 }
