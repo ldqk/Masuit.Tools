@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using StackExchange.Redis;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 
 namespace Masuit.Tools.NoSQL
 {
@@ -17,13 +17,9 @@ namespace Masuit.Tools.NoSQL
         private readonly ConnectionMultiplexer _conn;
 
         /// <summary>
-        /// Redis服务器连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
+        /// Redis服务器默认连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
         /// </summary>
-        public static string RedisConnectionString
-        {
-            get => "127.0.0.1:6379,allowadmin=true";
-            set { }
-        }
+        public static string RedisConnectionString { get; set; } = "127.0.0.1:6379,allowadmin=true";
 
         /// <summary>
         /// 自定义键
@@ -63,7 +59,8 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// 静态连接池
         /// </summary>
-        public static ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache { get; set; } = new ConcurrentDictionary<string, ConnectionMultiplexer>();
+        private static ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache { get; set; } = new ConcurrentDictionary<string, ConnectionMultiplexer>();
+
         #region 构造函数
 
         /// <summary>
@@ -192,8 +189,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>是否保存成功</returns>
         public bool SetString(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
-            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
-                keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
+            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
             return Do(db => db.StringSet(newkeyValues.ToArray()));
         }
 
@@ -302,8 +298,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>是否保存成功</returns>
         public async Task<bool> SetStringAsync(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
-            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
-                keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
+            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
             return await Do(async db => await db.StringSetAsync(newkeyValues.ToArray()));
         }
 

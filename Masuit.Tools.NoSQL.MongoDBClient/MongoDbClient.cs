@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Masuit.Tools.Systems;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
-using Masuit.Tools.Systems;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace Masuit.Tools.NoSQL.MongoDBClient
 {
@@ -42,6 +43,24 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             {
                 instance = new MongoDbClient(url, database);
                 InstancePool.TryAdd(url + database, instance);
+            }
+            return instance;
+        }
+
+        /// <summary>
+        /// 获取mongo默认单例
+        /// </summary>
+        /// <param name="url">连接字符串</param>
+        /// <param name="database">数据库</param>
+        /// <returns></returns>
+        public static MongoDbClient GetDefaultInstance(string database)
+        {
+            string cs = ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString ?? "mongodb://127.0.0.1:27017";
+            InstancePool.TryGetValue(cs + database, out var instance);
+            if (instance is null)
+            {
+                instance = new MongoDbClient(cs, database);
+                InstancePool.TryAdd(cs + database, instance);
             }
             return instance;
         }
