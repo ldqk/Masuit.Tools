@@ -1552,7 +1552,7 @@ namespace Masuit.Tools
                 }
                 temp = temp.Substring(0, length);
             }
-            return temp;
+            return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
         }
 
         /// <summary>

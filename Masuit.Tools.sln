@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试", "测试", "{E0B8FB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest", "Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest\Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest.csproj", "{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{91954D82-A5FC-417B-8FD9-D9C165C8F16C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

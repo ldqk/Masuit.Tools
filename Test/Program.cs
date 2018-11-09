@@ -1,5 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Masuit.Tools;
 using Masuit.Tools.Systems;
 
 namespace Test
@@ -8,7 +10,8 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            var redisLock = new RedisLock();
+            Console.WriteLine("".CreateShortToken(26));
+            //var redisLock = new RedisLock();
         }
 
         public static ConcurrentDictionary<string, object> LockDic { get; set; } = new ConcurrentDictionary<string, object>();

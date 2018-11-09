@@ -1218,7 +1218,7 @@ namespace Masuit.Tools
         /// <returns>匹配对象</returns>
         public static Match MatchUrl(this string s, out bool isMatch)
         {
-            Match match = Regex.Match(s, @"^((\w*):?//)?((\w+)\.|((\S+):(\S+))@)?((\w+)\.(\w+))(:(\d{1,5}))?(/([a-z0-9A-Z-_@{}!+%/]+(\.\w+)?)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]+&?)+)?(/?#[a-z0-9A-Z-_@{}!+%/]+)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]*&?)+)?)?$");
+            Match match = Regex.Match(s, @"^((\w*):?//)?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(:(\d{1,5}))?(/([a-z0-9A-Z-_@{}!+%/]+(\.\w+)?)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]+&?)+)?(/?#[a-z0-9A-Z-_@{}!+%/]+)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]*&?)+)?)?$");
             isMatch = match.Success;
             return isMatch ? match : null;
         }
@@ -1499,7 +1499,7 @@ namespace Masuit.Tools
                 }
                 temp = temp.Substring(0, length);
             }
-            return temp.ToLower();
+            return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
         }
 
         /// <summary>
