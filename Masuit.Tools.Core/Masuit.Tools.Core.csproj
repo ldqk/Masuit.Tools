@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Version>2.1.2.1</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
@@ -86,7 +86,7 @@ string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&l
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.10" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.197" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
