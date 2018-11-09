@@ -19,7 +19,7 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// Redis服务器默认连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
         /// </summary>
-        public static string RedisConnectionString { get; set; } = "127.0.0.1:6379,allowadmin=true";
+        internal static string RedisConnectionString { get; set; } = "127.0.0.1:6379,allowadmin=true";
 
         /// <summary>
         /// 自定义键

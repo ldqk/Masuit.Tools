@@ -1,19 +1,17 @@
-﻿using System;
-using Masuit.Tools;
-using Masuit.Tools.Core.Logging;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace NetCoreTest
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine(AppContext.BaseDirectory);
-            LogManager.Event += info =>
-              {
-                  Console.WriteLine(info.ToJsonString());
-              };
-            LogManager.Error(new Exception("测试异常"));
+            CreateWebHostBuilder(args).Build().Run();
         }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>();
     }
 }
