@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Masuit.Tools.Systems;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
-using Masuit.Tools.Systems;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 
 namespace Masuit.Tools.NoSQL
 {
@@ -23,7 +23,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         public string CustomKey;
 
-        public static string DefaultConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false";
+        public static string DefaultConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["RedisHosts"]?.ConnectionString ?? "127.0.0.1:6379,allowadmin=true,abortConnect=false,connectTimeout=1000,connectRetry=1,syncTimeout=20000";
 
         /// <summary>
         /// 连接失败 ， 如果重新连接成功你将不会收到这个通知
