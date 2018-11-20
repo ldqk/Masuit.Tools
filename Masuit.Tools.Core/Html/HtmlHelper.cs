@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Win32;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using Masuit.Tools.Win32;
 
 namespace Masuit.Tools.Core.Html
 {
@@ -454,7 +454,7 @@ namespace Masuit.Tools.Core.Html
         /// <returns></returns>
         public static string MatchFirstImgSrc(this string html)
         {
-            string src = Regex.Match(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>").Groups[1].Value;
+            string src = Regex.Match(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))").Groups["src"].Value;
             int index = src.IndexOf("\"", StringComparison.Ordinal);
             if (index > 0)
             {
@@ -470,10 +470,10 @@ namespace Masuit.Tools.Core.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            MatchCollection collection = Regex.Matches(html, @"<img\s+[^>]*\s*src\s*=\s*['""]?(\S+\.\w{3,4})['""]?[^>]*>");
+            var collection = Regex.Matches(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
             if (collection.Count > 0)
             {
-                string src = collection[new Random().StrictNext(collection.Count)].Groups[1].Value;
+                string src = collection[new Random().StrictNext(collection.Count)].Groups["src"].Value;
                 int index = src.IndexOf("\"", StringComparison.Ordinal);
                 if (index > 0)
                 {
@@ -481,7 +481,7 @@ namespace Masuit.Tools.Core.Html
                 }
                 return src;
             }
-            return String.Empty;
+            return string.Empty;
         }
 
         /// <summary>

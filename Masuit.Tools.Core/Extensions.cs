@@ -12,6 +12,274 @@ namespace Masuit.Tools
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// 转换成json字符串
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string ToJsonString(this object source)
+        {
+            return JsonConvert.SerializeObject(source, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented
+            });
+        }
+
+        /// <summary>
+        /// 转换成json字符串
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static async Task<string> ToJsonStringAsync(this object source)
+        {
+            return await Task.Run(() => JsonConvert.SerializeObject(source, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented
+            }));
+        }
+
+        #region 检测字符串中是否包含列表中的关键词
+
+        /// <summary>
+        /// 检测字符串中是否包含列表中的关键词
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="keys">关键词列表</param>
+        /// <returns></returns>
+        public static bool Contains(this string s, string[] keys)
+        {
+            return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+        }
+
+        #endregion 检测字符串中是否包含列表中的关键词
+
+        #region 权威校验身份证号码
+
+        /// <summary>
+        /// 根据GB11643-1999标准权威校验中国身份证号码的合法性
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchIdentifyCard(this string s)
+        {
+            if (s.Length == 18)
+            {
+                long n;
+                if (long.TryParse(s.Remove(17), out n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                {
+                    return false; //数字验证
+                }
+
+                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
+                {
+                    return false; //省份验证
+                }
+
+                string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
+                DateTime time;
+                if (!DateTime.TryParse(birth, out time))
+                {
+                    return false; //生日验证
+                }
+
+                string[] arrVarifyCode = "1,0,x,9,8,7,6,5,4,3,2".Split(',');
+                string[] wi = "7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2".Split(',');
+                char[] ai = s.Remove(17).ToCharArray();
+                int sum = 0;
+                for (int i = 0; i < 17; i++)
+                {
+                    sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
+                }
+
+                int y;
+                Math.DivRem(sum, 11, out y);
+                if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
+                {
+                    return false; //校验码验证
+                }
+
+                return true; //符合GB11643-1999标准
+            }
+
+            if (s.Length == 15)
+            {
+                long n;
+                if (long.TryParse(s, out n) == false || n < Math.Pow(10, 14))
+                {
+                    return false; //数字验证
+                }
+
+                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
+                {
+                    return false; //省份验证
+                }
+
+                string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
+                DateTime time;
+                if (DateTime.TryParse(birth, out time) == false)
+                {
+                    return false; //生日验证
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion 权威校验身份证号码
+
+        /// <summary>
+        /// 严格比较两个对象是否是同一对象
+        /// </summary>
+        /// <param name="_this">自己</param>
+        /// <param name="o">需要比较的对象</param>
+        /// <returns>是否同一对象</returns>
+        public new static bool ReferenceEquals(this object _this, object o)
+        {
+            return object.ReferenceEquals(_this, o);
+        }
+
+        /// <summary>
+        /// 判断字符串是否为空
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this string s)
+        {
+            return string.IsNullOrEmpty(s);
+        }
+
+        /// <summary>
+        /// 类型直转
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T To<T>(this IConvertible value)
+        {
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
+
+        /// <summary>
+        /// 字符串转时间
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static DateTime ToDateTime(this string value)
+        {
+            try
+            {
+                return DateTime.Parse(value);
+            }
+            catch
+            {
+                return default(DateTime);
+            }
+        }
+
+        /// <summary>
+        /// 字符串转Guid
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Guid ToGuid(this string s)
+        {
+            return Guid.Parse(s);
+        }
+
+        /// <summary>
+        /// 根据正则替换
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="regex">正则表达式</param>
+        /// <param name="replacement">新内容</param>
+        /// <returns></returns>
+        public static string Replace(this string input, Regex regex, string replacement)
+        {
+            return regex.Replace(input, replacement);
+        }
+
+        /// <summary>
+        /// 生成唯一短字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为6，最小长度为5，最大长度为22</param>
+        /// <returns></returns>
+        public static string CreateShortToken(this string str, int length = 6)
+        {
+            var temp = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
+            if (length <= 22)
+            {
+                if (length < 5)
+                {
+                    length = 5;
+                }
+
+                temp = temp.Substring(0, length);
+            }
+
+            return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
+        }
+
+        /// <summary>
+        /// 按字段去重
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> hash = new HashSet<TKey>();
+            return source.Where(p => hash.Add(keySelector(p)));
+        }
+
+        /// <summary>
+        /// 将小数截断为8位
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static double Digits8(this double num)
+        {
+            return (long)(num * 1E+8) * 1e-8;
+        }
+
+        /// <summary>
+        /// 判断IP地址在不在某个IP地址段
+        /// </summary>
+        /// <param name="input">需要判断的IP地址</param>
+        /// <param name="begin">起始地址</param>
+        /// <param name="ends">结束地址</param>
+        /// <returns></returns>
+        public static bool IpAddressInRange(this string input, string begin, string ends)
+        {
+            if (input.MatchInetAddress() && begin.MatchInetAddress() && ends.MatchInetAddress())
+            {
+                string[] ipStarts = begin.Split('.');
+                string[] ipEnds = ends.Split('.');
+                string[] inputs = input.Split('.');
+                uint start = (uint.Parse(ipStarts[0]) << 24) | (uint.Parse(ipStarts[1]) << 16) | (uint.Parse(ipStarts[2]) << 8) | uint.Parse(ipStarts[3]);
+                uint end = (uint.Parse(ipEnds[0]) << 24) | (uint.Parse(ipEnds[1]) << 16) | (uint.Parse(ipEnds[2]) << 8) | uint.Parse(ipEnds[3]);
+                uint current = (uint.Parse(inputs[0]) << 24) | (uint.Parse(inputs[1]) << 16) | (uint.Parse(inputs[2]) << 8) | uint.Parse(inputs[3]);
+                return current >= start && current <= end;
+            }
+
+            return false;
+        }
+
         #region SyncForEach
 
         /// <summary>
@@ -139,7 +407,6 @@ namespace Masuit.Tools
             }
         }
 
-
         /// <summary>
         /// 遍历数组并返回一个新的List
         /// </summary>
@@ -185,7 +452,7 @@ namespace Masuit.Tools
             }
         }
 
-        #endregion
+        #endregion SyncForEach
 
         #region AsyncForEach
 
@@ -244,7 +511,7 @@ namespace Masuit.Tools
             });
         }
 
-        #endregion
+        #endregion AsyncForEach
 
         #region Map
 
@@ -257,7 +524,10 @@ namespace Masuit.Tools
         public static TDestination MapTo<TDestination>(this object source) where TDestination : new()
         {
             TDestination dest = new TDestination();
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -272,7 +542,10 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 TDestination dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+                });
                 return dest;
             });
         }
@@ -283,7 +556,10 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型</returns>
-        public static TDestination Map<TDestination>(this object source) where TDestination : new() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
+        public static TDestination Map<TDestination>(this object source) where TDestination : new()
+        {
+            return JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
+        }
 
         /// <summary>
         /// 映射到目标类型(深克隆)
@@ -291,7 +567,10 @@ namespace Masuit.Tools
         /// <param name="source">源</param>
         /// <typeparam name="TDestination">目标类型</typeparam>
         /// <returns>目标类型</returns>
-        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
+        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new()
+        {
+            return await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
+        }
 
         /// <summary>
         /// 复制一个新的对象
@@ -302,7 +581,10 @@ namespace Masuit.Tools
         public static T Copy<T>(this T source) where T : new()
         {
             T dest = new T();
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -315,7 +597,10 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static T CopyTo<T>(this T source, T dest) where T : new()
         {
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -325,13 +610,18 @@ namespace Masuit.Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static async Task<T> CopyAsync<T>(this T source) where T : new() =>
-            await Task.Run(() =>
+        public static async Task<T> CopyAsync<T>(this T source) where T : new()
+        {
+            return await Task.Run(() =>
             {
                 T dest = new T();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+                });
                 return dest;
             });
+        }
 
         /// <summary>
         /// 映射到目标类型的集合
@@ -344,7 +634,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -363,7 +656,10 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
 
@@ -382,7 +678,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -401,9 +700,13 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
+
                 return list;
             });
         }
@@ -419,7 +722,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -438,36 +744,18 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
+
                 return list;
             });
         }
 
-        #endregion
-
-        /// <summary>
-        /// 转换成json字符串
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings()
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Formatting.Indented
-        });
-
-        /// <summary>
-        /// 转换成json字符串
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source, new JsonSerializerSettings()
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Formatting.Indented
-        }));
+        #endregion Map
 
         #region UBB、HTML互转
 
@@ -485,63 +773,64 @@ namespace Masuit.Tools
 
             ubbStr = ubbStr.Replace(" ", "&nbsp;");
 
-            #endregion
+            #endregion 处理空格
 
             #region 处理&符
 
             ubbStr = ubbStr.Replace("&", "&amp;");
 
-            #endregion
+            #endregion 处理&符
 
             #region 处理单引号
 
             ubbStr = ubbStr.Replace("'", "’");
 
-            #endregion
+            #endregion 处理单引号
 
             #region 处理双引号
 
             ubbStr = ubbStr.Replace("\"", "&quot;");
 
-            #endregion
+            #endregion 处理双引号
 
             #region html标记符
 
             ubbStr = ubbStr.Replace("<", "&lt;");
             ubbStr = ubbStr.Replace(">", "&gt;");
 
-            #endregion
+            #endregion html标记符
 
             #region 处理换行
 
             //处理换行，在每个新行的前面添加两个全角空格
             r = new Regex(@"(\r\n((&nbsp;)|　)+)(?<正文>\S+)", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<BR>　　" + m.Groups["正文"]);
+
             //处理换行，在每个新行的前面添加两个全角空格
             ubbStr = ubbStr.Replace("\r\n", "<BR>");
 
-            #endregion
+            #endregion 处理换行
 
             #region 处[b][/b]标记
 
             r = new Regex(@"(\[b\])([ \S\t]*?)(\[\/b\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<B>" + m.Groups[2] + "</B>");
 
-            #endregion
+            #endregion 处[b][/b]标记
 
             #region 处[i][/i]标记
 
             r = new Regex(@"(\[i\])([ \S\t]*?)(\[\/i\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<I>" + m.Groups[2] + "</I>");
 
-            #endregion
+            #endregion 处[i][/i]标记
 
             #region 处[u][/u]标记
 
             r = new Regex(@"(\[U\])([ \S\t]*?)(\[\/U\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<U>" + m.Groups[2] + "</U>");
 
-            #endregion
+            #endregion 处[u][/u]标记
 
             #region 处[p][/p]标记
 
@@ -549,7 +838,7 @@ namespace Masuit.Tools
             r = new Regex(@"((\r\n)*\[p\])(.*?)((\r\n)*\[\/p\])", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<P class=\"pstyle\">" + m.Groups[3] + "</P>");
 
-            #endregion
+            #endregion 处[p][/p]标记
 
             #region 处[sup][/sup]标记
 
@@ -557,7 +846,7 @@ namespace Masuit.Tools
             r = new Regex(@"(\[sup\])([ \S\t]*?)(\[\/sup\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUP>" + m.Groups[2] + "</SUP>");
 
-            #endregion
+            #endregion 处[sup][/sup]标记
 
             #region 处[sub][/sub]标记
 
@@ -565,7 +854,7 @@ namespace Masuit.Tools
             r = new Regex(@"(\[sub\])([ \S\t]*?)(\[\/sub\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<SUB>" + m.Groups[2] + "</SUB>");
 
-            #endregion
+            #endregion 处[sub][/sub]标记
 
             #region 处标记
 
@@ -576,7 +865,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[2] + "</A>");
             }
 
-            #endregion
+            #endregion 处标记
 
             #region 处[url=xxx][/url]标记
 
@@ -587,7 +876,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[3] + "</A>");
             }
 
-            #endregion
+            #endregion 处[url=xxx][/url]标记
 
             #region 处[email][/email]标记
 
@@ -598,7 +887,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[2] + "</A>");
             }
 
-            #endregion
+            #endregion 处[email][/email]标记
 
             #region 处[email=xxx][/email]标记
 
@@ -609,7 +898,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"mailto:" + m.Groups[2] + "\" target=\"_blank\">" + m.Groups[3] + "</A>");
             }
 
-            #endregion
+            #endregion 处[email=xxx][/email]标记
 
             #region 处[size=x][/size]标记
 
@@ -620,7 +909,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT SIZE=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
-            #endregion
+            #endregion 处[size=x][/size]标记
 
             #region 处[color=x][/color]标记
 
@@ -631,7 +920,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT COLOR=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
-            #endregion
+            #endregion 处[color=x][/color]标记
 
             #region 处[font=x][/font]标记
 
@@ -642,7 +931,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<FONT FACE=" + m.Groups[2] + ">" + m.Groups[3] + "</FONT>");
             }
 
-            #endregion
+            #endregion 处[font=x][/font]标记
 
             #region 处理图片链接
 
@@ -653,7 +942,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<A href=\"ShowImage.aspx?Type=ALL&Action=forumImage&ImageID=" + m.Groups[1] + "\" target=\"_blank\"><IMG border=0 Title=\"点击打开新窗口查看\" src=\"ShowImage.aspx?Action=forumImage&ImageID=" + m.Groups[1] + "\"></A>");
             }
 
-            #endregion
+            #endregion 处理图片链接
 
             #region 处理[align=x][/align]
 
@@ -664,7 +953,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<P align=" + m.Groups[2] + ">" + m.Groups[3] + "</P>");
             }
 
-            #endregion
+            #endregion 处理[align=x][/align]
 
             #region 处[H=x][/H]标记
 
@@ -675,7 +964,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<H" + m.Groups[2] + ">" + m.Groups[3] + "</H" + m.Groups[2] + ">");
             }
 
-            #endregion
+            #endregion 处[H=x][/H]标记
 
             #region 处理[list=x][*][/list]
 
@@ -690,7 +979,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<UL TYPE=\"" + m.Groups[3] + "\"><B>" + m.Groups[4] + "</B>" + strLi + "</UL>");
             }
 
-            #endregion
+            #endregion 处理[list=x][*][/list]
 
             #region 处[SHADOW=x][/SHADOW]标记
 
@@ -701,7 +990,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<TABLE WIDTH=" + m.Groups[2] + "STYLE=FILTER:SHADOW(COLOR=" + m.Groups[3] + ",STRENGTH=" + m.Groups[4] + ")>" + m.Groups[5] + "</TABLE>");
             }
 
-            #endregion
+            #endregion 处[SHADOW=x][/SHADOW]标记
 
             #region 处[glow=x][/glow]标记
 
@@ -712,28 +1001,28 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<TABLE WIDTH=" + m.Groups[2] + "  STYLE=FILTER:GLOW(COLOR=" + m.Groups[3] + ", STRENGTH=" + m.Groups[4] + ")>" + m.Groups[5] + "</TABLE>");
             }
 
-            #endregion
+            #endregion 处[glow=x][/glow]标记
 
             #region 处[center][/center]标记
 
             r = new Regex(@"(\[center\])([ \S\t]*?)(\[\/center\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<CENTER>" + m.Groups[2] + "</CENTER>");
 
-            #endregion
+            #endregion 处[center][/center]标记
 
             #region 处[ IMG][ /IMG]标记
 
             r = new Regex(@"(\[IMG\])(http|https|ftp):\/\/([ \S\t]*?)(\[\/IMG\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<br><a onfocus=this.blur() href=" + m.Groups[2] + "://" + m.Groups[3] + " target=_blank><IMG SRC=" + m.Groups[2] + "://" + m.Groups[3] + " border=0 alt=按此在新窗口浏览图片 onload=javascript:if(screen.width-333<this.width)this.width=screen.width-333></a>");
 
-            #endregion
+            #endregion 处[ IMG][ /IMG]标记
 
             #region 处[em]标记
 
             r = new Regex(@"(\[em([\S\t]*?)\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<img src=pic/em" + m.Groups[2] + ".gif border=0 align=middle>");
 
-            #endregion
+            #endregion 处[em]标记
 
             #region 处[flash=x][/flash]标记
 
@@ -744,7 +1033,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<a href=" + m.Groups[4] + " TARGET=_blank><IMG SRC=pic/swf.gif border=0 alt=点击开新窗口欣赏该FLASH动画!> [全屏欣赏]</a><br><br><OBJECT codeBase=http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,29,0 classid=clsid:D27CDB6E-AE6D-11cf-96B8-444553540000 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=movie VALUE=" + m.Groups[4] + "><PARAM NAME=quality VALUE=high><param name=menu value=false><embed src=" + m.Groups[4] + " quality=high menu=false pluginspage=http://www.macromedia.com/go/getflashplayer type=application/x-shockwave-flash width=" + m.Groups[2] + " height=" + m.Groups[3] + ">" + m.Groups[4] + "</embed></OBJECT>");
             }
 
-            #endregion
+            #endregion 处[flash=x][/flash]标记
 
             #region 处[dir=x][/dir]标记
 
@@ -755,7 +1044,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<object classid=clsid:166B1BCA-3F9C-11CF-8075-444553540000 codebase=http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=7,0,2,0 width=" + m.Groups[2] + " height=" + m.Groups[3] + "><param name=src value=" + m.Groups[4] + "><embed src=" + m.Groups[4] + " pluginspage=http://www.macromedia.com/shockwave/download/ width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
             }
 
-            #endregion
+            #endregion 处[dir=x][/dir]标记
 
             #region 处[rm=x][/rm]标记
 
@@ -766,7 +1055,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<OBJECT classid=clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA class=OBJECT id=RAOCX width=" + m.Groups[2] + " height=" + m.Groups[3] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=CONSOLE VALUE=Clip1><PARAM NAME=CONTROLS VALUE=imagewindow><PARAM NAME=AUTOSTART VALUE=true></OBJECT><br><OBJECT classid=CLSID:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA height=32 id=video2 width=" + m.Groups[2] + "><PARAM NAME=SRC VALUE=" + m.Groups[4] + "><PARAM NAME=AUTOSTART VALUE=-1><PARAM NAME=CONTROLS VALUE=controlpanel><PARAM NAME=CONSOLE VALUE=Clip1></OBJECT>");
             }
 
-            #endregion
+            #endregion 处[rm=x][/rm]标记
 
             #region 处[mp=x][/mp]标记
 
@@ -777,7 +1066,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<object align=middle classid=CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95 class=OBJECT id=MediaPlayer width=" + m.Groups[2] + " height=" + m.Groups[3] + " ><param name=ShowStatusBar value=-1><param name=Filename value=" + m.Groups[4] + "><embed type=application/x-oleobject codebase=http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701 flename=mp src=" + m.Groups[4] + "  width=" + m.Groups[2] + " height=" + m.Groups[3] + "></embed></object>");
             }
 
-            #endregion
+            #endregion 处[mp=x][/mp]标记
 
             #region 处[qt=x][/qt]标记
 
@@ -788,28 +1077,28 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<embed src=" + m.Groups[4] + " width=" + m.Groups[2] + " height=" + m.Groups[3] + " autoplay=true loop=false controller=true playeveryframe=false cache=false scale=TOFIT bgcolor=#000000 kioskmode=false targetcache=false pluginspage=http://www.apple.com/quicktime/>");
             }
 
-            #endregion
+            #endregion 处[qt=x][/qt]标记
 
             #region 处[QUOTE][/QUOTE]标记
 
             r = new Regex(@"(\[QUOTE\])([ \S\t]*?)(\[\/QUOTE\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<div style='border:#CCCCCC 1px dashed; width:94%; color:#999999; padding:3px; background:#F8F8F8'>" + m.Groups[2] + "</div><br /> ");
 
-            #endregion
+            #endregion 处[QUOTE][/QUOTE]标记
 
             #region 处[move][/move]标记
 
             r = new Regex(@"(\[move\])([ \S\t]*?)(\[\/move\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
 
-            #endregion
+            #endregion 处[move][/move]标记
 
             #region 处[FLY][/FLY]标记
 
             r = new Regex(@"(\[FLY\])([ \S\t]*?)(\[\/FLY\])", RegexOptions.IgnoreCase);
             for (m = r.Match(ubbStr); m.Success; m = m.NextMatch()) ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<MARQUEE width=80% behavior=alternate scrollamount=3>" + m.Groups[2] + "</MARQUEE>");
 
-            #endregion
+            #endregion 处[FLY][/FLY]标记
 
             #region 处[image][/image]标记
 
@@ -820,7 +1109,7 @@ namespace Masuit.Tools
                 ubbStr = ubbStr.Replace(m.Groups[0].ToString(), "<img src=\"" + m.Groups[2] + "\" border=0 align=middle><br>");
             }
 
-            #endregion
+            #endregion 处[image][/image]标记
 
             return ubbStr;
         }
@@ -830,7 +1119,10 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="ubbStr">输入UBB字符串</param>
         /// <returns>输出html字符串</returns>
-        public static async Task<string> UbbToHtmlAsync(this string ubbStr) => await Task.Run(() => UbbToHtml(ubbStr));
+        public static async Task<string> UbbToHtmlAsync(this string ubbStr)
+        {
+            return await Task.Run(() => UbbToHtml(ubbStr));
+        }
 
         /// <summary>
         /// UBB转HTML方式2
@@ -986,7 +1278,10 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="ubbStr">UBB 代码</param>
         /// <returns>HTML代码</returns>
-        public static async Task<string> UbbToHtml2Async(this string ubbStr) => await Task.Run(() => UbbToHtml2(ubbStr));
+        public static async Task<string> UbbToHtml2Async(this string ubbStr)
+        {
+            return await Task.Run(() => UbbToHtml2(ubbStr));
+        }
 
         /// <summary>
         /// Html转UBB
@@ -1033,9 +1328,12 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="chr">HTML代码</param>
         /// <returns>UBB代码</returns>
-        public static async Task<string> HtmltoUBBAsync(this string chr) => await Task.Run(() => HtmltoUBB(chr));
+        public static async Task<string> HtmltoUBBAsync(this string chr)
+        {
+            return await Task.Run(() => HtmltoUBB(chr));
+        }
 
-        #endregion
+        #endregion UBB、HTML互转
 
         #region 数字互转
 
@@ -1181,19 +1479,7 @@ namespace Masuit.Tools
             return (decimal)(num * 1.0);
         }
 
-        #endregion
-
-        #region 检测字符串中是否包含列表中的关键词
-
-        /// <summary>
-        /// 检测字符串中是否包含列表中的关键词
-        /// </summary>
-        /// <param name="s">源字符串</param>
-        /// <param name="keys">关键词列表</param>
-        /// <returns></returns>
-        public static bool Contains(this string s, string[] keys) => Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
-
-        #endregion
+        #endregion 数字互转
 
         #region 匹配Email
 
@@ -1221,7 +1507,7 @@ namespace Masuit.Tools
             return success;
         }
 
-        #endregion
+        #endregion 匹配Email
 
         #region 匹配完整的URL
 
@@ -1307,85 +1593,7 @@ namespace Masuit.Tools
             return success;
         }
 
-        #endregion
-
-        #region 权威校验身份证号码
-
-        /// <summary>
-        /// 根据GB11643-1999标准权威校验中国身份证号码的合法性
-        /// </summary>
-        /// <param name="s">源字符串</param>
-        /// <returns>是否匹配成功</returns>
-        public static bool MatchIdentifyCard(this string s)
-        {
-            if (s.Length == 18)
-            {
-                long n;
-                if (long.TryParse(s.Remove(17), out n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
-                {
-                    return false; //数字验证  
-                }
-
-                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
-                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
-                {
-                    return false; //省份验证  
-                }
-
-                string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
-                DateTime time;
-                if (!DateTime.TryParse(birth, out time))
-                {
-                    return false; //生日验证  
-                }
-
-                string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
-                string[] wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
-                char[] ai = s.Remove(17).ToCharArray();
-                int sum = 0;
-                for (int i = 0; i < 17; i++)
-                {
-                    sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
-                }
-
-                int y;
-                Math.DivRem(sum, 11, out y);
-                if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
-                {
-                    return false; //校验码验证  
-                }
-
-                return true; //符合GB11643-1999标准  
-            }
-
-            if (s.Length == 15)
-            {
-                long n;
-                if (long.TryParse(s, out n) == false || n < Math.Pow(10, 14))
-                {
-                    return false; //数字验证  
-                }
-
-                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
-                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
-                {
-                    return false; //省份验证  
-                }
-
-                string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
-                DateTime time;
-                if (DateTime.TryParse(birth, out time) == false)
-                {
-                    return false; //生日验证  
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion
+        #endregion 匹配完整的URL
 
         #region 校验IP地址的合法性
 
@@ -1401,7 +1609,7 @@ namespace Masuit.Tools
             if (s.Contains(":"))
             {
                 //IPv6
-                match = Regex.Match(s, "^((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))$");
+                match = Regex.Match(s, @"^([\da-fA-F]{0,4}:){1,7}[\da-fA-F]{1,4}$");
                 isMatch = match.Success;
             }
             else
@@ -1433,7 +1641,7 @@ namespace Masuit.Tools
             return success;
         }
 
-        #endregion
+        #endregion 校验IP地址的合法性
 
         #region 校验手机号码的正确性
 
@@ -1461,144 +1669,6 @@ namespace Masuit.Tools
             return success;
         }
 
-        #endregion
-
-        /// <summary>
-        /// 严格比较两个对象是否是同一对象
-        /// </summary>
-        /// <param name="_this">自己</param>
-        /// <param name="o">需要比较的对象</param>
-        /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
-
-        /// <summary>
-        /// 判断字符串是否为空
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
-
-        /// <summary>
-        /// 类型直转
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static T To<T>(this IConvertible value)
-        {
-            try
-            {
-                return (T)Convert.ChangeType(value, typeof(T));
-            }
-            catch
-            {
-                return default(T);
-            }
-        }
-
-        /// <summary>
-        /// 字符串转时间
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static DateTime ToDateTime(this string value)
-        {
-            try
-            {
-                return DateTime.Parse(value);
-            }
-            catch
-            {
-                return default(DateTime);
-            }
-        }
-
-        /// <summary>
-        /// 字符串转Guid
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        public static Guid ToGuid(this string s)
-        {
-            return Guid.Parse(s);
-        }
-
-        /// <summary>
-        /// 根据正则替换
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="regex">正则表达式</param>
-        /// <param name="replacement">新内容</param>
-        /// <returns></returns>
-        public static string Replace(this string input, Regex regex, string replacement)
-        {
-            return regex.Replace(input, replacement);
-        }
-
-        /// <summary>
-        /// 生成唯一短字符串
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为6，最小长度为5，最大长度为22</param>
-        /// <returns></returns>
-        public static string CreateShortToken(this string str, int length = 6)
-        {
-            var temp = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
-            if (length <= 22)
-            {
-                if (length < 5)
-                {
-                    length = 5;
-                }
-                temp = temp.Substring(0, length);
-            }
-            return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
-        }
-
-        /// <summary>
-        /// 按字段去重
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <returns></returns>
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            HashSet<TKey> hash = new HashSet<TKey>();
-            return source.Where(p => hash.Add(keySelector(p)));
-        }
-
-        /// <summary>
-        /// 将小数截断为8位
-        /// </summary>
-        /// <param name="num"></param>
-        /// <returns></returns>
-        public static double Digits8(this double num)
-        {
-            return (long)(num * 1E+8) * 1e-8;
-        }
-
-        /// <summary>
-        /// 判断IP地址在不在某个IP地址段
-        /// </summary>
-        /// <param name="input">需要判断的IP地址</param>
-        /// <param name="begin">起始地址</param>
-        /// <param name="ends">结束地址</param>
-        /// <returns></returns>
-        public static bool IpAddressInRange(this string input, string begin, string ends)
-        {
-            if (input.MatchInetAddress() && begin.MatchInetAddress() && ends.MatchInetAddress())
-            {
-                string[] ipStarts = begin.Split('.');
-                string[] ipEnds = ends.Split('.');
-                string[] inputs = input.Split('.');
-                uint start = uint.Parse(ipStarts[0]) << 24 | uint.Parse(ipStarts[1]) << 16 | uint.Parse(ipStarts[2]) << 8 | uint.Parse(ipStarts[3]);
-                uint end = uint.Parse(ipEnds[0]) << 24 | uint.Parse(ipEnds[1]) << 16 | uint.Parse(ipEnds[2]) << 8 | uint.Parse(ipEnds[3]);
-                uint current = uint.Parse(inputs[0]) << 24 | uint.Parse(inputs[1]) << 16 | uint.Parse(inputs[2]) << 8 | uint.Parse(inputs[3]);
-                return current >= start && current <= end;
-            }
-            return false;
-        }
+        #endregion 校验手机号码的正确性
     }
 }

@@ -1,15 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Masuit.Tools.Core.Config
 {
     /// <summary>
     /// .net core的配置导入
     /// </summary>
-    public class CoreConfig
+    internal class CoreConfig
     {
         /// <summary>
         /// 配置对象
         /// </summary>
-        public static IConfiguration Configuration { get; set; }
+        internal static IConfiguration Configuration => new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json", true, true).AddInMemoryCollection().AddEnvironmentVariables().AddApplicationInsightsSettings().Build();
     }
 }

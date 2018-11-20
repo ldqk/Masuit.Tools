@@ -1354,7 +1354,7 @@ namespace Masuit.Tools
             if (s.Contains(":"))
             {
                 //IPv6
-                match = Regex.Match(s, "^((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))$");
+                match = Regex.Match(s, @"^([\da-fA-F]{0,4}:){1,7}[\da-fA-F]{1,4}$");
                 isMatch = match.Success;
             }
             else

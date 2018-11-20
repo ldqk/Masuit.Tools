@@ -6,11 +6,13 @@ namespace NetCoreTest.Controllers
 {
     public class HomeController : Controller
     {
-        public RedisHelper RedisHelper { get; set; }
         public HomeController(RedisHelperFactory redisHelper)
         {
             RedisHelper = redisHelper.Create("aa");
         }
+
+        public RedisHelper RedisHelper { get; set; }
+
         // GET
         public IActionResult Index()
         {

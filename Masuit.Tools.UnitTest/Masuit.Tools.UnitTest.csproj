@@ -47,10 +47,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExtensionMethodsTest.cs" />
+    <Compile Include="HtmlHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TemplateTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
