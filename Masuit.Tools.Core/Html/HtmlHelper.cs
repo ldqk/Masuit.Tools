@@ -432,20 +432,21 @@ namespace Masuit.Tools.Core.Html
             return Regex.Replace(s, @"<img src=""(http:\/\/.+?)/", @"<img src=""/");
         }
 
+        private static readonly Regex ImgRegex = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<src>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
 
         /// <summary>
         /// 匹配html的所有img标签集合
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static MatchCollection MatchImgTags(this string html) => Regex.Matches(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
+        public static MatchCollection MatchImgTags(this string html) => ImgRegex.Matches(html);
 
         /// <summary>
         /// 匹配html的一个img标签
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static Match MatchImgTag(this string html) => Regex.Match(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
+        public static Match MatchImgTag(this string html) => ImgRegex.Match(html);
 
         /// <summary>
         /// 获取html中第一个img标签的src
@@ -454,7 +455,7 @@ namespace Masuit.Tools.Core.Html
         /// <returns></returns>
         public static string MatchFirstImgSrc(this string html)
         {
-            string src = Regex.Match(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))").Groups["src"].Value;
+            string src = ImgRegex.Match(html).Groups["src"].Value;
             int index = src.IndexOf("\"", StringComparison.Ordinal);
             if (index > 0)
             {
@@ -470,7 +471,7 @@ namespace Masuit.Tools.Core.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            var collection = Regex.Matches(html, @"<img[\s]+src[\s]*=[\s]*((['""](?<src>[^'""]*)[\'""])|(?<src>[^\s]*))");
+            var collection = ImgRegex.Matches(html);
             if (collection.Count > 0)
             {
                 string src = collection[new Random().StrictNext(collection.Count)].Groups["src"].Value;
