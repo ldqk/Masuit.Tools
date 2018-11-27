@@ -28,6 +28,7 @@ namespace Masuit.Tools.Database
                     dt.Rows[i]["identityid"] = (i + 1).ToString();
                 }
             }
+
             return dt;
         }
 
@@ -36,12 +37,9 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>是否有数据行</returns>
-        public static bool IsHaveRows(this DataTable dt)
+        public static bool HasRows(this DataTable dt)
         {
-            if (dt?.Rows.Count > 0)
-                return true;
-
-            return false;
+            return dt.Rows.Count > 0;
         }
 
         /// <summary>
@@ -52,8 +50,10 @@ namespace Masuit.Tools.Database
         /// <returns>强类型的数据集合</returns>
         public static IList<T> DataTableToList<T>(this DataTable table) where T : class
         {
-            if (!IsHaveRows(table))
+            if (!HasRows(table))
+            {
                 return new List<T>();
+            }
 
             IList<T> list = new List<T>();
             foreach (DataRow dr in table.Rows)
@@ -70,8 +70,10 @@ namespace Masuit.Tools.Database
                         pi.SetValue(model, drValue, null);
                     }
                 }
+
                 list.Add(model);
             }
+
             return list;
         }
 
@@ -88,6 +90,7 @@ namespace Masuit.Tools.Database
             {
                 return null;
             }
+
             var dt = new DataTable(typeof(T).Name);
             PropertyInfo[] myPropertyInfo = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             int length = myPropertyInfo.Length;
@@ -98,6 +101,7 @@ namespace Masuit.Tools.Database
                 {
                     continue;
                 }
+
                 var row = dt.NewRow();
                 for (int i = 0; i < length; i++)
                 {
@@ -108,14 +112,18 @@ namespace Masuit.Tools.Database
                         var column = new DataColumn(name, pi.PropertyType);
                         dt.Columns.Add(column);
                     }
+
                     row[name] = pi.GetValue(t, null);
                 }
+
                 if (createColumn)
                 {
                     createColumn = false;
                 }
+
                 dt.Rows.Add(row);
             }
+
             return dt;
         }
 
@@ -127,7 +135,7 @@ namespace Masuit.Tools.Database
         /// <returns>数据集(表)</returns>
         public static DataTable ToDataTable<T>(this IList<T> list)
         {
-            return ToDataTable<T>(list, null);
+            return ToDataTable(list, null);
         }
 
         /// <summary>
@@ -141,48 +149,55 @@ namespace Masuit.Tools.Database
         {
             List<string> propertyNameList = new List<string>();
             if (propertyName != null)
-                propertyNameList.AddRange(propertyName);
-            DataTable result = new DataTable();
-            if (list.Count > 0)
             {
-                PropertyInfo[] propertys = list[0].GetType().GetProperties();
-                propertys.ForEach(pi =>
+                propertyNameList.AddRange(propertyName);
+            }
+
+            DataTable result = new DataTable();
+            if (list.Count <= 0)
+            {
+                return result;
+            }
+
+            PropertyInfo[] propertys = list[0].GetType().GetProperties();
+            propertys.ForEach(pi =>
+            {
+                if (propertyNameList.Count == 0)
+                {
+                    result.Columns.Add(pi.Name, pi.PropertyType);
+                }
+                else
+                {
+                    if (propertyNameList.Contains(pi.Name))
+                    {
+                        result.Columns.Add(pi.Name, pi.PropertyType);
+                    }
+                }
+            });
+            list.ForEach(item =>
+            {
+                ArrayList tempList = new ArrayList();
+                foreach (PropertyInfo pi in propertys)
                 {
                     if (propertyNameList.Count == 0)
                     {
-                        result.Columns.Add(pi.Name, pi.PropertyType);
+                        object obj = pi.GetValue(item, null);
+                        tempList.Add(obj);
                     }
                     else
                     {
                         if (propertyNameList.Contains(pi.Name))
                         {
-                            result.Columns.Add(pi.Name, pi.PropertyType);
-                        }
-                    }
-                });
-                list.ForEach(item =>
-                {
-                    ArrayList tempList = new ArrayList();
-                    foreach (PropertyInfo pi in propertys)
-                    {
-                        if (propertyNameList.Count == 0)
-                        {
                             object obj = pi.GetValue(item, null);
                             tempList.Add(obj);
                         }
-                        else
-                        {
-                            if (propertyNameList.Contains(pi.Name))
-                            {
-                                object obj = pi.GetValue(item, null);
-                                tempList.Add(obj);
-                            }
-                        }
                     }
-                    object[] array = tempList.ToArray();
-                    result.LoadDataRow(array, true);
-                });
-            }
+                }
+
+                object[] array = tempList.ToArray();
+                result.LoadDataRow(array, true);
+            });
+
             return result;
         }
 
@@ -194,12 +209,16 @@ namespace Masuit.Tools.Database
         public static DataTable CreateTable(this List<string> nameList)
         {
             if (nameList.Count <= 0)
+            {
                 return null;
+            }
+
             var myDataTable = new DataTable();
             foreach (string columnName in nameList)
             {
                 myDataTable.Columns.Add(columnName, typeof(string));
             }
+
             return myDataTable;
         }
 
@@ -229,6 +248,7 @@ namespace Masuit.Tools.Database
                     }
                 }
             }
+
             return dt;
         }
 
@@ -298,6 +318,7 @@ namespace Masuit.Tools.Database
                     newType = typeof(char);
                     break;
             }
+
             return newType;
         }
 
@@ -314,6 +335,7 @@ namespace Masuit.Tools.Database
             {
                 drs[i] = drc[i];
             }
+
             return drs;
         }
 
@@ -329,12 +351,14 @@ namespace Masuit.Tools.Database
             {
                 return new DataTable();
             }
+
             DataTable dt = rows[0].Table.Clone();
             dt.DefaultView.Sort = rows[0].Table.DefaultView.Sort;
             for (int i = 0; i < rows.Length; i++)
             {
                 dt.LoadDataRow(rows[i].ItemArray, true);
             }
+
             return dt;
         }
 
@@ -353,8 +377,10 @@ namespace Masuit.Tools.Database
                 {
                     tmp += sorts[i] + ",";
                 }
+
                 dt.DefaultView.Sort = tmp.TrimEnd(',');
             }
+
             return dt;
         }
 
@@ -370,6 +396,7 @@ namespace Masuit.Tools.Database
             {
                 return dt;
             }
+
             var newdt = dt.Clone();
             DataRow[] dr = dt.Select(condition);
             dr.ForEach(t => newdt.ImportRow(t));

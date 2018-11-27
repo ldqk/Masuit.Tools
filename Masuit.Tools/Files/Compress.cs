@@ -23,7 +23,10 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static void PackFiles(string filename, string directory)
         {
-            FastZip fz = new FastZip { CreateEmptyDirectories = true };
+            FastZip fz = new FastZip
+            {
+                CreateEmptyDirectories = true
+            };
             fz.CreateZip(filename, directory, true, "");
         }
 
@@ -34,7 +37,10 @@ namespace Masuit.Tools.Files
         /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
         public static async void PackFilesAsync(string filename, string directory)
         {
-            FastZip fz = new FastZip { CreateEmptyDirectories = true };
+            FastZip fz = new FastZip
+            {
+                CreateEmptyDirectories = true
+            };
             await Task.Run(() =>
             {
                 fz.CreateZip(filename, directory, true, "");
@@ -81,6 +87,7 @@ namespace Masuit.Tools.Files
                     }
                 }
             }
+
             return true;
         }
 
@@ -122,6 +129,7 @@ namespace Masuit.Tools.Files
                     }
                 }).ConfigureAwait(false);
             }
+
             return true;
         }
 
@@ -171,6 +179,7 @@ namespace Masuit.Tools.Files
                     GetFilesRecurs(directory);
                 }
             }
+
             MemoryStream ms = new MemoryStream();
             byte[] buffer;
             using (ZipFile f = ICSharpCode.SharpZipLib.Zip.ZipFile.Create(ms))
@@ -193,15 +202,21 @@ namespace Masuit.Tools.Files
                 {
                     dirname = Directory.GetParent(fileList[0]).FullName;
                 }
+
                 f.NameTransform = new ZipNameTransform(dirname); //通过这个名称格式化器，可以将里面的文件名进行一些处理。默认情况下，会自动根据文件的路径在zip中创建有关的文件夹。  
-                fileList.ForEach(s => { f.Add(s); });
+                fileList.ForEach(s =>
+                {
+                    f.Add(s);
+                });
                 f.CommitUpdate();
                 buffer = new byte[ms.Length];
                 ms.Position = 0;
                 ms.Read(buffer, 0, buffer.Length);
             }
+
             return buffer;
         }
+
         #endregion
 
         #region 解压
@@ -230,6 +245,7 @@ namespace Masuit.Tools.Files
                             Directory.CreateDirectory(fileName);
                             continue;
                         }
+
                         using (FileStream streamWriter = File.Create(fileName))
                         {
                             byte[] data = new byte[2048];
@@ -284,6 +300,7 @@ namespace Masuit.Tools.Files
                     s.Write(buffer, 0, buffer.Length);
                 }
             }
+
             var folders = Directory.GetDirectories(folderToZip);
             foreach (string folder in folders)
             {
@@ -315,6 +332,7 @@ namespace Masuit.Tools.Files
                 res = ZipFileDictory(folderToZip, s, "");
                 s.Finish();
             }
+
             return res;
         }
 
@@ -347,6 +365,7 @@ namespace Masuit.Tools.Files
                     zipStream.Write(buffer, 0, buffer.Length);
                 }
             }
+
             return true;
         }
 

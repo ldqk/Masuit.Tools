@@ -11,6 +11,7 @@ namespace Masuit.Tools.Net
     public class PartialDownloader
     {
         #region Variables
+
         public event EventHandler DownloadPartCompleted;
         public event EventHandler DownloadPartProgressChanged;
         public event EventHandler DownloadPartStopped;
@@ -23,9 +24,11 @@ namespace Masuit.Tools.Net
         readonly int[] _lastSpeeds;
         int _counter;
         bool _stop, _wait;
+
         #endregion
 
         #region PartialDownloader
+
         public PartialDownloader(string url, string dir, string fileGuid, int from, int to, bool rangeAllowed)
         {
             _from = from;
@@ -37,12 +40,15 @@ namespace Masuit.Tools.Net
             _lastSpeeds = new int[10];
             _stp = new Stopwatch();
         }
+
         #endregion
 
         void DownloadProcedure()
         {
             _file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite);
+
             #region Request-Response
+
             _req = WebRequest.Create(_url) as HttpWebRequest;
             if (_req != null)
             {
@@ -83,16 +89,19 @@ namespace Masuit.Tools.Net
                         }
 
                         if (_totalBytesRead + bytesRead > _contentLength)
-                            bytesRead = (int)(_contentLength - _totalBytesRead);
+                            bytesRead = (int) (_contentLength - _totalBytesRead);
                         _file.Write(buffer, 0, bytesRead);
                         _totalBytesRead += bytesRead;
-                        _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(_stp.Elapsed.TotalSeconds));
+                        _lastSpeeds[_counter] = (int) (_totalBytesRead / Math.Ceiling(_stp.Elapsed.TotalSeconds));
                         _counter = (_counter >= 9) ? 0 : _counter + 1;
-                        int tempProgress = (int)(_totalBytesRead * 100 / _contentLength);
+                        int tempProgress = (int) (_totalBytesRead * 100 / _contentLength);
                         if (_progress != tempProgress)
                         {
                             _progress = tempProgress;
-                            _aop.Post(state => { DownloadPartProgressChanged?.Invoke(this, EventArgs.Empty); }, null);
+                            _aop.Post(state =>
+                            {
+                                DownloadPartProgressChanged?.Invoke(this, EventArgs.Empty);
+                            }, null);
                         }
 
                         if (_stop || (_rangeAllowed && _totalBytesRead == _contentLength))
@@ -114,9 +123,11 @@ namespace Masuit.Tools.Net
             }
 
             _stp.Stop();
+
             #endregion
 
             #region Fire Events
+
             if (!_stop && DownloadPartCompleted != null)
                 _aop.Post(state =>
                 {
@@ -131,6 +142,7 @@ namespace Masuit.Tools.Net
         }
 
         #region Public Methods
+
         public void Start()
         {
             _stop = false;
@@ -142,18 +154,22 @@ namespace Masuit.Tools.Net
         {
             _stop = true;
         }
+
         //Wait is used when repartitiate a partition securely in this project
         public void Wait()
         {
             _wait = true;
         }
+
         public void ResumeAfterWait()
         {
             _wait = false;
         }
+
         #endregion
 
         #region Property Variables
+
         private readonly int _from;
         private int _to;
         private readonly string _url;
@@ -164,9 +180,11 @@ namespace Masuit.Tools.Net
         private readonly string _directory;
         private int _progress;
         private bool _completed;
+
         #endregion
 
         #region Properties
+
         public bool Stopped => _stop;
 
         public bool Completed => _completed;
@@ -199,7 +217,7 @@ namespace Masuit.Tools.Net
 
         public int CurrentPosition => _from + _totalBytesRead - 1;
 
-        public int RemainingBytes => (int)(_contentLength - _totalBytesRead);
+        public int RemainingBytes => (int) (_contentLength - _totalBytesRead);
 
         public string FullPath => Path.Combine(_directory, _fileGuid);
 
@@ -215,6 +233,7 @@ namespace Masuit.Tools.Net
                 return totalSpeeds / 10;
             }
         }
+
         #endregion
     }
 }

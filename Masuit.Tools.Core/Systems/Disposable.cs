@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Masuit.Tools.Core.Systems
+namespace Masuit.Tools.Systems
 {
     public abstract class Disposable : IDisposable
     {

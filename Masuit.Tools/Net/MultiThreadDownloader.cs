@@ -21,19 +21,24 @@ namespace Masuit.Tools.Net
     /// </summary>
     public class MultiThreadDownloader
     {
-        #region Variables
+        #region 变量
+
         /// <summary>
         /// 总下载进度更新事件
         /// </summary>
         public event EventHandler TotalProgressChanged;
+
         /// <summary>
         /// 文件合并事件
         /// </summary>
         public event FileMergeProgressChangedEventHandler FileMergeProgressChanged;
+
         private readonly AsyncOperation _aop;
+
         #endregion
 
-        #region DownloadManager
+        #region 下载管理器
+
         public MultiThreadDownloader(string sourceUrl, string tempDir, string savePath, int numOfParts)
         {
             _url = sourceUrl;
@@ -43,16 +48,19 @@ namespace Masuit.Tools.Net
             _aop = AsyncOperationManager.CreateOperation(null);
             FilePath = savePath;
         }
+
         public MultiThreadDownloader(string sourceUrl, string savePath, int numOfParts) : this(sourceUrl, null, savePath, numOfParts)
         {
             TempFileDirectory = Environment.GetEnvironmentVariable("temp");
         }
+
         public MultiThreadDownloader(string sourceUrl, int numOfParts) : this(sourceUrl, null, numOfParts)
         {
         }
+
         #endregion
 
-        #region Events
+        #region 事件
 
         private void temp_DownloadPartCompleted(object sender, EventArgs e)
         {
@@ -81,6 +89,7 @@ namespace Masuit.Tools.Net
                 WaitOrResumeAll(PartialDownloaderList, false);
                 return;
             }
+
             PartialDownloaderList[0].To = from - 1;
 
             WaitOrResumeAll(PartialDownloaderList, false);
@@ -109,9 +118,11 @@ namespace Masuit.Tools.Net
                 }
             }
         }
+
         #endregion
 
-        #region Helpers
+        #region 方法
+
         void CreateFirstPartitions()
         {
             Size = GetContentLength(_url, ref _rangeAllowed, ref _url);
@@ -131,6 +142,7 @@ namespace Masuit.Tools.Net
                 temp.Start();
             }
         }
+
         void MergeParts()
         {
             List<PartialDownloader> mergeOrderedList = SortPDsByFrom(PartialDownloaderList);
@@ -156,10 +168,12 @@ namespace Masuit.Tools.Net
                             }
                         }
                     }
+
                     File.Delete(item.FullPath);
                 }
             }
         }
+
         PartialDownloader CreateNewPd(int order, int parts, long contentLength)
         {
             int division = (int)contentLength / parts;
@@ -169,6 +183,7 @@ namespace Masuit.Tools.Net
             end += (order == parts - 1) ? remaining : 0;
             return new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), start, end, true);
         }
+
         public static void WaitOrResumeAll(List<PartialDownloader> list, bool wait)
         {
             foreach (PartialDownloader item in list)
@@ -199,11 +214,13 @@ namespace Masuit.Tools.Net
                 }
             }
         }
+
         //Sorts the downloader by From property to merge the parts
         public static List<PartialDownloader> SortPDsByFrom(List<PartialDownloader> list)
         {
             return list.OrderBy(x => x.From).ToList();
         }
+
         public static void OrderByRemaining(List<PartialDownloader> list)
         {
             BubbleSort(list);
@@ -214,17 +231,26 @@ namespace Masuit.Tools.Net
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
             req.UserAgent = "Mozilla/4.0 (compatible; MSIE 11.0; Windows NT 6.2; .NET CLR 1.0.3705;)";
             req.ServicePoint.ConnectionLimit = 4;
-            HttpWebResponse resp = req.GetResponse() as HttpWebResponse;
-            redirectedUrl = resp.ResponseUri.OriginalString;
-            long ctl = resp.ContentLength;
-            rangeAllowed = resp.Headers.AllKeys.Select((v, i) => new { HeaderName = v, HeaderValue = resp.Headers[i] }).Any(k => k.HeaderName.ToLower().Contains("range") && k.HeaderValue.ToLower().Contains("byte"));
-            resp.Close();
+            long ctl;
+            using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+            {
+                redirectedUrl = resp.ResponseUri.OriginalString;
+                ctl = resp.ContentLength;
+                rangeAllowed = resp.Headers.AllKeys.Select((v, i) => new
+                {
+                    HeaderName = v,
+                    HeaderValue = resp.Headers[i]
+                }).Any(k => k.HeaderName.ToLower().Contains("range") && k.HeaderValue.ToLower().Contains("byte"));
+                resp.Close();
+            }
+
             req.Abort();
             return ctl;
         }
+
         #endregion
 
-        #region Public Methods
+        #region 公共方法
 
         /// <summary>
         /// 暂停下载
@@ -273,21 +299,24 @@ namespace Masuit.Tools.Net
                 }
             }
         }
+
         #endregion
 
-        #region Property Variables
+        #region 属性
 
         private string _url;
         private bool _rangeAllowed;
 
         #endregion
 
-        #region Properties
+        #region 公共属性
+
         public bool RangeAllowed
         {
             get => _rangeAllowed;
             set => _rangeAllowed = value;
         }
+
         public string TempFileDirectory { get; set; }
 
         public string Url
@@ -310,6 +339,5 @@ namespace Masuit.Tools.Net
         public string FilePath { get; set; }
 
         #endregion
-
     }
 }

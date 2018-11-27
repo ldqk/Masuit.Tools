@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Masuit.Tools.Logging;
+using Microsoft.Win32;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +10,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Masuit.Tools.Logging;
-using Microsoft.Win32;
 
 namespace Masuit.Tools.Hardware
 {
@@ -122,6 +122,7 @@ namespace Masuit.Tools.Hardware
                         var mo = (ManagementObject)o;
                         if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
                     }
+
                     return availablebytes;
                 }
                 catch (Exception)
@@ -168,6 +169,7 @@ namespace Masuit.Tools.Hardware
                     string strTitle = sb.ToString();
                     if (!string.IsNullOrEmpty(strTitle)) apps.Add(strTitle);
                 }
+
                 hwCurr = GetWindow(hwCurr, GwHwndnext);
             }
 
@@ -272,6 +274,7 @@ namespace Masuit.Tools.Hardware
                 {
                     str += managementObject.Properties["CurrentTemperature"].Value.ToString();
                 }
+
                 //这就是CPU的温度了
                 double temp = (double.Parse(str) - 2732) / 10;
                 return Math.Round(temp, 2);
@@ -306,9 +309,8 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static string GetMemoryVData()
         {
-            string str;
             double d = GetCounterValue(MemoryCounter, "Memory", "% Committed Bytes In Use", null);
-            str = d.ToString("F") + "% (";
+            var str = d.ToString("F") + "% (";
 
             d = GetCounterValue(MemoryCounter, "Memory", "Committed Bytes", null);
             str += FormatBytes(d) + " / ";
@@ -334,6 +336,7 @@ namespace Masuit.Tools.Hardware
         {
             return GetCounterValue(MemoryCounter, "Memory", "Committed Bytes", null);
         }
+
         /// <summary>
         /// 获取虚拟内存总大小
         /// </summary>
@@ -450,6 +453,7 @@ namespace Masuit.Tools.Hardware
                         }
                     }
                 }
+
                 return list;
             }
             catch (Exception)
@@ -468,7 +472,6 @@ namespace Masuit.Tools.Hardware
             try
             {
                 IList<string> list = new List<string>();
-                var st = "";
                 ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
                 using (mc)
                 {
@@ -479,19 +482,22 @@ namespace Masuit.Tools.Hardware
                         {
                             if ((bool)mo["IPEnabled"])
                             {
-                                st = mo["IpAddress"].ToString();
                                 var ar = (Array)(mo.Properties["IpAddress"].Value);
-                                st = ar.GetValue(0).ToString();
+                                var st = ar.GetValue(0).ToString();
                                 list.Add(st);
                             }
                         }
+
                         return list;
                     }
                 }
             }
             catch (Exception)
             {
-                return new List<string>() { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" };
+                return new List<string>()
+                {
+                    "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
+                };
             }
         }
 
@@ -507,6 +513,7 @@ namespace Masuit.Tools.Hardware
             {
                 return m.Groups[2].Value;
             }
+
             try
             {
                 System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient();
@@ -539,7 +546,8 @@ namespace Masuit.Tools.Hardware
 
                 Process proc = new Process
                 {
-                    StartInfo = {
+                    StartInfo =
+                    {
                         FileName = filename,
                         CreateNoWindow = true,
                         Arguments = arguments,
@@ -551,12 +559,14 @@ namespace Masuit.Tools.Hardware
 
                 using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
                 {
-                    Thread.Sleep(100);           //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                                                 //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
-                    if (!proc.HasExited)         //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                    {                            //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                    //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
+                    {
+                        //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
                         proc.Kill();
                     }
+
                     string txt = sr.ReadToEnd();
                     sr.Close();
                     if (recordLog)
@@ -586,6 +596,7 @@ namespace Masuit.Tools.Hardware
                 return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
+
         #region 将速度值格式化成字节单位
 
         /// <summary>
@@ -601,6 +612,7 @@ namespace Masuit.Tools.Hardware
                 bytes /= 1024;
                 ++unit;
             }
+
             string s = CompactFormat ? ((int)bytes).ToString() : bytes.ToString("F") + " ";
             return s + (Unit)unit;
         }
@@ -622,6 +634,7 @@ namespace Masuit.Tools.Hardware
             {
                 return ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
             }
+
             return DateTime.Now - TimeSpan.FromMilliseconds(Environment.TickCount & Int32.MaxValue);
         }
 
@@ -682,11 +695,15 @@ namespace Masuit.Tools.Hardware
                         }
                     }
                 }
+
                 return dic;
             }
             catch (Exception)
             {
-                return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
+                return new Dictionary<string, string>()
+                {
+                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                };
             }
         }
 
@@ -712,6 +729,7 @@ namespace Masuit.Tools.Hardware
                         }
                     }
                 }
+
                 return dic;
             }
             catch (Exception)
@@ -744,11 +762,15 @@ namespace Masuit.Tools.Hardware
                         }
                     }
                 }
+
                 return dic;
             }
             catch (Exception)
             {
-                return new Dictionary<string, string>() { { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" } };
+                return new Dictionary<string, string>()
+                {
+                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                };
             }
         }
 
@@ -775,11 +797,15 @@ namespace Masuit.Tools.Hardware
                         }
                     }
                 }
+
                 return dic;
             }
             catch (Exception)
             {
-                return new Dictionary<string, double>() { { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 } };
+                return new Dictionary<string, double>()
+                {
+                    { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
+                };
             }
         }
 
@@ -815,7 +841,6 @@ namespace Masuit.Tools.Hardware
         public static extern uint GetIfTable(byte[] pIfTable, ref uint pdwSize, bool bOrder);
 
         [DllImport("User32")]
-        // ReSharper disable once MissingXmlDoc
         public static extern int GetWindow(int hWnd, int wCmd);
 
         [DllImport("User32")]

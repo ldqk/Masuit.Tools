@@ -1,18 +1,18 @@
-﻿using System;
+﻿using Ganss.XSS;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
-using Ganss.XSS;
-using Masuit.Tools.Core.Logging;
 
-namespace Masuit.Tools.Core.Html
+namespace Masuit.Tools.Html
 {
     /// <summary>
     /// html工具类
@@ -20,6 +20,7 @@ namespace Masuit.Tools.Core.Html
     public static partial class HtmlTools
     {
         #region 防止html的xss净化器
+
         /// <summary>
         /// 标准的防止html的xss净化器
         /// </summary>
@@ -77,11 +78,15 @@ namespace Masuit.Tools.Core.Html
                     sanitizer.AllowedCssProperties.Remove(p);
                 }
             }
+
             sanitizer.KeepChildNodes = true;
             return sanitizer.Sanitize(html);
         }
+
         #endregion
+
         #region BaseMethod
+
         /// <summary>
         /// 多个匹配内容
         /// </summary>
@@ -95,15 +100,9 @@ namespace Masuit.Tools.Core.Html
             MatchCollection mcs = re.Matches(sInput);
             foreach (Match mc in mcs)
             {
-                if (iGroupIndex > 0)
-                {
-                    list.Add(mc.Groups[iGroupIndex].Value);
-                }
-                else
-                {
-                    list.Add(mc.Value);
-                }
+                list.Add(iGroupIndex > 0 ? mc.Groups[iGroupIndex].Value : mc.Value);
             }
+
             return list;
         }
 
@@ -120,15 +119,9 @@ namespace Masuit.Tools.Core.Html
             MatchCollection mcs = re.Matches(sInput);
             foreach (Match mc in mcs)
             {
-                if (sGroupName != "")
-                {
-                    list.Add(mc.Groups[sGroupName].Value);
-                }
-                else
-                {
-                    list.Add(mc.Value);
-                }
+                list.Add(string.IsNullOrEmpty(sGroupName) ? mc.Value : mc.Groups[sGroupName].Value);
             }
+
             return list;
         }
 
@@ -145,15 +138,9 @@ namespace Masuit.Tools.Core.Html
             string result = "";
             if (mc.Success)
             {
-                if (iGroupIndex > 0)
-                {
-                    result = mc.Groups[iGroupIndex].Value;
-                }
-                else
-                {
-                    result = mc.Value;
-                }
+                result = iGroupIndex > 0 ? mc.Groups[iGroupIndex].Value : mc.Value;
             }
+
             return result;
         }
 
@@ -170,15 +157,9 @@ namespace Masuit.Tools.Core.Html
             string result = "";
             if (mc.Success)
             {
-                if (sGroupName != "")
-                {
-                    result = mc.Groups[sGroupName].Value;
-                }
-                else
-                {
-                    result = mc.Value;
-                }
+                result = string.IsNullOrEmpty(sGroupName) ? mc.Value : mc.Groups[sGroupName].Value;
             }
+
             return result;
         }
 
@@ -195,15 +176,9 @@ namespace Masuit.Tools.Core.Html
             MatchCollection mcs = re.Matches(sInput);
             foreach (Match mc in mcs)
             {
-                if (iGroupIndex > 0)
-                {
-                    sInput = sInput.Replace(mc.Groups[iGroupIndex].Value, sReplace);
-                }
-                else
-                {
-                    sInput = sInput.Replace(mc.Value, sReplace);
-                }
+                sInput = sInput.Replace(iGroupIndex > 0 ? mc.Groups[iGroupIndex].Value : mc.Value, sReplace);
             }
+
             return sInput;
         }
 
@@ -220,15 +195,9 @@ namespace Masuit.Tools.Core.Html
             MatchCollection mcs = re.Matches(sInput);
             foreach (Match mc in mcs)
             {
-                if (sGroupName != "")
-                {
-                    sInput = sInput.Replace(mc.Groups[sGroupName].Value, sReplace);
-                }
-                else
-                {
-                    sInput = sInput.Replace(mc.Value, sReplace);
-                }
+                sInput = sInput.Replace(sGroupName != "" ? mc.Groups[sGroupName].Value : mc.Value, sReplace);
             }
+
             return sInput;
         }
 
@@ -251,6 +220,7 @@ namespace Masuit.Tools.Core.Html
 
                 list.Add(s.Trim());
             }
+
             return list;
         }
 
@@ -306,6 +276,7 @@ namespace Masuit.Tools.Core.Html
         #endregion 获得特定内容
 
         #region 根据表达式，获得文章内容
+
         /// <summary>
         /// 文章标题
         /// </summary>
@@ -319,6 +290,7 @@ namespace Masuit.Tools.Core.Html
             {
                 sTitle = sTitle.Substring(0, 99);
             }
+
             return sTitle;
         }
 
@@ -337,7 +309,7 @@ namespace Masuit.Tools.Core.Html
         /// <param name="sInput">输入内容</param>
         public static string GetHtml(string sInput)
         {
-            return Replace(sInput, @"(?<Head>[^<]+)<", "", "Head");
+            return Replace(sInput, "(?<Head>[^<]+)<", "", "Head");
         }
 
         /// <summary>
@@ -369,7 +341,10 @@ namespace Masuit.Tools.Core.Html
             string sSource = GetText(sInput, sRegex, "Source");
             sSource = ClearTag(sSource);
             if (sSource.Length > 99)
+            {
                 sSource = sSource.Substring(0, 99);
+            }
+
             return sSource;
         }
 
@@ -383,7 +358,10 @@ namespace Masuit.Tools.Core.Html
             string sAuthor = GetText(sInput, sRegex, "Author");
             sAuthor = ClearTag(sAuthor);
             if (sAuthor.Length > 99)
+            {
                 sAuthor = sAuthor.Substring(0, 99);
+            }
+
             return sAuthor;
         }
 
@@ -405,7 +383,7 @@ namespace Masuit.Tools.Core.Html
         public static string GetUrl(string sInput, string sRelativeUrl)
         {
             string sReturnUrl = "";
-            string sUrl = _GetStandardUrlDepth(sInput);//返回了http://www.163.com/news/这种形式
+            string sUrl = _GetStandardUrlDepth(sInput); //返回了http://www.163.com/news/这种形式
 
             if (sRelativeUrl.ToLower().StartsWith("http") || sRelativeUrl.ToLower().StartsWith("https"))
             {
@@ -422,11 +400,14 @@ namespace Masuit.Tools.Core.Html
                 {
                     string temp = sUrl.Substring(0, sUrl.LastIndexOf("/")); // CString.GetPreStrByLast(sUrl, "/");
                     if (temp.Length > 6)
-                    {//temp != "http:/"，否则的话，说明已经回溯到尽头了，"../"与网址的层次对应不上。存在这种情况，网页上面的链接是错误的，但浏览器还能正常显示
+                    {
+                        //temp != "http:/"，否则的话，说明已经回溯到尽头了，"../"与网址的层次对应不上。存在这种情况，网页上面的链接是错误的，但浏览器还能正常显示
                         sUrl = temp;
                     }
+
                     sRelativeUrl = sRelativeUrl.Substring(3);
                 }
+
                 sReturnUrl = sUrl + "/" + sRelativeUrl.Trim();
             }
             else if (sRelativeUrl.StartsWith("./"))
@@ -434,9 +415,11 @@ namespace Masuit.Tools.Core.Html
                 sReturnUrl = sUrl + sRelativeUrl.Trim().Substring(2);
             }
             else if (sRelativeUrl.Trim() != "")
-            {//2007images/modecss.css
+            {
+                //2007images/modecss.css
                 sReturnUrl = sUrl + sRelativeUrl.Trim();
             }
+
             return sReturnUrl;
         }
 
@@ -461,14 +444,17 @@ namespace Masuit.Tools.Core.Html
 
             int p = sheep.LastIndexOf("/");
             if (p == -1)
-            {//www.163.com
+            {
+                //www.163.com
                 sheep += "/";
             }
             else if (p == sheep.Length - 1)
-            {//传来的是：http://www.163.com/news/
+            {
+                //传来的是：http://www.163.com/news/
             }
             else if (sheep.Substring(p).IndexOf(".") != -1)
-            {//传来的是：http://www.163.com/news/hello.htm 这种形式
+            {
+                //传来的是：http://www.163.com/news/hello.htm 这种形式
                 sheep = sheep.Substring(0, p + 1);
             }
             else
@@ -487,10 +473,9 @@ namespace Masuit.Tools.Core.Html
         {
             List<string> list = Split(sInput, "(,|，|\\+|＋|。|;|；|：|:|“)|”|、|_|\\(|（|\\)|）", 2);
             List<string> listReturn = new List<string>();
-            Regex re;
             foreach (string str in list)
             {
-                re = new Regex(@"[a-zA-z]+", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                var re = new Regex("[a-zA-z]+", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
                 MatchCollection mcs = re.Matches(str);
                 string sTemp = str;
                 foreach (Match mc in mcs)
@@ -499,8 +484,8 @@ namespace Masuit.Tools.Core.Html
                         listReturn.Add(mc.Value);
                     sTemp = sTemp.Replace(mc.Value, ",");
                 }
-                re = new Regex(@",{1}", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
-                mcs = re.Matches(sTemp);
+
+                re = new Regex(",{1}", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
                 foreach (string s in re.Split(sTemp))
                 {
                     if (s.Trim().Length <= 2)
@@ -508,6 +493,7 @@ namespace Masuit.Tools.Core.Html
                     listReturn.Add(s);
                 }
             }
+
             string sReturn = "";
             for (int i = 0; i < listReturn.Count - 1; i++)
             {
@@ -519,15 +505,14 @@ namespace Masuit.Tools.Core.Html
                     }
                 }
             }
+
             foreach (string str in listReturn)
             {
                 if (str.Length > 2)
                     sReturn += str + ",";
             }
-            if (sReturn.Length > 0)
-                sReturn = sReturn.Substring(0, sReturn.Length - 1);
-            else
-                sReturn = sInput;
+
+            sReturn = sReturn.Length > 0 ? sReturn.Substring(0, sReturn.Length - 1) : sInput;
             if (sReturn.Length > 99)
                 sReturn = sReturn.Substring(0, 99);
             return sReturn;
@@ -550,7 +535,10 @@ namespace Masuit.Tools.Core.Html
             sFormartted = Regex.Replace(sFormartted, @"<iframe[^>]*>[\s\S]*?</iframe>", "", RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
             Regex r = new Regex(@"<input[\s\S]+?>|<form[\s\S]+?>|</form[\s\S]*?>|<select[\s\S]+?>?</select>|<textarea[\s\S]*?>?</textarea>|<file[\s\S]*?>|<noscript>|</noscript>", RegexOptions.IgnoreCase);
             sFormartted = r.Replace(sFormartted, "");
-            string[] sOtherReg = sOtherRemoveReg.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] sOtherReg = sOtherRemoveReg.Split(new string[]
+            {
+                "\r\n"
+            }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string sRemoveReg in sOtherReg)
             {
                 sFormartted = Replace(sFormartted, sRemoveReg, "", 0);
@@ -567,10 +555,10 @@ namespace Masuit.Tools.Core.Html
                 {
                     switch (Convert.ToInt32(dr["Type"]))
                     {
-                        case 1://置换
+                        case 1: //置换
                             sFormartted = sFormartted.Replace(dr["imgUrl"].ToString(), "http://stat.580k.com/t.asp?url=");
                             break;
-                        default://附加
+                        default: //附加
                             sFormartted = sFormartted.Replace(dr["imgUrl"].ToString(), "http://stat.580k.com/t.asp?url=" + dr["imgUrl"].ToString());
                             break;
                     }
@@ -636,6 +624,7 @@ namespace Masuit.Tools.Core.Html
         #endregion 根据表达式，获得文章内容
 
         #region HTML相关操作
+
         /// <summary>
         /// 清除html标签
         /// </summary>
@@ -649,6 +638,7 @@ namespace Masuit.Tools.Core.Html
             Regex re = new Regex(@"(<[^>\s]*\b(\w)+\b[^>]*>)|(<>)|(&nbsp;)|(&gt;)|(&lt;)|(&amp;)|\r|\n|\t", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             return re.Replace(sHtml, "");
         }
+
         /// <summary>
         /// 根据正则清除html标签
         /// </summary>
@@ -661,6 +651,7 @@ namespace Masuit.Tools.Core.Html
             Regex re = new Regex(sRegex, RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             return re.Replace(sHtml, "");
         }
+
         /// <summary>
         /// 将html转换成js代码
         /// </summary>
@@ -675,6 +666,7 @@ namespace Masuit.Tools.Core.Html
             {
                 sText.Append("document.writeln(\"" + strLine.Replace("\"", "\\\"") + "\");\r\n");
             }
+
             return sText.ToString();
         }
 
@@ -714,12 +706,14 @@ namespace Masuit.Tools.Core.Html
             {
                 str = DelTag(str, sr1, isContent);
             }
+
             return str;
         }
 
         #endregion HTML相关操作
 
         #region 根据内容获得链接
+
         /// <summary>
         /// 根据内容获得链接
         /// </summary>
@@ -730,7 +724,7 @@ namespace Masuit.Tools.Core.Html
             string strReturn = "";
             Regex re = new Regex(@"<a\s+[^>]*href\s*=\s*(?:'(?<href>[^']+)'|""(?<href>[^""]+)""|(?<href>[^>\s]+))\s*[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
             Regex js = new Regex(@"(href|onclick)=[^>]+javascript[^>]+(('(?<href>[\w\d/-]+\.[^']*)')|(&quot;(?<href>[\w\d/-]+\.[^;]*)&quot;))[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace);
-            Match mc = js.Match(sContent);//获取javascript中的链接，有待改进
+            Match mc = js.Match(sContent); //获取javascript中的链接，有待改进
             if (mc.Success)
             {
                 strReturn = mc.Groups["href"].Value;
@@ -748,6 +742,7 @@ namespace Masuit.Tools.Core.Html
 
             return strReturn;
         }
+
         /// <summary>
         /// 根据链接得到文本
         /// </summary>
@@ -770,8 +765,7 @@ namespace Masuit.Tools.Core.Html
 
         private static void _GetLinks(string sContent, string sUrl, ref Dictionary<string, string> lisA)
         {
-            const string sFilter =
-@"首页|下载|中文|English|反馈|讨论区|投诉|建议|联系|关于|about|诚邀|工作|简介|新闻|掠影|风采
+            const string sFilter = @"首页|下载|中文|English|反馈|讨论区|投诉|建议|联系|关于|about|诚邀|工作|简介|新闻|掠影|风采
 |登录|注销|注册|使用|体验|立即|收藏夹|收藏|添加|加入
 |更多|more|专题|精选|热卖|热销|推荐|精彩
 |加盟|联盟|友情|链接|相关
@@ -788,10 +782,10 @@ namespace Masuit.Tools.Core.Html
                 Match mc = mcs[i];
                 string strHref = GetLink(mc.Value).Trim();
 
-                strHref = strHref.Replace("\\\"", "");//针对JS输出链接
+                strHref = strHref.Replace("\\\"", ""); //针对JS输出链接
                 strHref = strHref.Replace("\\\'", "");
 
-                string strTemp = RemoveByReg(strHref, @"^http.*/$");//屏蔽以“http”开头“/”结尾的链接地址
+                string strTemp = RemoveByReg(strHref, @"^http.*/$"); //屏蔽以“http”开头“/”结尾的链接地址
                 if (strTemp.Length < 2)
                 {
                     continue;
@@ -804,6 +798,7 @@ namespace Masuit.Tools.Core.Html
                 {
                     continue;
                 }
+
                 if (re2.IsMatch(strText))
                 {
                     continue;
@@ -811,7 +806,7 @@ namespace Masuit.Tools.Core.Html
 
                 //换上绝对地址
                 strHref = GetUrlByRelative(sUrl, strHref);
-                if (strHref.Length <= 18)//例如，http://www.163.com = 18
+                if (strHref.Length <= 18) //例如，http://www.163.com = 18
                 {
                     continue;
                 }
@@ -823,7 +818,12 @@ namespace Masuit.Tools.Core.Html
                 {
                     strHref = strHref.Substring(0, charIndex);
                 }
-                strHref = strHref.Trim(new char[] { '/', '\\' });
+
+                strHref = strHref.Trim(new char[]
+                {
+                    '/',
+                    '\\'
+                });
                 string tmpDomainURL = GetDomain(strHref);
                 if (strHref.Equals(tmpDomainURL, StringComparison.OrdinalIgnoreCase))
                 {
@@ -874,96 +874,55 @@ namespace Masuit.Tools.Core.Html
             XmlDocument xml = new XmlDocument();
 
             //RSS2.0
-            try
+            xml.LoadXml(sContent.Trim());
+            XmlNodeList nodes = xml.SelectNodes("/rss/channel/item");
+            if (nodes.Count > 0)
             {
-                xml.LoadXml(sContent.Trim());
-                XmlNodeList nodes = xml.SelectNodes("/rss/channel/item");
-                if (nodes.Count > 0)
+                for (int i = nodes.Count - 1; i >= 0; i--)
                 {
-                    for (int i = nodes.Count - 1; i >= 0; i--)
-                    {
-                        try
-                        {
-                            string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("link").InnerText);
-                            listResult.Add(sLink, nodes[i].SelectSingleNode("title").InnerText);
-                            lisDes.Add(sLink, nodes[i].SelectSingleNode("description").InnerText);
-                        }
-                        catch (Exception e)
-                        {
-                            LogManager.Error(e);
-                        }
-                    }
-                    return listResult;
+                    string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("link").InnerText);
+                    listResult.Add(sLink, nodes[i].SelectSingleNode("title").InnerText);
+                    lisDes.Add(sLink, nodes[i].SelectSingleNode("description").InnerText);
                 }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+
+                return listResult;
             }
 
             //RSS1.0（RDF）
-            try
+            XmlNamespaceManager nsMgr = new XmlNamespaceManager(xml.NameTable);
+            nsMgr.AddNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            nsMgr.AddNamespace("rss", "http://purl.org/rss/1.0/");
+            nodes = xml.SelectNodes("/rdf:RDF//rss:item", nsMgr);
+            if (nodes.Count > 0)
             {
-                XmlNamespaceManager nsMgr = new XmlNamespaceManager(xml.NameTable);
-                nsMgr.AddNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-                nsMgr.AddNamespace("rss", "http://purl.org/rss/1.0/");
-                XmlNodeList nodes = xml.SelectNodes("/rdf:RDF//rss:item", nsMgr);
-                if (nodes.Count > 0)
+                for (int i = nodes.Count - 1; i >= 0; i--)
                 {
-                    for (int i = nodes.Count - 1; i >= 0; i--)
-                    {
-                        try
-                        {
-                            string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("rss:link", nsMgr).InnerText);
-                            listResult.Add(sLink, nodes[i].SelectSingleNode("rss:title", nsMgr).InnerText);
-                            lisDes.Add(sLink, nodes[i].SelectSingleNode("rss:description", nsMgr).InnerText);
-                        }
-                        catch (Exception e)
-                        {
-                            LogManager.Error(e);
-                        }
-                        //listResult.Add("<a href=\"" + nodes[i].SelectSingleNode("rss:link",nsMgr).InnerText + "\">" + nodes[i].SelectSingleNode("rss:title",nsMgr).InnerText + "</a>");
-                    }
-                    return listResult;
+                    string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("rss:link", nsMgr).InnerText);
+                    listResult.Add(sLink, nodes[i].SelectSingleNode("rss:title", nsMgr).InnerText);
+                    lisDes.Add(sLink, nodes[i].SelectSingleNode("rss:description", nsMgr).InnerText);
                 }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+
+                return listResult;
             }
 
             //RSS ATOM
-            try
+            nsMgr.AddNamespace("atom", "http://purl.org/atom/ns#");
+            nodes = xml.SelectNodes("/atom:feed/atom:entry", nsMgr);
+            if (nodes.Count > 0)
             {
-                XmlNamespaceManager nsMgr = new XmlNamespaceManager(xml.NameTable);
-                nsMgr.AddNamespace("atom", "http://purl.org/atom/ns#");
-                XmlNodeList nodes = xml.SelectNodes("/atom:feed/atom:entry", nsMgr);
-                if (nodes.Count > 0)
+                for (int i = nodes.Count - 1; i >= 0; i--)
                 {
-                    for (int i = nodes.Count - 1; i >= 0; i--)
-                    {
-                        try
-                        {
-                            string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("atom:link", nsMgr).Attributes["href"].InnerText);
-                            listResult.Add(sLink, nodes[i].SelectSingleNode("atom:title", nsMgr).InnerText);
-                            lisDes.Add(sLink, nodes[i].SelectSingleNode("atom:content", nsMgr).InnerText);
-                        }
-                        catch (Exception e)
-                        {
-                            LogManager.Error(e);
-                        }
-                        //listResult.Add("<a href=\"" + nodes[i].SelectSingleNode("atom:link",nsMgr).Attributes["href"].InnerText + "\">" + nodes[i].SelectSingleNode("atom:title",nsMgr).InnerText + "</a>");
-                    }
-                    return listResult;
+                    string sLink = GetUrlByRelative(sUrl, nodes[i].SelectSingleNode("atom:link", nsMgr).Attributes["href"].InnerText);
+                    listResult.Add(sLink, nodes[i].SelectSingleNode("atom:title", nsMgr).InnerText);
+                    lisDes.Add(sLink, nodes[i].SelectSingleNode("atom:content", nsMgr).InnerText);
                 }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+
+                return listResult;
             }
 
             return listResult;
         }
+
         /// <summary>
         ///  从RSS FEED中读取标题
         /// </summary>
@@ -975,15 +934,8 @@ namespace Masuit.Tools.Core.Html
             XmlDocument xml = new XmlDocument();
 
             //RSS2.0
-            try
-            {
-                xml.LoadXml(sContent.Trim());
-                title = xml.SelectSingleNode("/rss/channel/title").InnerText;
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
-            }
+            xml.LoadXml(sContent.Trim());
+            title = xml.SelectSingleNode("/rss/channel/title").InnerText;
 
             return title;
         }
@@ -1002,6 +954,7 @@ namespace Masuit.Tools.Core.Html
             {
                 sContent = sContent.Replace(mc.Value, "");
             }
+
             return sContent;
         }
 
@@ -1033,9 +986,11 @@ namespace Masuit.Tools.Core.Html
             sContent = re.Replace(sContent, "");
             return sContent;
         }
+
         #endregion 根据超链接地址获取页面内容
 
         #region 根据内容作字符串分析
+
         /// <summary>
         /// 根据标签获取文本
         /// </summary>
@@ -1053,6 +1008,7 @@ namespace Masuit.Tools.Core.Html
             {
                 str = RemoveEndWith(str, "_");
             }
+
             return str;
         }
 
@@ -1098,6 +1054,7 @@ namespace Masuit.Tools.Core.Html
                         }
                     }
                 }
+
                 Uri myUri = new Uri(baseUri, sRUrl);
                 return myUri.AbsoluteUri;
             }
@@ -1122,6 +1079,7 @@ namespace Masuit.Tools.Core.Html
             {
                 list.Add(mc.Groups["href"].Value);
             }
+
             return list;
         }
 
@@ -1168,7 +1126,7 @@ namespace Masuit.Tools.Core.Html
             content = ReplaceByReg(content, "", @"[\f\n\r\v]+");
 
             content = RemoveByReg(content, @"<a(\s+[^>]*)*>[\s\S]*?</a>");
-            content = RemoveByReg(content, "<[^>]+>");//去除各种HTML标记，获得纯内容
+            content = RemoveByReg(content, "<[^>]+>"); //去除各种HTML标记，获得纯内容
 
             content = content.Replace("\n", "");
             content = content.Replace("\r", "");
@@ -1189,7 +1147,7 @@ namespace Masuit.Tools.Core.Html
             del = @"(<script[^>]*>[\s\S]*?</script>)|(<IFRAME[^>]*>[\s\S]*?</IFRAME>)|(<style[^>]*>[\s\S]*?</style>|<title[^>]*>[\s\S]*?</title>|<meta[^>]*>|<option[^>]*>[\s\S]*?</option>)";
             content = RemoveByReg(content, del);
 
-            del = @"(&nbsp;)|([\t]+)";//del = @"(&nbsp;)|([\n\t]+)";
+            del = @"(&nbsp;)|([\t]+)"; //del = @"(&nbsp;)|([\n\t]+)";
             content = RemoveByReg(content, del);
 
             string re = @"(<table(\s+[^>]*)*>)|(<td(\s+[^>]*)*>)|(<tr(\s+[^>]*)*>)|(<p(\s+[^>]*)*>)|(<div(\s+[^>]*)*>)|(<ul(\s+[^>]*)*>)|(<li(\s+[^>]*)*>)|</table>|</td>|</tr>|</p>|<br>|</div>|</li>|</ul>|<p />|<br />";
@@ -1197,11 +1155,12 @@ namespace Masuit.Tools.Core.Html
             //content = CText.ReplaceByReg(content, "", @"[\f\n\r\v]+");
 
             content = RemoveByReg(content, @"<a(\s+[^>]*)*>[\s\S]*?</a>");
-            content = RemoveByReg(content, "<[^>]+>");//去除各种HTML标记，获得纯内容
+            content = RemoveByReg(content, "<[^>]+>"); //去除各种HTML标记，获得纯内容
             content = content.Trim();
 
             return content;
         }
+
         #endregion
 
         /// <summary>
@@ -1218,6 +1177,7 @@ namespace Masuit.Tools.Core.Html
         }
 
         #region 根据超链接地址获取页面内容
+
         /// <summary>
         /// 根据超链接地址获取页面内容
         /// </summary>
@@ -1251,7 +1211,7 @@ namespace Masuit.Tools.Core.Html
 
             try
             {
-                HttpWebResponse response = _MyGetResponse(sUrl);
+                HttpWebResponse response = MyGetResponse(sUrl);
                 if (response == null)
                 {
                     return content;
@@ -1266,7 +1226,8 @@ namespace Masuit.Tools.Core.Html
 
                 string charset = "";
                 if (string.IsNullOrEmpty(sCoding) || string.Equals(sCoding, "auto", StringComparison.CurrentCultureIgnoreCase))
-                {//如果不指定编码，那么系统代为指定
+                {
+                    //如果不指定编码，那么系统代为指定
                     //首先，从返回头信息中寻找
                     string ht = response.GetResponseHeader("Content-Type");
                     response.Close();
@@ -1276,7 +1237,8 @@ namespace Masuit.Tools.Core.Html
                     charset = (m.Captures.Count != 0) ? m.Result("${charset}") : "";
                     if (charset == "-8") charset = "utf-8";
                     if (charset?.Length == 0)
-                    {//找不到，则在文件信息本身中查找
+                    {
+                        //找不到，则在文件信息本身中查找
                         //先按gb2312来获取文件信息
                         content = System.Text.Encoding.GetEncoding("gb2312").GetString(buffer);
 
@@ -1284,10 +1246,12 @@ namespace Masuit.Tools.Core.Html
                         r = new Regex(regCharSet, RegexOptions.IgnoreCase);
                         m = r.Match(content);
                         if (m.Captures.Count == 0)
-                        {//没办法，都找不到编码，只能返回按"gb2312"获取的信息
+                        {
+                            //没办法，都找不到编码，只能返回按"gb2312"获取的信息
                             //content = CText.RemoveByReg(content, @"<!--[\s\S]*?-->");
                             return content;
                         }
+
                         charset = m.Result("${charset}");
                     }
                 }
@@ -1302,7 +1266,8 @@ namespace Masuit.Tools.Core.Html
                     content = System.Text.Encoding.GetEncoding(charset).GetString(buffer);
                 }
                 catch (ArgumentException)
-                {//指定的编码不可识别
+                {
+                    //指定的编码不可识别
                     content = Encoding.GetEncoding("gb2312").GetString(buffer);
                 }
 
@@ -1316,25 +1281,19 @@ namespace Masuit.Tools.Core.Html
             return content;
         }
 
-        private static HttpWebResponse _MyGetResponse(string sUrl)
+        private static HttpWebResponse MyGetResponse(string sUrl)
         {
             int iTimeOut = 10000;
-            //try
-            //{
-            //    //iTimeOut = int.Parse(System.Configuration.ConfigurationManager.AppSettings["SocketTimeOut"]);
-            //}
-            //catch { iTimeOut = 10000; }
-
             bool bCookie = false;
             bool bRepeat = false;
             Uri target = new Uri(sUrl);
 
-ReCatch:
+            ReCatch:
             try
             {
                 HttpWebRequest resquest = (HttpWebRequest)WebRequest.Create(target);
                 resquest.MaximumResponseHeadersLength = -1;
-                resquest.ReadWriteTimeout = 120000;//120秒就超时
+                resquest.ReadWriteTimeout = 120000; //120秒就超时
                 resquest.Timeout = iTimeOut;
                 resquest.MaximumAutomaticRedirections = 50;
                 resquest.MaximumResponseHeadersLength = 5;
@@ -1343,20 +1302,20 @@ ReCatch:
                 {
                     resquest.CookieContainer = new CookieContainer();
                 }
+
                 resquest.UserAgent = "Mozilla/6.0 (compatible; MSIE 6.0; Windows NT 5.1)";
-                //resquest.UserAgent = @"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.1) Web-Sniffer/1.0.24";
-                //resquest.KeepAlive = true;
                 return (HttpWebResponse)resquest.GetResponse();
             }
             catch (WebException)
             {
-                if (!bRepeat)
+                if (bRepeat)
                 {
-                    bRepeat = true;
-                    bCookie = true;
-                    goto ReCatch;
+                    return null;
                 }
-                return null;
+
+                bRepeat = true;
+                bCookie = true;
+                goto ReCatch;
             }
             catch
             {
@@ -1369,25 +1328,19 @@ ReCatch:
             ArrayList arBuffer = new ArrayList();
             const int BUFFSIZE = 4096;
 
-            try
+            byte[] buffer = new byte[BUFFSIZE];
+            int count = stream.Read(buffer, 0, BUFFSIZE);
+            while (count > 0)
             {
-                byte[] buffer = new byte[BUFFSIZE];
-                int count = stream.Read(buffer, 0, BUFFSIZE);
-                while (count > 0)
+                for (int i = 0; i < count; i++)
                 {
-                    for (int i = 0; i < count; i++)
-                    {
-                        arBuffer.Add(buffer[i]);
-                    }
-                    count = stream.Read(buffer, 0, BUFFSIZE);
+                    arBuffer.Add(buffer[i]);
                 }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+
+                count = stream.Read(buffer, 0, BUFFSIZE);
             }
 
-            return (byte[])arBuffer.ToArray(System.Type.GetType("System.Byte"));
+            return (byte[])arBuffer.ToArray(typeof(byte));
         }
 
         /// <summary>
@@ -1399,20 +1352,13 @@ ReCatch:
         {
             string sHead = "";
             Uri uri = new Uri(sUrl);
-            try
+            WebRequest req = WebRequest.Create(uri);
+            WebResponse resp = req.GetResponse();
+            WebHeaderCollection headers = resp.Headers;
+            string[] sKeys = headers.AllKeys;
+            foreach (string sKey in sKeys)
             {
-                WebRequest req = WebRequest.Create(uri);
-                WebResponse resp = req.GetResponse();
-                WebHeaderCollection headers = resp.Headers;
-                string[] sKeys = headers.AllKeys;
-                foreach (string sKey in sKeys)
-                {
-                    sHead += sKey + ":" + headers[sKey] + "\r\n";
-                }
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
+                sHead += sKey + ":" + headers[sKey] + "\r\n";
             }
             return sHead;
         }
@@ -1452,12 +1398,13 @@ ReCatch:
                 m = m.NextMatch();
             }
 
-            return (string[])alFrame.ToArray(System.Type.GetType("System.String"));
+            return (string[])alFrame.ToArray(typeof(string));
         }
 
         #endregion 根据超链接地址获取页面内容
 
         #region 获得多个页面
+
         /// <summary>
         /// 获得多个页面
         /// </summary>
@@ -1465,32 +1412,27 @@ ReCatch:
         /// <param name="sCoding">文件编码</param>
         /// <returns>页面集合</returns>
         /// <exception cref="Exception"> </exception>
-        public static List<KeyValuePair<int, string>> GetHtmlByUrlList(List<KeyValuePair<int, string>> listUrl, string sCoding)
+        public static Dictionary<int, string> GetHtmlByUrlList(Dictionary<int, string> listUrl, string sCoding)
         {
             int iTimeOut = 120000;
             StringBuilder sbHtml = new StringBuilder();
-            List<KeyValuePair<int, string>> listResult = new List<KeyValuePair<int, string>>();
-            Socket sock = null;
-            try
+            Dictionary<int, string> listResult = new Dictionary<int, string>();
+            // 初始化				
+            Uri site = new Uri(listUrl.FirstOrDefault().Value);
+            var ipHostInfo = Dns.GetHostEntry(site.Host);
+            IPAddress ipAddress = ipHostInfo.AddressList[0];
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, site.Port);
+            using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
-                // 初始化				
-                Uri site = new Uri(listUrl[0].Value);
-                var ipHostInfo = Dns.GetHostEntry(site.Host);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, site.Port);
-                sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                sock.SendTimeout = iTimeOut;
-                sock.ReceiveTimeout = iTimeOut;
+                SendTimeout = iTimeOut,
+                ReceiveTimeout = iTimeOut
+            })
+            {
                 sock.Connect(remoteEP);
                 foreach (KeyValuePair<int, string> kvUrl in listUrl)
                 {
                     site = new Uri(kvUrl.Value);
-                    string sendMsg = "GET " + HttpUtility.UrlDecode(site.PathAndQuery) + " HTTP/1.1\r\n" +
-                        "Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, application/vnd.ms-powerpoint, */*\r\n" +
-                        "Accept-Language:en-us\r\n" +
-                        "Accept-Encoding:gb2312, deflate\r\n" +
-                        "User-Agent: Mozilla/4.0\r\n" +
-                        "Host: " + site.Host + "\r\n\r\n" + '\0';
+                    string sendMsg = "GET " + HttpUtility.UrlDecode(site.PathAndQuery) + " HTTP/1.1\r\n" + "Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/msword, application/vnd.ms-powerpoint, */*\r\n" + "Accept-Language:en-us\r\n" + "Accept-Encoding:gb2312, deflate\r\n" + "User-Agent: Mozilla/4.0\r\n" + "Host: " + site.Host + "\r\n\r\n" + '\0';
                     // 发送
                     byte[] msg = Encoding.GetEncoding(sCoding).GetBytes(sendMsg);
                     int nBytes;
@@ -1500,6 +1442,7 @@ ReCatch:
                         sock.Close();
                         return listResult;
                     }
+
                     // 接受
                     byte[] bytes = new byte[2048];
                     byte bt = Convert.ToByte('\x7f');
@@ -1510,11 +1453,11 @@ ReCatch:
                         {
                             nBytes = sock.Receive(bytes, bytes.Length - 1, 0);
                         }
-                        catch (Exception Ex)
+                        catch
                         {
-                            //string str = Ex.Message;
                             nBytes = -1;
                         }
+
                         if (nBytes <= 0) break;
                         if (bytes[nBytes - 1] > bt)
                         {
@@ -1525,6 +1468,7 @@ ReCatch:
                                 else
                                     break;
                             }
+
                             if (count % 2 == 1)
                             {
                                 count = sock.Receive(bytes, nBytes, 1, 0);
@@ -1542,54 +1486,34 @@ ReCatch:
                         sbHtml.Append(s);
                     } while (nBytes > 0);
 
-                    listResult.Add(new KeyValuePair<int, string>(kvUrl.Key, sbHtml.ToString()));
-                    //sbHtml = null;
+                    listResult.Add(kvUrl.Key, sbHtml.ToString());
                     sbHtml = new StringBuilder();
                 }
+
+                sock.Shutdown(SocketShutdown.Both);
             }
-            catch (Exception Ex)
-            {
-                //string s = Ex.Message;
-                try
-                {
-                    sock.Shutdown(SocketShutdown.Both);
-                    sock.Close();
-                }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
-            }
-            finally
-            {
-                try
-                {
-                    sock.Shutdown(SocketShutdown.Both);
-                    sock.Close();
-                }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
-            }
+
             return listResult;
         }
+
         #endregion 根据超链接地址获取页面内容
 
         /// <summary>
         /// 页面类型枚举
         /// </summary>
-        public enum PageType : int
+        public enum PageType
         {
             /// <summary>
             /// HTML格式
             /// </summary>
             HTML = 0,
+
             /// <summary>
             /// RSS格式
             /// </summary>
             RSS = 1
         }
+
         /// <summary>
         /// 获取页面类型
         /// </summary>
@@ -1605,20 +1529,24 @@ ReCatch:
             Regex r = new Regex(regRss, RegexOptions.IgnoreCase);
             Match m = r.Match(sHtml);
             if (m.Captures.Count != 0)
-            {//有，则转向从RSS FEED中抓取
+            {
+                //有，则转向从RSS FEED中抓取
                 string regHref = @"href=\s*(?:'(?<href>[^']+)'|""(?<href>[^""]+)""|(?<href>[^>\s]+))";
                 r = new Regex(regHref, RegexOptions.IgnoreCase);
                 m = r.Match(m.Captures[0].Value);
-                if (m.Captures.Count > 0)
+                if (m.Captures.Count <= 0)
                 {
-                    //有可能是相对路径，加上绝对路径
-                    string rssFile = GetUrl(sUrl, m.Groups["href"].Value);
-                    sHtml = GetHtmlByUrl(rssFile);
-                    pt = PageType.RSS;
+                    return pt;
                 }
+
+                //有可能是相对路径，加上绝对路径
+                string rssFile = GetUrl(sUrl, m.Groups["href"].Value);
+                sHtml = GetHtmlByUrl(rssFile);
+                pt = PageType.RSS;
             }
             else
-            {//看这个地址本身是不是一个Rss feed
+            {
+                //看这个地址本身是不是一个Rss feed
                 r = new Regex(@"<rss\s+[^>]*>", RegexOptions.IgnoreCase);
                 m = r.Match(sHtml);
                 if (m.Captures.Count > 0)

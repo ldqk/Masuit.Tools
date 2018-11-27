@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Masuit.Tools.Core.Logging
+namespace Masuit.Tools.Logging
 {
     /// <summary>
     /// 日志信息

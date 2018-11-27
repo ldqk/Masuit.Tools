@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,10 +12,11 @@ namespace Masuit.Tools.Security
     public static class Encrypt
     {
         #region DES对称加密解密
+
         /// <summary>
-        /// 加密密钥，需要在config配置文件中配置desSecret值，若未配置，默认取“masuit”的MD5值
+        /// 加密密钥，需要在config配置文件中AppSettings节点中配置desSecret值，若未配置，默认取“masuit”的MD5值
         /// </summary>
-        public static string DEFAULT_ENCRYPT_KEY = "masuit".MDString2();
+        public static string DefaultEncryptKey = "masuit".MDString2();
 
         /// <summary>
         /// 使用默认加密
@@ -27,7 +27,7 @@ namespace Masuit.Tools.Security
         {
             try
             {
-                return DesEncrypt(strText, DEFAULT_ENCRYPT_KEY);
+                return DesEncrypt(strText, DefaultEncryptKey);
             }
             catch
             {
@@ -44,7 +44,7 @@ namespace Masuit.Tools.Security
         {
             try
             {
-                return DesDecrypt(strText, DEFAULT_ENCRYPT_KEY);
+                return DesDecrypt(strText, DefaultEncryptKey);
             }
             catch
             {
@@ -65,6 +65,7 @@ namespace Masuit.Tools.Security
             {
                 throw new Exception("密钥长度无效，密钥必须是8位！");
             }
+
             StringBuilder ret = new StringBuilder();
             DESCryptoServiceProvider des = new DESCryptoServiceProvider();
             byte[] inputByteArray = Encoding.Default.GetBytes(strText);
@@ -78,6 +79,7 @@ namespace Masuit.Tools.Security
             {
                 ret.AppendFormat($"{b:X2}");
             }
+
             return ret.ToString();
         }
 
@@ -89,7 +91,17 @@ namespace Masuit.Tools.Security
         /// <param name="strEncrKey">加密密钥</param>
         public static void DesEncrypt(this FileStream fin, string outFilePath, string strEncrKey)
         {
-            byte[] iv = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
+            byte[] iv =
+            {
+                0x12,
+                0x34,
+                0x56,
+                0x78,
+                0x90,
+                0xAB,
+                0xCD,
+                0xEF
+            };
             var byKey = Encoding.UTF8.GetBytes(strEncrKey.Substring(0, 8));
             using (fin)
             {
@@ -119,7 +131,17 @@ namespace Masuit.Tools.Security
         /// <param name="sDecrKey">解密密钥</param>
         public static void DesDecrypt(this FileStream fin, string outFilePath, string sDecrKey)
         {
-            byte[] iv = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
+            byte[] iv =
+            {
+                0x12,
+                0x34,
+                0x56,
+                0x78,
+                0x90,
+                0xAB,
+                0xCD,
+                0xEF
+            };
             var byKey = Encoding.UTF8.GetBytes(sDecrKey.Substring(0, 8));
             using (fin)
             {
@@ -154,6 +176,7 @@ namespace Masuit.Tools.Security
             {
                 throw new Exception("密钥长度无效，密钥必须是8位！");
             }
+
             var ms = new MemoryStream();
 
             var des = new DESCryptoServiceProvider();
@@ -163,6 +186,7 @@ namespace Masuit.Tools.Security
                 int i = (Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16));
                 inputByteArray[x] = (byte)i;
             }
+
             des.Key = Encoding.ASCII.GetBytes(sKey.Substring(0, 8));
             des.IV = Encoding.ASCII.GetBytes(sKey.Substring(0, 8));
             var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
@@ -172,10 +196,30 @@ namespace Masuit.Tools.Security
         }
 
         #endregion
+
         #region 对称加密算法AES RijndaelManaged加密解密
+
         private static readonly string Default_AES_Key = "@#kim123";
-        private static byte[] Keys = { 0x41, 0x72, 0x65, 0x79, 0x6F, 0x75, 0x6D, 0x79,
-                                             0x53,0x6E, 0x6F, 0x77, 0x6D, 0x61, 0x6E, 0x3F };
+
+        private static byte[] Keys =
+        {
+            0x41,
+            0x72,
+            0x65,
+            0x79,
+            0x6F,
+            0x75,
+            0x6D,
+            0x79,
+            0x53,
+            0x6E,
+            0x6F,
+            0x77,
+            0x6D,
+            0x61,
+            0x6E,
+            0x3F
+        };
 
         /// <summary>
         /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
@@ -197,7 +241,11 @@ namespace Masuit.Tools.Security
         {
             encryptKey = GetSubString(encryptKey, 32, "");
             encryptKey = encryptKey.PadRight(32, ' ');
-            var rijndaelProvider = new RijndaelManaged { Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32)), IV = Keys };
+            var rijndaelProvider = new RijndaelManaged
+            {
+                Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32)),
+                IV = Keys
+            };
             ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
             byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
@@ -272,6 +320,7 @@ namespace Masuit.Tools.Security
                 {
                     return string.Empty;
                 }
+
                 return sourceString.Substring(startIndex, length + startIndex > sourceString.Length ? (sourceString.Length - startIndex) : length);
             }
 
@@ -280,6 +329,7 @@ namespace Masuit.Tools.Security
             {
                 return string.Empty;
             }
+
             byte[] bytesSource = Encoding.Default.GetBytes(sourceString);
 
             //当字符串长度大于起始位置
@@ -293,10 +343,12 @@ namespace Masuit.Tools.Security
                     endIndex = length + startIndex;
                 }
                 else
-                {   //当不在有效范围内时,只取到字符串的结尾
+                {
+                    //当不在有效范围内时,只取到字符串的结尾
                     length = bytesSource.Length - startIndex;
                     tailString = "";
                 }
+
                 var anResultFlag = new int[length];
                 int nFlag = 0;
                 //字节大于127为双字节字符
@@ -314,19 +366,23 @@ namespace Masuit.Tools.Security
                     {
                         nFlag = 0;
                     }
+
                     anResultFlag[i] = nFlag;
                 }
+
                 //最后一个字节为双字节字符的一半
                 if ((bytesSource[endIndex - 1] > 127) && (anResultFlag[length - 1] == 1))
                 {
                     length++;
                 }
+
                 byte[] bsResult = new byte[length];
                 Array.Copy(bytesSource, startIndex, bsResult, 0, length);
                 var myResult = Encoding.Default.GetString(bsResult);
                 myResult += tailString;
                 return myResult;
             }
+
             return string.Empty;
         }
 
@@ -375,15 +431,12 @@ namespace Masuit.Tools.Security
         /// <param name="outputPath">输出文件路径</param>
         public static void AESEncryptFile(this FileStream input, string outputPath)
         {
-            using (input)
+            using (FileStream fren = new FileStream(outputPath, FileMode.Create))
             {
-                using (FileStream fren = new FileStream(outputPath, FileMode.Create))
-                {
-                    CryptoStream enfr = AESEncryptStrream(fren, Default_AES_Key);
-                    byte[] bytearrayinput = new byte[input.Length];
-                    input.Read(bytearrayinput, 0, bytearrayinput.Length);
-                    enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
-                }
+                CryptoStream enfr = AESEncryptStrream(fren, Default_AES_Key);
+                byte[] bytearrayinput = new byte[input.Length];
+                input.Read(bytearrayinput, 0, bytearrayinput.Length);
+                enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
             }
         }
 
@@ -394,16 +447,16 @@ namespace Masuit.Tools.Security
         /// <param name="outputPath">输出文件路径</param>
         public static void AESDecryptFile(this FileStream input, string outputPath)
         {
-            using (input)
+            FileStream frde = new FileStream(outputPath, FileMode.Create);
+            CryptoStream defr = AESDecryptStream(input, Default_AES_Key);
+            byte[] bytearrayoutput = new byte[1024];
+            while (true)
             {
-                FileStream frde = new FileStream(outputPath, FileMode.Create);
-                CryptoStream defr = AESDecryptStream(input, Default_AES_Key);
-                byte[] bytearrayoutput = new byte[1024];
-                while (true)
+                var count = defr.Read(bytearrayoutput, 0, bytearrayoutput.Length);
+                frde.Write(bytearrayoutput, 0, count);
+                if (count < bytearrayoutput.Length)
                 {
-                    var count = defr.Read(bytearrayoutput, 0, bytearrayoutput.Length);
-                    frde.Write(bytearrayoutput, 0, count);
-                    if (count < bytearrayoutput.Length) break;
+                    break;
                 }
             }
         }
@@ -411,6 +464,7 @@ namespace Masuit.Tools.Security
         #endregion
 
         #region Base64加密解密
+
         /// <summary>
         /// Base64加密
         /// </summary>
@@ -432,9 +486,11 @@ namespace Masuit.Tools.Security
             byte[] decbuff = Convert.FromBase64String(str);
             return Encoding.UTF8.GetString(decbuff);
         }
+
         #endregion
 
         #region MD5加密
+
         /// <summary> 
         /// MD5加密
         /// </summary> 
@@ -459,7 +515,7 @@ namespace Masuit.Tools.Security
             byte[] sha256Data = Encoding.UTF8.GetBytes(str);
             var sha256 = new SHA256Managed();
             byte[] result = sha256.ComputeHash(sha256Data);
-            return Convert.ToBase64String(result);  //返回长度为44字节的字符串
+            return Convert.ToBase64String(result); //返回长度为44字节的字符串
         }
 
         #region 创建Key
@@ -496,7 +552,10 @@ namespace Masuit.Tools.Security
             cs.FlushFinalBlock();
             var ret = new StringBuilder();
             foreach (var b in ms.ToArray())
+            {
                 ret.AppendFormat("{0:X2}", b);
+            }
+
             ret.ToString();
             return ret.ToString();
         }
@@ -528,9 +587,6 @@ namespace Masuit.Tools.Security
             var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
-
-            var ret = new StringBuilder();
-
             return Encoding.Default.GetString(ms.ToArray());
         }
 
@@ -622,9 +678,9 @@ namespace Masuit.Tools.Security
 
         private static uint[] MD5_Append(byte[] input)
         {
-            var zeros = 0;
+            int zeros;
             var ones = 1;
-            var size = 0;
+            int size;
             var n = input.Length;
             var m = n % 64;
             if (m < 56)
@@ -766,7 +822,14 @@ namespace Masuit.Tools.Security
                 C += c;
                 D += d;
             }
-            return new[] { A, B, C, D };
+
+            return new[]
+            {
+                A,
+                B,
+                C,
+                D
+            };
         }
 
         #region MD5对数组数据加密
@@ -790,6 +853,7 @@ namespace Masuit.Tools.Security
                 output[j + 2] = (byte)((bits[i] >> 16) & 0xff);
                 output[j + 3] = (byte)((bits[i] >> 24) & 0xff);
             }
+
             return output;
         }
 
@@ -832,6 +896,7 @@ namespace Masuit.Tools.Security
             var digest = MD5Array(b);
             return ArrayToHexString(digest, false);
         }
+
         /// <summary>
         ///     对字符串进行MD5二次加密
         /// </summary>
@@ -857,8 +922,10 @@ namespace Masuit.Tools.Security
             {
                 sb.Append(item.ToString("x").PadLeft(2, '0'));
             }
+
             return sb.ToString();
         }
+
         /// <summary>
         ///     对字符串进行MD5加盐加密
         /// </summary>
@@ -894,8 +961,10 @@ namespace Masuit.Tools.Security
             {
                 sb.Append(item.ToString("x").PadLeft(2, '0'));
             }
+
             return sb.ToString();
         }
+
         #endregion
 
         #region 获取文件的MD5值
@@ -960,11 +1029,11 @@ namespace Masuit.Tools.Security
     /// </summary>
     public static class RC2
     {
-        private static ASCIIEncoding asciiEncoding;
-        private static byte[] iv;
-        private static byte[] key;
-        private static RC2CryptoServiceProvider rc2CSP;
-        private static UnicodeEncoding textConverter;
+        private static ASCIIEncoding _asciiEncoding;
+        private static byte[] _iv;
+        private static byte[] _key;
+        private static RC2CryptoServiceProvider _rc2Csp;
+        private static UnicodeEncoding _textConverter;
 
         static RC2()
         {
@@ -973,11 +1042,39 @@ namespace Masuit.Tools.Security
 
         private static void InitializeComponent()
         {
-            key = new byte[] { 106, 51, 25, 141, 157, 142, 23, 111, 234, 159, 187, 154, 215, 34, 37, 204 };
-            iv = new byte[] { 135, 186, 133, 136, 184, 149, 153, 144 };
-            asciiEncoding = new ASCIIEncoding();
-            textConverter = new UnicodeEncoding();
-            rc2CSP = new RC2CryptoServiceProvider();
+            _key = new byte[]
+            {
+                106,
+                51,
+                25,
+                141,
+                157,
+                142,
+                23,
+                111,
+                234,
+                159,
+                187,
+                154,
+                215,
+                34,
+                37,
+                204
+            };
+            _iv = new byte[]
+            {
+                135,
+                186,
+                133,
+                136,
+                184,
+                149,
+                153,
+                144
+            };
+            _asciiEncoding = new ASCIIEncoding();
+            _textConverter = new UnicodeEncoding();
+            _rc2Csp = new RC2CryptoServiceProvider();
         }
 
         #region 新建一个大小为10261B的文件，以便将加密数据写入固定大小的文件。
@@ -991,10 +1088,7 @@ namespace Masuit.Tools.Security
             var tmp = new byte[10261];
             try //创建文件流，将其内容全部写入0
             {
-                var writeFileStream = new FileStream(filePath,
-                    FileMode.Create,
-                    FileAccess.Write,
-                    FileShare.None, 512, false);
+                var writeFileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 512, false);
 
                 for (var i = 0; i < 10261; i++)
                     tmp[i] = 0;
@@ -1007,6 +1101,7 @@ namespace Masuit.Tools.Security
                 // MessageBox.Show("文件操作错误！", "错误！", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return "Error,file operation error!";
             }
+
             return "OK";
         }
 
@@ -1027,32 +1122,30 @@ namespace Masuit.Tools.Security
         {
             var r = false;
             if ((dataIndex > 10) && (dataIndex < 1))
+            {
                 return r;
-            byte[] encrypted;
+            }
+
             //打开要写入的文件，主要是为了保持原文件的内容不丢失
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
+            var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
 
             var index = new byte[10261];
             //将读取的内容写到byte数组
             tmpFileStream.Read(index, 0, 10261);
             tmpFileStream.Close();
             //定义基本的加密转换运算
-            var Encryptor = rc2CSP.CreateEncryptor(key, iv);
+            var Encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
             var msEncrypt = new MemoryStream();
             //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
-            var csEncrypt = new CryptoStream(msEncrypt,
-                Encryptor, CryptoStreamMode.Write);
+            var csEncrypt = new CryptoStream(msEncrypt, Encryptor, CryptoStreamMode.Write);
             //将要加密的文本转换成UTF-16 编码，保存在tmp数组。
-            var tmp = textConverter.GetBytes(toEncryptText);
+            var tmp = _textConverter.GetBytes(toEncryptText);
             //将tmp输入csEncrypt,将通过Encryptor来加密。
             csEncrypt.Write(tmp, 0, tmp.Length);
             //输出到msEnctypt
             csEncrypt.FlushFinalBlock();
             //将流转成byte[]
-            encrypted = msEncrypt.ToArray();
+            var encrypted = msEncrypt.ToArray();
             if (encrypted.Length > 1024)
                 return false;
             //得到加密后数据的大小，将结果存在指定的位置。
@@ -1062,10 +1155,7 @@ namespace Masuit.Tools.Security
             for (var i = 0; i < encrypted.Length; i++)
                 index[1024 * (dataIndex - 1) + 21 + i] = encrypted[i];
             //建立文件流
-            tmpFileStream = new FileStream(filePath,
-                FileMode.Truncate,
-                FileAccess.Write,
-                FileShare.None, 1024, true);
+            tmpFileStream = new FileStream(filePath, FileMode.Truncate, FileAccess.Write, FileShare.None, 1024, true);
             //写文件
             tmpFileStream.Write(index, 0, 10261);
             tmpFileStream.Flush();
@@ -1088,29 +1178,27 @@ namespace Masuit.Tools.Security
         {
             var r = "";
             if ((dataIndex > 10) && (dataIndex < 1))
+            {
                 return r;
-            byte[] decrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
+            }
 
-            var Decryptor = rc2CSP.CreateDecryptor(key, iv);
+            var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
+
+            var decryptor = _rc2Csp.CreateDecryptor(_key, _iv);
             var msDecrypt = new MemoryStream();
-            var csDecrypt = new CryptoStream(msDecrypt,
-                Decryptor, CryptoStreamMode.Write);
+            var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
             var index = new byte[10261];
 
             tmpFileStream.Read(index, 0, 10261);
-            var startIndex = 1024 * (dataIndex - 1) + 21;
+            //var startIndex = 1024 * (dataIndex - 1) + 21;
             var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
             var tmp = new byte[count];
 
             Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
             csDecrypt.Write(tmp, 0, count);
             csDecrypt.FlushFinalBlock();
-            decrypted = msDecrypt.ToArray();
-            r = textConverter.GetString(decrypted, 0, decrypted.Length);
+            var decrypted = msDecrypt.ToArray();
+            r = _textConverter.GetString(decrypted, 0, decrypted.Length);
             tmpFileStream.Close();
             return r;
         }
@@ -1127,26 +1215,23 @@ namespace Masuit.Tools.Security
         /// <returns>是否加密成功</returns>
         public static bool EncryptToFile(this string toEncryptText, string filePath)
         {
-            var r = false;
-            byte[] encrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.OpenOrCreate,
-                FileAccess.Write,
-                FileShare.None, 1024, true);
-
-            var Encryptor = rc2CSP.CreateEncryptor(key, iv);
-            var msEncrypt = new MemoryStream();
-            var csEncrypt = new CryptoStream(msEncrypt,
-                Encryptor, CryptoStreamMode.Write);
-
-            var tmp = textConverter.GetBytes(toEncryptText);
-            csEncrypt.Write(tmp, 0, tmp.Length);
-            csEncrypt.FlushFinalBlock();
-            encrypted = msEncrypt.ToArray();
-            tmpFileStream.Write(encrypted, 0, encrypted.Length);
-            tmpFileStream.Flush();
-            r = true;
-            tmpFileStream.Close();
+            bool r;
+            using (var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true))
+            {
+                using (var encryptor = _rc2Csp.CreateEncryptor(_key, _iv))
+                {
+                    var msEncrypt = new MemoryStream();
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        var tmp = _textConverter.GetBytes(toEncryptText);
+                        csEncrypt.Write(tmp, 0, tmp.Length);
+                        csEncrypt.FlushFinalBlock();
+                    }
+                    var encrypted = msEncrypt.ToArray();
+                    tmpFileStream.Write(encrypted, 0, encrypted.Length);
+                    r = true;
+                }
+            }
             return r;
         }
 
@@ -1161,25 +1246,26 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的文本</returns>
         public static string DecryptFromFile(this string filePath)
         {
-            var r = "";
-            byte[] decrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
-            var Decryptor = rc2CSP.CreateDecryptor(key, iv);
-            var msDecrypt = new MemoryStream();
-            var csDecrypt = new CryptoStream(msDecrypt,
-                Decryptor, CryptoStreamMode.Write);
+            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
+            {
+                using (var decryptor = _rc2Csp.CreateDecryptor(_key, _iv))
+                {
+                    var msDecrypt = new MemoryStream();
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                    {
+                        var tmp = new byte[tmpFileStream.Length];
+                        tmpFileStream.Read(tmp, 0, tmp.Length);
+                        csDecrypt.Write(tmp, 0, tmp.Length);
+                        csDecrypt.FlushFinalBlock();
+                    }
 
-            var tmp = new byte[tmpFileStream.Length];
-            tmpFileStream.Read(tmp, 0, tmp.Length);
-            csDecrypt.Write(tmp, 0, tmp.Length);
-            csDecrypt.FlushFinalBlock();
-            decrypted = msDecrypt.ToArray();
-            r = textConverter.GetString(decrypted, 0, decrypted.Length);
-            tmpFileStream.Close();
-            return r;
+                    var decrypted = msDecrypt.ToArray();
+                    var r = _textConverter.GetString(decrypted, 0, decrypted.Length);
+                    return r;
+                }
+
+            }
+
         }
 
         #endregion
@@ -1201,51 +1287,50 @@ namespace Masuit.Tools.Security
         {
             var r = false;
             if ((dataIndex > 10) && (dataIndex < 1))
+            {
                 return r;
-            byte[] encrypted;
+            }
             //打开要写入的文件，主要是为了保持原文件的内容不丢失
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
+            var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
 
             var index = new byte[10261];
             //将读取的内容写到byte数组
             tmpFileStream.Read(index, 0, 10261);
             tmpFileStream.Close();
             //定义基本的加密转换运算
-            var Encryptor = rc2CSP.CreateEncryptor(Key, IV);
-            var msEncrypt = new MemoryStream();
-            //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
-            var csEncrypt = new CryptoStream(msEncrypt,
-                Encryptor, CryptoStreamMode.Write);
-            //将要加密的文本转换成UTF-16 编码，保存在tmp数组。
-            var tmp = textConverter.GetBytes(toEncryptText);
-            //将tmp输入csEncrypt,将通过Encryptor来加密。
-            csEncrypt.Write(tmp, 0, tmp.Length);
-            //输出到msEnctypt
-            csEncrypt.FlushFinalBlock();
-            //将流转成byte[]
-            encrypted = msEncrypt.ToArray();
-            if (encrypted.Length > 1024)
-                return false;
-            //得到加密后数据的大小，将结果存在指定的位置。
-            index[dataIndex * 2 - 1] = Convert.ToByte(Convert.ToString(encrypted.Length / 128));
-            index[dataIndex * 2] = Convert.ToByte(Convert.ToString(encrypted.Length % 128));
-            //将加密后的结果写入index（覆盖）
-            for (var i = 0; i < encrypted.Length; i++)
-                index[1024 * (dataIndex - 1) + 21 + i] = encrypted[i];
-            //建立文件流
-            tmpFileStream = new FileStream(filePath,
-                FileMode.Truncate,
-                FileAccess.Write,
-                FileShare.None, 1024, true);
-            //写文件
-            tmpFileStream.Write(index, 0, 10261);
-            tmpFileStream.Flush();
-            r = true;
-            tmpFileStream.Close();
-            return r;
+            using (var encryptor = _rc2Csp.CreateEncryptor(Key, IV))
+            {
+                var msEncrypt = new MemoryStream();
+                //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
+                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    var tmp = _textConverter.GetBytes(toEncryptText);
+                    //将tmp输入csEncrypt,将通过Encryptor来加密。
+                    csEncrypt.Write(tmp, 0, tmp.Length);
+                    //输出到msEnctypt
+                    csEncrypt.FlushFinalBlock();
+                }
+
+                //将流转成byte[]
+                var encrypted = msEncrypt.ToArray();
+                if (encrypted.Length > 1024)
+                    return false;
+                //得到加密后数据的大小，将结果存在指定的位置。
+                index[dataIndex * 2 - 1] = Convert.ToByte(Convert.ToString(encrypted.Length / 128));
+                index[dataIndex * 2] = Convert.ToByte(Convert.ToString(encrypted.Length % 128));
+                //将加密后的结果写入index（覆盖）
+                for (var i = 0; i < encrypted.Length; i++)
+                    index[1024 * (dataIndex - 1) + 21 + i] = encrypted[i];
+                //建立文件流
+                tmpFileStream = new FileStream(filePath, FileMode.Truncate, FileAccess.Write, FileShare.None, 1024, true);
+                //写文件
+                tmpFileStream.Write(index, 0, 10261);
+                tmpFileStream.Flush();
+                r = true;
+                tmpFileStream.Close();
+                return r;
+            }
+
         }
 
         #endregion
@@ -1257,37 +1342,39 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="filePath">要解密的文件</param>
         /// <param name="dataIndex">要从哪一个块中解密</param>
-        /// <param name="IV">初始化向量</param>
-        /// <param name="Key">解密密匙</param>
+        /// <param name="iv">初始化向量</param>
+        /// <param name="key">解密密匙</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(this string filePath, int dataIndex, byte[] IV, byte[] Key)
+        public static string DecryptFromFile(this string filePath, int dataIndex, byte[] iv, byte[] key)
         {
             var r = "";
             if ((dataIndex > 10) && (dataIndex < 1))
+            {
                 return r;
-            byte[] decrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
+            }
 
-            var Decryptor = rc2CSP.CreateDecryptor(Key, IV);
-            var msDecrypt = new MemoryStream();
-            var csDecrypt = new CryptoStream(msDecrypt,
-                Decryptor, CryptoStreamMode.Write);
-            var index = new byte[10261];
+            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
+            {
+                using (var decryptor = _rc2Csp.CreateDecryptor(key, iv))
+                {
+                    var msDecrypt = new MemoryStream();
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                    {
+                        var index = new byte[10261];
 
-            tmpFileStream.Read(index, 0, 10261);
-            var startIndex = 1024 * (dataIndex - 1) + 21;
-            var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
-            var tmp = new byte[count];
+                        tmpFileStream.Read(index, 0, 10261);
+                        var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
+                        var tmp = new byte[count];
 
-            Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
-            csDecrypt.Write(tmp, 0, count);
-            csDecrypt.FlushFinalBlock();
-            decrypted = msDecrypt.ToArray();
-            r = textConverter.GetString(decrypted, 0, decrypted.Length);
-            tmpFileStream.Close();
+                        Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
+                        csDecrypt.Write(tmp, 0, count);
+                        csDecrypt.FlushFinalBlock();
+                        var decrypted = msDecrypt.ToArray();
+                        r = _textConverter.GetString(decrypted, 0, decrypted.Length);
+                    }
+                }
+            }
+
             return r;
         }
 
@@ -1300,32 +1387,29 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="toEncryptText">要加密的文本数据</param>
         /// <param name="filePath">要保存的文件</param>
-        /// <param name="IV">初始化向量</param>
-        /// <param name="Key">加密密匙</param>
+        /// <param name="iv">初始化向量</param>
+        /// <param name="key">加密密匙</param>
         /// <returns>是否加密成功</returns>
-        public static bool EncryptToFile(this string toEncryptText, string filePath, byte[] IV, byte[] Key)
+        public static bool EncryptToFile(this string toEncryptText, string filePath, byte[] iv, byte[] key)
         {
-            var r = false;
-            byte[] encrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.OpenOrCreate,
-                FileAccess.Write,
-                FileShare.None, 1024, true);
-
-            var Encryptor = rc2CSP.CreateEncryptor(Key, IV);
-            var msEncrypt = new MemoryStream();
-            var csEncrypt = new CryptoStream(msEncrypt,
-                Encryptor, CryptoStreamMode.Write);
-
-            var tmp = textConverter.GetBytes(toEncryptText);
-            csEncrypt.Write(tmp, 0, tmp.Length);
-            csEncrypt.FlushFinalBlock();
-            encrypted = msEncrypt.ToArray();
-            tmpFileStream.Write(encrypted, 0, encrypted.Length);
-            tmpFileStream.Flush();
-            r = true;
-            tmpFileStream.Close();
-            return r;
+            using (var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true))
+            {
+                using (var encryptor = _rc2Csp.CreateEncryptor(key, iv))
+                {
+                    var msEncrypt = new MemoryStream();
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        var tmp = _textConverter.GetBytes(toEncryptText);
+                        csEncrypt.Write(tmp, 0, tmp.Length);
+                        csEncrypt.FlushFinalBlock();
+                        var encrypted = msEncrypt.ToArray();
+                        tmpFileStream.Write(encrypted, 0, encrypted.Length);
+                        tmpFileStream.Flush();
+                        var r = true;
+                        return r;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -1336,30 +1420,28 @@ namespace Masuit.Tools.Security
         ///     将一个被加密的文件解密
         /// </summary>
         /// <param name="filePath">要解密的文件</param>
-        /// <param name="IV">初始化向量</param>
-        /// <param name="Key">解密密匙</param>
+        /// <param name="iv">初始化向量</param>
+        /// <param name="key">解密密匙</param>
         /// <returns>解密后的文本</returns>
-        public static string DecryptFromFile(this string filePath, byte[] IV, byte[] Key)
+        public static string DecryptFromFile(this string filePath, byte[] iv, byte[] key)
         {
-            var r = "";
-            byte[] decrypted;
-            var tmpFileStream = new FileStream(filePath,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.None, 1024, true);
-            var Decryptor = rc2CSP.CreateDecryptor(Key, IV);
-            var msDecrypt = new MemoryStream();
-            var csDecrypt = new CryptoStream(msDecrypt,
-                Decryptor, CryptoStreamMode.Write);
-
-            var tmp = new byte[tmpFileStream.Length];
-            tmpFileStream.Read(tmp, 0, tmp.Length);
-            csDecrypt.Write(tmp, 0, tmp.Length);
-            csDecrypt.FlushFinalBlock();
-            decrypted = msDecrypt.ToArray();
-            r = textConverter.GetString(decrypted, 0, decrypted.Length);
-            tmpFileStream.Close();
-            return r;
+            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
+            {
+                using (var decryptor = _rc2Csp.CreateDecryptor(key, iv))
+                {
+                    var msDecrypt = new MemoryStream();
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                    {
+                        var tmp = new byte[tmpFileStream.Length];
+                        tmpFileStream.Read(tmp, 0, tmp.Length);
+                        csDecrypt.Write(tmp, 0, tmp.Length);
+                        csDecrypt.FlushFinalBlock();
+                        var decrypted = msDecrypt.ToArray();
+                        var r = _textConverter.GetString(decrypted, 0, decrypted.Length);
+                        return r;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -1375,17 +1457,18 @@ namespace Masuit.Tools.Security
             if (s.Length != 8)
             {
                 // MessageBox.Show("输入的字符串必须为长度为8的且属于ASCII字符集的字符串");
-                iv = null;
+                _iv = null;
                 return;
             }
+
             try
             {
-                iv = asciiEncoding.GetBytes(s);
+                _iv = _asciiEncoding.GetBytes(s);
             }
             catch (Exception)
             {
                 // MessageBox.Show("输入的字符串必须为长度为8的且属于ASCII字符集的字符串");
-                iv = null;
+                _iv = null;
             }
         }
 
@@ -1402,17 +1485,18 @@ namespace Masuit.Tools.Security
             if (s.Length != 16)
             {
                 // MessageBox.Show("输入的字符串必须为长度为16的且属于ASCII字符集的字符串");
-                key = null;
+                _key = null;
                 return;
             }
+
             try
             {
-                key = asciiEncoding.GetBytes(s);
+                _key = _asciiEncoding.GetBytes(s);
             }
             catch (Exception)
             {
                 //MessageBox.Show("输入的字符串必须为长度为16的且属于ASCII字符集的字符串");
-                key = null;
+                _key = null;
             }
         }
 
@@ -1424,16 +1508,16 @@ namespace Masuit.Tools.Security
     /// </summary>
     public static class Rijndael
     {
-        private static string Key;
-        private static SymmetricAlgorithm mobjCryptoService;
+        private static string _key;
+        private static SymmetricAlgorithm _mobjCryptoService;
 
         /// <summary>
         ///     对称加密类的构造函数
         /// </summary>
         public static void SymmetricMethod()
         {
-            mobjCryptoService = new RijndaelManaged();
-            Key = "Guz(%&hj7x89H$yuBI0456FtmaT5&fvHUFCy76*h%(HilJ$lhj!y6&(*jkP87jH7";
+            _mobjCryptoService = new RijndaelManaged();
+            _key = "Guz(%&hj7x89H$yuBI0456FtmaT5&fvHUFCy76*h%(HilJ$lhj!y6&(*jkP87jH7";
         }
 
         /// <summary>
@@ -1442,14 +1526,14 @@ namespace Masuit.Tools.Security
         /// <returns>密钥</returns>
         private static byte[] GetLegalKey()
         {
-            var sTemp = Key;
-            mobjCryptoService.GenerateKey();
-            var bytTemp = mobjCryptoService.Key;
-            var KeyLength = bytTemp.Length;
-            if (sTemp.Length > KeyLength)
-                sTemp = sTemp.Substring(0, KeyLength);
-            else if (sTemp.Length < KeyLength)
-                sTemp = sTemp.PadRight(KeyLength, ' ');
+            var sTemp = _key;
+            _mobjCryptoService.GenerateKey();
+            var bytTemp = _mobjCryptoService.Key;
+            var keyLength = bytTemp.Length;
+            if (sTemp.Length > keyLength)
+                sTemp = sTemp.Substring(0, keyLength);
+            else if (sTemp.Length < keyLength)
+                sTemp = sTemp.PadRight(keyLength, ' ');
             return Encoding.ASCII.GetBytes(sTemp);
         }
 
@@ -1460,28 +1544,28 @@ namespace Masuit.Tools.Security
         private static byte[] GetLegalIV()
         {
             var sTemp = "E4ghj*Ghg7!rNIfb&95GUY86GfghUber57HBh(u%g6HJ($jhWk7&!hg4ui%$hjk";
-            mobjCryptoService.GenerateIV();
-            var bytTemp = mobjCryptoService.IV;
-            var IVLength = bytTemp.Length;
-            if (sTemp.Length > IVLength)
-                sTemp = sTemp.Substring(0, IVLength);
-            else if (sTemp.Length < IVLength)
-                sTemp = sTemp.PadRight(IVLength, ' ');
+            _mobjCryptoService.GenerateIV();
+            var bytTemp = _mobjCryptoService.IV;
+            var ivLength = bytTemp.Length;
+            if (sTemp.Length > ivLength)
+                sTemp = sTemp.Substring(0, ivLength);
+            else if (sTemp.Length < ivLength)
+                sTemp = sTemp.PadRight(ivLength, ' ');
             return Encoding.ASCII.GetBytes(sTemp);
         }
 
         /// <summary>
         ///     加密方法
         /// </summary>
-        /// <param name="Source">待加密的串</param>
+        /// <param name="source">待加密的串</param>
         /// <returns>经过加密的串</returns>
-        public static string Encrypto(this string Source)
+        public static string Encrypto(this string source)
         {
-            var bytIn = Encoding.UTF8.GetBytes(Source);
+            var bytIn = Encoding.UTF8.GetBytes(source);
             var ms = new MemoryStream();
-            mobjCryptoService.Key = GetLegalKey();
-            mobjCryptoService.IV = GetLegalIV();
-            var encrypto = mobjCryptoService.CreateEncryptor();
+            _mobjCryptoService.Key = GetLegalKey();
+            _mobjCryptoService.IV = GetLegalIV();
+            var encrypto = _mobjCryptoService.CreateEncryptor();
             var cs = new CryptoStream(ms, encrypto, CryptoStreamMode.Write);
             cs.Write(bytIn, 0, bytIn.Length);
             cs.FlushFinalBlock();
@@ -1493,15 +1577,15 @@ namespace Masuit.Tools.Security
         /// <summary>
         ///     解密方法
         /// </summary>
-        /// <param name="Source">待解密的串</param>
+        /// <param name="source">待解密的串</param>
         /// <returns>经过解密的串</returns>
-        public static string Decrypto(this string Source)
+        public static string Decrypto(this string source)
         {
-            var bytIn = Convert.FromBase64String(Source);
+            var bytIn = Convert.FromBase64String(source);
             var ms = new MemoryStream(bytIn, 0, bytIn.Length);
-            mobjCryptoService.Key = GetLegalKey();
-            mobjCryptoService.IV = GetLegalIV();
-            var encrypto = mobjCryptoService.CreateDecryptor();
+            _mobjCryptoService.Key = GetLegalKey();
+            _mobjCryptoService.IV = GetLegalIV();
+            var encrypto = _mobjCryptoService.CreateDecryptor();
             var cs = new CryptoStream(ms, encrypto, CryptoStreamMode.Read);
             var sr = new StreamReader(cs);
             return sr.ReadToEnd();

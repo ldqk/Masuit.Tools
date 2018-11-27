@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Masuit.Tools.Core.DateTimeExt
+namespace Masuit.Tools.DateTimeExt
 {
     /// <summary>
     /// 时间相关操作帮助类
@@ -29,8 +29,7 @@ namespace Masuit.Tools.Core.DateTimeExt
                     break;
                 case 2:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
-                    if (DateTime.IsLeapYear(DateTime.Now.Year)) lastDay = DateTime.Now.ToString(year + "-0" + month + "-29");
-                    else lastDay = DateTime.Now.ToString(year + "-0" + month + "-28");
+                    lastDay = DateTime.IsLeapYear(DateTime.Now.Year) ? DateTime.Now.ToString(year + "-0" + month + "-29") : DateTime.Now.ToString(year + "-0" + month + "-28");
                     break;
                 case 3:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
@@ -87,12 +86,14 @@ namespace Masuit.Tools.Core.DateTimeExt
         /// <returns>xxxx年xx月xx日</returns>
         public static string GetFormatDate(this DateTime dt, char separator)
         {
-            if (dt != null && !dt.Equals(DBNull.Value))
+            if (dt.Equals(DBNull.Value))
             {
-                string tem = $"yyyy{separator}MM{separator}dd";
-                return dt.ToString(tem);
+                return GetFormatDate(DateTime.Now, separator);
             }
-            return GetFormatDate(DateTime.Now, separator);
+
+            string tem = $"yyyy{separator}MM{separator}dd";
+            return dt.ToString(tem);
+
         }
 
         #endregion
@@ -107,12 +108,14 @@ namespace Masuit.Tools.Core.DateTimeExt
         /// <returns> xx时xx分xx秒 </returns>
         public static string GetFormatTime(this DateTime dt, char separator)
         {
-            if (dt != null && !dt.Equals(DBNull.Value))
+            if (dt.Equals(DBNull.Value))
             {
-                string tem = string.Format("hh{0}mm{1}ss", separator, separator);
-                return dt.ToString(tem);
+                return GetFormatDate(DateTime.Now, separator);
             }
-            return GetFormatDate(DateTime.Now, separator);
+
+            string tem = $"hh{separator}mm{separator}ss";
+            return dt.ToString(tem);
+
         }
 
         #endregion
@@ -170,34 +173,6 @@ namespace Masuit.Tools.Core.DateTimeExt
 
         #endregion
 
-        #region 格式化日期时间
-
-        /// <summary>
-        /// 格式化日期时间
-        /// </summary>
-        /// <param name="dateTime1">日期时间</param>
-        /// <param name="dateMode">显示模式</param>
-        /// <returns>0-9种模式的日期</returns>
-        public static string FormatDate(this DateTime dateTime1, string dateMode)
-        {
-            switch (dateMode)
-            {
-                case "0": return dateTime1.ToString("yyyy-MM-dd");
-                case "1": return dateTime1.ToString("yyyy-MM-dd HH:mm:ss");
-                case "2": return dateTime1.ToString("yyyy/MM/dd");
-                case "3": return dateTime1.ToString("yyyy年MM月dd日");
-                case "4": return dateTime1.ToString("MM-dd");
-                case "5": return dateTime1.ToString("MM/dd");
-                case "6": return dateTime1.ToString("MM月dd日");
-                case "7": return dateTime1.ToString("yyyy-MM");
-                case "8": return dateTime1.ToString("yyyy/MM");
-                case "9": return dateTime1.ToString("yyyy年MM月");
-                default: return dateTime1.ToString(CultureInfo.CurrentCulture);
-            }
-        }
-
-        #endregion
-
         #region 得到随机日期
 
         /// <summary>
@@ -229,6 +204,7 @@ namespace Masuit.Tools.Core.DateTimeExt
             {
                 return time1;
             }
+
             int maxValue = iTotalSecontds;
             if (iTotalSecontds <= int.MinValue) maxValue = int.MinValue + 1;
             int i = random.Next(Math.Abs(maxValue));
@@ -320,6 +296,7 @@ namespace Masuit.Tools.Core.DateTimeExt
                 if (ts.Hours > 1) dateDiff = ts.Hours + "小时前";
                 else dateDiff = ts.Minutes + "分钟前";
             }
+
             return dateDiff;
         }
 
@@ -363,26 +340,31 @@ namespace Masuit.Tools.Core.DateTimeExt
                 strResout += iTatol / iYear + "年";
                 iTatol %= iYear; //剩余
             }
+
             if (iTatol > iMonth)
             {
                 strResout += iTatol / iMonth + "月";
                 iTatol %= iMonth;
             }
+
             if (iTatol > iDay)
             {
                 strResout += iTatol / iDay + "天";
                 iTatol %= iDay;
             }
+
             if (iTatol > iHours)
             {
                 strResout += iTatol / iHours + "小时";
                 iTatol %= iHours;
             }
+
             if (iTatol > iMinutes)
             {
                 strResout += iTatol / iMinutes + "分";
                 iTatol %= iMinutes;
             }
+
             strResout += iTatol + "秒";
             return strResout;
         }
@@ -394,12 +376,12 @@ namespace Masuit.Tools.Core.DateTimeExt
         /// <summary>
         /// C#的时间到Javascript的时间的转换
         /// </summary>
-        /// <param name="TheDate">C#的时间</param>
+        /// <param name="theDate">C#的时间</param>
         /// <returns>Javascript的时间</returns>
-        public static long CsharpTime2JavascriptTime(this DateTime TheDate)
+        public static long CsharpTime2JavascriptTime(this DateTime theDate)
         {
             DateTime d1 = new DateTime(1970, 1, 1);
-            DateTime d2 = TheDate.ToUniversalTime();
+            DateTime d2 = theDate.ToUniversalTime();
             TimeSpan ts = new TimeSpan(d2.Ticks - d1.Ticks);
             return (long)ts.TotalMilliseconds;
         }
@@ -425,7 +407,7 @@ namespace Masuit.Tools.Core.DateTimeExt
         public static long CsharpTime2PhpTime(this DateTime time)
         {
             DateTime timeStamp = new DateTime(1970, 1, 1); //得到1970年的时间戳
-                                                           //注意这里有时区问题，用now就要减掉8个小时
+            //注意这里有时区问题，用now就要减掉8个小时
             return (DateTime.UtcNow.Ticks - timeStamp.Ticks) / 10000000;
         }
 

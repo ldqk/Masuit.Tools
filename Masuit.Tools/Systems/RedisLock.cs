@@ -10,11 +10,14 @@ namespace Masuit.Tools.Systems
     public class RedisLock : IDisposable
     {
         #region Property
-        private bool isDisposed;
+
+        private bool _isDisposed;
+
         ~RedisLock()
         {
             Dispose(false);
         }
+
         /// <summary>
         /// KEYS[1] ：需要加锁的key，这里需要是字符串类型。
         /// ARGV[1] ：锁的超时时间，防止死锁
@@ -75,6 +78,7 @@ namespace Masuit.Tools.Systems
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// 默认连接127.0.0.1:6379,synctimeout=20000
         /// </summary>
@@ -164,10 +168,23 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public RedisResult UnLock(Lock lockObject)
         {
-            if (lockObject == null) return null;
+            if (lockObject == null)
+            {
+                return null;
+            }
+
             CancelExpirationRenewal(lockObject);
-            RedisKey[] key = { lockObject.Resource, GetChannelName(lockObject.Resource) };
-            RedisValue[] values = { Thread.CurrentThread.ManagedThreadId, 10000, lockObject.Value };
+            RedisKey[] key =
+            {
+                lockObject.Resource,
+                GetChannelName(lockObject.Resource)
+            };
+            RedisValue[] values =
+            {
+                Thread.CurrentThread.ManagedThreadId,
+                10000,
+                lockObject.Value
+            };
             return _server.GetDatabase().ScriptEvaluate(UnLockScript, key, values);
         }
 
@@ -210,8 +227,15 @@ namespace Masuit.Tools.Systems
 
         private RedisResult LockInnerAsync(RedisKey resource, TimeSpan waitTime, string threadId)
         {
-            RedisKey[] key = { resource };
-            RedisValue[] values = { waitTime.TotalMilliseconds, threadId };
+            RedisKey[] key =
+            {
+                resource
+            };
+            RedisValue[] values =
+            {
+                waitTime.TotalMilliseconds,
+                threadId
+            };
             return _server.GetDatabase().ScriptEvaluate(LockScript, key, values);
         }
 
@@ -239,7 +263,7 @@ namespace Masuit.Tools.Systems
         protected CancellationTokenSource TaskTimeOut(Func<Lock, bool> action, Lock lockObj, int time)
         {
             var timeoutCancellationTokenSource = new CancellationTokenSource();
-            var task = Task.Run(() =>
+            Task.Run(() =>
             {
                 SpinWait.SpinUntil(() => !timeoutCancellationTokenSource.IsCancellationRequested);
             }, timeoutCancellationTokenSource.Token);
@@ -288,12 +312,13 @@ namespace Masuit.Tools.Systems
 
         public virtual void Dispose(bool disposing)
         {
-            if (isDisposed)
+            if (_isDisposed)
             {
                 return;
             }
+
             _server?.Dispose();
-            isDisposed = true;
+            _isDisposed = true;
             //_server = null;
         }
     }

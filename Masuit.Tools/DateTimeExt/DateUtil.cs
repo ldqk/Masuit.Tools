@@ -33,6 +33,7 @@ namespace Masuit.Tools.DateTimeExt
             {
                 return fDateTime;
             }
+
             var s = Convert.ToDateTime(fDateTime);
             return s.ToString(formatStr);
         }
@@ -156,6 +157,7 @@ namespace Masuit.Tools.DateTimeExt
                     days = 31;
                     break;
             }
+
             return days;
         }
 
@@ -247,6 +249,7 @@ namespace Masuit.Tools.DateTimeExt
                     week = "星期日";
                     break;
             }
+
             return week;
         }
 
@@ -282,6 +285,7 @@ namespace Masuit.Tools.DateTimeExt
                     week = "7";
                     break;
             }
+
             return week;
         }
 

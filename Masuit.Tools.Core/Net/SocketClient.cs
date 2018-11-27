@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 
-namespace Masuit.Tools.Core.Net
+namespace Masuit.Tools.Net
 {
     /// <summary>
     /// Socket客户端操作类
@@ -36,7 +36,7 @@ namespace Masuit.Tools.Core.Net
                 Socket socket = listener.AcceptSocket();
                 return socket;
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -54,7 +54,7 @@ namespace Masuit.Tools.Core.Net
                 TcpClient client = listener.AcceptTcpClient();
                 return client.GetStream();
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -77,7 +77,7 @@ namespace Masuit.Tools.Core.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.Client;
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -97,7 +97,7 @@ namespace Masuit.Tools.Core.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.Client;
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -116,7 +116,7 @@ namespace Masuit.Tools.Core.Net
                 tcpclient.Connect(ipendpoint);
                 return tcpclient.GetStream();
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -136,7 +136,7 @@ namespace Masuit.Tools.Core.Net
                 tcpclient.Connect(ipadd, port);
                 return tcpclient.GetStream();
             }
-            catch
+            catch (Exception)
             {
                 return null;
             }
@@ -165,6 +165,7 @@ namespace Masuit.Tools.Core.Net
                 offset += recv;
                 dataleft -= recv;
             }
+
             return msg;
         }
 
@@ -225,11 +226,13 @@ namespace Masuit.Tools.Core.Net
                     if (mark == 10)
                         break;
                 }
+
                 if (offset == length)
                     break;
             }
+
             stream.Seek(0, SeekOrigin.Begin); //必须要这个 或者stream.Position = 0;
-            T t = (T)format.Deserialize(stream);
+            T t = (T) format.Deserialize(stream);
             stream.Close();
             return t;
         }
@@ -252,7 +255,6 @@ namespace Masuit.Tools.Core.Net
                 string savepath = GetPath(path, filename); //得到文件路径
                 //缓冲区
                 byte[] file = new byte[m_maxpacket];
-                int count = 0; //每次接收的实际长度
                 int receivedata = m_maxpacket; //每次要接收的长度
                 long offset = 0; //循环接收的总长度
                 long lastdata = size; //剩余多少还没接收
@@ -264,7 +266,7 @@ namespace Masuit.Tools.Core.Net
                         {
                             if (lastdata < receivedata)
                                 receivedata = Convert.ToInt32(lastdata);
-                            count = socket.Receive(file, 0, receivedata, SocketFlags.None);
+                            var count = socket.Receive(file, 0, receivedata, SocketFlags.None); //每次接收的实际长度
                             if (count > 0)
                             {
                                 fs.Write(file, 0, count);
@@ -278,6 +280,7 @@ namespace Masuit.Tools.Core.Net
                                 if (mark == 10)
                                     break;
                             }
+
                             //接收进度
                             if (progress != null)
                                 progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(size) * 100));
@@ -288,9 +291,11 @@ namespace Masuit.Tools.Core.Net
                                 break;
                             }
                         }
+
                     fs.Close();
                 }
             }
+
             return ret;
         }
 
@@ -345,6 +350,7 @@ namespace Masuit.Tools.Core.Net
         private static int i;
 
         private static string markPath = string.Empty;
+
         /// <summary>
         /// 得到文件路径(防止有文件名重复)
         ///  如:aaa.txt已经在directory目录下存在,则会得到文件aaa(1).txt
@@ -352,7 +358,6 @@ namespace Masuit.Tools.Core.Net
         /// <param name="directory">目录名</param>
         /// <param name="file">文件名</param>
         /// <returns>文件路径</returns>
-
         public static string GetPath(string directory, string file)
         {
             if (markPath == string.Empty)
@@ -365,6 +370,7 @@ namespace Masuit.Tools.Core.Net
                 string extension = Path.GetExtension(markPath);
                 return GetPath(directory, filename + extension);
             }
+
             i = 0;
             markPath = string.Empty;
             return path;
@@ -398,6 +404,7 @@ namespace Masuit.Tools.Core.Net
                 if (offset == size)
                     break;
             }
+
             return offset;
         }
 
@@ -493,6 +500,7 @@ namespace Masuit.Tools.Core.Net
                             if (mark == 10)
                                 break;
                         }
+
                         if (progress != null)
                             progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(length) * 100));
                         if (offset == length)
@@ -501,6 +509,7 @@ namespace Masuit.Tools.Core.Net
                     }
                 }
             }
+
             return ret;
         }
 

@@ -17,7 +17,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>该年周数</returns>
         public static int GetWeekAmount(this DateTime _, int year)
         {
-            var end = new System.DateTime(year, 12, 31); //该年最后一天
+            var end = new DateTime(year, 12, 31); //该年最后一天
             var gc = new GregorianCalendar();
             return gc.GetWeekOfYear(end, CalendarWeekRule.FirstDay, DayOfWeek.Monday); //该年星期数
         }
@@ -73,7 +73,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="nNumWeek">第几周</param>
         /// <param name="dtWeekStart">开始日期</param>
         /// <param name="dtWeekeEnd">结束日期</param>
-        public static void GetWeekWorkTime(this DateTime _, int nYear, int nNumWeek, out System.DateTime dtWeekStart, out System.DateTime dtWeekeEnd)
+        public static void GetWeekWorkTime(this DateTime _, int nYear, int nNumWeek, out DateTime dtWeekStart, out DateTime dtWeekeEnd)
         {
             var dt = new DateTime(nYear, 1, 1);
             dt += new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);
@@ -84,10 +84,10 @@ namespace Masuit.Tools.DateTimeExt
         #region P/Invoke 设置本地时间
 
         [DllImport("kernel32.dll")]
-        private static extern bool SetLocalTime(ref SYSTEMTIME time);
+        private static extern bool SetLocalTime(ref SystemTime time);
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct SYSTEMTIME
+        private struct SystemTime
         {
             public short year;
             public short month;
@@ -105,7 +105,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="dt">DateTime对象</param>
         public static void SetLocalTime(this DateTime dt)
         {
-            SYSTEMTIME st;
+            SystemTime st;
 
             st.year = (short)dt.Year;
             st.month = (short)dt.Month;

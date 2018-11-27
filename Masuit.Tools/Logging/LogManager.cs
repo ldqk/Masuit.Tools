@@ -21,6 +21,7 @@ namespace Masuit.Tools.Logging
         /// 自定义事件
         /// </summary>
         public static event Action<LogInfo> Event;
+
         static LogManager()
         {
             var writeTask = new Task(obj =>
@@ -40,11 +41,17 @@ namespace Masuit.Tools.Logging
                         }
                         else
                         {
-                            logArr = new[] { logPath, logMergeContent };
+                            logArr = new[]
+                            {
+                                logPath,
+                                logMergeContent
+                            };
                             temp.Add(logArr);
                         }
+
                         LogQueue.TryDequeue(out Tuple<string, string> _);
                     }
+
                     foreach (var item in temp)
                     {
                         WriteText(item[0], item[1]);
@@ -62,8 +69,11 @@ namespace Masuit.Tools.Logging
         public static string LogDirectory
         {
             get => Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            set { }
+            set
+            {
+            }
         }
+
         /// <summary>
         /// 写入Info级别的日志
         /// </summary>
@@ -389,6 +399,7 @@ namespace Masuit.Tools.Logging
             {
                 Directory.CreateDirectory(logDir);
             }
+
             string extension = ".log";
             string fileNameNotExt = Now.ToString("yyyyMMdd");
             string fileNamePattern = string.Concat(fileNameNotExt, "(*)", extension);
@@ -416,6 +427,7 @@ namespace Masuit.Tools.Logging
                 string newFileName = string.Concat(fileNameNotExt, $"({0})", extension);
                 newFilePath = Path.Combine(logDir, newFileName);
             }
+
             return newFilePath;
         }
 
@@ -427,6 +439,7 @@ namespace Masuit.Tools.Logging
                 {
                     File.CreateText(logPath).Close();
                 }
+
                 using (StreamWriter sw = File.AppendText(logPath))
                 {
                     sw.Write(logContent);

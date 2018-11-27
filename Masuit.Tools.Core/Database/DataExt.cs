@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
 
-namespace Masuit.Tools.Core.Database
+namespace Masuit.Tools.Database
 {
     /// <summary>
     /// SqlDataReader扩展类
@@ -25,6 +25,7 @@ namespace Masuit.Tools.Core.Database
             {
                 p.SetValue(obj, reader[p.Name]);
             }
+
             return obj;
         }
 
@@ -43,6 +44,7 @@ namespace Masuit.Tools.Core.Database
             {
                 p.SetValue(obj, row[p.Name]);
             }
+
             return obj;
         }
 
@@ -61,6 +63,7 @@ namespace Masuit.Tools.Core.Database
             {
                 p.SetValue(obj, dr[p.Name]);
             }
+
             return obj;
         }
     }

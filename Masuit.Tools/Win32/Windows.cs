@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Hardware;
+using System;
 using System.Diagnostics;
 using System.Management;
 using System.Net;
@@ -6,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Masuit.Tools.Hardware;
+using static System.String;
 
 namespace Masuit.Tools.Win32
 {
@@ -50,6 +51,7 @@ namespace Masuit.Tools.Win32
                         //两个系统的关键进程，不整理
                         continue;
                     }
+
                     try
                     {
                         EmptyWorkingSet(p.Handle);
@@ -74,6 +76,7 @@ namespace Masuit.Tools.Win32
             {
                 return m.Groups[2].Value;
             }
+
             try
             {
                 string ip;
@@ -82,6 +85,7 @@ namespace Masuit.Tools.Win32
                     c.Connect("www.baidu.com", 80);
                     ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
                 }
+
                 return ip;
             }
             catch (Exception)
@@ -108,7 +112,8 @@ namespace Masuit.Tools.Win32
 
                 Process proc = new Process
                 {
-                    StartInfo = {
+                    StartInfo =
+                    {
                         FileName = filename,
                         CreateNoWindow = true,
                         Arguments = arguments,
@@ -121,12 +126,14 @@ namespace Masuit.Tools.Win32
                 using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
                 {
                     //上面标记的是原文，下面是我自己调试错误后自行修改的  
-                    Thread.Sleep(100);           //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                                                 //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
-                    if (!proc.HasExited)         //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                    {                            //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                    //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
+                    {
+                        //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
                         proc.Kill();
                     }
+
                     string txt = sr.ReadToEnd();
                     if (recordLog)
                         Trace.WriteLine(txt);
@@ -249,6 +256,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return cpuInfo;
             }
             catch
@@ -277,6 +285,7 @@ namespace Masuit.Tools.Win32
             {
                 // ignored
             }
+
             return -1;
         }
 
@@ -290,7 +299,7 @@ namespace Masuit.Tools.Win32
             {
                 using (ManagementObjectCollection cpus = mc.GetInstances())
                 {
-                    var MHz = new string[cpus.Count];
+                    var mhz = new string[cpus.Count];
                     int c = 0;
                     using (var mySearch = new ManagementObjectSearcher("select * from Win32_Processor"))
                     {
@@ -298,12 +307,13 @@ namespace Masuit.Tools.Win32
                         {
                             using (mo)
                             {
-                                MHz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
+                                mhz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
                                 c++;
                             }
                         }
                     }
-                    return MHz;
+
+                    return mhz;
                 }
             }
         }
@@ -324,6 +334,7 @@ namespace Masuit.Tools.Win32
                     }
                 }
             }
+
             return "-1";
         }
 
@@ -339,7 +350,7 @@ namespace Masuit.Tools.Win32
                     {
                         using (mo)
                         {
-                            if ((bool)mo["IPEnabled"] == true)
+                            if ((bool)mo["IPEnabled"])
                             {
                                 mac = mo["MacAddress"].ToString();
                                 break;
@@ -347,6 +358,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return mac;
             }
             catch
@@ -360,14 +372,14 @@ namespace Masuit.Tools.Win32
             try
             {
                 //获取IP地址 
-                string st = String.Empty;
+                string st = Empty;
                 using (var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
                 {
                     foreach (ManagementObject mo in mc.GetInstances())
                     {
                         using (mo)
                         {
-                            if ((bool)mo["IPEnabled"] == true)
+                            if ((bool)mo["IPEnabled"])
                             {
                                 //st=mo[ "IpAddress "].ToString(); 
                                 Array ar;
@@ -378,6 +390,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return st;
             }
             catch
@@ -391,18 +404,19 @@ namespace Masuit.Tools.Win32
             try
             {
                 //获取硬盘ID 
-                string HDid = String.Empty;
+                string hdid = Empty;
                 using (var mc = new ManagementClass("Win32_DiskDrive"))
                 {
                     foreach (ManagementObject mo in mc.GetInstances())
                     {
                         using (mo)
                         {
-                            HDid = (string)mo.Properties["Model"].Value;
+                            hdid = (string)mo.Properties["Model"].Value;
                         }
                     }
                 }
-                return HDid;
+
+                return hdid;
             }
             catch
             {
@@ -418,7 +432,7 @@ namespace Masuit.Tools.Win32
         {
             try
             {
-                string st = String.Empty;
+                string st = Empty;
                 using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
                     foreach (ManagementObject mo in mc.GetInstances())
@@ -429,6 +443,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return st;
             }
             catch
@@ -441,7 +456,7 @@ namespace Masuit.Tools.Win32
         {
             try
             {
-                string st = String.Empty;
+                string st = Empty;
                 using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
                     foreach (var o in mc.GetInstances())
@@ -453,6 +468,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return st;
             }
             catch
@@ -465,7 +481,7 @@ namespace Masuit.Tools.Win32
         {
             try
             {
-                string st = String.Empty;
+                string st = Empty;
                 using (var mc = new ManagementClass("Win32_ComputerSystem"))
                 {
                     using (ManagementObjectCollection moc = mc.GetInstances())
@@ -478,6 +494,7 @@ namespace Masuit.Tools.Win32
                         }
                     }
                 }
+
                 return st;
             }
             catch

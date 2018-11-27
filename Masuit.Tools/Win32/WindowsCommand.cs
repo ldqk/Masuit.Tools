@@ -10,7 +10,6 @@ namespace Masuit.Tools.Win32
     /// </summary>
     public static class WindowsCommand
     {
-
         /// <summary>
         /// 生成真正的随机数
         /// </summary>
@@ -75,11 +74,14 @@ namespace Masuit.Tools.Win32
                         {
                             process.WaitForExit(outtime);
                         }
+
                         output = process.StandardOutput.ReadToEnd(); //读取进程的输出  
                     }
                 }
+
                 return output;
             }
+
             throw new Exception("命令参数无效，必须传入一个控制台能被cmd.exe可执行程序;\n如：ping 127.0.0.1");
         }
     }

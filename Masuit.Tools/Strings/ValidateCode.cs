@@ -30,7 +30,7 @@ namespace Masuit.Tools.Strings
             {
                 sb.Append(ch[r.Next(ch.Length)]);
             }
-            r = null;
+
             return sb.ToString();
         }
 
@@ -45,7 +45,7 @@ namespace Masuit.Tools.Strings
         /// <exception cref="HttpException">The Web application is running under IIS 7 in Integrated mode.</exception>
         public static void CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 22, int lineHeight = 36)
         {
-            using (Bitmap image = new Bitmap((int)Math.Ceiling(validateCode.Length * (fontSize + 2.0)), lineHeight))
+            using (Bitmap image = new Bitmap((int) Math.Ceiling(validateCode.Length * (fontSize + 2.0)), lineHeight))
             {
                 using (Graphics g = Graphics.FromImage(image))
                 {
@@ -62,10 +62,17 @@ namespace Masuit.Tools.Strings
                         int y2 = random.Next(image.Height);
                         g.DrawLine(new Pen(Color.Silver), x1, y1, x2, y2);
                     }
-                    Font[] fonts = { new Font("Arial", fontSize, FontStyle.Bold | FontStyle.Italic), new Font("微软雅黑", fontSize, FontStyle.Bold | FontStyle.Italic), new Font("黑体", fontSize, FontStyle.Bold | FontStyle.Italic), new Font("宋体", fontSize, FontStyle.Bold | FontStyle.Italic), new Font("楷体", fontSize, FontStyle.Bold | FontStyle.Italic) };
+
+                    Font[] fonts =
+                    {
+                        new Font("Arial", fontSize, FontStyle.Bold | FontStyle.Italic),
+                        new Font("微软雅黑", fontSize, FontStyle.Bold | FontStyle.Italic),
+                        new Font("黑体", fontSize, FontStyle.Bold | FontStyle.Italic),
+                        new Font("宋体", fontSize, FontStyle.Bold | FontStyle.Italic),
+                        new Font("楷体", fontSize, FontStyle.Bold | FontStyle.Italic)
+                    };
                     //渐变.
-                    LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, image.Width, image.Height),
-                        Color.Blue, Color.DarkRed, 1.2f, true);
+                    LinearGradientBrush brush = new LinearGradientBrush(new Rectangle(0, 0, image.Width, image.Height), Color.Blue, Color.DarkRed, 1.2f, true);
                     g.DrawString(validateCode, fonts[new Random().Next(fonts.Length)], brush, 3, 2);
 
                     //画图片的前景干扰点
@@ -75,6 +82,7 @@ namespace Masuit.Tools.Strings
                         int y = random.Next(image.Height);
                         image.SetPixel(x, y, Color.FromArgb(random.Next()));
                     }
+
                     //画图片的边框线
                     g.DrawRectangle(new Pen(Color.Silver), 0, 0, image.Width - 1, image.Height - 1);
                     //保存图片数据
@@ -87,6 +95,5 @@ namespace Masuit.Tools.Strings
                 }
             }
         }
-
     }
 }

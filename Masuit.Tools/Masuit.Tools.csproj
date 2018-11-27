@@ -70,11 +70,12 @@
   <ItemGroup>
     <Compile Include="Database\DataTableHelper.cs" />
     <Compile Include="DateTimeExt\ChineseCalendar.cs" />
-    <Compile Include="DateTimeExt\CNCalendar.cs" />
     <Compile Include="Database\DataExt.cs" />
     <Compile Include="DateTimeExt\DateTimeHelper.cs" />
     <Compile Include="DateTimeExt\DateUtil.cs" />
+    <Compile Include="DateTimeExt\DateInfoStruct.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
+    <Compile Include="DateTimeExt\WeekHolidayStruct.cs" />
     <Compile Include="ExpressionGenericMapper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Files\Compress.cs" />

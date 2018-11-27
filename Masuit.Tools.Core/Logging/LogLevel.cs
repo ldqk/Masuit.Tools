@@ -1,4 +1,4 @@
-﻿namespace Masuit.Tools.Core.Logging
+﻿namespace Masuit.Tools.Logging
 {
     public enum LogLevel
     {

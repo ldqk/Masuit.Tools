@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Masuit.Tools.Win32;
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using Masuit.Tools.Win32;
 
 namespace Masuit.Tools.Security
 {
@@ -32,6 +32,7 @@ namespace Masuit.Tools.Security
             {
                 sb.Append((int)o + "O");
             }
+
             return sb.ToString();
         }
     }

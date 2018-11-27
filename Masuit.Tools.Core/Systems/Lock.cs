@@ -1,7 +1,7 @@
 ﻿using System;
 using StackExchange.Redis;
 
-namespace Masuit.Tools.Core.Systems
+namespace Masuit.Tools.Systems
 {
     public class Lock
     {

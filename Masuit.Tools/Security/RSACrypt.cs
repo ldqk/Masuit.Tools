@@ -20,6 +20,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         public string PrivateKey;
     }
+
     /// <summary> 
     /// RSA加密解密及RSA签名和验证
     /// </summary> 
@@ -36,7 +37,11 @@ namespace Masuit.Tools.Security
         {
             using (var rsa = new RSACryptoServiceProvider())
             {
-                return new RsaKey { PrivateKey = rsa.ToXmlString(true), PublicKey = rsa.ToXmlString(false) };
+                return new RsaKey
+                {
+                    PrivateKey = rsa.ToXmlString(true),
+                    PublicKey = rsa.ToXmlString(false)
+                };
             }
         }
 

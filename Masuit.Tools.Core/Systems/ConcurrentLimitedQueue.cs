@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Masuit.Tools.Core.Systems
+namespace Masuit.Tools.Systems
 {
     /// <summary>
     /// 定长队列

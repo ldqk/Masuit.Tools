@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Masuit.Tools.Core
+namespace Masuit.Tools
 {
     /// <summary>
     /// 生成表达式目录树  泛型缓存
@@ -43,12 +43,7 @@ namespace Masuit.Tools.Core
                 func = lambda.Compile();
             }
 
-            if (source == null)
-            {
-                return default(TDestination);
-            }
-
-            return ((Func<TSource, TDestination>)func)(source); //拼装是一次性的
+            return source == null ? default(TDestination) : ((Func<TSource, TDestination>)func)(source);
         }
 
         /// <summary>

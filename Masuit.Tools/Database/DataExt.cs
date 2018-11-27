@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Reflection;
 
 namespace Masuit.Tools.Database
@@ -26,6 +25,7 @@ namespace Masuit.Tools.Database
             {
                 p.SetValue(obj, reader[p.Name]);
             }
+
             return obj;
         }
 
@@ -44,6 +44,7 @@ namespace Masuit.Tools.Database
             {
                 p.SetValue(obj, row[p.Name]);
             }
+
             return obj;
         }
 
@@ -62,6 +63,7 @@ namespace Masuit.Tools.Database
             {
                 p.SetValue(obj, dr[p.Name]);
             }
+
             return obj;
         }
     }

@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.DateTime;
 
-namespace Masuit.Tools.Core.Logging
+namespace Masuit.Tools.Logging
 {
     /// <summary>
     /// 日志组件
@@ -20,6 +21,7 @@ namespace Masuit.Tools.Core.Logging
         /// 自定义事件
         /// </summary>
         public static event Action<LogInfo> Event;
+
         static LogManager()
         {
             var writeTask = new Task(obj =>
@@ -39,11 +41,17 @@ namespace Masuit.Tools.Core.Logging
                         }
                         else
                         {
-                            logArr = new[] { logPath, logMergeContent };
+                            logArr = new[]
+                            {
+                                logPath,
+                                logMergeContent
+                            };
                             temp.Add(logArr);
                         }
+
                         LogQueue.TryDequeue(out Tuple<string, string> _);
                     }
+
                     foreach (var item in temp)
                     {
                         WriteText(item[0], item[1]);
@@ -60,21 +68,24 @@ namespace Masuit.Tools.Core.Logging
         /// </summary>
         public static string LogDirectory
         {
-            get => AppContext.BaseDirectory + "logs";
-            set { }
+            get => Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            set
+            {
+            }
         }
+
         /// <summary>
         /// 写入Info级别的日志
         /// </summary>
         /// <param name="info"></param>
         public static void Info(string info)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}  {info}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}  {info}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Info,
                 Message = info,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId
             };
             Event?.Invoke(log);
@@ -87,12 +98,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="info"></param>
         public static void Info(string source, string info)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source}  {info}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source}  {info}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Info,
                 Message = info,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source
             };
@@ -106,12 +117,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="info"></param>
         public static void Info(Type source, string info)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source.FullName}  {info}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}   {source.FullName}  {info}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Info,
                 Message = info,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName
             };
@@ -124,12 +135,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="debug">异常对象</param>
         public static void Debug(string debug)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {debug}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {debug}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Debug,
                 Message = debug,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId
             };
             Event?.Invoke(log);
@@ -142,12 +153,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="debug">异常对象</param>
         public static void Debug(string source, string debug)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source}  {debug}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source}  {debug}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Debug,
                 Message = debug,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source
             };
@@ -161,12 +172,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="debug">异常对象</param>
         public static void Debug(Type source, string debug)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source.FullName}  {debug}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(debug).ToUpper()}   {source.FullName}  {debug}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Debug,
                 Message = debug,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName
             };
@@ -179,12 +190,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="error">异常对象</param>
         public static void Error(Exception error)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {error.Source}  {error.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = error.Source,
                 Exception = error,
@@ -200,12 +211,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="error">异常对象</param>
         public static void Error(Type source, Exception error)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName,
                 Exception = error,
@@ -221,12 +232,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="error">异常信息</param>
         public static void Error(Type source, string error)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source.FullName}  {error}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName,
                 //Exception = error,
@@ -242,12 +253,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="error">异常对象</param>
         public static void Error(string source, Exception error)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source,
                 Exception = error,
@@ -263,12 +274,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="error">异常信息</param>
         public static void Error(string source, string error)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(error).ToUpper()}   {source}  {error}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Error,
                 Message = error,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source,
                 //Exception = error,
@@ -283,12 +294,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(Exception fatal)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {fatal.Source}  {fatal.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = fatal.Source,
                 Exception = fatal,
@@ -304,12 +315,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(Type source, Exception fatal)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName,
                 Exception = fatal,
@@ -325,12 +336,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(Type source, string fatal)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source.FullName}  {fatal}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source.FullName,
                 //Exception = fatal,
@@ -346,12 +357,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(string source, Exception fatal)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.Message}{Environment.NewLine}{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.StackTrace}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.Message}{Environment.NewLine}{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal.StackTrace}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal.Message,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source,
                 Exception = fatal,
@@ -367,12 +378,12 @@ namespace Masuit.Tools.Core.Logging
         /// <param name="fatal">异常对象</param>
         public static void Fatal(string source, string fatal)
         {
-            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{DateTime.Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal}"));
+            LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(fatal).ToUpper()}   {source}  {fatal}"));
             LogInfo log = new LogInfo()
             {
                 LogLevel = LogLevel.Fatal,
                 Message = fatal,
-                Time = DateTime.Now,
+                Time = Now,
                 ThreadId = Thread.CurrentThread.ManagedThreadId,
                 Source = source,
                 ExceptionType = fatal.GetType().Name
@@ -388,8 +399,9 @@ namespace Masuit.Tools.Core.Logging
             {
                 Directory.CreateDirectory(logDir);
             }
+
             string extension = ".log";
-            string fileNameNotExt = DateTime.Now.ToString("yyyyMMdd");
+            string fileNameNotExt = Now.ToString("yyyyMMdd");
             string fileNamePattern = string.Concat(fileNameNotExt, "(*)", extension);
             List<string> filePaths = Directory.GetFiles(logDir, fileNamePattern, SearchOption.TopDirectoryOnly).ToList();
 
@@ -415,6 +427,7 @@ namespace Masuit.Tools.Core.Logging
                 string newFileName = string.Concat(fileNameNotExt, $"({0})", extension);
                 newFilePath = Path.Combine(logDir, newFileName);
             }
+
             return newFilePath;
         }
 
@@ -426,6 +439,7 @@ namespace Masuit.Tools.Core.Logging
                 {
                     File.CreateText(logPath).Close();
                 }
+
                 using (StreamWriter sw = File.AppendText(logPath))
                 {
                     sw.Write(logContent);

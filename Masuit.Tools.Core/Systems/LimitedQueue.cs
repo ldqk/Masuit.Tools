@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Masuit.Tools.Core.Systems
+namespace Masuit.Tools.Systems
 {
     /// <summary>
     /// 定长队列

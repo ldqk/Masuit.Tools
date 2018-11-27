@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -7,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Masuit.Tools.Logging;
 
 namespace Masuit.Tools.Net
 {
@@ -37,11 +37,15 @@ namespace Masuit.Tools.Net
                 cookieData = new StringBuilder(datasize);
                 if (!InternetGetCookie(uri.ToString(), null, cookieData, ref datasize)) return null;
             }
-            if (cookieData.Length > 0)
+
+            if (cookieData.Length <= 0)
             {
-                cookies = new CookieContainer();
-                cookies.SetCookies(uri, cookieData.ToString().Replace(';', ','));
+                return cookies;
             }
+
+            cookies = new CookieContainer();
+            cookies.SetCookies(uri, cookieData.ToString().Replace(';', ','));
+
             return cookies;
         }
 
@@ -59,12 +63,14 @@ namespace Masuit.Tools.Net
             {
                 sb.AppendLine(string.Format("{0}:{1}", cook.Name, cook.Value));
             }
+
             return sb.ToString();
         }
 
         #region 清除CooKie 
 
         #region 清除指定Cookie
+
         /// <summary>
         /// 清除指定Cookie
         /// </summary>
@@ -78,9 +84,11 @@ namespace Masuit.Tools.Net
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
         }
+
         #endregion
 
         #region   删除所有cookie值
+
         /// <summary>
         /// 删除所有cookie值
         /// </summary>
@@ -89,14 +97,16 @@ namespace Masuit.Tools.Net
             int n = HttpContext.Current.Response.Cookies.Count;
             for (int i = 0; i < n; i++)
             {
-                HttpCookie MyCookie = HttpContext.Current.Response.Cookies[i];
-                MyCookie.Expires = DateTime.Now.AddDays(-1);
-                HttpContext.Current.Response.Cookies.Add(MyCookie);
+                HttpCookie myCookie = HttpContext.Current.Response.Cookies[i];
+                myCookie.Expires = DateTime.Now.AddDays(-1);
+                HttpContext.Current.Response.Cookies.Add(myCookie);
             }
         }
+
         #endregion
 
         #region 清除系统指定的Cookie
+
         /// <summary>
         /// 清除系统指定的Cookie
         /// </summary>
@@ -115,6 +125,7 @@ namespace Masuit.Tools.Net
                 }
             }
         }
+
         #endregion
 
         #region 清除系统的Cookie文件
@@ -137,7 +148,9 @@ namespace Masuit.Tools.Net
                 }
             }
         }
+
         #endregion
+
         #endregion
 
         #region 获取Cookie
@@ -157,22 +170,24 @@ namespace Masuit.Tools.Net
             {
                 str = cookie.Value;
             }
+
             return str;
         }
 
         /// <summary>
         /// 根据Key值得到Cookie值,Key不区分大小写
         /// </summary>
-        /// <param name="Key">key</param>
+        /// <param name="key">key</param>
         /// <param name="cookie">字符串Cookie</param>
         /// <returns>Cookie值</returns>
-        public static string GetCookieValue(string Key, string cookie)
+        public static string GetCookieValue(string key, string cookie)
         {
             foreach (CookieItem item in GetCookieList(cookie))
             {
-                if (item.Key == Key)
+                if (item.Key == key)
                     return item.Value;
             }
+
             return "";
         }
 
@@ -184,16 +199,26 @@ namespace Masuit.Tools.Net
         public static List<CookieItem> GetCookieList(string cookie)
         {
             List<CookieItem> cookielist = new List<CookieItem>();
-            foreach (string item in cookie.Split(new[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string item in cookie.Split(new[]
+            {
+                ";",
+                ","
+            }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (Regex.IsMatch(item, @"([\s\S]*?)=([\s\S]*?)$"))
                 {
                     Match m = Regex.Match(item, @"([\s\S]*?)=([\s\S]*?)$");
-                    cookielist.Add(new CookieItem() { Key = m.Groups[1].Value, Value = m.Groups[2].Value });
+                    cookielist.Add(new CookieItem()
+                    {
+                        Key = m.Groups[1].Value,
+                        Value = m.Groups[2].Value
+                    });
                 }
             }
+
             return cookielist;
         }
+
         #endregion
 
         #region  获取cookie数组
@@ -205,15 +230,9 @@ namespace Masuit.Tools.Net
         /// <returns>字符串数组</returns>
         public static string[] GetCKS(string ck)
         {
-            if (ck != null)
-            {
-                return ck.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            }
-            else
-            {
-                return new string[0];
-            }
+            return ck == null ? new string[0] : ck.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
         }
+
         #endregion
 
         #region  从Cookie数组中转换成不重复的Cookie字符串，相同的Cookie取前面的
@@ -237,12 +256,15 @@ namespace Masuit.Tools.Net
                     }
                 }
             }
-            for (int i = 0; i < list.Count; i++)
+
+            foreach (var t in list)
             {
-                res += list[i] + ";";
+                res += t + ";";
             }
+
             return res;
         }
+
         #endregion
 
         #region  从CookieCollection中获取Cookie字符串
@@ -259,8 +281,10 @@ namespace Masuit.Tools.Net
             {
                 ck += cc[i].Name + "=" + cc[i].Value + ";";
             }
+
             return ck;
         }
+
         #endregion
 
         #region   将Cookie字符串填充到CookieCollection中
@@ -299,9 +323,12 @@ namespace Masuit.Tools.Net
                     }
                 }
             }
+
             return cc;
         }
+
         #endregion
+
         #endregion
 
         #region 添加Cookie
@@ -317,9 +344,11 @@ namespace Masuit.Tools.Net
         {
             SetCookie(cookiename, cookievalue, DateTime.Now.AddDays(1.0));
         }
+
         #endregion
 
         #region   添加一个Cookie
+
         /// <summary>
         /// 添加一个Cookie
         /// </summary>
@@ -335,7 +364,9 @@ namespace Masuit.Tools.Net
             };
             HttpContext.Current.Response.Cookies.Add(cookie);
         }
+
         #endregion
+
         #endregion
 
         #region 检查Cookie集合中是否包含指定的Cookie值
@@ -357,9 +388,11 @@ namespace Masuit.Tools.Net
                         return true;
                     }
                 }
+
                 return false;
             }).ConfigureAwait(false);
         }
+
         #endregion
 
         #region 设置系统Cookie
@@ -371,8 +404,9 @@ namespace Masuit.Tools.Net
         /// <param name="lbszCookieName">Cookie名</param>
         /// <param name="lpszCookieData">Cookie数据</param>
         /// <returns>设置成功与否</returns>
-        [System.Runtime.InteropServices.DllImport("wininet.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto, SetLastError = true)]
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);
+
         #endregion
 
         #region   获取所有可能的Cookie域
@@ -393,8 +427,10 @@ namespace Masuit.Tools.Net
                 baseDomain += t;
                 res.Add(baseDomain);
             }
+
             return res;
         }
+
         #endregion
 
         #region  将Cookie字符串描述的Cookie追加到CookieCoollection
@@ -413,6 +449,7 @@ namespace Masuit.Tools.Net
                 cc.Add(tmp[i]);
             }
         }
+
         #endregion
 
         #region 将Cookie字符串设置到系统中，便于浏览器使用
@@ -425,15 +462,17 @@ namespace Masuit.Tools.Net
         public static void SetCKToSystem(string ck, string url)
         {
             string[] cks = GetCKS(ck);
-            for (int i = 0; i < cks.Length; i++)
+            foreach (var t in cks)
             {
-                string[] nv = cks[i].Split('=');
+                string[] nv = t.Split('=');
                 InternetSetCookie(url, nv[0], nv.Length > 1 ? nv[1] : "");
             }
         }
+
         #endregion
 
         #region 将CookieCollection中的Cookie设置到系统中，便于浏览器使用
+
         /// <summary>
         /// 将CookieCollection中的Cookie设置到系统中，便于浏览器使用
         /// </summary>
@@ -444,12 +483,13 @@ namespace Masuit.Tools.Net
             List<string> domains = GetDomains(url);
             for (int i = 0; i < cc.Count; i++)
             {
-                for (int j = 0; j < domains.Count; j++)
+                foreach (var t in domains)
                 {
-                    InternetSetCookie(domains[j], cc[i].Name, cc[i].Value);
+                    InternetSetCookie(t, cc[i].Name, cc[i].Value);
                 }
             }
         }
+
         #endregion
 
         /// <summary>
@@ -473,6 +513,7 @@ namespace Masuit.Tools.Net
         /// 键
         /// </summary>
         public string Key { get; set; }
+
         /// <summary>
         /// 值
         /// </summary>

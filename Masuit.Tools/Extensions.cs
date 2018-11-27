@@ -257,7 +257,10 @@ namespace Masuit.Tools
         public static TDestination MapTo<TDestination>(this object source) where TDestination : new()
         {
             TDestination dest = new TDestination();
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -272,7 +275,10 @@ namespace Masuit.Tools
             return await Task.Run(() =>
             {
                 TDestination dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+                });
                 return dest;
             });
         }
@@ -302,7 +308,10 @@ namespace Masuit.Tools
         public static T Copy<T>(this T source) where T : new()
         {
             T dest = new T();
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -315,7 +324,10 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static T CopyTo<T>(this T source, T dest) where T : new()
         {
-            dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
             return dest;
         }
 
@@ -325,13 +337,15 @@ namespace Masuit.Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static async Task<T> CopyAsync<T>(this T source) where T : new() =>
-            await Task.Run(() =>
+        public static async Task<T> CopyAsync<T>(this T source) where T : new() => await Task.Run(() =>
+        {
+            T dest = new T();
+            dest.GetType().GetProperties().ForEach(p =>
             {
-                T dest = new T();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source)); });
-                return dest;
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
             });
+            return dest;
+        });
 
         /// <summary>
         /// 映射到目标类型的集合
@@ -344,7 +358,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -363,7 +380,10 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
 
@@ -382,7 +402,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -401,7 +424,10 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
 
@@ -420,7 +446,10 @@ namespace Masuit.Tools
             foreach (var o in source)
             {
                 var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                dest.GetType().GetProperties().ForEach(p =>
+                {
+                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                });
                 yield return dest;
             }
         }
@@ -439,7 +468,10 @@ namespace Masuit.Tools
                 foreach (var o in source)
                 {
                     var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p => { p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o)); });
+                    dest.GetType().GetProperties().ForEach(p =>
+                    {
+                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
+                    });
                     list.Add(dest);
                 }
 
@@ -454,7 +486,10 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static string ToJsonString(this object source) => JsonConvert.SerializeObject(source, new JsonSerializerSettings()
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        });
 
         /// <summary>
         /// 转换成json字符串
@@ -1497,8 +1532,10 @@ namespace Masuit.Tools
                 {
                     length = 5;
                 }
+
                 temp = temp.Substring(0, length);
             }
+
             return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
         }
 
@@ -1545,6 +1582,7 @@ namespace Masuit.Tools
                 uint current = uint.Parse(inputs[0]) << 24 | uint.Parse(inputs[1]) << 16 | uint.Parse(inputs[2]) << 8 | uint.Parse(inputs[3]);
                 return current >= start && current <= end;
             }
+
             return false;
         }
     }

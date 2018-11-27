@@ -50,6 +50,7 @@ namespace Masuit.Tools.Net
                 {
                     throw new Exception("ftp下载目标服务器地址未设置！");
                 }
+
                 Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
                 var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
                 ftpsize.UseBinary = true;
@@ -61,6 +62,7 @@ namespace Masuit.Tools.Net
                     ftpsize.Credentials = new NetworkCredential(Username, Password);
                     reqFtp.Credentials = new NetworkCredential(Username, Password);
                 }
+
                 ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
                 using (FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse())
                 {
@@ -111,6 +113,7 @@ namespace Masuit.Tools.Net
                 {
                     throw new Exception("ftp下载目标服务器地址未设置！");
                 }
+
                 Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
                 var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
                 ftpsize.UseBinary = true;
@@ -124,6 +127,7 @@ namespace Masuit.Tools.Net
                     ftpsize.Credentials = new NetworkCredential(Username, Password);
                     reqFtp.Credentials = new NetworkCredential(Username, Password);
                 }
+
                 ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
                 using (FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse())
                 {
@@ -175,8 +179,10 @@ namespace Masuit.Tools.Net
                         size = outputStream.Length;
                     }
                 }
+
                 BrokenDownload(remoteFileName, localFileName, ifCredential, size, updateProgress);
             }
+
             Download(remoteFileName, localFileName, ifCredential, updateProgress);
         }
 
@@ -196,6 +202,7 @@ namespace Masuit.Tools.Net
             {
                 throw new Exception("ftp上传目标服务器地址未设置！");
             }
+
             Uri uri = new Uri("ftp://" + FtpServer + "/" + finfo.Name);
             var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
             reqFtp.KeepAlive = false;
@@ -239,6 +246,7 @@ namespace Masuit.Tools.Net
             {
                 remoteFilepath = "";
             }
+
             string newFileName;
             FileInfo fileInf = new FileInfo(localFullPath);
             long allbye = fileInf.Length;
@@ -251,11 +259,13 @@ namespace Masuit.Tools.Net
                 newFileName = fileInf.Name.Replace("#", "＃");
                 newFileName = RemoveSpaces(newFileName);
             }
+
             long startfilesize = GetFileSize(newFileName, remoteFilepath);
             if (startfilesize >= allbye)
             {
                 return false;
             }
+
             long startbye = startfilesize;
             //更新进度 
             updateProgress?.Invoke((int)allbye, (int)startfilesize); //更新进度条 
@@ -269,6 +279,7 @@ namespace Masuit.Tools.Net
             {
                 uri = "ftp://" + FtpServer + "/" + remoteFilepath + "/" + newFileName;
             }
+
             // 根据uri创建FtpWebRequest对象 
             var reqFtp = (FtpWebRequest)WebRequest.Create(new Uri(uri));
             // ftp用户名和密码 
@@ -304,6 +315,7 @@ namespace Masuit.Tools.Net
                     }
                 }
             }
+
             return true;
         }
 
@@ -324,6 +336,7 @@ namespace Masuit.Tools.Net
                     a += c.ToString();
                 }
             }
+
             return a.Split('.')[a.Split('.').Length - 2] + "." + a.Split('.')[a.Split('.').Length - 1];
         }
 
@@ -347,6 +360,7 @@ namespace Masuit.Tools.Net
                 {
                     uri = "ftp://" + FtpServer + "/" + remoteFilepath + "/" + fi.Name;
                 }
+
                 var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
                 reqFtp.KeepAlive = false;
                 reqFtp.UseBinary = true;
@@ -387,9 +401,11 @@ namespace Masuit.Tools.Net
                         result.Append("\n");
                         line = reader.ReadLine();
                     }
+
                     result.Remove(result.ToString().LastIndexOf("\n", StringComparison.Ordinal), 1);
                 }
             }
+
             return result.ToString().Split('\n');
         }
 
@@ -425,11 +441,14 @@ namespace Masuit.Tools.Net
                             result.Append(line);
                             result.Append("\n");
                         }
+
                         line = reader.ReadLine();
                     }
+
                     result.Remove(result.ToString().LastIndexOf('\n'), 1);
                 }
             }
+
             return result.ToString().Split('\n');
         }
 
@@ -459,7 +478,11 @@ namespace Masuit.Tools.Net
                     }
                 }
             }
-            char[] n = { '\n' };
+
+            char[] n =
+            {
+                '\n'
+            };
             return m.Split(n);
         }
 
@@ -553,6 +576,7 @@ namespace Masuit.Tools.Net
                         return true;
                     }
                 }
+
                 return false;
             }
             catch
@@ -575,6 +599,7 @@ namespace Masuit.Tools.Net
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -642,6 +667,7 @@ namespace Masuit.Tools.Net
             {
                 _ftpRemotePath += directoryName + "/";
             }
+
             FtpUri = "ftp://" + FtpServer + "/" + _ftpRemotePath + "/";
         }
 

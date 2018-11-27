@@ -43,11 +43,7 @@ namespace Masuit.Tools
                 func = lambda.Compile();
             }
 
-            if (source == null)
-            {
-                return default(TDestination);
-            }
-            return ((Func<TSource, TDestination>)func)(source); //拼装是一次性的
+            return source == null ? default(TDestination) : ((Func<TSource, TDestination>)func)(source);
         }
 
         /// <summary>

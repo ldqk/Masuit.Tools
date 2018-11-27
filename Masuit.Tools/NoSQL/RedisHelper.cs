@@ -59,6 +59,7 @@ namespace Masuit.Tools.NoSQL
         /// 静态连接池
         /// </summary>
         public static ConcurrentDictionary<string, ConnectionMultiplexer> ConnectionCache { get; set; } = new ConcurrentDictionary<string, ConnectionMultiplexer>();
+
         #region 构造函数
 
         /// <summary>
@@ -188,8 +189,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>是否保存成功</returns>
         public bool SetString(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
-            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
-                keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
+            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
             return Do(db => db.StringSet(newkeyValues.ToArray()));
         }
 
@@ -220,6 +220,7 @@ namespace Masuit.Tools.NoSQL
                 key = AddSysCustomKey(key);
                 return Do(db => db.StringGet(key));
             }
+
             return string.Empty;
         }
 
@@ -247,6 +248,7 @@ namespace Masuit.Tools.NoSQL
                 key = AddSysCustomKey(key);
                 return Do(db => ConvertObj<T>(db.StringGet(key)));
             }
+
             return default(T);
         }
 
@@ -298,8 +300,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>是否保存成功</returns>
         public async Task<bool> SetStringAsync(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
-            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues =
-                keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
+            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
             return await Do(async db => await db.StringSetAsync(newkeyValues.ToArray()));
         }
 
@@ -330,6 +331,7 @@ namespace Masuit.Tools.NoSQL
                 key = AddSysCustomKey(key);
                 return await Do(async db => await db.StringGetAsync(key));
             }
+
             return string.Empty;
         }
 
@@ -358,6 +360,7 @@ namespace Masuit.Tools.NoSQL
                 string result = await Do(async db => await db.StringGetAsync(key));
                 return ConvertObj<T>(result);
             }
+
             return default(T);
         }
 
@@ -482,6 +485,7 @@ namespace Masuit.Tools.NoSQL
                     return ConvertObj<T>(value);
                 });
             }
+
             return default(T);
         }
 
@@ -616,6 +620,7 @@ namespace Masuit.Tools.NoSQL
                 string value = await Do(async db => await db.HashGetAsync(key, dataKey));
                 return ConvertObj<T>(value);
             }
+
             return default(T);
         }
 
@@ -695,6 +700,7 @@ namespace Masuit.Tools.NoSQL
                     return ConvetList<T>(values);
                 });
             }
+
             return new List<T>();
         }
 
@@ -727,6 +733,7 @@ namespace Masuit.Tools.NoSQL
                     return ConvertObj<T>(value);
                 });
             }
+
             return default(T);
         }
 
@@ -759,6 +766,7 @@ namespace Masuit.Tools.NoSQL
                     return ConvertObj<T>(value);
                 });
             }
+
             return default(T);
         }
 
@@ -802,6 +810,7 @@ namespace Masuit.Tools.NoSQL
                 var values = await Do(async redis => await redis.ListRangeAsync(key));
                 return ConvetList<T>(values);
             }
+
             return new List<T>();
         }
 
@@ -831,6 +840,7 @@ namespace Masuit.Tools.NoSQL
                 var value = await Do(async db => await db.ListRightPopAsync(key));
                 return ConvertObj<T>(value);
             }
+
             return default(T);
         }
 
@@ -860,6 +870,7 @@ namespace Masuit.Tools.NoSQL
                 var value = await Do(async db => await db.ListLeftPopAsync(key));
                 return ConvertObj<T>(value);
             }
+
             return default(T);
         }
 
@@ -921,6 +932,7 @@ namespace Masuit.Tools.NoSQL
                     return ConvetList<T>(values);
                 });
             }
+
             return new List<T>();
         }
 
@@ -975,6 +987,7 @@ namespace Masuit.Tools.NoSQL
                 var values = await Do(async redis => await redis.SortedSetRangeByRankAsync(key));
                 return ConvetList<T>(values);
             }
+
             return new List<T>();
         }
 
@@ -1208,6 +1221,7 @@ namespace Masuit.Tools.NoSQL
                 var model = ConvertObj<T>(item);
                 result.Add(model);
             }
+
             return result;
         }
 

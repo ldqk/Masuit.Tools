@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace Masuit.Tools.Core.Media
+namespace Masuit.Tools.Media
 {
     /// <summary>
     /// 图片处理
@@ -28,7 +28,6 @@ namespace Masuit.Tools.Core.Media
         /// <param name="quality">质量（范围0-100）</param>
         public static void CutForSquare(this Stream fromFile, string fileSaveUrl, int side, int quality)
         {
-            var aliceBlue = Color.AliceBlue;
             //创建目录
             string dir = Path.GetDirectoryName(fileSaveUrl);
             if (!Directory.Exists(dir))
@@ -243,7 +242,7 @@ namespace Masuit.Tools.Core.Media
                     ImageCodecInfo ici = null;
                     foreach (ImageCodecInfo i in icis)
                     {
-                        if ((i.MimeType == "image/jpeg") || (i.MimeType == "image/bmp") || (i.MimeType == "image/png") || (i.MimeType == "image/gif"))
+                        if (i.MimeType == "image/jpeg" || i.MimeType == "image/bmp" || i.MimeType == "image/png" || i.MimeType == "image/gif")
                             ici = i;
                     }
 
@@ -482,12 +481,13 @@ namespace Masuit.Tools.Core.Media
         /// <returns>剪裁后的Bitmap</returns>
         public static Bitmap CutImage(this Bitmap b, Rectangle rec)
         {
-            if (b == null)
-                return null;
             int w = b.Width;
             int h = b.Height;
             if ((rec.X >= w) || (rec.Y >= h))
+            {
                 return null;
+            }
+
             if (rec.X + rec.Width > w)
                 rec.Width = w - rec.X;
             if (rec.Y + rec.Height > h)
@@ -840,12 +840,11 @@ namespace Masuit.Tools.Core.Media
         {
             Bitmap bm = new Bitmap(width, height); //初始化一个记录经过处理后的图片对象
             int x, y; //x、y是循环次数，后面三个是记录红绿蓝三个值的
-            Color pixel;
             for (x = 0; x < width; x++)
             {
                 for (y = 0; y < height; y++)
                 {
-                    pixel = mybm.GetPixel(x, y); //获取当前像素的值
+                    var pixel = mybm.GetPixel(x, y);
                     var resultR = pixel.R + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
                     var resultG = pixel.G + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
                     var resultB = pixel.B + val; //x、y是循环次数，后面三个是记录红绿蓝三个值的
@@ -998,12 +997,11 @@ namespace Masuit.Tools.Core.Media
             using (Bitmap bm = new Bitmap(width, height))
             {
                 int x, y, z; //x,y是循环次数,z是用来记录像素点的x坐标的变化的
-                Color pixel;
                 for (y = height - 1; y >= 0; y--)
                 {
                     for (x = width - 1, z = 0; x >= 0; x--)
                     {
-                        pixel = mybm.GetPixel(x, y); //获取当前像素的值
+                        var pixel = mybm.GetPixel(x, y);
                         bm.SetPixel(z++, y, Color.FromArgb(pixel.R, pixel.G, pixel.B)); //绘图
                     }
                 }
@@ -1028,12 +1026,11 @@ namespace Masuit.Tools.Core.Media
             using (bm)
             {
                 int x, y, z;
-                Color pixel;
                 for (x = 0; x < width; x++)
                 {
                     for (y = height - 1, z = 0; y >= 0; y--)
                     {
-                        pixel = mybm.GetPixel(x, y); //获取当前像素的值
+                        var pixel = mybm.GetPixel(x, y);
                         bm.SetPixel(x, z++, Color.FromArgb(pixel.R, pixel.G, pixel.B)); //绘图
                     }
                 }
@@ -1118,14 +1115,13 @@ namespace Masuit.Tools.Core.Media
             Bitmap bm = new Bitmap(width, height);
             using (bm)
             {
-                int x, y, result; //x,y是循环次数，result是记录处理后的像素值
-                Color pixel;
+                int x, y; //x,y是循环次数
                 for (x = 0; x < width; x++)
                 {
                     for (y = 0; y < height; y++)
                     {
-                        pixel = mybm.GetPixel(x, y); //获取当前坐标的像素值
-                        result = (pixel.R + pixel.G + pixel.B) / 3; //取红绿蓝三色的平均值
+                        var pixel = mybm.GetPixel(x, y);
+                        var result = (pixel.R + pixel.G + pixel.B) / 3; //记录处理后的像素值
                         bm.SetPixel(x, y, Color.FromArgb(result, result, result));
                     }
                 }

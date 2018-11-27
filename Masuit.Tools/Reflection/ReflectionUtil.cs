@@ -14,6 +14,7 @@ namespace Masuit.Tools.Reflection
     public static class ReflectionUtil
     {
         #region 属性字段设置
+
 #pragma warning disable 1591
         public static BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 #pragma warning restore 1591
@@ -139,19 +140,14 @@ namespace Masuit.Tools.Reflection
                 throw new ArgumentNullException(nameof(value));
             }
 
-            string text1;
-
             FieldInfo fi = value.GetType().GetField(value.ToString());
-
-            DescriptionAttribute[] attributes =
-                (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-            text1 = (attributes.Length > 0) ? attributes[0].Description : value.ToString();
-
+            DescriptionAttribute[] attributes = (DescriptionAttribute[]) fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var text1 = (attributes.Length > 0) ? attributes[0].Description : value.ToString();
             if ((args != null) && (args.Length > 0))
             {
                 return string.Format(null, text1, args);
             }
+
             return text1;
         }
 
@@ -185,19 +181,19 @@ namespace Masuit.Tools.Reflection
 
             if (member.IsDefined(typeof(DescriptionAttribute), false))
             {
-                DescriptionAttribute[] attributes =
-                    (DescriptionAttribute[])member.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                DescriptionAttribute[] attributes = (DescriptionAttribute[]) member.GetCustomAttributes(typeof(DescriptionAttribute), false);
                 text1 = attributes[0].Description;
             }
             else
             {
-                return System.String.Empty;
+                return string.Empty;
             }
 
             if ((args != null) && (args.Length > 0))
             {
-                return System.String.Format(null, text1, args);
+                return string.Format(null, text1, args);
             }
+
             return text1;
         }
 
@@ -221,15 +217,18 @@ namespace Masuit.Tools.Reflection
             {
                 throw new ArgumentNullException(nameof(attributeType));
             }
+
             if (assembly == null)
             {
                 throw new ArgumentNullException(nameof(assembly));
             }
+
             if (assembly.IsDefined(attributeType, false))
             {
                 object[] attributes = assembly.GetCustomAttributes(attributeType, false);
                 return attributes[0];
             }
+
             return null;
         }
 
@@ -255,18 +254,16 @@ namespace Masuit.Tools.Reflection
         /// </returns>
         public static object GetAttribute(this Type attributeType, MemberInfo type, bool searchParent)
         {
-            if (attributeType == null)
-            {
-                return null;
-            }
             if (type == null)
             {
                 return null;
             }
+
             if (!(attributeType.IsSubclassOf(typeof(Attribute))))
             {
                 return null;
             }
+
             if (type.IsDefined(attributeType, searchParent))
             {
                 object[] attributes = type.GetCustomAttributes(attributeType, searchParent);
@@ -276,6 +273,7 @@ namespace Masuit.Tools.Reflection
                     return attributes[0];
                 }
             }
+
             return null;
         }
 
@@ -305,18 +303,17 @@ namespace Masuit.Tools.Reflection
             {
                 return null;
             }
-            if (attributeType == null)
-            {
-                return null;
-            }
+
             if (!(attributeType.IsSubclassOf(typeof(Attribute))))
             {
                 return null;
             }
+
             if (type.IsDefined(attributeType, false))
             {
                 return type.GetCustomAttributes(attributeType, searchParent);
             }
+
             return null;
         }
 
@@ -346,7 +343,7 @@ namespace Masuit.Tools.Reflection
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
-            return (Bitmap)rm.GetObject(imageName);
+            return (Bitmap) rm.GetObject(imageName);
         }
 
         /// <summary>
@@ -367,15 +364,18 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <param name="assemblyType">程序集中的某一对象类型</param>
         /// <param name="charset">字符集编码</param>
-        /// <param name="ResName">嵌入资源相对路径</param>
+        /// <param name="resName">嵌入资源相对路径</param>
         /// <returns>如没找到该资源则返回空字符</returns>
-        public static string GetManifestString(this Type assemblyType, string charset, string ResName)
+        public static string GetManifestString(this Type assemblyType, string charset, string resName)
         {
             Assembly asm = Assembly.GetAssembly(assemblyType);
-            Stream st = asm.GetManifestResourceStream(string.Concat(assemblyType.Namespace,
-                ".", ResName.Replace("/", ".")));
-            if (st == null) { return ""; }
-            int iLen = (int)st.Length;
+            Stream st = asm.GetManifestResourceStream(string.Concat(assemblyType.Namespace, ".", resName.Replace("/", ".")));
+            if (st == null)
+            {
+                return "";
+            }
+
+            int iLen = (int) st.Length;
             byte[] bytes = new byte[iLen];
             st.Read(bytes, 0, iLen);
             return (bytes != null) ? Encoding.GetEncoding(charset).GetString(bytes) : "";
@@ -384,6 +384,7 @@ namespace Masuit.Tools.Reflection
         #endregion
 
         #region 创建对应实例
+
         /// <summary>
         /// 创建对应实例
         /// </summary>
@@ -400,6 +401,7 @@ namespace Masuit.Tools.Reflection
                     return t.CreateInstance(type) as T;
                 }
             }
+
             return null;
             //return Assembly.GetExecutingAssembly().CreateInstance(type);
         }
@@ -413,6 +415,7 @@ namespace Masuit.Tools.Reflection
         {
             return CreateInstance<T>(type.FullName);
         }
+
         #endregion
     }
 }

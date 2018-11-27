@@ -35,7 +35,8 @@ namespace Masuit.Tools.Net
                 db = new T();
                 CallContext.SetData("db", db);
             }
-            db = (T)CallContext.GetData("db");
+
+            db = (T) CallContext.GetData("db");
             return db;
         }
 
@@ -78,6 +79,7 @@ namespace Masuit.Tools.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
+
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (string.IsNullOrEmpty(sessionKey))
             {
@@ -90,6 +92,7 @@ namespace Masuit.Tools.Net
             {
                 session[key] = obj;
             }
+
             try
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
@@ -121,6 +124,7 @@ namespace Masuit.Tools.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
+
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (string.IsNullOrEmpty(sessionKey))
             {
@@ -128,6 +132,7 @@ namespace Masuit.Tools.Net
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
+
             if (session != null)
             {
                 session[key] = obj;
@@ -157,7 +162,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T Get<T>(this HttpSessionStateBase session, string key) => (T)session[key];
+        public static T Get<T>(this HttpSessionStateBase session, string key) => (T) session[key];
 
         /// <summary>
         /// 获取Session
@@ -166,7 +171,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T Get<T>(this HttpSessionState session, string key) => (T)session[key];
+        public static T Get<T>(this HttpSessionState session, string key) => (T) session[key];
 
         /// <summary>
         /// 从Redis取Session
@@ -204,6 +209,7 @@ namespace Masuit.Tools.Net
                                 redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
+
                             return default(T);
                         }
                     }
@@ -212,8 +218,10 @@ namespace Masuit.Tools.Net
                         return default(T);
                     }
                 }
+
                 return obj;
             }
+
             return default(T);
         }
 
@@ -253,6 +261,7 @@ namespace Masuit.Tools.Net
                                 redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
                                 return redisHelper.GetHash<T>(sessionKey, key);
                             }
+
                             return default(T);
                         }
                     }
@@ -261,8 +270,10 @@ namespace Masuit.Tools.Net
                         return default(T);
                     }
                 }
+
                 return obj;
             }
+
             return default(T);
         }
 
@@ -278,6 +289,7 @@ namespace Masuit.Tools.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
+
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
@@ -316,6 +328,7 @@ namespace Masuit.Tools.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
+
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (!string.IsNullOrEmpty(sessionKey))
             {
@@ -362,6 +375,7 @@ namespace Masuit.Tools.Net
                 return 0;
             }
         }
+
         /// <summary>
         /// Session个数
         /// </summary>
@@ -382,6 +396,7 @@ namespace Masuit.Tools.Net
                 return 0;
             }
         }
+
         #endregion
 
         #region 获取客户端IP地址信息
@@ -403,8 +418,10 @@ namespace Masuit.Tools.Net
                     List<string> pois = address.AddressResult.Pois.Select(p => $"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米").ToList();
                     return new Tuple<string, List<string>>(detail, pois);
                 }
+
                 return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
             }
+
             return new Tuple<string, List<string>>($"{ip}不是一个合法的IP地址", new List<string>());
         }
 
@@ -423,7 +440,11 @@ namespace Masuit.Tools.Net
                 {
                     throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
                 }
-                using (HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") })
+
+                using (HttpClient client = new HttpClient()
+                {
+                    BaseAddress = new Uri("http://api.map.baidu.com")
+                })
                 {
                     client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
                     var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
@@ -432,6 +453,7 @@ namespace Masuit.Tools.Net
                         {
                             return null;
                         }
+
                         var res = await t;
                         if (res.IsSuccessStatusCode)
                         {
@@ -448,7 +470,10 @@ namespace Masuit.Tools.Net
                             }
                             else
                             {
-                                using (var client2 = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") })
+                                using (var client2 = new HttpClient
+                                {
+                                    BaseAddress = new Uri("http://ip.taobao.com")
+                                })
                                 {
                                     return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
                                     {
@@ -456,6 +481,7 @@ namespace Masuit.Tools.Net
                                         {
                                             return null;
                                         }
+
                                         var result = await tt;
                                         if (result.IsSuccessStatusCode)
                                         {
@@ -477,16 +503,19 @@ namespace Masuit.Tools.Net
                                                 };
                                             }
                                         }
+
                                         return null;
                                     });
                                 }
                             }
                         }
+
                         return null;
                     });
                     return await await task;
                 }
             }
+
             return null;
         }
 
@@ -499,7 +528,10 @@ namespace Masuit.Tools.Net
         {
             if (ip.MatchInetAddress())
             {
-                using (var client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") })
+                using (var client = new HttpClient
+                {
+                    BaseAddress = new Uri("http://ip.taobao.com")
+                })
                 {
                     var task = client.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
                     {
@@ -507,6 +539,7 @@ namespace Masuit.Tools.Net
                         {
                             return $"未能找到{ip}的ISP信息";
                         }
+
                         var result = await t;
                         if (result.IsSuccessStatusCode)
                         {
@@ -516,11 +549,13 @@ namespace Masuit.Tools.Net
                                 return taobaoIp.IpData.Isp;
                             }
                         }
+
                         return $"未能找到{ip}的ISP信息";
                     });
                     return task.Result.Result;
                 }
             }
+
             return $"{ip}不是一个合法的IP";
         }
 
