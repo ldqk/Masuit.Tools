@@ -394,9 +394,19 @@ namespace Masuit.Tools.DateTimeExt
         #region 节日数据
 
         /// <summary>
-        /// 按公历计算的节日
+        /// 自定义的工作日
         /// </summary>
-        public static HashSet<DateInfoStruct> SolarHolidayInfo { get; } = new HashSet<DateInfoStruct>
+        public static HashSet<DateTime> CustomWorkDays { get; } = new HashSet<DateTime>();
+
+        /// <summary>
+        /// 自定义的节假日
+        /// </summary>
+        public static Dictionary<DateTime, string> CustomHolidays { get; } = new Dictionary<DateTime, string>();
+
+        /// <summary>
+        /// 按公历计算的通用节假日
+        /// </summary>
+        private static HashSet<DateInfoStruct> SolarHolidayInfo { get; } = new HashSet<DateInfoStruct>
         {
             new DateInfoStruct(1, 1, 1, "元旦"),
             new DateInfoStruct(2, 2, 0, "世界湿地日"),
@@ -448,9 +458,9 @@ namespace Masuit.Tools.DateTimeExt
         };
 
         /// <summary>
-        /// 按农历计算的节日
+        /// 按农历计算的通用节假日
         /// </summary>
-        public static HashSet<DateInfoStruct> LunarHolidayInfo { get; } = new HashSet<DateInfoStruct>
+        private static HashSet<DateInfoStruct> LunarHolidayInfo { get; } = new HashSet<DateInfoStruct>
         {
             new DateInfoStruct(1, 1, 6, "春节"),
             new DateInfoStruct(1, 15, 0, "元宵节"),
@@ -465,10 +475,6 @@ namespace Masuit.Tools.DateTimeExt
             //new HolidayStruct(12, 30, 0, "除夕")  //注意除夕需要其它方法进行计算
         };
 
-        /// <summary>
-        /// 按农历计算的节日
-        /// </summary>
-        public static HashSet<DateTime> WorkDays { get; } = new HashSet<DateTime>();
 
         private static readonly WeekHolidayStruct[] WHolidayInfo =
         {
@@ -960,6 +966,11 @@ namespace Masuit.Tools.DateTimeExt
                         tempStr = sh.HolidayName;
                         break;
                     }
+                    if (CustomHolidays.Keys.Any(d => d.Date == _date))
+                    {
+                        tempStr = CustomHolidays[_date];
+                        break;
+                    }
                 }
 
                 return tempStr;
@@ -977,6 +988,12 @@ namespace Masuit.Tools.DateTimeExt
                 {
                     var end = sh.Recess > 0 ? sh.Day + sh.Recess - 1 : sh.Day + sh.Recess;
                     if ((sh.Month == _date.Month) && _date.Day >= sh.Day && _date.Day <= end && sh.Recess > 0)
+                    {
+                        isHoliday = true;
+                        break;
+                    }
+
+                    if (CustomHolidays.Keys.Any(d => d.Date == _date))
                     {
                         isHoliday = true;
                         break;
@@ -1006,7 +1023,7 @@ namespace Masuit.Tools.DateTimeExt
                     }
                 }
 
-                return !isHoliday && !IsWeekend() || WorkDays.Any(s => s.Date == _date);
+                return !isHoliday && !IsWeekend() || CustomWorkDays.Any(s => s.Date == _date);
             }
         }
 
@@ -1174,7 +1191,7 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         /// <summary>
-        /// 取农历日期表示法：农历一九九七年正月初五
+        /// 取农历日期表示法：一九九七年正月初五
         /// </summary>
         public string ChineseDateString
         {
@@ -1182,10 +1199,10 @@ namespace Masuit.Tools.DateTimeExt
             {
                 if (_cIsLeapMonth)
                 {
-                    return "农历" + ChineseYearString + "闰" + ChineseMonthString + ChineseDayString;
+                    return ChineseYearString + "闰" + ChineseMonthString + ChineseDayString;
                 }
 
-                return "农历" + ChineseYearString + ChineseMonthString + ChineseDayString;
+                return ChineseYearString + ChineseMonthString + ChineseDayString;
             }
         }
 
@@ -1510,6 +1527,7 @@ namespace Masuit.Tools.DateTimeExt
             var cc = new ChineseCalendar(_date);
             while (true)
             {
+                cc = cc.AddDays(1);
                 if (cc.IsWorkDay)
                 {
                     days--;
@@ -1527,7 +1545,6 @@ namespace Masuit.Tools.DateTimeExt
                 {
                     return cc;
                 }
-                cc = cc.AddDays(1);
             }
         }
 

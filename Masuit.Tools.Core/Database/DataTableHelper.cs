@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 
-namespace Masuit.Tools.Database
+namespace Masuit.Tools.Core.Database
 {
     /// <summary>
     /// DataTable帮助类
@@ -373,9 +373,9 @@ namespace Masuit.Tools.Database
             if (dt.Rows.Count > 0)
             {
                 string tmp = "";
-                for (int i = 0; i < sorts.Length; i++)
+                foreach (var t in sorts)
                 {
-                    tmp += sorts[i] + ",";
+                    tmp += t + ",";
                 }
 
                 dt.DefaultView.Sort = tmp.TrimEnd(',');

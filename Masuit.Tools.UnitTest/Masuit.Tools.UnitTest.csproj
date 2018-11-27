@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChineseCalendarTest.cs" />
     <Compile Include="ExtensionMethodsTest.cs" />
     <Compile Include="HtmlToolsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

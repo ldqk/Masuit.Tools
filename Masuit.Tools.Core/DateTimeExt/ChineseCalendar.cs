@@ -26,8 +26,16 @@ namespace Masuit.Tools.DateTimeExt
         private readonly int _cYear;
         private readonly int _cMonth;
         private readonly int _cDay;
-        private readonly bool _cIsLeapMonth; //当月是否闰月
-        private readonly bool _cIsLeapYear; //当年是否有闰月
+
+        /// <summary>
+        /// 当月是否闰月
+        /// </summary>
+        private readonly bool _cIsLeapMonth;
+
+        /// <summary>
+        /// 当年是否有闰月
+        /// </summary>
+        private readonly bool _cIsLeapYear;
 
         #endregion
 
@@ -36,7 +44,7 @@ namespace Masuit.Tools.DateTimeExt
         private const int MinYear = 1900;
         private const int MaxYear = 2050;
         private static readonly DateTime MinDay = new DateTime(1900, 1, 30);
-        private static readonly DateTime MaxDay = new DateTime(2069, 12, 31);
+        private static readonly DateTime MaxDay = new DateTime(2049, 12, 31);
         private const int GanZhiStartYear = 1864; //干支计算起始年
         private static readonly DateTime GanZhiStartDay = new DateTime(1899, 12, 22); //起始日
         private const string HzNum = "零一二三四五六七八九";
@@ -384,10 +392,21 @@ namespace Masuit.Tools.DateTimeExt
         #endregion
 
         #region 节日数据
+
         /// <summary>
-        /// 按公历计算的节日
+        /// 自定义的工作日
         /// </summary>
-        public static HashSet<DateInfoStruct> SolarHolidayInfo { get; } = new HashSet<DateInfoStruct>
+        public static HashSet<DateTime> CustomWorkDays { get; } = new HashSet<DateTime>();
+
+        /// <summary>
+        /// 自定义的节假日
+        /// </summary>
+        public static Dictionary<DateTime, string> CustomHolidays { get; } = new Dictionary<DateTime, string>();
+
+        /// <summary>
+        /// 按公历计算的通用节假日
+        /// </summary>
+        private static HashSet<DateInfoStruct> SolarHolidayInfo { get; } = new HashSet<DateInfoStruct>
         {
             new DateInfoStruct(1, 1, 1, "元旦"),
             new DateInfoStruct(2, 2, 0, "世界湿地日"),
@@ -439,9 +458,9 @@ namespace Masuit.Tools.DateTimeExt
         };
 
         /// <summary>
-        /// 按农历计算的节日
+        /// 按农历计算的通用节假日
         /// </summary>
-        public static HashSet<DateInfoStruct> LunarHolidayInfo { get; } = new HashSet<DateInfoStruct>
+        private static HashSet<DateInfoStruct> LunarHolidayInfo { get; } = new HashSet<DateInfoStruct>
         {
             new DateInfoStruct(1, 1, 6, "春节"),
             new DateInfoStruct(1, 15, 0, "元宵节"),
@@ -456,10 +475,6 @@ namespace Masuit.Tools.DateTimeExt
             //new HolidayStruct(12, 30, 0, "除夕")  //注意除夕需要其它方法进行计算
         };
 
-        /// <summary>
-        /// 按农历计算的节日
-        /// </summary>
-        public static HashSet<DateTime> WorkDays { get; } = new HashSet<DateTime>();
 
         private static readonly WeekHolidayStruct[] WHolidayInfo =
         {
@@ -472,6 +487,7 @@ namespace Masuit.Tools.DateTimeExt
             new WeekHolidayStruct(10, 1, 4, "国际减轻自然灾害日"),
             new WeekHolidayStruct(11, 4, 5, "感恩节")
         };
+
         #endregion
 
         #endregion
@@ -887,7 +903,8 @@ namespace Masuit.Tools.DateTimeExt
 
                 foreach (DateInfoStruct lh in LunarHolidayInfo)
                 {
-                    if (lh.Month == _cMonth && (_cDay >= lh.Day || _cDay <= lh.Day + lh.Recess))
+                    var end = lh.Recess > 0 ? lh.Day + lh.Recess - 1 : lh.Day + lh.Recess;
+                    if (lh.Month == _cMonth && _cDay >= lh.Day && _cDay <= end)
                     {
                         tempStr = lh.HolidayName;
                         break;
@@ -943,9 +960,15 @@ namespace Masuit.Tools.DateTimeExt
                 string tempStr = "";
                 foreach (DateInfoStruct sh in SolarHolidayInfo)
                 {
-                    if ((sh.Month == _date.Month) && (_date.Day >= sh.Day || _date.Day <= sh.Day + sh.Recess))
+                    var end = sh.Recess > 0 ? sh.Day + sh.Recess - 1 : sh.Day + sh.Recess;
+                    if ((sh.Month == _date.Month) && _date.Day >= sh.Day && _date.Day <= end)
                     {
                         tempStr = sh.HolidayName;
+                        break;
+                    }
+                    if (CustomHolidays.Keys.Any(d => d.Date == _date))
+                    {
+                        tempStr = CustomHolidays[_date];
                         break;
                     }
                 }
@@ -955,7 +978,54 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         public bool IsHoliday => !IsWorkDay;
-        public bool IsWorkDay => string.IsNullOrEmpty(DateHoliday) && string.IsNullOrEmpty(ChineseCalendarHoliday) && !IsWeekend() || WorkDays.Any(s => s.Date == _date);
+
+        public bool IsWorkDay
+        {
+            get
+            {
+                bool isHoliday = false;
+                foreach (DateInfoStruct sh in SolarHolidayInfo)
+                {
+                    var end = sh.Recess > 0 ? sh.Day + sh.Recess - 1 : sh.Day + sh.Recess;
+                    if ((sh.Month == _date.Month) && _date.Day >= sh.Day && _date.Day <= end && sh.Recess > 0)
+                    {
+                        isHoliday = true;
+                        break;
+                    }
+
+                    if (CustomHolidays.Keys.Any(d => d.Date == _date))
+                    {
+                        isHoliday = true;
+                        break;
+                    }
+                }
+
+                if (!isHoliday)
+                {
+                    foreach (DateInfoStruct lh in LunarHolidayInfo)
+                    {
+                        var end = lh.Recess > 0 ? lh.Day + lh.Recess - 1 : lh.Day + lh.Recess;
+                        if (lh.Month == _cMonth && _cDay >= lh.Day && _cDay <= end && lh.Recess > 0)
+                        {
+                            isHoliday = true;
+                            break;
+                        }
+                    }
+
+                    //对除夕进行特别处理
+                    if (_cMonth == 12)
+                    {
+                        int i = GetChineseMonthDays(_cYear, 12); //计算当年农历12月的总天数
+                        if (_cDay == i) //如果为最后一天
+                        {
+                            isHoliday = true;
+                        }
+                    }
+                }
+
+                return !isHoliday && !IsWeekend() || CustomWorkDays.Any(s => s.Date == _date);
+            }
+        }
 
         /// <summary>
         /// 是否是周末
@@ -963,8 +1033,9 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns></returns>
         private bool IsWeekend()
         {
-            return (_date.DayOfWeek == DayOfWeek.Saturday || _date.DayOfWeek == DayOfWeek.Sunday);
+            return _date.DayOfWeek == DayOfWeek.Saturday || _date.DayOfWeek == DayOfWeek.Sunday;
         }
+
         #endregion
 
         #region 公历日期
@@ -1128,10 +1199,10 @@ namespace Masuit.Tools.DateTimeExt
             {
                 if (_cIsLeapMonth)
                 {
-                    return "农历" + ChineseYearString + "闰" + ChineseMonthString + ChineseDayString;
+                    return ChineseYearString + "闰" + ChineseMonthString + ChineseDayString;
                 }
 
-                return "农历" + ChineseYearString + ChineseMonthString + ChineseDayString;
+                return ChineseYearString + ChineseMonthString + ChineseDayString;
             }
         }
 
@@ -1445,6 +1516,36 @@ namespace Masuit.Tools.DateTimeExt
         {
             DateTime nextDay = _date.AddDays(days);
             return new ChineseCalendar(nextDay);
+        }
+
+        /// <summary>
+        /// 取下n天
+        /// </summary>
+        /// <returns></returns>
+        public ChineseCalendar AddWorkDays(int days)
+        {
+            var cc = new ChineseCalendar(_date);
+            while (true)
+            {
+                cc = cc.AddDays(1);
+                if (cc.IsWorkDay)
+                {
+                    days--;
+                }
+                else
+                {
+                    Console.WriteLine("阳历：" + cc.DateString);
+                    Console.WriteLine("节日：" + cc.DateHoliday);
+                    Console.WriteLine("农历节日：" + cc.ChineseCalendarHoliday);
+                    Console.WriteLine("星期：" + cc.WeekDayStr);
+                    Console.WriteLine("----------------------------");
+                }
+
+                if (days == 0)
+                {
+                    return cc;
+                }
+            }
         }
 
         /// <summary>
