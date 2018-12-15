@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -1583,6 +1584,84 @@ namespace Masuit.Tools
                 return current >= start && current <= end;
             }
 
+            return false;
+        }
+        /// <summary>
+        /// 判断IP是否是私有地址
+        /// </summary>
+        /// <param name="myIPAddress"></param>
+        /// <returns></returns>
+        public static bool IsPrivateIP(this IPAddress myIPAddress)
+        {
+            if (IPAddress.IsLoopback(myIPAddress)) return true;
+            if (myIPAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                byte[] ipBytes = myIPAddress.GetAddressBytes();
+                // 10.0.0.0/24 
+                if (ipBytes[0] == 10)
+                {
+                    return true;
+                }
+                // 169.254.0.0/16
+                if (ipBytes[0] == 169 && ipBytes[1] == 254)
+                {
+                    return true;
+                }
+                // 172.16.0.0/16
+                if (ipBytes[0] == 172 && ipBytes[1] == 16)
+                {
+                    return true;
+                }
+                // 192.168.0.0/16
+                if (ipBytes[0] == 192 && ipBytes[1] == 168)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 判断IP是否是私有地址
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public static bool IsPrivateIP(this string ip)
+        {
+            if (MatchInetAddress(ip))
+            {
+                return IsPrivateIP(IPAddress.Parse(ip));
+            }
+            throw new ArgumentException("不是一个合法的ip地址");
+        }
+
+        /// <summary>
+        /// 判断url是否是外部地址
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static bool IsExternalAddress(this string url)
+        {
+            var uri = new Uri(url);
+            switch (uri.HostNameType)
+            {
+                case UriHostNameType.Dns:
+                    var ipHostEntry = Dns.GetHostEntry(uri.DnsSafeHost);
+                    foreach (IPAddress ipAddress in ipHostEntry.AddressList)
+                    {
+                        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            if (!ipAddress.IsPrivateIP())
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+
+                case UriHostNameType.IPv4:
+                    return !IPAddress.Parse(uri.DnsSafeHost).IsPrivateIP();
+            }
             return false;
         }
     }
