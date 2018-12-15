@@ -35,5 +35,27 @@ namespace Masuit.Tools.Core.UnitTest
             var isip = s.MatchUrl();
             Assert.True(isip);
         }
+
+        [Theory]
+        [InlineData("127.0.0.1", true)]
+        [InlineData("10.23.254.223", true)]
+        [InlineData("172.16.23.22", true)]
+        [InlineData("172.17.23.22", false)]
+        [InlineData("169.254.23.21", true)]
+        [InlineData("192.168.1.1", true)]
+        public void IsPrivateIP_ReturnTrue(string ip, bool actual)
+        {
+            bool expected = ip.IsPrivateIP();
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("https://baidu.com", true)]
+        [InlineData("http://localhost", false)]
+        public void IsExtenalAddress_RetuenTrue(string url, bool actual)
+        {
+            bool expected = url.IsExternalAddress();
+            Assert.Equal(expected, actual);
+        }
     }
 }
