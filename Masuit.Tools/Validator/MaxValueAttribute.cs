@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Masuit.Tools.Validator
 {
+    /// <summary>
+    /// 最大值校验
+    /// </summary>
     public class MaxValueAttribute : ValidationAttribute
     {
         private double MaxValue { get; }

@@ -7,6 +7,11 @@ namespace Masuit.Tools.Validator
     /// </summary>
     public class IsIPAddressAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// IPv4校验
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override bool IsValid(object value)
         {
             if (value is null)
@@ -14,8 +19,8 @@ namespace Masuit.Tools.Validator
                 ErrorMessage = "IP地址不能为空！";
                 return false;
             }
-            string email = value as string;
-            if (email.MatchInetAddress())
+            string ip = value as string;
+            if (ip.MatchInetAddress())
             {
                 return true;
             }

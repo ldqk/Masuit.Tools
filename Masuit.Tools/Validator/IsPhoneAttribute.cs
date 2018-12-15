@@ -7,6 +7,11 @@ namespace Masuit.Tools.Validator
     /// </summary>
     public class IsPhoneAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// 大陆手机号校验
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override bool IsValid(object value)
         {
             if (value is null)

@@ -1,5 +1,6 @@
 ﻿using Masuit.Tools.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -40,47 +41,6 @@ namespace Masuit.Tools.Html
     /// </summary>
     public static partial class HtmlTools
     {
-        #region 私有字段
-
-        private static string contentType = "application/x-www-form-urlencoded";
-        private static string accept = "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg," + " application/x-shockwave-flash, application/x-silverlight, " + "application/vnd.ms-excel, application/vnd.ms-powerpoint, " + "application/msword, application/x-ms-application," + " application/x-ms-xbap," + " application/vnd.ms-xpsdocument, application/xaml+xml, application/x-silverlight-2-b1, */*";
-        private static string userAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1;" + " .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)";
-        private static int delay = 1000;
-        private static int currentTry;
-
-        #endregion
-
-        #region 公有属性
-
-        /// <summary> 
-        /// 获取网页源码时使用的编码
-        /// </summary> 
-        public static Encoding Encoding { get; set; } = Encoding.GetEncoding("utf-8");
-
-        /// <summary>
-        /// 网络延迟
-        /// </summary>
-        public static int NetworkDelay
-        {
-            get
-            {
-                Random r = new Random();
-                return r.Next(delay, delay * 2);
-                // return (r.Next(delay / 1000, delay / 1000 * 2)) * 1000;
-            }
-            set
-            {
-                delay = value;
-            }
-        }
-
-        /// <summary>
-        /// 最大尝试次数
-        /// </summary>
-        public static int MaxTry { get; set; } = 300;
-
-        #endregion
-
         #region 1、获取HTML
 
         /// <summary>
@@ -311,6 +271,19 @@ namespace Masuit.Tools.Html
         /// <param name="html"></param>
         /// <returns></returns>
         public static MatchCollection MatchImgTags(this string html) => ImgRegex.Matches(html);
+
+        /// <summary>
+        /// 匹配html的所有img标签的src集合
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> MatchImgSrcs(this string html)
+        {
+            foreach (Match m in ImgRegex.Matches(html))
+            {
+                yield return m.Groups["src"].Value;
+            }
+        }
 
         /// <summary>
         /// 匹配html的一个img标签

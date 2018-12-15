@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Masuit.Tools.Core.NoSQL
 {
+    /// <summary>
+    /// RedisHelper工厂类
+    /// </summary>
     public class RedisHelperFactory
     {
         internal static Dictionary<string, string> ConnectionCache { get; set; } = new Dictionary<string, string>();

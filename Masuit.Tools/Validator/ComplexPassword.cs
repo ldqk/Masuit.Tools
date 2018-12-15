@@ -8,6 +8,11 @@ namespace Masuit.Tools.Validator
     /// </summary>
     public class ComplexPassword : ValidationAttribute
     {
+        /// <summary>
+        /// 密码复杂度校验
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override bool IsValid(object value)
         {
             string pwd = value as string;

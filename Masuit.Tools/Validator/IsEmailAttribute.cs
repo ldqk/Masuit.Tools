@@ -2,8 +2,16 @@
 
 namespace Masuit.Tools.Validator
 {
+    /// <summary>
+    /// Email校验器
+    /// </summary>
     public class IsEmailAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// Email校验
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override bool IsValid(object value)
         {
             if (value == null)
