@@ -1,24 +1,28 @@
 ﻿using System.Linq.Expressions;
 
-namespace Masuit.Tools.Linq
+namespace Masuit.Tools.Core.Linq
 {
     /// <summary>
-    /// 表达式树参数替换
+    /// linq参数替换器
     /// </summary>
     public class ParameterReplacer : ExpressionVisitor
     {
+        /// <summary>
+        /// linq参数替换器
+        /// </summary>
+        /// <param name="paramExpr"></param>
         public ParameterReplacer(ParameterExpression paramExpr)
         {
             this.ParameterExpression = paramExpr;
         }
 
         /// <summary>
-        /// 参数表达式树
+        /// 参数表达式
         /// </summary>
         public ParameterExpression ParameterExpression { get; private set; }
 
         /// <summary>
-        /// 替换表达式树
+        /// 表达式替换
         /// </summary>
         /// <param name="expr"></param>
         /// <returns></returns>
@@ -26,7 +30,11 @@ namespace Masuit.Tools.Linq
         {
             return this.Visit(expr);
         }
-
+        /// <summary>
+        /// 表达式参数访问
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         protected override Expression VisitParameter(ParameterExpression p)
         {
             return this.ParameterExpression;

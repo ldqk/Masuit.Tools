@@ -39,17 +39,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
-      <HintPath>..\..\MyBlogs\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer, Version=3.0.0.0, Culture=neutral, PublicKeyToken=61c49a1a9e79cc28, processorArchitecture=MSIL">
-      <HintPath>..\..\MyBlogs\packages\HtmlSanitizer.4.0.199\lib\net45\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.4.0.199\lib\net45\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.0.999, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\MyBlogs\packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\MyBlogs\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.1.2.6\lib\net45\StackExchange.Redis.dll</HintPath>
@@ -118,9 +118,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashEncode.cs" />
     <Compile Include="Security\RSACrypt.cs" />
+    <Compile Include="Strings\NumberFormater.cs" />
     <Compile Include="Strings\Template.cs" />
     <Compile Include="Systems\ConcurrentLimitedQueue.cs" />
     <Compile Include="Systems\Disposable.cs" />
+    <Compile Include="Systems\HiPerfTimer.cs" />
     <Compile Include="Systems\LimitedQueue.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
     <Compile Include="Net\WebExtension.cs" />

@@ -42,7 +42,7 @@ namespace Masuit.Tools.Systems
             Dictionary<int, string> names = new Dictionary<int, string>(enumItems.Length);
             foreach (FieldInfo enumItem in enumItems)
             {
-                int intValue = (int) enumItem.GetValue(enumType);
+                int intValue = (int)enumItem.GetValue(enumType);
                 names[intValue] = enumItem.Name;
             }
 
@@ -73,7 +73,7 @@ namespace Masuit.Tools.Systems
             Dictionary<string, int> values = new Dictionary<string, int>(enumItems.Length);
             foreach (FieldInfo enumItem in enumItems)
             {
-                values[enumItem.Name] = (int) enumItem.GetValue(enumType);
+                values[enumItem.Name] = (int)enumItem.GetValue(enumType);
             }
 
             return values;
@@ -127,7 +127,7 @@ namespace Masuit.Tools.Systems
             Dictionary<string, int> dicResult = new Dictionary<string, int>();
             foreach (object e in Enum.GetValues(enumType))
             {
-                dicResult.Add(GetDescription(e as Enum), (int) e);
+                dicResult.Add(GetDescription(e as Enum), (int)e);
             }
 
             return dicResult;
@@ -198,7 +198,7 @@ namespace Masuit.Tools.Systems
             {
                 if (field.FieldType.IsEnum)
                 {
-                    var strValue = ((int) enumType.InvokeMember(field.Name, BindingFlags.GetField, null, null, null)).ToString();
+                    var strValue = ((int)enumType.InvokeMember(field.Name, BindingFlags.GetField, null, null, null)).ToString();
                     nvc.Add(strValue, field.Name);
                 }
             }

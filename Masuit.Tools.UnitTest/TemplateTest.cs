@@ -1,6 +1,7 @@
 ﻿using Masuit.Tools.Strings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Masuit.Tools.UnitTest
 {

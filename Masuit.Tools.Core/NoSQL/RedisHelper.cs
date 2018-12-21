@@ -102,6 +102,7 @@ namespace Masuit.Tools.NoSQL
         /// </summary>
         /// <param name="readWriteHosts">Redis服务器连接字符串，格式：127.0.0.1:6379,allowadmin=true,abortConnect=false</param>
         /// <param name="dbNum">数据库的编号</param>
+        /// <param name="_"></param>
         private RedisHelper(string readWriteHosts, int dbNum, int _)
         {
             DbNum = dbNum;
@@ -567,6 +568,7 @@ namespace Masuit.Tools.NoSQL
         /// <param name="key">键</param>
         /// <param name="dataKey">对象的字段</param>
         /// <param name="t">对象实例</param>
+        /// <param name="expire">过期时间</param>
         /// <returns>是否存储成功</returns>
         public async Task<bool> SetHashAsync<T>(string key, string dataKey, T t, TimeSpan expire)
         {

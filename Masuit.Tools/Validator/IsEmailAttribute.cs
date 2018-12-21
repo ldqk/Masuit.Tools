@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
-    /// Email校验器
+    /// 邮箱校验
     /// </summary>
     public class IsEmailAttribute : ValidationAttribute
     {
         /// <summary>
-        /// Email校验
+        /// 邮箱校验
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>

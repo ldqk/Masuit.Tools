@@ -8,13 +8,28 @@ using System.Threading;
 
 namespace Masuit.Tools.Net
 {
+    /// <summary>
+    /// 部分下载器
+    /// </summary>
     public class PartialDownloader
     {
         #region Variables
 
+        /// <summary>
+        /// 这部分完成事件
+        /// </summary>
         public event EventHandler DownloadPartCompleted;
+
+        /// <summary>
+        /// 部分下载进度改变事件
+        /// </summary>
         public event EventHandler DownloadPartProgressChanged;
+
+        /// <summary>
+        /// 部分下载停止事件
+        /// </summary>
         public event EventHandler DownloadPartStopped;
+
         HttpWebRequest _req;
         HttpWebResponse _resp;
         Stream _tempStream;
@@ -29,6 +44,15 @@ namespace Masuit.Tools.Net
 
         #region PartialDownloader
 
+        /// <summary>
+        /// 部分块下载
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="dir"></param>
+        /// <param name="fileGuid"></param>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="rangeAllowed"></param>
         public PartialDownloader(string url, string dir, string fileGuid, int from, int to, bool rangeAllowed)
         {
             _from = from;
@@ -89,12 +113,12 @@ namespace Masuit.Tools.Net
                         }
 
                         if (_totalBytesRead + bytesRead > _contentLength)
-                            bytesRead = (int) (_contentLength - _totalBytesRead);
+                            bytesRead = (int)(_contentLength - _totalBytesRead);
                         _file.Write(buffer, 0, bytesRead);
                         _totalBytesRead += bytesRead;
-                        _lastSpeeds[_counter] = (int) (_totalBytesRead / Math.Ceiling(_stp.Elapsed.TotalSeconds));
+                        _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(_stp.Elapsed.TotalSeconds));
                         _counter = (_counter >= 9) ? 0 : _counter + 1;
-                        int tempProgress = (int) (_totalBytesRead * 100 / _contentLength);
+                        int tempProgress = (int)(_totalBytesRead * 100 / _contentLength);
                         if (_progress != tempProgress)
                         {
                             _progress = tempProgress;
@@ -143,6 +167,9 @@ namespace Masuit.Tools.Net
 
         #region Public Methods
 
+        /// <summary>
+        /// 启动下载
+        /// </summary>
         public void Start()
         {
             _stop = false;
@@ -150,17 +177,25 @@ namespace Masuit.Tools.Net
             procThread.Start();
         }
 
+        /// <summary>
+        /// 下载停止
+        /// </summary>
         public void Stop()
         {
             _stop = true;
         }
 
-        //Wait is used when repartitiate a partition securely in this project
+        /// <summary>
+        /// 暂停等待下载
+        /// </summary>
         public void Wait()
         {
             _wait = true;
         }
 
+        /// <summary>
+        /// 稍后唤醒
+        /// </summary>
         public void ResumeAfterWait()
         {
             _wait = false;
@@ -185,24 +220,54 @@ namespace Masuit.Tools.Net
 
         #region Properties
 
+        /// <summary>
+        /// 下载已停止
+        /// </summary>
         public bool Stopped => _stop;
 
+        /// <summary>
+        /// 下载已完成
+        /// </summary>
         public bool Completed => _completed;
 
+        /// <summary>
+        /// 下载进度
+        /// </summary>
         public int Progress => _progress;
 
+        /// <summary>
+        /// 下载目录
+        /// </summary>
         public string Directory => _directory;
 
+        /// <summary>
+        /// 文件名
+        /// </summary>
         public string FileName => _fileGuid;
 
+        /// <summary>
+        /// 已读字节数
+        /// </summary>
         public long TotalBytesRead => _totalBytesRead;
 
+        /// <summary>
+        /// 内容长度
+        /// </summary>
         public long ContentLength => _contentLength;
 
+        /// <summary>
+        /// RangeAllowed
+        /// </summary>
         public bool RangeAllowed => _rangeAllowed;
 
+        /// <summary>
+        /// url
+        /// </summary>
         public string Url => _url;
 
+        /// <summary>
+        /// to
+        /// </summary>
         public int To
         {
             get => _to;
@@ -213,14 +278,29 @@ namespace Masuit.Tools.Net
             }
         }
 
+        /// <summary>
+        /// from
+        /// </summary>
         public int From => _from;
 
+        /// <summary>
+        /// 当前位置
+        /// </summary>
         public int CurrentPosition => _from + _totalBytesRead - 1;
 
-        public int RemainingBytes => (int) (_contentLength - _totalBytesRead);
+        /// <summary>
+        /// 剩余字节数
+        /// </summary>
+        public int RemainingBytes => (int)(_contentLength - _totalBytesRead);
 
+        /// <summary>
+        /// 完整路径
+        /// </summary>
         public string FullPath => Path.Combine(_directory, _fileGuid);
 
+        /// <summary>
+        /// 下载速度
+        /// </summary>
         public int SpeedInBytes
         {
             get

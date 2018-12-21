@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Masuit.Tools.NoSQL.MongoDBClient.Core;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Masuit.Tools.NoSQL.MongoDBClient.Core;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace Masuit.Tools.NoSQL.MongoDBClient
 {
@@ -1029,7 +1029,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return mgr.CreateOne(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+                    return mgr.CreateOne(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
                 }
             }
             return string.Empty;
@@ -1050,7 +1050,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return await mgr.CreateOneAsync(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+                    return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
                 }
             }
             return string.Empty;
@@ -1066,7 +1066,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public string UpdateIndex(string collection, string index, bool asc = true)
         {
             IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
-            return mgr.CreateOne(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+            return mgr.CreateOne(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
         }
 
         /// <summary>
@@ -1079,7 +1079,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public async Task<string> UpdateIndexAsync(string collection, string index, bool asc = true)
         {
             IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
-            return await mgr.CreateOneAsync(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index]));
+            return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
         }
 
         /// <summary>
@@ -1120,7 +1120,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return mgr.CreateOne(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+                    return mgr.CreateOne(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
                 }
             }
             return String.Empty;
@@ -1142,7 +1142,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return await mgr.CreateOneAsync(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+                    return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
                 }
             }
             return String.Empty;
@@ -1158,7 +1158,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public string UpdateIndex<T>(string collection, Expression<Func<T, object>> key, bool asc = true)
         {
             IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
-            return mgr.CreateOne(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+            return mgr.CreateOne(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
         }
 
         /// <summary>
@@ -1171,7 +1171,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         public async Task<string> UpdateIndexAsync<T>(string collection, Expression<Func<T, object>> key, bool asc = true)
         {
             IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
-            return await mgr.CreateOneAsync(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key));
+            return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
         }
 
         #endregion

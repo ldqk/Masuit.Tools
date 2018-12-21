@@ -1,18 +1,24 @@
-﻿using System;
+﻿using StackExchange.Redis;
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using StackExchange.Redis;
 
 namespace Masuit.Tools.Systems
 {
+    /// <summary>
+    /// Redis分布式锁
+    /// </summary>
     public class RedisLock : IDisposable
     {
         #region Property
 
         private bool _isDisposed;
 
+        /// <summary>
+        /// 终结器
+        /// </summary>
         ~RedisLock()
         {
             Dispose(false);
@@ -245,13 +251,21 @@ namespace Masuit.Tools.Systems
             return task;
         }
 
+        /// <summary>
+        /// 创建唯一锁id
+        /// </summary>
+        /// <returns></returns>
         protected static string CreateUniqueLockId()
         {
             return string.Concat(Guid.NewGuid().ToString(), Thread.CurrentThread.ManagedThreadId);
         }
 
+        /// <summary>
+        /// 设置超时
+        /// </summary>
+        /// <param name="doWork"></param>
+        /// <param name="time"></param>
         protected void SetTimeOut(ElapsedEventHandler doWork, int time)
-
         {
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Interval = time;
@@ -260,6 +274,13 @@ namespace Masuit.Tools.Systems
             timer.Start();
         }
 
+        /// <summary>
+        /// 任务超时
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="lockObj"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
         protected CancellationTokenSource TaskTimeOut(Func<Lock, bool> action, Lock lockObj, int time)
         {
             var timeoutCancellationTokenSource = new CancellationTokenSource();
@@ -310,6 +331,10 @@ namespace Masuit.Tools.Systems
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// 释放锁
+        /// </summary>
+        /// <param name="disposing"></param>
         public virtual void Dispose(bool disposing)
         {
             if (_isDisposed)

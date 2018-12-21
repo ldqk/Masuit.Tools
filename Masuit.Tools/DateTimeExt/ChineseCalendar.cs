@@ -966,6 +966,7 @@ namespace Masuit.Tools.DateTimeExt
                         tempStr = sh.HolidayName;
                         break;
                     }
+
                     if (CustomHolidays.Keys.Any(d => d.Date == _date))
                     {
                         tempStr = CustomHolidays[_date];
@@ -977,8 +978,14 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
+        /// <summary>
+        /// 今天是否是假期
+        /// </summary>
         public bool IsHoliday => !IsWorkDay;
 
+        /// <summary>
+        /// 今天是否是工作日
+        /// </summary>
         public bool IsWorkDay
         {
             get
@@ -1191,7 +1198,7 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         /// <summary>
-        /// 取农历日期表示法：一九九七年正月初五
+        /// 取农历日期表示法：农历一九九七年正月初五
         /// </summary>
         public string ChineseDateString
         {
@@ -1241,7 +1248,9 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
-        //当前日期前一个最近节气
+        /// <summary>
+        /// 当前日期前一个最近节气
+        /// </summary>
         public string ChineseTwentyFourPrevDay
         {
             get
@@ -1264,7 +1273,9 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
-        //当前日期后一个最近节气
+        /// <summary>
+        /// 当前日期后一个最近节气
+        /// </summary>
         public string ChineseTwentyFourNextDay
         {
             get

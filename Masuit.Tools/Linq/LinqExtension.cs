@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Masuit.Tools.Linq
+namespace Masuit.Tools.Core.Linq
 {
     /// <summary>
-    /// linq扩展
+    /// linq扩展类
     /// </summary>
     public static class LinqExtension
     {
@@ -12,8 +12,8 @@ namespace Masuit.Tools.Linq
         /// 与连接
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
+        /// <param name="left">左条件</param>
+        /// <param name="right">右条件</param>
         /// <returns></returns>
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right)
         {
@@ -29,8 +29,8 @@ namespace Masuit.Tools.Linq
         /// 或连接
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
+        /// <param name="left">左条件</param>
+        /// <param name="right">右条件</param>
         /// <returns></returns>
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right)
         {

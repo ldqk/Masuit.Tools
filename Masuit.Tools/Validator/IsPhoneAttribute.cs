@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 验证手机号码是否合法
@@ -8,7 +8,7 @@ namespace Masuit.Tools.Validator
     public class IsPhoneAttribute : ValidationAttribute
     {
         /// <summary>
-        /// 大陆手机号校验
+        /// 验证手机号码是否合法
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>

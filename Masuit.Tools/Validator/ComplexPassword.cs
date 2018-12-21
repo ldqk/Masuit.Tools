@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 强密码验证
@@ -9,7 +9,7 @@ namespace Masuit.Tools.Validator
     public class ComplexPassword : ValidationAttribute
     {
         /// <summary>
-        /// 密码复杂度校验
+        /// 校验密码强度
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>

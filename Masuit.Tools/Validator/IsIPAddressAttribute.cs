@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 验证IPv4地址是否合法
@@ -8,7 +8,7 @@ namespace Masuit.Tools.Validator
     public class IsIPAddressAttribute : ValidationAttribute
     {
         /// <summary>
-        /// IPv4校验
+        /// 验证IPv4地址是否合法
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -19,8 +19,8 @@ namespace Masuit.Tools.Validator
                 ErrorMessage = "IP地址不能为空！";
                 return false;
             }
-            string ip = value as string;
-            if (ip.MatchInetAddress())
+            string email = value as string;
+            if (email.MatchInetAddress())
             {
                 return true;
             }

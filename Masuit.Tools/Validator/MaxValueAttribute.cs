@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 最大值校验
@@ -9,16 +9,28 @@ namespace Masuit.Tools.Validator
     public class MaxValueAttribute : ValidationAttribute
     {
         private double MaxValue { get; }
+
+        /// <summary>
+        /// 最大值
+        /// </summary>
+        /// <param name="value"></param>
         public MaxValueAttribute(double value)
         {
             MaxValue = value;
         }
+
+        /// <summary>
+        /// 最大值校验
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public override bool IsValid(object value)
         {
             if (value is null)
             {
                 return true;
             }
+
             var input = Convert.ToDouble(value);
             return input <= MaxValue;
         }

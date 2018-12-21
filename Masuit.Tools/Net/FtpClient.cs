@@ -29,6 +29,9 @@ namespace Masuit.Tools.Net
         /// </summary>
         public static string Password { get; set; }
 
+        /// <summary>
+        /// ftp地址
+        /// </summary>
         public static string FtpUri = "ftp://" + FtpServer + "/";
 
         #endregion
