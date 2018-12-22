@@ -1,7 +1,6 @@
-﻿using Masuit.Tools;
+﻿using Masuit.Tools.Strings;
 using Masuit.Tools.Systems;
 using System;
-using System.Collections.Generic;
 
 namespace Test
 {
@@ -11,13 +10,13 @@ namespace Test
         {
             var timer = HiPerfTimer.Execute(() =>
             {
-                var dic = new Dictionary<string, int>();
-                for (int i = 0; i < 10000000; i++)
-                {
-                    dic.Add("".CreateShortToken(), 0);
-                }
-
-                Console.WriteLine("".CreateShortToken());
+                //var dic = new Dictionary<string, int>();
+                //for (int i = 0; i < 1000000; i++)
+                //{
+                //    dic.Add(DateTime.Now.Ticks.ToBinary(36), 0);
+                //}
+                long s = new NumberFormater(16).FromString("1a");
+                Console.WriteLine(s);
             });
             Console.WriteLine(timer);
         }
