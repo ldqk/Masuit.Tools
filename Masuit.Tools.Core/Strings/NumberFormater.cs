@@ -37,6 +37,24 @@ namespace Masuit.Tools.Strings
         }
 
         /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="bin">进制</param>
+        public NumberFormater(int bin)
+        {
+            if (bin < 2)
+            {
+                bin = 2;
+            }
+
+            if (bin > 62)
+            {
+                throw new ArgumentException("进制最大支持62进制");
+            }
+            Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(0, bin);
+        }
+
+        /// <summary>
         /// 数字转换为指定的进制形式字符串
         /// </summary>
         /// <param name="number"></param>

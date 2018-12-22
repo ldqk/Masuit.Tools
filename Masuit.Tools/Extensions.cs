@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Masuit.Tools.Strings;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -1524,7 +1526,7 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为6，最小长度为5，最大长度为22</param>
         /// <returns></returns>
-        public static string CreateShortToken(this string str, int length = 6)
+        public static string CreateShortToken(this string str, int length)
         {
             var temp = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
             if (length <= 22)
@@ -1538,6 +1540,17 @@ namespace Masuit.Tools
             }
 
             return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
+        }
+
+        /// <summary>
+        /// 生成唯一短字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string CreateShortToken(this string str)
+        {
+            var nf = new NumberFormater(36);
+            return nf.ToString(Stopwatch.GetTimestamp());
         }
 
         /// <summary>

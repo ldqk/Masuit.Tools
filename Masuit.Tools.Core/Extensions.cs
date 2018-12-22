@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Masuit.Tools.Strings;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -1538,6 +1540,17 @@ namespace Masuit.Tools
             }
 
             return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
+        }
+
+        /// <summary>
+        /// 生成唯一短字符串
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string CreateShortToken(this string str)
+        {
+            var nf = new NumberFormater(36);
+            return nf.ToString(Stopwatch.GetTimestamp());
         }
 
         /// <summary>

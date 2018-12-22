@@ -1,8 +1,7 @@
-﻿using Masuit.Tools.Strings;
+﻿using Masuit.Tools;
 using Masuit.Tools.Systems;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Test
 {
@@ -12,15 +11,13 @@ namespace Test
         {
             var timer = HiPerfTimer.Execute(() =>
             {
-                NumberFormater nf = new NumberFormater(36);
-                var set = new HashSet<string>();
-                for (int i = 0; i < 1000000; i++)
+                var dic = new Dictionary<string, int>();
+                for (int i = 0; i < 10000000; i++)
                 {
-                    string ts = nf.ToString(Stopwatch.GetTimestamp());
-                    //Console.WriteLine(ts);
-                    set.Add(ts);
+                    dic.Add("".CreateShortToken(), 0);
                 }
-                Console.WriteLine(set.Count);
+
+                Console.WriteLine("".CreateShortToken());
             });
             Console.WriteLine(timer);
         }
