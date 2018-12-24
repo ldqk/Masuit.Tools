@@ -11,8 +11,6 @@ namespace Masuit.Tools.Net
     /// </summary>
     public class FtpClient
     {
-        string _ftpRemotePath;
-
         #region 变量属性
 
         /// <summary>
