@@ -129,6 +129,7 @@
     <Compile Include="Systems\EnumExt.cs" />
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
+    <Compile Include="Systems\StopwatchExtension.cs" />
     <Compile Include="Validator\ComplexPassword.cs" />
     <Compile Include="Validator\IsEmailAttribute.cs" />
     <Compile Include="Validator\IsIPAddressAttribute.cs" />
