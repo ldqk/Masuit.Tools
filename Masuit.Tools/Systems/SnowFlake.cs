@@ -1,5 +1,5 @@
-﻿using System;
-using Masuit.Tools.Strings;
+﻿using Masuit.Tools.Strings;
+using System;
 
 namespace Masuit.Tools.Systems
 {
@@ -34,21 +34,37 @@ namespace Masuit.Tools.Systems
 
         #endregion
 
+        /// <summary>
+        /// 创建一个实例
+        /// </summary>
+        /// <returns></returns>
         public static SnowFlake GetInstance()
         {
             return _snowFlake ?? (_snowFlake = new SnowFlake());
         }
 
+        /// <summary>
+        /// 默认构造函数
+        /// </summary>
         public SnowFlake()
         {
             Snowflakes(0L, -1);
         }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="machineId">机器码</param>
         public SnowFlake(long machineId)
         {
             Snowflakes(machineId, -1);
         }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="machineId">机器码</param>
+        /// <param name="datacenterId">数据中心id</param>
         public SnowFlake(long machineId, long datacenterId)
         {
             Snowflakes(machineId, datacenterId);
