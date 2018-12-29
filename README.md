@@ -16,60 +16,148 @@
 要使用ResumeFileResults，必须在`Startup.cs`的`ConfigureServices`方法调用中配置服务：
 
 ```csharp
-using Masuit.Tools.AspNetCore.ResumeFileResults.DependencyInjection;
+        using Masuit.Tools.AspNetCore.ResumeFileResults.DependencyInjection;
 ```
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddResumeFileResult();
-}
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddResumeFileResult();
+        }
 ```
 
 然后在你的控制器中，你可以像在`FileResult`帮助器中构建一样使用它。
 
 ```csharp
-using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
+        using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
 ```
 
 ```csharp
-public IActionResult FileContents()
-{
-    string webRoot = this.hostingEnvironment.WebRootPath;
-    var contents = System.IO.File.ReadAllBytes(Path.Combine(webRoot, "TestFile.txt"));
+        private const string EntityTag = "\"TestFile\"";
 
-    return this.ResumeFile(contents, "text/plain", "TestFile.txt");
-}
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-public IActionResult FileStream()
-{
-    string webRoot = this.hostingEnvironment.WebRootPath;
-    FileStream stream = System.IO.File.OpenRead(Path.Combine(webRoot, "TestFile.txt"));
-    return this.ResumeFile(stream, "text/plain", "TestFile.txt");
-}
-       
-public IActionResult PhysicalFile()
-{
-    string webRoot = this.hostingEnvironment.WebRootPath;
-    return this.ResumePhysicalFile(Path.Combine(webRoot, "TestFile.txt"), "text/plain", "TestFile.txt");
-}
-    
-public IActionResult VirtualFile()
-{
-    return this.ResumeFile("TestFile.txt", "text/plain", "TestFile.txt");
-}
+        private readonly DateTimeOffset _lastModified = new DateTimeOffset(2016, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hostingEnvironment"></param>
+        public TestController(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
+
+        [HttpGet("content/{fileName}/{etag}")]
+        public IActionResult FileContent(bool fileName, bool etag)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+            var content = System.IO.File.ReadAllBytes(Path.Combine(webRoot, "TestFile.txt"));
+            ResumeFileContentResult result = this.ResumeFile(content, "text/plain", fileName ? "TestFile.txt" : null, etag ? EntityTag : null);
+            result.LastModified = _lastModified;
+            return result;
+        }
+
+        [HttpGet("content/{fileName}")]
+        public IActionResult FileContent(bool fileName)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+            var content = System.IO.File.ReadAllBytes(Path.Combine(webRoot, "TestFile.txt"));
+            var result = new ResumeFileContentResult(content, "text/plain")
+            {
+                FileInlineName = "TestFile.txt",
+                LastModified = _lastModified
+            };
+            return result;
+        }
+
+        [HttpHead("file")]
+        public IActionResult FileHead()
+        {
+            ResumeVirtualFileResult result = this.ResumeFile("TestFile.txt", "text/plain", "TestFile.txt", EntityTag);
+            result.LastModified = _lastModified;
+            return result;
+        }
+
+        [HttpPut("file")]
+        public IActionResult FilePut()
+        {
+            ResumeVirtualFileResult result = this.ResumeFile("TestFile.txt", "text/plain", "TestFile.txt", EntityTag);
+            result.LastModified = _lastModified;
+            return result;
+        }
+
+        [HttpGet("stream/{fileName}/{etag}")]
+        public IActionResult FileStream(bool fileName, bool etag)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+            FileStream stream = System.IO.File.OpenRead(Path.Combine(webRoot, "TestFile.txt"));
+
+            ResumeFileStreamResult result = this.ResumeFile(stream, "text/plain", fileName ? "TestFile.txt" : null, etag ? EntityTag : null);
+            result.LastModified = _lastModified;
+            return result;
+        }
+
+        [HttpGet("stream/{fileName}")]
+        public IActionResult FileStream(bool fileName)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+            FileStream stream = System.IO.File.OpenRead(Path.Combine(webRoot, "TestFile.txt"));
+
+            var result = new ResumeFileStreamResult(stream, "text/plain")
+            {
+                FileInlineName = "TestFile.txt",
+                LastModified = _lastModified
+            };
+
+            return result;
+        }
+
+        [HttpGet("physical/{fileName}/{etag}")]
+        public IActionResult PhysicalFile(bool fileName, bool etag)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+
+            ResumePhysicalFileResult result = this.ResumePhysicalFile(Path.Combine(webRoot, "TestFile.txt"), "text/plain", fileName ? "TestFile.txt" : null, etag ? EntityTag : null);
+            result.LastModified = _lastModified;
+            return result;
+        }
+
+        [HttpGet("physical/{fileName}")]
+        public IActionResult PhysicalFile(bool fileName)
+        {
+            string webRoot = _hostingEnvironment.WebRootPath;
+
+            var result = new ResumePhysicalFileResult(Path.Combine(webRoot, "TestFile.txt"), "text/plain")
+            {
+                FileInlineName = "TestFile.txt",
+                LastModified = _lastModified
+            };
+
+            return result;
+        }
+
+        [HttpGet("virtual/{fileName}/{etag}")]
+        public IActionResult VirtualFile(bool fileName, bool etag)
+        {
+            ResumeVirtualFileResult result = this.ResumeFile("TestFile.txt", "text/plain", fileName ? "TestFile.txt" : null, etag ? EntityTag : null);
+            result.LastModified = _lastModified;
+            return result;
+        }
 ```
 
 以上示例将为您的数据提供“Content-Disposition：attachment”。 当没有提供fileName时，数据将作为“Content-Disposition：inline”提供。
 另外，它可以提供`ETag`和`LastModified`标题。
 
 ```csharp
-public IActionResult File()
-{
-    return new ResumeVirtualFileResult("TestFile.txt", "text/plain", "\"MyEtagHeader\"") 
-    { 
-        FileDownloadName = "TestFile.txt", 
-        LastModified = DateTimeOffset.Now 
-    };
-}
+        [HttpGet("virtual/{fileName}")]
+        public IActionResult VirtualFile(bool fileName)
+        {
+            var result = new ResumeVirtualFileResult("TestFile.txt", "text/plain")
+            {
+                FileInlineName = "TestFile.txt",
+                LastModified = _lastModified
+            };
+            return result;
+        }
 ```
