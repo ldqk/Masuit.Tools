@@ -1,4 +1,5 @@
-﻿using Masuit.Tools.Strings;
+﻿using Masuit.Tools.DateTimeExt;
+using Masuit.Tools.Strings;
 using System;
 
 namespace Masuit.Tools.Systems
@@ -13,6 +14,7 @@ namespace Masuit.Tools.Systems
         private static long _machineId; //机器码
         private static long _datacenterId; //数据ID
         private static long _sequence; //计数从零开始
+        private static long _lastTimestamp = -1L; //最后时间戳
 
         private const long Twepoch = 687888001020L; //唯一时间随机量
 
@@ -25,8 +27,7 @@ namespace Masuit.Tools.Systems
         private const long MachineIdShift = SequenceBits; //机器码数据左移位数，就是后面计数器占用的位数
         private const long DatacenterIdShift = SequenceBits + MachineIdBits;
         private const long TimestampLeftShift = DatacenterIdShift + DatacenterIdBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数
-        private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一微秒内可以产生计数，如果达到该值则等到下一微秒在进行生成
-        private static long _lastTimestamp = -1L; //最后时间戳
+        private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一毫秒内可以产生计数，如果达到该值则等到下一毫秒在进行生成
 
         private static readonly object SyncRoot = new object(); //加锁对象
         private static readonly NumberFormater NumberFormater = new NumberFormater(36);
@@ -48,7 +49,7 @@ namespace Masuit.Tools.Systems
         /// </summary>
         public SnowFlake()
         {
-            Snowflakes(0L, -1);
+            Snowflakes(0, -1);
         }
 
         /// <summary>
@@ -94,31 +95,6 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
-        /// 生成当前时间戳
-        /// </summary>
-        /// <returns>毫秒</returns>
-        private static long GetTimestamp()
-        {
-            return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-        }
-
-        /// <summary>
-        /// 获取下一微秒时间戳
-        /// </summary>
-        /// <param name="lastTimestamp"></param>
-        /// <returns></returns>
-        private static long GetNextTimestamp(long lastTimestamp)
-        {
-            long timestamp = GetTimestamp();
-            if (timestamp <= lastTimestamp)
-            {
-                timestamp = GetTimestamp();
-            }
-
-            return timestamp;
-        }
-
-        /// <summary>
         /// 获取长整形的ID
         /// </summary>
         /// <returns></returns>
@@ -126,26 +102,21 @@ namespace Masuit.Tools.Systems
         {
             lock (SyncRoot)
             {
-                long timestamp = GetTimestamp();
+                var timestamp = (long)DateTime.UtcNow.GetTotalMilliseconds();
                 if (_lastTimestamp == timestamp)
                 {
-                    //同一微秒中生成ID
-                    _sequence = (_sequence + 1) & SequenceMask; //用&运算计算该微秒内产生的计数是否已经到达上限
+                    //同一毫秒中生成ID
+                    _sequence = (_sequence + 1) & SequenceMask; //用&运算计算该毫秒内产生的计数是否已经到达上限
                     if (_sequence == 0)
                     {
-                        //一微秒内产生的ID计数已达上限，等待下一微秒
-                        timestamp = GetNextTimestamp(_lastTimestamp);
+                        //一毫秒内产生的ID计数已达上限，等待下一毫秒
+                        timestamp = (long)DateTime.UtcNow.GetTotalMilliseconds();
                     }
                 }
                 else
                 {
-                    //不同微秒生成ID
+                    //不同毫秒生成ID
                     _sequence = 0L;
-                }
-
-                if (timestamp < _lastTimestamp)
-                {
-                    throw new Exception("时间戳比上一次生成ID时时间戳还小，故异常");
                 }
 
                 _lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳

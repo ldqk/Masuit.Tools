@@ -7,6 +7,7 @@ namespace Masuit.Tools.DateTimeExt
     /// </summary>
     public static class DateUtil
     {
+        private static readonly DateTime Start1970 = DateTime.Parse("1970-01-01 00:00:00");
         /// <summary>
         /// 返回相对于当前时间的相对天数
         /// </summary>
@@ -52,35 +53,35 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalSeconds(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalSeconds;
+        public static double GetTotalSeconds(this DateTime dt) => (dt - Start1970).TotalSeconds;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的毫秒数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalMilliseconds(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalMilliseconds;
+        public static double GetTotalMilliseconds(this DateTime dt) => (dt - Start1970).TotalMilliseconds;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的分钟数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalMinutes(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalMinutes;
+        public static double GetTotalMinutes(this DateTime dt) => (dt - Start1970).TotalMinutes;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的小时数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalHours(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalHours;
+        public static double GetTotalHours(this DateTime dt) => (dt - Start1970).TotalHours;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的天数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalDays(this DateTime dt) => (dt - DateTime.Parse("1970-01-01 00:00:00")).TotalDays;
+        public static double GetTotalDays(this DateTime dt) => (dt - Start1970).TotalDays;
 
         /// <summary>
         /// 返回本年有多少天

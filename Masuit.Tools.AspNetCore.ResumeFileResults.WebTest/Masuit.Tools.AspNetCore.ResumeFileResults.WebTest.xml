@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Masuit.Tools.AspNetCore.ResumeFileResults.WebTest</name>
+    </assembly>
+    <members>
+        <member name="T:Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.Controllers.TestController">
+            <summary>
+            测试控制器
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.Controllers.TestController.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            
+            </summary>
+            <param name="hostingEnvironment"></param>
+        </member>
+    </members>
+</doc>

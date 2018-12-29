@@ -424,9 +424,9 @@ namespace Masuit.Tools.Net
         /// 获取当前目录下明细(包含文件和文件夹)
         /// </summary>
         /// <returns></returns>
-        public string[] GetFilesDetails(string relativePath = "")
+        public List<string> GetFilesDetails(string relativePath = "")
         {
-            StringBuilder result = new StringBuilder();
+            List<string> result = new List<string>();
             var ftp = (FtpWebRequest)WebRequest.Create(new Uri(Path.Combine("ftp://" + FtpServer, relativePath).Replace("\\", "/")));
             ftp.Credentials = new NetworkCredential(Username, Password);
             ftp.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
@@ -437,16 +437,13 @@ namespace Masuit.Tools.Net
                     string line = reader.ReadLine();
                     while (line != null)
                     {
-                        result.Append(line);
-                        result.Append("\n");
+                        result.Add(line);
                         line = reader.ReadLine();
                     }
-
-                    result.Remove(result.ToString().LastIndexOf("\n", StringComparison.Ordinal), 1);
                 }
             }
 
-            return result.ToString().Split('\n');
+            return result;
         }
 
         /// <summary>
@@ -494,7 +491,7 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public string[] GetDirectories(string relativePath)
         {
-            string[] drectory = GetFilesDetails(relativePath);
+            var drectory = GetFilesDetails(relativePath);
             string m = string.Empty;
             foreach (string str in drectory)
             {

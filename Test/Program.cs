@@ -1,6 +1,8 @@
-﻿using Masuit.Tools.Strings;
+﻿using Masuit.Tools;
 using Masuit.Tools.Systems;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Test
 {
@@ -10,13 +12,14 @@ namespace Test
         {
             var timer = HiPerfTimer.Execute(() =>
             {
-                //var dic = new Dictionary<string, int>();
-                //for (int i = 0; i < 1000000; i++)
-                //{
-                //    dic.Add(DateTime.Now.Ticks.ToBinary(36), 0);
-                //}
-                long s = new NumberFormater(16).FromString("1a");
-                Console.WriteLine(s);
+                var dic = new Dictionary<string, int>();
+                var sf = SnowFlake.GetInstance();
+                for (int i = 0; i < 1000000; i++)
+                {
+                    //Console.WriteLine(ObjectId.GenerateNewId());
+                    var id = Stopwatch.GetTimestamp().ToBinary(36);
+                    dic.Add(id, 0);
+                }
             });
             Console.WriteLine(timer);
         }
