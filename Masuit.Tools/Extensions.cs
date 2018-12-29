@@ -1156,6 +1156,21 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 字符串转long类型
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="defaultResult">转换失败的默认值</param>
+        /// <returns></returns>
+        public static long ToLong(this string str, long defaultResult)
+        {
+            if (!long.TryParse(str, out var result))
+            {
+                result = defaultResult;
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 将int转换成double
         /// </summary>
         /// <param name="num">int类型</param>
