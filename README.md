@@ -13,7 +13,7 @@
 
 ## 如何使用 
 ### .NET Framework
-在你的控制器中，你可以像在`FileResult`帮助器中构建一样使用它。
+在你的控制器中，你可以像在`FileResult`一样的方式使用它。
 ```csharp
         using Masuit.Tools.Mvc;
         using Masuit.Tools.Mvc.ResumeFileResult;
@@ -54,7 +54,7 @@
         }
 ```
 
-然后在你的控制器中，你可以像在`FileResult`帮助器中构建一样使用它。
+然后在你的控制器中，你可以像在`FileResult`一样的方式使用它。
 
 ```csharp
         using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
