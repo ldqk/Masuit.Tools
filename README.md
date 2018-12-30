@@ -5,7 +5,7 @@
 # 示例代码
 1.检验字符串是否是Email
 ```csharp
-bool isEmail="1170397736@qq.com".MatchEmail();
+bool isEmail="3444764617@qq.com".MatchEmail();
 ```
 2.获取CPU核心数
 ```csharp
