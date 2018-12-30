@@ -2,6 +2,46 @@
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。
 [官网教程](http://masuit.com/55)
 
+# 示例代码
+1.检验字符串是否是Email
+```csharp
+bool isEmail="1170397736@qq.com".MatchEmail();
+```
+2.获取CPU核心数
+```csharp
+int core = SystemInfo.GetCpuCount();
+```
+3.大文件操作
+```csharp
+        FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        {
+                //fs.CopyToFile(@"D:\1.bak");//同步复制大文件
+                fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
+                string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
+        }
+```
+
+4.html的防XSS处理：
+```csharp
+string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
+        <!--[if IE 7]>
+        <link href='/Content/font-awesome-ie7.min.css' rel='stylesheet'/>
+        <![endif]-->
+        <script src='/Scripts/modernizr'></script>
+        <div id='searchBox' role='search'>
+        <form action='/packages' method='get'>
+        <span class='user-actions'><a href='/users/account/LogOff'>退出</a></span>
+        <input name='q' id='searchBoxInput'/>
+        <input id='searchBoxSubmit' type='submit' value='Submit' />
+        </form>
+        </div>";
+string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
+```
+5.整理操作系统的内存：
+```csharp
+Windows.ClearMemorySilent();
+```
+
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
