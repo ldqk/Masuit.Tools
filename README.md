@@ -371,6 +371,14 @@ var list = new List<MyClass>()
 List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
+### 27.实体映射
+```csharp
+var myClass = new MyClass()
+{
+    Email = "1@1.cn"
+};
+MyClassDto dto = ExpressionGenericMapper.Map<MyClass,MyClassDto>(myClass);
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
