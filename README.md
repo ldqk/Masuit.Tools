@@ -3,12 +3,13 @@
 [官网教程](http://masuit.com/55)
 
 # 特色功能示例代码
-### 1.检验字符串是否是Email、手机号、URL、IP地址
+### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
 ```csharp
 bool isEmail="3444764617@qq.com".MatchEmail();
 bool isInetAddress = "114.114.114.114".MatchInetAddress();
 bool isUrl = "http://masuit.com".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
+bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 ```
 ### 2.硬件监测
 ```csharp
@@ -336,6 +337,39 @@ public class MyClass
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
 var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
 ...
+```
+### 24.DateTime扩展
+```csharp
+double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
+double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
+double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
+...
+```
+### 25.IP地址和URL
+```csharp
+bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
+bool isPrivateIp = "172.16.23.25".IsPrivateIP();// 判断是否是私有地址
+bool isExternalAddress = "http://baidu.com".IsExternalAddress();// 判断是否是外网的URL
+```
+### 26.元素去重
+```csharp
+var list = new List<MyClass>()
+{
+    new MyClass()
+    {
+        Email = "1@1.cn"
+    },
+    new MyClass()
+    {
+        Email = "1@1.cn"
+    },
+    new MyClass()
+    {
+        Email = "1@1.cn"
+    }
+};
+List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
+Console.WriteLine(classes.Count==1);//True
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
