@@ -322,14 +322,18 @@ public class MyClass
 {
     [IsEmail]
     public string Email { get; set; }
+
     [IsPhone]
     public string PhoneNumber { get; set; }
 
     [IsIPAddress]
     public string IP { get; set; }
 
-    [MinValue(0,ErrorMessage = "年龄最小为0岁"),MaxValue(100,ErrorMessage = "年龄最大100岁")]
+    [MinValue(0, ErrorMessage = "年龄最小为0岁"), MaxValue(100, ErrorMessage = "年龄最大100岁")]
     public int Age { get; set; }
+
+    [ComplexPassword]//密码复杂度校验
+    public string Password { get; set; }
 }
 ```
 ### 23.HTML操作
@@ -378,6 +382,38 @@ var myClass = new MyClass()
     Email = "1@1.cn"
 };
 MyClassDto dto = ExpressionGenericMapper.Map<MyClass,MyClassDto>(myClass);
+```
+### 28.枚举扩展
+```csharp
+public enum MyEnum
+{
+    [Display(Name = "读")]
+    [Description("读")]
+    Read,
+    
+    [Display(Name = "写")]
+    [Description("写")]
+    Write
+}
+```
+```csharp
+Dictionary<int, string> dic1 = typeof(MyEnum).GetDictionary();// 获取枚举值和字符串表示的字典映射
+var dic2 = typeof(MyEnum).GetDescriptionAndValue();// 获取字符串表示和枚举值的字典映射
+string desc = MyEnum.Read.GetDescription();// 获取Description标签
+string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
+var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
+string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
+```
+### 29.定长队列实现
+```csharp
+LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
+ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
+```
+### 30.反射操作
+```csharp
+MyClass myClass = new MyClass();
+PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
+myClass.SetProperty("Email","1@1.cn");//给对象设置值
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
