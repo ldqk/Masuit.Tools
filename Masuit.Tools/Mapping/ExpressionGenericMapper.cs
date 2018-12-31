@@ -8,11 +8,14 @@ using System.Reflection;
 
 namespace Masuit.Tools
 {
-    public static class ExpressionGenericMapper<TSource, TDest> where TSource : class where TDest : class
+    internal static class ExpressionGenericMapper<TSource, TDest> where TSource : class where TDest : class
     {
-        private static Func<TSource, TDest> MapFunc { get; set; }
 
+        // 缓存委托
+        private static Func<TSource, TDest> MapFunc { get; set; }
         private static Action<TSource, TDest> MapAction { get; set; }
+        private static Func<TSource, TDest> _copyFunc;
+        private static Action<TSource, TDest> _copyAction;
 
         /// <summary>
         /// 将对象TSource转换为TDest
@@ -163,7 +166,7 @@ namespace Masuit.Tools
             //条件p.Item!=null    
             var testItem = Expression.NotEqual(sourceProperty, Expression.Constant(null, sourceType));
 
-            //构造回调 Mapper<TSource, TDest>.MapList()
+            //构造回调
             var sourceArg = sourceType.IsArray ? sourceType.GetElementType() : sourceType.GetGenericArguments()[0];
             var targetArg = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
             var mapperType = typeof(ExpressionGenericMapper<,>).MakeGenericType(sourceArg, targetArg);
@@ -264,29 +267,159 @@ namespace Masuit.Tools
             var lambda = Expression.Lambda<Action<TSource, TDest>>(conditionTarget, sourceParameter, targetParameter);
             return lambda.Compile();
         }
-    }
-
-    public static class MapClass
-    {
-        /// <summary>
-        /// 将对象TSource转换为TDest
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static TDest Map<TSource, TDest>(this TSource source) where TDest : class where TSource : class => ExpressionGenericMapper<TSource, TDest>.Map(source);
 
         /// <summary>
-        /// 集合元素映射
+        /// 新建目标类型实例，并将源对象的属性值拷贝至目标对象的对应属性
         /// </summary>
-        /// <param name="sources"></param>
-        /// <returns></returns>
-        public static List<TDest> MapList<TSource, TDest>(this IEnumerable<TSource> sources) where TDest : class where TSource : class => ExpressionGenericMapper<TSource, TDest>.MapList(sources);
+        /// <param name="source">源对象实例</param>
+        /// <returns>深拷贝了源对象属性的目标对象实例</returns>
+        public static TDest Copy(TSource source)
+        {
+            if (source == null) return default(TDest);
+
+            // 因为对于泛型类型而言，每次传入不同的泛型参数都会调用静态构造函数，所以可以通过这种方式进行缓存
+            if (_copyFunc != null)
+            {
+                // 如果之前缓存过，则直接调用缓存的委托
+                return _copyFunc(source);
+            }
+
+            Type sourceType = typeof(TSource);
+            Type targetType = typeof(TDest);
+
+            var paramExpr = Expression.Parameter(sourceType, nameof(source));
+
+            Expression bodyExpr;
+
+            // 如果对象可以遍历（目前只支持数组和ICollection<T>实现类）
+            if (sourceType == targetType && MapperTools.IsIEnumerableExceptString(sourceType))
+            {
+                bodyExpr = Expression.Call(null, EnumerableCopier.GetMethondInfo(sourceType), paramExpr);
+            }
+            else
+            {
+                var memberBindings = new List<MemberBinding>();
+                // 遍历目标对象的所有属性信息
+                foreach (var targetPropInfo in targetType.GetProperties())
+                {
+                    // 从源对象获取同名的属性信息
+                    var sourcePropInfo = sourceType.GetProperty(targetPropInfo.Name);
+                    if (sourcePropInfo is null)
+                    {
+                        continue;
+                    }
+
+                    Type sourcePropType = sourcePropInfo?.PropertyType;
+                    Type targetPropType = targetPropInfo.PropertyType;
+
+                    // 只在满足以下三个条件的情况下进行拷贝
+                    // 1.源属性类型和目标属性类型一致
+                    // 2.源属性可读
+                    // 3.目标属性可写
+                    if (sourcePropInfo.CanRead && targetPropInfo.CanWrite)
+                    {
+                        // 获取属性值的表达式
+                        Expression expression = Expression.Property(paramExpr, sourcePropInfo);
+
+                        // 如果目标属性是值类型或者字符串，则直接做赋值处理
+                        // 暂不考虑目标值类型有非字符串的引用类型这种特殊情况
+                        // 非字符串引用类型做递归处理
+                        if (MapperTools.IsRefTypeExceptString(targetPropType))
+                        {
+                            // 进行递归
+                            if (MapperTools.IsRefTypeExceptString(targetPropType))
+                            {
+                                expression = Expression.Call(null, GetCopyMethodInfo(sourcePropType, targetPropType), expression);
+                            }
+                        }
+
+                        memberBindings.Add(Expression.Bind(targetPropInfo, expression));
+                    }
+                }
+
+                bodyExpr = Expression.MemberInit(Expression.New(targetType), memberBindings);
+            }
+
+            var lambdaExpr = Expression.Lambda<Func<TSource, TDest>>(bodyExpr, paramExpr);
+
+            _copyFunc = lambdaExpr.Compile();
+            return _copyFunc(source);
+        }
 
         /// <summary>
-        /// 将对象TSource的值赋给给TDest
+        /// 新建目标类型实例，并将源对象的属性值拷贝至目标对象的对应属性
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        public static void MapTo<TSource, TDest>(this TSource source, TDest target) where TSource : class where TDest : class => ExpressionGenericMapper<TSource, TDest>.Map(source, target);
+        /// <param name="source">源对象实例</param>
+        /// <param name="target">目标对象实例</param>
+        public static void Copy(TSource source, TDest target)
+        {
+            if (source == null) return;
+
+            // 因为对于泛型类型而言，每次传入不同的泛型参数都会调用静态构造函数，所以可以通过这种方式进行缓存
+            // 如果之前缓存过，则直接调用缓存的委托
+            if (_copyAction != null)
+            {
+                _copyAction(source, target);
+                return;
+            }
+
+            Type sourceType = typeof(TSource);
+            Type targetType = typeof(TDest);
+
+            // 如果双方都可以被遍历
+            if (MapperTools.IsIEnumerableExceptString(sourceType) && MapperTools.IsIEnumerableExceptString(targetType))
+            {
+                // TODO
+                // 向已存在的数组或者ICollection<T>拷贝的功能暂不支持
+            }
+            else
+            {
+                var paramSourceExpr = Expression.Parameter(sourceType, nameof(source));
+                var paramTargetExpr = Expression.Parameter(targetType, nameof(target));
+
+                var binaryExpressions = new List<Expression>();
+                // 遍历目标对象的所有属性信息
+                foreach (var targetPropInfo in targetType.GetProperties())
+                {
+                    // 从源对象获取同名的属性信息
+                    var sourcePropInfo = sourceType.GetProperty(targetPropInfo.Name);
+
+                    Type sourcePropType = sourcePropInfo?.PropertyType;
+                    Type targetPropType = targetPropInfo.PropertyType;
+
+                    // 只在满足以下三个条件的情况下进行拷贝
+                    // 1.源属性类型和目标属性类型一致
+                    // 2.源属性可读
+                    // 3.目标属性可写
+                    if (sourcePropType == targetPropType && sourcePropInfo.CanRead && targetPropInfo.CanWrite)
+                    {
+                        // 获取属性值的表达式
+                        Expression expression = Expression.Property(paramSourceExpr, sourcePropInfo);
+                        Expression targetPropExpr = Expression.Property(paramTargetExpr, targetPropInfo);
+
+                        // 如果目标属性是值类型或者字符串，则直接做赋值处理
+                        // 暂不考虑目标值类型有非字符串的引用类型这种特殊情况
+                        if (MapperTools.IsRefTypeExceptString(targetPropType))
+                        {
+                            expression = Expression.Call(null, GetCopyMethodInfo(sourcePropType, targetPropType), expression);
+                        }
+
+                        binaryExpressions.Add(Expression.Assign(targetPropExpr, expression));
+                    }
+                }
+
+                Expression bodyExpr = Expression.Block(binaryExpressions);
+
+                var lambdaExpr = Expression.Lambda<Action<TSource, TDest>>(bodyExpr, paramSourceExpr, paramTargetExpr);
+
+                _copyAction = lambdaExpr.Compile();
+                _copyAction(source, target);
+            }
+        }
+
+        private static MethodInfo GetCopyMethodInfo(Type source, Type target) => typeof(ExpressionGenericMapper<,>).MakeGenericType(source, target).GetMethod(nameof(Copy), new[]
+        {
+            source
+        });
     }
 }

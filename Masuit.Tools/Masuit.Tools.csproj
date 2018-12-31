@@ -97,7 +97,8 @@
     <Compile Include="DateTimeExt\DateInfoStruct.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
     <Compile Include="DateTimeExt\WeekHolidayStruct.cs" />
-    <Compile Include="ExpressionGenericMapper.cs" />
+    <Compile Include="Mapping\EnumerableCopier.cs" />
+    <Compile Include="Mapping\ExpressionGenericMapper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Files\Compress.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
@@ -118,6 +119,9 @@
     <Compile Include="Logging\LogInfo.cs" />
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Mapping\MapClass.cs" />
+    <Compile Include="Mapping\MapperTools.cs" />
+    <Compile Include="Mapping\UnsupportedTypeException.cs" />
     <Compile Include="Models\BaiduIP.cs" />
     <Compile Include="Models\IspInfo.cs" />
     <Compile Include="Models\PhysicsAddress.cs" />

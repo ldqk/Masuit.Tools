@@ -303,22 +303,6 @@ namespace Masuit.Tools
         public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
 
         /// <summary>
-        /// 复制一个新的对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static T Copy<T>(this T source) where T : new()
-        {
-            T dest = new T();
-            dest.GetType().GetProperties().ForEach(p =>
-            {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
-        }
-
-        /// <summary>
         /// 复制到一个现有对象
         /// </summary>
         /// <typeparam name="T"></typeparam>

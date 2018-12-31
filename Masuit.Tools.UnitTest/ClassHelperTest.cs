@@ -17,11 +17,12 @@ namespace Masuit.Tools.UnitTest
             {
                 new ClassHelper.CustPropertyInfo(typeof(string),"Name","张三"),
                 new ClassHelper.CustPropertyInfo(typeof(int),"Age",20),
-            });
+            }).AddProperty("List", new List<string>());
 
             // act
             Assert.Equal("张三", newObj.Name);
             Assert.Equal(20, newObj.Age);
+            Assert.IsType(typeof(List<string>), newObj.List);
         }
 
         [Fact]

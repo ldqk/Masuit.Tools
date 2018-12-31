@@ -85,7 +85,6 @@ namespace Masuit.Tools.Reflection
             return retval;
         }
 
-
         /// <summary>  
         /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。  
         /// </summary>  
@@ -150,6 +149,18 @@ namespace Masuit.Tools.Reflection
         public static object AddProperty(this object obj, CustPropertyInfo cpi)
         {
             return AddProperty(obj, new List<CustPropertyInfo>() { cpi });
+        }
+
+        /// <summary>
+        /// 给对象实例添加新属性并返回新对象实例
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="propertyName">属性名</param>
+        /// <param name="propertyValue">属性值</param>
+        /// <returns></returns>
+        public static object AddProperty(this object obj, string propertyName, object propertyValue)
+        {
+            return AddProperty(obj, new List<CustPropertyInfo>() { new CustPropertyInfo(propertyValue.GetType(), propertyName, propertyValue) });
         }
 
         /// <summary>  
@@ -276,6 +287,7 @@ namespace Masuit.Tools.Reflection
             {
                 //定义字段。  
                 FieldBuilder customerNameBldr = myTypeBuilder.DefineField(cpi.FieldName, cpi.Type, FieldAttributes.Private);
+
                 //customerNameBldr.SetConstant("11111111");
                 //定义属性。  
                 //最后一个参数为null,因为属性没有参数。  

@@ -156,6 +156,18 @@ namespace Masuit.Tools.Reflection
             });
         }
 
+        /// <summary>
+        /// 给对象实例添加新属性并返回新对象实例
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="propertyName">属性名</param>
+        /// <param name="propertyValue">属性值</param>
+        /// <returns></returns>
+        public static object AddProperty(this object obj, string propertyName, object propertyValue)
+        {
+            return AddProperty(obj, new List<CustPropertyInfo>() { new CustPropertyInfo(propertyValue.GetType(), propertyName, propertyValue) });
+        }
+
         /// <summary>  
         /// 从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。  
         /// </summary>  
