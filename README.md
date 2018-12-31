@@ -331,6 +331,12 @@ public class MyClass
     public int Age { get; set; }
 }
 ```
+### 23.HTML操作
+```csharp
+List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
+var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
+...
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
