@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Masuit.Tools
+namespace Masuit.Tools.Mapping
 {
     /// <summary>
     /// 可遍历类型拷贝器

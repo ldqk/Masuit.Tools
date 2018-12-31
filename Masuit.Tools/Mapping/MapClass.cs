@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Masuit.Tools
+namespace Masuit.Tools.Mapping
 {
     public static class MapClass
     {
@@ -31,14 +31,7 @@ namespace Masuit.Tools
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TSource Copy<TSource>(this TSource source) where TSource : class => ExpressionGenericMapper<TSource, TSource>.Map(source);
-
-        /// <summary>
-        /// 复制一个新集合
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static List<TSource> Copy<TSource>(this IEnumerable<TSource> source) where TSource : class => ExpressionGenericMapper<TSource, TSource>.MapList(source);
+        public static TSource Copy<TSource>(this TSource source) where TSource : class => ExpressionGenericMapper<TSource, TSource>.Copy(source);
+        
     }
 }

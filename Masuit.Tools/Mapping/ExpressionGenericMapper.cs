@@ -6,19 +6,18 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Masuit.Tools
+namespace Masuit.Tools.Mapping
 {
-    internal static class ExpressionGenericMapper<TSource, TDest> where TSource : class where TDest : class
+    public static class ExpressionGenericMapper<TSource, TDest> where TSource : class where TDest : class
     {
-
         // 缓存委托
-        private static Func<TSource, TDest> MapFunc { get; set; }
-        private static Action<TSource, TDest> MapAction { get; set; }
+        private static Func<TSource, TDest> MapFunc;
+        private static Action<TSource, TDest> MapAction;
         private static Func<TSource, TDest> _copyFunc;
         private static Action<TSource, TDest> _copyAction;
 
         /// <summary>
-        /// 将对象TSource转换为TDest
+        /// 对象映射
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
@@ -33,7 +32,7 @@ namespace Masuit.Tools
         }
 
         /// <summary>
-        /// 集合元素映射
+        /// 集合映射
         /// </summary>
         /// <param name="sources"></param>
         /// <returns></returns>
@@ -44,17 +43,11 @@ namespace Masuit.Tools
                 MapFunc = GetMapFunc();
             }
 
-            var result = new List<TDest>();
-            foreach (var item in sources)
-            {
-                result.Add(MapFunc(item));
-            }
-
-            return result;
+            return sources.Select(MapFunc).ToList();
         }
 
         /// <summary>
-        /// 将对象TSource的值赋给给TDest
+        /// 映射到已经实例化的对象
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
@@ -72,6 +65,12 @@ namespace Masuit.Tools
         {
             var sourceType = typeof(TSource);
             var targetType = typeof(TDest);
+
+            if (MapperTools.IsEnumerable(sourceType) || MapperTools.IsEnumerable(targetType))
+            {
+                throw new NotSupportedException("数组类型暂不支持对象映射，请使用List类型");
+            }
+
             //Func委托传入变量
             var parameter = Expression.Parameter(sourceType, "p");
 
@@ -81,7 +80,7 @@ namespace Masuit.Tools
             {
                 var sourceItem = sourceType.GetProperty(targetItem.Name);
 
-                //判断实体的读写权限
+                //判断对象的读写权限
                 if (sourceItem == null || !sourceItem.CanRead || sourceItem.PropertyType.IsNotPublic)
                 {
                     continue;
@@ -98,8 +97,8 @@ namespace Masuit.Tools
                 //当非值类型且类型不相同时
                 if (!sourceItem.PropertyType.IsValueType && sourceItem.PropertyType != targetItem.PropertyType)
                 {
-                    //判断都是(非泛型)class
-                    if (sourceItem.PropertyType.IsClass && targetItem.PropertyType.IsClass && !sourceItem.PropertyType.IsGenericType && !targetItem.PropertyType.IsGenericType)
+                    //判断都是(非泛型、非数组)class
+                    if (sourceItem.PropertyType.IsClass && targetItem.PropertyType.IsClass && !sourceItem.PropertyType.IsArray && !targetItem.PropertyType.IsArray && !sourceItem.PropertyType.IsGenericType && !targetItem.PropertyType.IsGenericType)
                     {
                         var expression = GetClassExpression(sourceProperty, sourceItem.PropertyType, targetItem.PropertyType);
                         memberBindings.Add(Expression.Bind(targetItem, expression));
@@ -112,6 +111,23 @@ namespace Masuit.Tools
                         memberBindings.Add(Expression.Bind(targetItem, expression));
                     }
 
+                    continue;
+                }
+
+                //可空类型转换到非可空类型，当可空类型值为null时，用默认值赋给目标属性；不为null就直接转换
+                if (MapperTools.IsNullableType(sourceItem.PropertyType) && !MapperTools.IsNullableType(targetItem.PropertyType))
+                {
+                    var hasValueExpression = Expression.Equal(Expression.Property(sourceProperty, "HasValue"), Expression.Constant(true));
+                    var conditionItem = Expression.Condition(hasValueExpression, Expression.Convert(sourceProperty, targetItem.PropertyType), Expression.Default(targetItem.PropertyType));
+                    memberBindings.Add(Expression.Bind(targetItem, conditionItem));
+                    continue;
+                }
+
+                //非可空类型转换到可空类型，直接转换
+                if (!MapperTools.IsNullableType(sourceItem.PropertyType) && MapperTools.IsNullableType(targetItem.PropertyType))
+                {
+                    var memberExpression = Expression.Convert(sourceProperty, targetItem.PropertyType);
+                    memberBindings.Add(Expression.Bind(targetItem, memberExpression));
                     continue;
                 }
 
@@ -141,10 +157,10 @@ namespace Masuit.Tools
         /// <returns></returns>
         private static Expression GetClassExpression(Expression sourceProperty, Type sourceType, Type targetType)
         {
-            //条件p.Item!=null    
+            //条件p.Item!=null
             var testItem = Expression.NotEqual(sourceProperty, Expression.Constant(null, sourceType));
 
-            //构造回调 Mapper<TSource, TDest>.Map()
+            //构造回调
             var mapperType = typeof(ExpressionGenericMapper<,>).MakeGenericType(sourceType, targetType);
             var iftrue = Expression.Call(mapperType.GetMethod(nameof(Map), new[]
             {
@@ -163,19 +179,17 @@ namespace Masuit.Tools
         /// <returns></returns>
         private static Expression GetListExpression(Expression sourceProperty, Type sourceType, Type targetType)
         {
-            //条件p.Item!=null    
+            //条件p.Item!=null
             var testItem = Expression.NotEqual(sourceProperty, Expression.Constant(null, sourceType));
 
             //构造回调
             var sourceArg = sourceType.IsArray ? sourceType.GetElementType() : sourceType.GetGenericArguments()[0];
             var targetArg = targetType.IsArray ? targetType.GetElementType() : targetType.GetGenericArguments()[0];
             var mapperType = typeof(ExpressionGenericMapper<,>).MakeGenericType(sourceArg, targetArg);
-
             var mapperExecMap = Expression.Call(mapperType.GetMethod(nameof(MapList), new[]
             {
                 sourceType
             }), sourceProperty);
-
             Expression iftrue;
             if (targetType == mapperExecMap.Type)
             {
@@ -183,7 +197,10 @@ namespace Masuit.Tools
             }
             else if (targetType.IsArray) //数组类型调用ToArray()方法
             {
-                iftrue = Expression.Call(mapperExecMap, mapperExecMap.Type.GetMethod("ToArray"));
+                iftrue = Expression.Call(typeof(Enumerable), nameof(Enumerable.ToArray), new[]
+                {
+                    mapperExecMap.Type.GenericTypeArguments[0]
+                }, mapperExecMap);
             }
             else if (typeof(IDictionary).IsAssignableFrom(targetType))
             {
@@ -202,6 +219,12 @@ namespace Masuit.Tools
         {
             var sourceType = typeof(TSource);
             var targetType = typeof(TDest);
+
+            if (MapperTools.IsEnumerable(sourceType) || MapperTools.IsEnumerable(targetType))
+            {
+                throw new NotSupportedException("数组类型暂不支持对象映射，请使用List类型");
+            }
+
             //Func委托传入变量
             var sourceParameter = Expression.Parameter(sourceType, "p");
             var targetParameter = Expression.Parameter(targetType, "t");
@@ -213,7 +236,7 @@ namespace Masuit.Tools
             {
                 var sourceItem = sourceType.GetProperty(targetItem.Name);
 
-                //判断实体的读写权限
+                //判断对象的读写权限
                 if (sourceItem == null || !sourceItem.CanRead || sourceItem.PropertyType.IsNotPublic)
                 {
                     continue;
@@ -231,8 +254,8 @@ namespace Masuit.Tools
                 //当非值类型且类型不相同时
                 if (!sourceItem.PropertyType.IsValueType && sourceItem.PropertyType != targetItem.PropertyType)
                 {
-                    //判断都是(非泛型)class
-                    if (sourceItem.PropertyType.IsClass && targetItem.PropertyType.IsClass && !sourceItem.PropertyType.IsGenericType && !targetItem.PropertyType.IsGenericType)
+                    //判断都是(非泛型、非数组)class
+                    if (sourceItem.PropertyType.IsClass && targetItem.PropertyType.IsClass && !sourceItem.PropertyType.IsArray && !targetItem.PropertyType.IsArray && !sourceItem.PropertyType.IsGenericType && !targetItem.PropertyType.IsGenericType)
                     {
                         var expression = GetClassExpression(sourceProperty, sourceItem.PropertyType, targetItem.PropertyType);
                         expressions.Add(Expression.Assign(targetProperty, expression));
@@ -245,6 +268,23 @@ namespace Masuit.Tools
                         expressions.Add(Expression.Assign(targetProperty, expression));
                     }
 
+                    continue;
+                }
+
+                //可空类型转换到非可空类型，当可空类型值为null时，用默认值赋给目标属性；不为null就直接转换
+                if (MapperTools.IsNullableType(sourceItem.PropertyType) && !MapperTools.IsNullableType(targetItem.PropertyType))
+                {
+                    var hasValueExpression = Expression.Equal(Expression.Property(sourceProperty, "HasValue"), Expression.Constant(true));
+                    var conditionItem = Expression.Condition(hasValueExpression, Expression.Convert(sourceProperty, targetItem.PropertyType), Expression.Default(targetItem.PropertyType));
+                    expressions.Add(Expression.Assign(targetProperty, conditionItem));
+                    continue;
+                }
+
+                //非可空类型转换到可空类型，直接转换
+                if (!MapperTools.IsNullableType(sourceItem.PropertyType) && MapperTools.IsNullableType(targetItem.PropertyType))
+                {
+                    var memberExpression = Expression.Convert(sourceProperty, targetItem.PropertyType);
+                    expressions.Add(Expression.Assign(targetProperty, memberExpression));
                     continue;
                 }
 
@@ -304,10 +344,6 @@ namespace Masuit.Tools
                 {
                     // 从源对象获取同名的属性信息
                     var sourcePropInfo = sourceType.GetProperty(targetPropInfo.Name);
-                    if (sourcePropInfo is null)
-                    {
-                        continue;
-                    }
 
                     Type sourcePropType = sourcePropInfo?.PropertyType;
                     Type targetPropType = targetPropInfo.PropertyType;
@@ -316,7 +352,7 @@ namespace Masuit.Tools
                     // 1.源属性类型和目标属性类型一致
                     // 2.源属性可读
                     // 3.目标属性可写
-                    if (sourcePropInfo.CanRead && targetPropInfo.CanWrite)
+                    if (sourcePropType == targetPropType && sourcePropInfo.CanRead && targetPropInfo.CanWrite)
                     {
                         // 获取属性值的表达式
                         Expression expression = Expression.Property(paramExpr, sourcePropInfo);

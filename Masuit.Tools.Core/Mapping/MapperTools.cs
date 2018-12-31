@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Masuit.Tools
@@ -34,5 +35,16 @@ namespace Masuit.Tools
         /// <param name="type">类型信息</param>
         /// <returns>指定类型的实例</returns>
         public static object CreateNewInstance(Type type) => _ctors.GetOrAdd(type, t => Expression.Lambda<Func<object>>(Expression.New(t)).Compile())();
+
+        public static bool IsNullableType(Type type)
+        {
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        public static bool IsEnumerable(Type type)
+        {
+            return type.IsArray || type.GetInterfaces().Any(x => x == typeof(ICollection) || x == typeof(IEnumerable));
+        }
+
     }
 }
