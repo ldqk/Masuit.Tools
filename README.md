@@ -48,8 +48,7 @@ Windows.ClearMemorySilent();
 
 它允许提供`ETag`标题以及`Last-Modified`标题。 它还支持以下前置条件标题：`If-Match`，`If-None-Match`，`If-Modified-Since`，`If-Unmodified-Since`，`If-Range`。
 ## 支持 ASP.NET Core 2.0
-从.NET Core2.0开始，ASP.NET Core内部支持断点续传。 因此删除了与断点续传相关的所有代码。 只留下了“Content-Disposition” Inline的一部分。 现在所有代码都依赖于基础.NET类。
-还删除了对多部分请求的支持。 为了支持我将不得不复制很多原始代码，因为目前没有办法简单地覆盖基类的某些部分。
+从.NET Core2.0开始，ASP.NET Core内部支持断点续传。 因此只是对FileResult做了一些扩展。 只留下了“Content-Disposition” Inline的一部分。 所有代码都依赖于基础.NET类。
 
 ## 如何使用 
 ### .NET Framework
