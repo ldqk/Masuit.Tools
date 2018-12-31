@@ -300,6 +300,22 @@ using (RedisLock redisLock = new RedisLock("127.0.0.1:6379"))
     var redisResult = redisLock.UnLock(lockObject);// 释放锁
 }
 ```
+22.实体校验
+```csharp
+public class MyClass
+{
+    [IsEmail]
+    public string Email { get; set; }
+    [IsPhone]
+    public string PhoneNumber { get; set; }
+
+    [IsIPAddress]
+    public string IP { get; set; }
+
+    [MinValue(0,ErrorMessage = "年龄最小为0岁"),MaxValue(100,ErrorMessage = "年龄最大100岁")]
+    public int Age { get; set; }
+}
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
