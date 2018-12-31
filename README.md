@@ -430,6 +430,116 @@ var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
 object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
 Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
+### 31.对象实体映射
+```csharp
+public class TestClassA
+{
+    public string MyProperty { get; set; }
+
+    public TestClassC TestClassC { get; set; }
+    public List<TestClassC> List { get; set; }
+    public TestClassC[] Array { get; set; }
+}
+
+public class TestClassB
+{
+    public string MyProperty { get; set; }
+
+    public TestClassC TestClassC { get; set; }
+    public List<TestClassD> List { get; set; }
+    public TestClassD[] Array { get; set; }
+}
+
+public class TestClassC
+{
+    public string MyProperty { get; set; }
+    public TestClassD Obj { get; set; }
+}
+
+public class TestClassD
+{
+    public string MyProperty { get; set; }
+    public TestClassC Obj { get; set; }
+}
+```
+```csharp
+TestClassA a = new TestClassA()
+{
+    TestClassC = new TestClassC()
+    {
+        MyProperty = "string"
+    },
+    List = new List<TestClassC>()
+    {
+        new TestClassC(){MyProperty = "cstring"},
+        new TestClassC(){MyProperty = "cstring"},
+    },
+    MyProperty = "string",
+    Array = new[]
+    {
+        new TestClassC()
+        {
+            MyProperty = "string",
+            Obj = new TestClassD()
+            {
+                MyProperty = "sstring"
+            }
+        },
+        new TestClassC()
+        {
+            MyProperty = "string",
+            Obj = new TestClassD()
+            {
+                MyProperty = "sstring"
+            }
+        },
+    }
+};
+var b = a.Map<TestClassA, TestClassB>();
+```
+性能测试：i7-4700H+12GB DDR3
+```csharp
+double time = HiPerfTimer.Execute(() =>
+{
+    for (int i = 0; i < 1000000; i++)
+    {
+        TestClassA a = new TestClassA()
+        {
+            TestClassC = new TestClassC()
+            {
+                MyProperty = "string"
+            },
+            List = new List<TestClassC>()
+            {
+                new TestClassC(){MyProperty = "cstring"},
+                new TestClassC(){MyProperty = "cstring"},
+            },
+            MyProperty = "string",
+            Array = new[]
+            {
+                new TestClassC()
+                {
+                    MyProperty = "string",
+                    Obj = new TestClassD()
+                    {
+                        MyProperty = "sstring"
+                    }
+                },
+                new TestClassC()
+                {
+                    MyProperty = "string",
+                    Obj = new TestClassD()
+                    {
+                        MyProperty = "sstring"
+                    }
+                },
+            }
+        };
+        var b = a.Map<TestClassA, TestClassB>();
+    }
+});
+Console.WriteLine(time);// 0.826132s
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
