@@ -354,6 +354,11 @@ double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
 bool isPrivateIp = "172.16.23.25".IsPrivateIP();// 判断是否是私有地址
 bool isExternalAddress = "http://baidu.com".IsExternalAddress();// 判断是否是外网的URL
+
+//以下需要配置baiduAK
+string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
+PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
+Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
 ```
 ### 26.元素去重
 ```csharp
@@ -414,6 +419,16 @@ ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);//
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
 myClass.SetProperty("Email","1@1.cn");//给对象设置值
+
+//动态增删对象的属性
+MyClass myClass = new MyClass();
+var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
+{
+    new ClassHelper.CustPropertyInfo(typeof(string), "Name", "张三"),
+    new ClassHelper.CustPropertyInfo(typeof(double), "Number", 123456.0),
+});//添加属性
+object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
+Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
