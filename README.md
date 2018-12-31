@@ -2,7 +2,7 @@
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。
 [官网教程](http://masuit.com/55)
 
-# 示例代码
+# 特色功能示例代码
 1.检验字符串是否是Email
 ```csharp
 bool isEmail="3444764617@qq.com".MatchEmail();
@@ -41,7 +41,108 @@ string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/user
 ```csharp
 Windows.ClearMemorySilent();
 ```
-
+6.任意进制转换
+```csharp
+NumberFormater nf = new NumberFormater(36);
+//NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");
+string s36 = nf.ToString(12345678);
+Console.WriteLine("12345678的36进制是："+s36);//7clzi
+```
+```csharp
+var bin=12345678.ToBinary(36);//7clzi
+```
+7.纳秒级计时器
+```csharp
+HiPerfTimer timer = HiPerfTimer.StartNew();
+for (int i = 0; i < 100000; i++)
+{
+    //todo
+}
+timer.Stop();
+Console.WriteLine("执行for循环100000次耗时"+timer.Duration+"s");
+```
+```csharp
+double time = HiPerfTimer.Execute(() =>
+{
+    for (int i = 0; i < 100000; i++)
+    {
+        //todo
+    }
+});
+Console.WriteLine("执行for循环100000次耗时"+time+"s");
+```
+8.单机产生唯一有序的短id
+```csharp
+var token=Stopwatch.GetTimestamp().ToBinary(36);
+```
+```csharp
+var set = new HashSet<string>();
+double time = HiPerfTimer.Execute(() =>
+{
+    for (int i = 0; i < 1000000; i++)
+    {
+        set.Add(Stopwatch.GetTimestamp().ToBinary(36));
+    }
+});
+Console.WriteLine(set.Count==1000000);//True
+Console.WriteLine("产生100w个id耗时"+time+"s");//1.6639039s
+```
+9.产生分布式唯一有序短id
+```csharp
+var sf = SnowFlake.GetInstance();
+string token = sf.GetUniqueId();// rcofqodori0w
+string shortId = sf.GetUniqueShortId(8);// qodw9728
+```
+```csharp
+var set = new HashSet<string>();
+double time = HiPerfTimer.Execute(() =>
+{
+    for (int i = 0; i < 1000000; i++)
+    {
+        set.Add(SnowFlake.GetInstance().GetUniqueId());
+    }
+});
+Console.WriteLine(set.Count == 1000000); //True
+Console.WriteLine("产生100w个id耗时" + time + "s"); //2.6891495s
+```
+10.农历转换
+```csharp
+ChineseCalendar.CustomHolidays.Add(DateTime.Parse("2018-12-31"),"元旦节");//自定义节假日
+ChineseCalendar today = new ChineseCalendar(DateTime.Parse("2018-12-31"));
+Console.WriteLine(today.ChineseDateString);// 二零一八年十一月廿五
+Console.WriteLine(today.AnimalString);// 生肖：狗
+Console.WriteLine(today.GanZhiDateString);// 干支：戊戌年甲子月丁酉日
+Console.WriteLine(today.DateHoliday);// 获取按公历计算的节假日
+...
+```
+11.Linq表达式树扩展
+```csharp
+Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
+Expression<Func<string, bool>> where2 = s => s.Length > 10;
+Func<string, bool> func = where1.And(where2).Compile();
+bool b=func("abcd12345678");//true
+```
+```csharp
+Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
+Expression<Func<string, bool>> where2 = s => s.Length > 10;
+Func<string, bool> func = where1.Or(where2).Compile();
+bool b=func("abc");// true
+```
+12.模版引擎
+```csharp
+var tmp = new Template("{{name}}，你好！");
+tmp.Set("name", "万金油");
+string s = tmp.Render();//万金油，你好！
+```
+```csharp
+var tmp = new Template("{{one}},{{two}},{{three}}");
+string s = tmp.Set("one", "1").Set("two", "2").Set("three", "3").Render();// 1,2,3
+```
+```csharp
+var tmp = new Template("{{name}}，{{greet}}！");
+tmp.Set("name", "万金油");
+string s = tmp.Render();// throw 模版变量{{greet}}未被使用
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
