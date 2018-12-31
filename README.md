@@ -3,15 +3,31 @@
 [官网教程](http://masuit.com/55)
 
 # 特色功能示例代码
-1.检验字符串是否是Email
+### 1.检验字符串是否是Email、手机号、URL、IP地址
 ```csharp
 bool isEmail="3444764617@qq.com".MatchEmail();
+bool isInetAddress = "114.114.114.114".MatchInetAddress();
+bool isUrl = "http://masuit.com".MatchUrl();
+bool isPhoneNumber = "15205201520".MatchPhoneNumber();
 ```
-2.获取CPU核心数
+### 2.硬件监测
 ```csharp
-int core = SystemInfo.GetCpuCount();
+float load = SystemInfo.CpuLoad;// 获取CPU占用率
+long physicalMemory = SystemInfo.PhysicalMemory;// 获取物理内存总数
+long memoryAvailable = SystemInfo.MemoryAvailable;// 获取物理内存可用率
+double freePhysicalMemory = SystemInfo.GetFreePhysicalMemory();// 获取可用物理内存
+Dictionary<string, string> diskFree = SystemInfo.DiskFree();// 获取磁盘每个分区可用空间
+Dictionary<string, string> diskTotalSpace = SystemInfo.DiskTotalSpace();// 获取磁盘每个分区总大小
+Dictionary<string, double> diskUsage = SystemInfo.DiskUsage();// 获取磁盘每个分区使用率
+double temperature = SystemInfo.GetCPUTemperature();// 获取CPU温度
+int cpuCount = SystemInfo.GetCpuCount();// 获取CPU核心数
+IList<string> ipAddress = SystemInfo.GetIPAddress();// 获取本机所有IP地址
+string localUsedIp = SystemInfo.GetLocalUsedIP();// 获取本机当前正在使用的IP地址
+IList<string> macAddress = SystemInfo.GetMacAddress();// 获取本机所有网卡mac地址
+string osVersion = SystemInfo.GetOsVersion();// 获取操作系统版本
+RamInfo ramInfo = SystemInfo.GetRamInfo();// 获取内存信息
 ```
-3.大文件操作
+### 3.大文件操作
 ```csharp
         FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
         {
@@ -20,8 +36,7 @@ int core = SystemInfo.GetCpuCount();
                 string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
         }
 ```
-
-4.html的防XSS处理：
+### 4.html的防XSS处理：
 ```csharp
 string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         <!--[if IE 7]>
@@ -37,11 +52,11 @@ string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         </div>";
 string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
 ```
-5.整理操作系统的内存：
+### 5.整理操作系统的内存：
 ```csharp
 Windows.ClearMemorySilent();
 ```
-6.任意进制转换
+### 6.任意进制转换
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
@@ -53,7 +68,7 @@ Console.WriteLine("36进制的7clzi是：" + num); // 12345678
 ```csharp
 var bin=12345678.ToBinary(36);//7clzi
 ```
-7.纳秒级计时器
+### 7.纳秒级性能计时器
 ```csharp
 HiPerfTimer timer = HiPerfTimer.StartNew();
 for (int i = 0; i < 100000; i++)
@@ -73,7 +88,7 @@ double time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine("执行for循环100000次耗时"+time+"s");
 ```
-8.单机产生唯一有序的短id
+### 8.单机产生唯一有序的短id
 ```csharp
 var token=Stopwatch.GetTimestamp().ToBinary(36);
 ```
@@ -89,7 +104,7 @@ double time = HiPerfTimer.Execute(() =>
 Console.WriteLine(set.Count==1000000);//True
 Console.WriteLine("产生100w个id耗时"+time+"s");//1.6639039s
 ```
-9.产生分布式唯一有序短id
+### 9.产生分布式唯一有序短id
 ```csharp
 var sf = SnowFlake.GetInstance();
 string token = sf.GetUniqueId();// rcofqodori0w
@@ -107,7 +122,7 @@ double time = HiPerfTimer.Execute(() =>
 Console.WriteLine(set.Count == 1000000); //True
 Console.WriteLine("产生100w个id耗时" + time + "s"); //2.6891495s
 ```
-10.农历转换
+### 10.农历转换
 ```csharp
 ChineseCalendar.CustomHolidays.Add(DateTime.Parse("2018-12-31"),"元旦节");//自定义节假日
 ChineseCalendar today = new ChineseCalendar(DateTime.Parse("2018-12-31"));
@@ -117,7 +132,7 @@ Console.WriteLine(today.GanZhiDateString);// 干支：戊戌年甲子月丁酉�
 Console.WriteLine(today.DateHoliday);// 获取按公历计算的节假日
 ...
 ```
-11.Linq表达式树扩展
+### 11.Linq表达式树扩展
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
@@ -130,7 +145,7 @@ Expression<Func<string, bool>> where2 = s => s.Length > 10;
 Func<string, bool> func = where1.Or(where2).Compile();
 bool b=func("abc");// true
 ```
-12.模版引擎
+### 12.模版引擎
 ```csharp
 var tmp = new Template("{{name}}，你好！");
 tmp.Set("name", "万金油");
@@ -145,7 +160,7 @@ var tmp = new Template("{{name}}，{{greet}}！");
 tmp.Set("name", "万金油");
 string s = tmp.Render();// throw 模版变量{{greet}}未被使用
 ```
-13.List转Datatable
+### 13.List转Datatable
 ```csharp
 var list = new List<MyClass>()
 {
@@ -167,7 +182,7 @@ var list = new List<MyClass>()
 };
 var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
 ```
-14.文件压缩解压
+### 14.文件压缩解压
 ```csharp
 SharpZip.PackFiles("D:\\1.zip","D:\\test");
 SharpZip.UnpackFiles("D:\\1.zip","D:\\test");
@@ -182,7 +197,7 @@ byte[] bytes = ClassZip.ZipStream(new List<string>()
     "D:\\test\\3.txt"
 });
 ```
-15.日志组件
+### 15.日志组件
 ```csharp
 LogManager.LogDirectory=AppDomain.CurrentDomain.BaseDirectory+"/logs";
 LogManager.Event+=info =>
@@ -192,7 +207,7 @@ LogManager.Event+=info =>
 LogManager.Info("记录一次消息");
 LogManager.Error(new Exception("异常消息"));
 ```
-16.FTP客户端
+### 16.FTP客户端
 ```csharp
 FtpClient ftpClient = FtpClient.GetAnonymousClient("192.168.2.2");//创建一个匿名访问的客户端
 //FtpClient ftpClient = FtpClient.GetClient("192.168.2.3","admin","123456");// 创建一个带用户名密码的客户端
@@ -205,7 +220,7 @@ ftpClient.UploadFile("/test/22.txt","D:\\test\\22.txt",(sum, progress) =>
 List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
 ...
 ```
-17.多线程后台下载
+### 17.多线程后台下载
 ```csharp
 var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
 mtd.TotalProgressChanged+=(sender, e) =>
@@ -222,7 +237,7 @@ mtd.Start();//开始下载
 //mtd.Pause(); // 暂停下载
 //mtd.Resume(); // 继续下载
 ```
-18.Socket客户端操作类
+### 18.Socket客户端操作类
 ```csharp
 var tcpClient = new TcpClient(AddressFamily.InterNetwork);
 Socket socket = tcpClient.ConnectSocket(IPAddress.Any,5000);
@@ -231,7 +246,7 @@ socket.SendFile("D:\\test\\1.txt",false,i =>
     Console.WriteLine("已发送"+i+"%");
 });
 ```
-19.RedisHelper
+### 19.RedisHelper
 .Net Framework:
 ```csharp
 RedisHelper redisHelper = RedisHelper.GetInstance();// 获取新实例并指定连接第0个数据库
@@ -265,7 +280,7 @@ public HomeController(RedisHelperFactory redisHelperFactory)
 }
 ```
 方法调用方式和.NET Framework方式相同
-20.加密解密
+### 20.加密解密
 ```csharp
 var enc="123456".MDString();// MD5加密
 var enc="123456".MDString("abc");// MD5加盐加密
@@ -288,7 +303,7 @@ RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();// 生成RSA密钥对
 string encrypt = "123456".RSAEncrypt(rsaKey.PublicKey);// 公钥加密
 string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
 ```
-21.Redis分布式锁
+### 21.Redis分布式锁
 ```csharp
 using (RedisLock redisLock = new RedisLock("127.0.0.1:6379"))
 {
@@ -300,7 +315,7 @@ using (RedisLock redisLock = new RedisLock("127.0.0.1:6379"))
     var redisResult = redisLock.UnLock(lockObject);// 释放锁
 }
 ```
-22.实体校验
+### 22.实体校验
 ```csharp
 public class MyClass
 {
