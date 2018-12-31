@@ -21,6 +21,75 @@ namespace Masuit.Tools.Net
     /// </summary>
     public class MultiThreadDownloader
     {
+        #region 属性
+
+        private string _url;
+        private bool _rangeAllowed;
+
+        #endregion
+
+        #region 公共属性
+
+        /// <summary>
+        /// RangeAllowed
+        /// </summary>
+        public bool RangeAllowed
+        {
+            get => _rangeAllowed;
+            set => _rangeAllowed = value;
+        }
+
+        /// <summary>
+        /// 临时文件夹
+        /// </summary>
+        public string TempFileDirectory { get; set; }
+
+        /// <summary>
+        /// url地址
+        /// </summary>
+        public string Url
+        {
+            get => _url;
+            set => _url = value;
+        }
+
+        /// <summary>
+        /// 第几部分
+        /// </summary>
+        public int NumberOfParts { get; set; }
+
+        /// <summary>
+        /// 已接收字节数
+        /// </summary>
+        public long TotalBytesReceived => PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
+
+        /// <summary>
+        /// 总进度
+        /// </summary>
+        public float TotalProgress { get; private set; }
+
+        /// <summary>
+        /// 文件大小
+        /// </summary>
+        public long Size { get; private set; }
+
+        /// <summary>
+        /// 下载速度
+        /// </summary>
+        public float TotalSpeedInBytes => PartialDownloaderList.Sum(t => t.SpeedInBytes);
+
+        /// <summary>
+        /// 下载块
+        /// </summary>
+        public List<PartialDownloader> PartialDownloaderList { get; }
+
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string FilePath { get; set; }
+
+        #endregion
+
         #region 变量
 
         /// <summary>
@@ -340,75 +409,6 @@ namespace Masuit.Tools.Net
                 }
             }
         }
-
-        #endregion
-
-        #region 属性
-
-        private string _url;
-        private bool _rangeAllowed;
-
-        #endregion
-
-        #region 公共属性
-
-        /// <summary>
-        /// RangeAllowed
-        /// </summary>
-        public bool RangeAllowed
-        {
-            get => _rangeAllowed;
-            set => _rangeAllowed = value;
-        }
-
-        /// <summary>
-        /// 临时文件夹
-        /// </summary>
-        public string TempFileDirectory { get; set; }
-
-        /// <summary>
-        /// url地址
-        /// </summary>
-        public string Url
-        {
-            get => _url;
-            set => _url = value;
-        }
-
-        /// <summary>
-        /// 第几部分
-        /// </summary>
-        public int NumberOfParts { get; set; }
-
-        /// <summary>
-        /// 已接收字节数
-        /// </summary>
-        public long TotalBytesReceived => PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
-
-        /// <summary>
-        /// 总进度
-        /// </summary>
-        public int TotalProgress { get; private set; }
-
-        /// <summary>
-        /// 文件大小
-        /// </summary>
-        public long Size { get; private set; }
-
-        /// <summary>
-        /// 下载速度
-        /// </summary>
-        public int TotalSpeedInBytes => PartialDownloaderList.Sum(t => t.SpeedInBytes);
-
-        /// <summary>
-        /// 下载块
-        /// </summary>
-        public List<PartialDownloader> PartialDownloaderList { get; }
-
-        /// <summary>
-        /// 文件路径
-        /// </summary>
-        public string FilePath { get; set; }
 
         #endregion
     }

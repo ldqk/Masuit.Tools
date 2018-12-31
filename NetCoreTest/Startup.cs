@@ -19,9 +19,9 @@ namespace NetCoreTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDefaultRedisHelper("192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");
-            services.AddLocalRedisHelper();
-            services.AddRedisHelper("aa", "192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");
+            services.AddDefaultRedisHelper("192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");//注入一个默认实例
+            services.AddLocalRedisHelper();// 注入本地实例
+            services.AddRedisHelper("aa", "192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");// 通用注入
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

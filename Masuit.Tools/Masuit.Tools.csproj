@@ -137,6 +137,7 @@
     <Compile Include="Net\PartialDownloader.cs" />
     <Compile Include="Net\SocketClient.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
+    <Compile Include="Reflection\ClassHelper.cs" />
     <Compile Include="Reflection\ReflectHelper.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Security\Encrypt.cs" />
