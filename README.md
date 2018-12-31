@@ -83,7 +83,7 @@ Windows.ClearMemorySilent();
 要使用ResumeFileResults，必须在`Startup.cs`的`ConfigureServices`方法调用中配置服务：
 
 ```csharp
-        using Masuit.Tools.AspNetCore.ResumeFileResults.DependencyInjection;
+        using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
 ```
 
 ```csharp
