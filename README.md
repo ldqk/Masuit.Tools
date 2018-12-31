@@ -145,6 +145,161 @@ var tmp = new Template("{{name}}，{{greet}}！");
 tmp.Set("name", "万金油");
 string s = tmp.Render();// throw 模版变量{{greet}}未被使用
 ```
+13.List转Datatable
+```csharp
+var list = new List<MyClass>()
+{
+    new MyClass()
+    {
+        Name = "张三",
+        Age = 22
+    },
+    new MyClass()
+    {
+        Name = "李四",
+        Age = 21
+    },
+    new MyClass()
+    {
+        Name = "王五",
+        Age = 28
+    }
+};
+var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
+```
+14.文件压缩解压
+```csharp
+SharpZip.PackFiles("D:\\1.zip","D:\\test");
+SharpZip.UnpackFiles("D:\\1.zip","D:\\test");
+```
+```csharp
+ClassZip.Zip("D:\\1.txt","D:\\1.zip");
+ClassZip.UnZip("D:\\1.zip","D:\\1");
+byte[] bytes = ClassZip.ZipStream(new List<string>()
+{
+    "D:\\1.txt",
+    "E:\\2.txt",
+    "D:\\test\\3.txt"
+});
+```
+15.日志组件
+```csharp
+LogManager.LogDirectory=AppDomain.CurrentDomain.BaseDirectory+"/logs";
+LogManager.Event+=info =>
+{
+    //todo:注册一些事件操作
+};
+LogManager.Info("记录一次消息");
+LogManager.Error(new Exception("异常消息"));
+```
+16.FTP客户端
+```csharp
+FtpClient ftpClient = FtpClient.GetAnonymousClient("192.168.2.2");//创建一个匿名访问的客户端
+//FtpClient ftpClient = FtpClient.GetClient("192.168.2.3","admin","123456");// 创建一个带用户名密码的客户端
+ftpClient.Delete("/1.txt");// 删除文件
+ftpClient.Download("/test/2.txt","D:\\test\\2.txt");// 下载文件
+ftpClient.UploadFile("/test/22.txt","D:\\test\\22.txt",(sum, progress) =>
+{
+    Console.WriteLine("已上传："+progress*1.0/sum);
+});//上传文件并检测进度
+List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
+...
+```
+17.多线程后台下载
+```csharp
+var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
+mtd.TotalProgressChanged+=(sender, e) =>
+{
+    var downloader = sender as MultiThreadDownloader;
+    Console.WriteLine("下载进度："+downloader.TotalProgress+"%");
+    Console.WriteLine("下载速度："+downloader.TotalSpeedInBytes/1024/1024+"MBps");
+};
+mtd.FileMergeProgressChanged+=(sender, e) =>
+{
+    Console.WriteLine("下载完成");
+};
+mtd.Start();//开始下载
+//mtd.Pause(); // 暂停下载
+//mtd.Resume(); // 继续下载
+```
+18.Socket客户端操作类
+```csharp
+var tcpClient = new TcpClient(AddressFamily.InterNetwork);
+Socket socket = tcpClient.ConnectSocket(IPAddress.Any,5000);
+socket.SendFile("D:\\test\\1.txt",false,i =>
+{
+    Console.WriteLine("已发送"+i+"%");
+});
+```
+19.RedisHelper
+.Net Framework:
+```csharp
+RedisHelper redisHelper = RedisHelper.GetInstance();// 获取新实例并指定连接第0个数据库
+//RedisHelper redisHelper = RedisHelper.GetInstance(2);// 获取新实例并指定连接第2个数据库
+//RedisHelper redisHelper = RedisHelper.GetInstance("192.168.3.150:6379");// 获取新实例并指定连接第0个数据库
+//RedisHelper redisHelper = RedisHelper.GetInstance("192.168.3.150:6379",2);// 获取新实例并指定连接第2个数据库
+//RedisHelper redisHelper = RedisHelper.GetSingleInstance();// 获取单例实例并指定连接第2个数据库
+//RedisHelper redisHelper = RedisHelper.GetSingleInstance(2);// 获取单例实例并指定连接第2个数据库
+//RedisHelper redisHelper = RedisHelper.GetSingleInstance("192.168.3.150:6379");// 获取单例实例并指定连接第0个数据库
+//RedisHelper redisHelper = RedisHelper.GetSingleInstance("192.168.3.150:6379",2);// 获取单例实例并指定连接第2个数据库
+redisHelper.SetString("key","value");
+string value = redisHelper.GetString("key");
+redisHelper.ListLeftPush("list","value");
+List<string> list = redisHelper.ListRange<string>("list");
+```
+Asp.Net Core依赖注入方式:
+Startup.cs:
+```csharp
+services.AddDefaultRedisHelper("192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");//注入一个默认实例
+services.AddLocalRedisHelper();// 注入本地实例
+services.AddRedisHelper("aa", "192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");// 通用注入
+```
+Controller:
+```csharp
+public RedisHelper RedisHelper { get; set; }
+public HomeController(RedisHelperFactory redisHelperFactory)
+{
+    RedisHelper=redisHelperFactory.Create("aa",0);// 创建命名为aa的RedisHelper，指定数据库0
+    RedisHelper=redisHelperFactory.CreateDefault(0); // 创建默认的RedisHelper，指定数据库0
+    RedisHelper=redisHelperFactory.CreateLocal(0); // 创建连接本机的RedisHelper，指定数据库0
+}
+```
+方法调用方式和.NET Framework方式相同
+20.加密解密
+```csharp
+var enc="123456".MDString();// MD5加密
+var enc="123456".MDString("abc");// MD5加盐加密
+var enc="123456".MDString2();// MD5两次加密
+var enc="123456".MDString2("abc");// MD5两次加盐加密
+var enc="123456".MDString3();// MD5三次加密
+var enc="123456".MDString3("abc");// MD5三次加盐加密
+
+string aes = "123456".AESEncrypt();// AES加密为密文
+string s = aes.AESDecrypt(); //AES解密为明文
+string aes = "123456".AESEncrypt("abc");// AES密钥加密为密文
+string s = aes.AESDecrypt("abc"); //AES密钥解密为明文
+
+string aes = "123456".DesEncrypt();// DES加密为密文
+string s = aes.DesDecrypt(); //DES解密为明文
+string aes = "123456".DesEncrypt("abcdefgh");// DES密钥加密为密文
+string s = aes.DesDecrypt("abcdefgh"); //DES密钥加密为密文
+
+RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();// 生成RSA密钥对
+string encrypt = "123456".RSAEncrypt(rsaKey.PublicKey);// 公钥加密
+string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
+```
+21.Redis分布式锁
+```csharp
+using (RedisLock redisLock = new RedisLock("127.0.0.1:6379"))
+{
+    if (redisLock.TryLock("lock", TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), out var lockObject))// 加锁
+    {
+        //todo:需要执行的原子操作
+    }
+
+    var redisResult = redisLock.UnLock(lockObject);// 释放锁
+}
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
