@@ -380,57 +380,7 @@ var list = new List<MyClass>()
 List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
-### 27.实体映射
-```csharp
-var myClass = new MyClass()
-{
-    Email = "1@1.cn"
-};
-MyClassDto dto = ExpressionGenericMapper.Map<MyClass,MyClassDto>(myClass);
-```
-### 28.枚举扩展
-```csharp
-public enum MyEnum
-{
-    [Display(Name = "读")]
-    [Description("读")]
-    Read,
-    
-    [Display(Name = "写")]
-    [Description("写")]
-    Write
-}
-```
-```csharp
-Dictionary<int, string> dic1 = typeof(MyEnum).GetDictionary();// 获取枚举值和字符串表示的字典映射
-var dic2 = typeof(MyEnum).GetDescriptionAndValue();// 获取字符串表示和枚举值的字典映射
-string desc = MyEnum.Read.GetDescription();// 获取Description标签
-string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
-var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
-string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
-```
-### 29.定长队列实现
-```csharp
-LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
-ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
-```
-### 30.反射操作
-```csharp
-MyClass myClass = new MyClass();
-PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
-myClass.SetProperty("Email","1@1.cn");//给对象设置值
-
-//动态增删对象的属性
-MyClass myClass = new MyClass();
-var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
-{
-    new ClassHelper.CustPropertyInfo(typeof(string), "Name", "张三"),
-    new ClassHelper.CustPropertyInfo(typeof(double), "Number", 123456.0),
-});//添加属性
-object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
-Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
-```
-### 31.对象实体映射
+### 27.对象实体映射
 ```csharp
 public class TestClassA
 {
@@ -539,6 +489,48 @@ double time = HiPerfTimer.Execute(() =>
     }
 });
 Console.WriteLine(time);// 0.826132s
+```
+### 28.枚举扩展
+```csharp
+public enum MyEnum
+{
+    [Display(Name = "读")]
+    [Description("读")]
+    Read,
+    
+    [Display(Name = "写")]
+    [Description("写")]
+    Write
+}
+```
+```csharp
+Dictionary<int, string> dic1 = typeof(MyEnum).GetDictionary();// 获取枚举值和字符串表示的字典映射
+var dic2 = typeof(MyEnum).GetDescriptionAndValue();// 获取字符串表示和枚举值的字典映射
+string desc = MyEnum.Read.GetDescription();// 获取Description标签
+string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
+var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
+string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
+```
+### 29.定长队列实现
+```csharp
+LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
+ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
+```
+### 30.反射操作
+```csharp
+MyClass myClass = new MyClass();
+PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
+myClass.SetProperty("Email","1@1.cn");//给对象设置值
+
+//动态增删对象的属性
+MyClass myClass = new MyClass();
+var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
+{
+    new ClassHelper.CustPropertyInfo(typeof(string), "Name", "张三"),
+    new ClassHelper.CustPropertyInfo(typeof(double), "Number", 123456.0),
+});//添加属性
+object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
+Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
