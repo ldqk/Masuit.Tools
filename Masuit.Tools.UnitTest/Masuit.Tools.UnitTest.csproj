@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="ChineseCalendarTest.cs" />
     <Compile Include="ClassHelperTest.cs" />
+    <Compile Include="CompressTest.cs" />
     <Compile Include="ExpressionGenericMapperTest.cs" />
     <Compile Include="ExtensionMethodsTest.cs" />
     <Compile Include="HtmlToolsTest.cs" />

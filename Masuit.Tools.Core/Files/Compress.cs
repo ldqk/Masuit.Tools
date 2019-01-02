@@ -1,167 +1,187 @@
-﻿using ICSharpCode.SharpZipLib.Checksum;
-using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using SharpCompress.Archives;
+using SharpCompress.Archives.Rar;
+using SharpCompress.Archives.Zip;
+using SharpCompress.Common;
+using SharpCompress.Readers;
+using SharpCompress.Writers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.Files
 {
     /// <summary>
-    /// SharpZip
+    /// 7z压缩
     /// </summary>
-    public static class SharpZip
+    public static class SevenZipCompressor
     {
-        #region 文件压缩
-
         /// <summary>
-        /// 文件压缩
-        /// </summary> 
-        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
-        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
-        public static void PackFiles(string filename, string directory)
-        {
-            FastZip fz = new FastZip
-            {
-                CreateEmptyDirectories = true
-            };
-            fz.CreateZip(filename, directory, true, "");
-        }
-
-        /// <summary>
-        /// 文件压缩
-        /// </summary> 
-        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
-        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
-        public static async void PackFilesAsync(string filename, string directory)
-        {
-            FastZip fz = new FastZip
-            {
-                CreateEmptyDirectories = true
-            };
-            await Task.Run(() =>
-            {
-                fz.CreateZip(filename, directory, true, "");
-                fz = null;
-            }).ConfigureAwait(false);
-        }
-
-        #endregion
-
-        #region 文件解压缩
-
-        /// <summary>
-        /// 文件解压缩
+        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
         /// </summary>
-        /// <param name="file">待解压文件名(包含物理路径)</param>
-        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
-        public static bool UnpackFiles(string file, string dir)
+        /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
+        /// <param name="rootdir"></param>
+        /// <returns>文件流</returns>
+        public static MemoryStream ZipStream(List<string> files, string rootdir = "")
         {
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            using (ZipInputStream s = new ZipInputStream(File.OpenRead(file)))
+            using (var archive = CreateZipArchive(files, rootdir))
             {
-                ZipEntry theEntry;
-                while ((theEntry = s.GetNextEntry()) != null)
+                var ms = new MemoryStream();
+                archive.SaveTo(ms, new WriterOptions(CompressionType.Deflate)
                 {
-                    string directoryName = Path.GetDirectoryName(theEntry.Name);
-                    string fileName = Path.GetFileName(theEntry.Name);
-                    if (directoryName != string.Empty)
-                        Directory.CreateDirectory(dir + directoryName);
-                    if (fileName != string.Empty)
+                    LeaveStreamOpen = true,
+                    ArchiveEncoding = new ArchiveEncoding()
                     {
-                        using (FileStream streamWriter = File.Create(dir + theEntry.Name))
+                        Default = Encoding.UTF8
+                    }
+                });
+                return ms;
+            }
+        }
+
+        /// <summary>
+        /// 压缩多个文件
+        /// </summary>
+        /// <param name="files">多个文件路径，文件或文件夹</param>
+        /// <param name="zipFile">压缩到...</param>
+        /// <param name="rootdir">压缩包内部根文件夹</param>
+        public static void Zip(List<string> files, string zipFile, string rootdir = "")
+        {
+            using (var archive = CreateZipArchive(files, rootdir))
+            {
+                archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
+                {
+                    LeaveStreamOpen = true,
+                    ArchiveEncoding = new ArchiveEncoding()
+                    {
+                        Default = Encoding.UTF8
+                    }
+                });
+            }
+        }
+
+        /// <summary>
+        /// 解压rar文件
+        /// </summary>
+        /// <param name="rar">rar文件</param>
+        /// <param name="dir">解压到...</param>
+        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
+        public static void UnRar(string rar, string dir = "", bool ignoreEmptyDir = true)
+        {
+            if (string.IsNullOrEmpty(dir))
+            {
+                dir = Path.GetDirectoryName(rar);
+            }
+            using (var archive = RarArchive.Open(rar))
+            {
+                var entries = ignoreEmptyDir ? archive.Entries.Where(entry => !entry.IsDirectory) : archive.Entries;
+                foreach (var entry in entries)
+                {
+                    entry.WriteToDirectory(dir, new ExtractionOptions()
+                    {
+                        ExtractFullPath = true,
+                        Overwrite = true
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// 解压文件，自动检测压缩包类型
+        /// </summary>
+        /// <param name="compressedFile">rar文件</param>
+        /// <param name="dir">解压到...</param>
+        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
+        public static void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true)
+        {
+            if (string.IsNullOrEmpty(dir))
+            {
+                dir = Path.GetDirectoryName(compressedFile);
+            }
+            using (Stream stream = File.OpenRead(compressedFile))
+            {
+                using (var reader = ReaderFactory.Open(stream))
+                {
+                    while (reader.MoveToNextEntry())
+                    {
+                        if (ignoreEmptyDir)
                         {
-                            byte[] data = new byte[2048];
-                            while (true)
+                            reader.WriteEntryToDirectory(dir, new ExtractionOptions()
                             {
-                                var size = s.Read(data, 0, data.Length);
-                                if (size > 0)
-                                    streamWriter.Write(data, 0, size);
-                                else
-                                    break;
+                                ExtractFullPath = true,
+                                Overwrite = true
+                            });
+                        }
+                        else
+                        {
+                            if (!reader.Entry.IsDirectory)
+                            {
+                                reader.WriteEntryToDirectory(dir, new ExtractionOptions()
+                                {
+                                    ExtractFullPath = true,
+                                    Overwrite = true
+                                });
                             }
                         }
                     }
                 }
             }
-
-            return true;
         }
 
         /// <summary>
-        /// 文件解压缩
+        /// 创建zip包
         /// </summary>
-        /// <param name="file">待解压文件名(包含物理路径)</param>
-        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
-        public static async Task<bool> UnpackFilesAsync(string file, string dir)
+        /// <param name="files"></param>
+        /// <param name="rootdir"></param>
+        /// <returns></returns>
+        private static ZipArchive CreateZipArchive(List<string> files, string rootdir)
         {
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            using (ZipInputStream s = new ZipInputStream(File.OpenRead(file)))
+            var archive = ZipArchive.Create();
+            var dic = GetFileEntryMaps(files);
+            var remoteFiles = files.Where(s => s.StartsWith("http")).ToList();
+            foreach (var fileEntry in dic)
             {
-                ZipEntry theEntry;
-                await Task.Run(() =>
+                archive.AddEntry(Path.Combine(rootdir, fileEntry.Value), fileEntry.Key);
+            }
+            if (remoteFiles.Any())
+            {
+                //var paths = remoteFiles.Select(s => new Uri(s).PathAndQuery).ToList();
+                //string pathname = new string(paths.First().Substring(0, paths.Min(s => s.Length)).TakeWhile((c, i) => paths.All(s => s[i] == c)).ToArray());
+                //Dictionary<string, string> pathDic = paths.ToDictionary(s => s, s => s.Substring(pathname.Length));
+                using (var httpClient = new HttpClient())
                 {
-                    while ((theEntry = s.GetNextEntry()) != null)
+                    Parallel.ForEach(remoteFiles, url =>
                     {
-                        string directoryName = Path.GetDirectoryName(theEntry.Name);
-                        string fileName = Path.GetFileName(theEntry.Name);
-                        if (directoryName != string.Empty)
-                            Directory.CreateDirectory(dir + directoryName);
-                        if (fileName != string.Empty)
+                        httpClient.GetAsync(url).ContinueWith(async t =>
                         {
-                            using (FileStream streamWriter = File.Create(dir + theEntry.Name))
+                            if (t.IsCompleted)
                             {
-                                byte[] data = new byte[2048];
-                                while (true)
+                                var res = await t;
+                                if (res.IsSuccessStatusCode)
                                 {
-                                    var size = s.Read(data, 0, data.Length);
-                                    if (size > 0)
-                                        streamWriter.Write(data, 0, size);
-                                    else
-                                        break;
+                                    Stream stream = await res.Content.ReadAsStreamAsync();
+                                    //archive.AddEntry(Path.Combine(rootdir, pathDic[new Uri(url).AbsolutePath.Trim('/')]), stream);
+                                    archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(new Uri(url).AbsolutePath.Trim('/'))), stream);
                                 }
                             }
-                        }
-                    }
-                }).ConfigureAwait(false);
+                        }).Wait();
+                    });
+                }
             }
-
-            return true;
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// ClassZip
-    /// </summary>
-    public static class ClassZip
-    {
-        #region 压缩
-
-        /// <summary>
-        /// 压缩
-        /// </summary>
-        /// <param name="fileToZip">待压缩的文件目录或文件</param>
-        /// <param name="zipedFile">生成的目标文件</param>
-        /// <param name="level">压缩级别，默认值6</param>
-        public static bool Zip(string fileToZip, string zipedFile, int level = 6)
-        {
-            if (Directory.Exists(fileToZip))
-                return ZipFileDictory(fileToZip, zipedFile, level);
-            return File.Exists(fileToZip) && ZipFile(fileToZip, zipedFile, level);
+            return archive;
         }
 
         /// <summary>
-        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// 获取文件路径和zip-entry的映射
         /// </summary>
-        /// <param name="files">多个文件路径，文件或文件夹</param>
-        /// <returns>文件流</returns>
-        public static byte[] ZipStream(List<string> files)
+        /// <param name="files"></param>
+        /// <returns></returns>
+        private static Dictionary<string, string> GetFileEntryMaps(List<string> files)
         {
             List<string> fileList = new List<string>();
 
@@ -180,42 +200,115 @@ namespace Masuit.Tools.Files
                 }
             }
 
-            MemoryStream ms = new MemoryStream();
-            byte[] buffer;
-            using (ZipFile f = ICSharpCode.SharpZipLib.Zip.ZipFile.Create(ms))
+            files.Where(s => !s.StartsWith("http")).ForEach(s =>
             {
-                f.BeginUpdate();
-                string dirname = null;
-                files.ForEach(s =>
+                if (Directory.Exists(s))
                 {
-                    if (Directory.Exists(s))
-                    {
-                        GetFilesRecurs(s);
-                    }
-                    else
-                    {
-                        fileList.Add(s);
-                        dirname = Path.GetDirectoryName(s);
-                    }
-                });
-                if (string.IsNullOrEmpty(dirname))
-                {
-                    dirname = Directory.GetParent(fileList[0]).FullName;
+                    GetFilesRecurs(s);
                 }
-
-                f.NameTransform = new ZipNameTransform(dirname); //通过这个名称格式化器，可以将里面的文件名进行一些处理。默认情况下，会自动根据文件的路径在zip中创建有关的文件夹。  
-                fileList.ForEach(s =>
+                else
                 {
-                    f.Add(new StaticDiskDataSource(s), Path.GetFileName(s), CompressionMethod.Deflated, true);
-                    //f.Add(s);
-                });
-                f.CommitUpdate();
-                buffer = new byte[ms.Length];
-                ms.Position = 0;
-                ms.Read(buffer, 0, buffer.Length);
+                    fileList.Add(s);
+                }
+            });
+            if (!fileList.Any())
+            {
+                return new Dictionary<string, string>();
             }
+            string dirname = new string(fileList.First().Substring(0, fileList.Min(s => s.Length)).TakeWhile((c, i) => fileList.All(s => s[i] == c)).ToArray());
+            Dictionary<string, string> dic = fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
+            return dic;
+        }
+    }
+    /// <summary>
+    /// SharpZip
+    /// </summary>
+    public static class SharpZip
+    {
+        #region 文件压缩
 
-            return buffer;
+        /// <summary>
+        /// 文件压缩
+        /// </summary> 
+        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
+        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
+        public static void PackFiles(string filename, string directory)
+        {
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
+        }
+
+        /// <summary>
+        /// 文件压缩
+        /// </summary> 
+        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
+        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
+        public static async void PackFilesAsync(string filename, string directory)
+        {
+            await Task.Delay(0);
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
+        }
+
+        #endregion
+
+        #region 文件解压缩
+
+        /// <summary>
+        /// 文件解压缩
+        /// </summary>
+        /// <param name="file">待解压文件名(包含物理路径)</param>
+        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
+        public static bool UnpackFiles(string file, string dir)
+        {
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
+
+        }
+
+        /// <summary>
+        /// 文件解压缩
+        /// </summary>
+        /// <param name="file">待解压文件名(包含物理路径)</param>
+        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
+        public static async Task<bool> UnpackFilesAsync(string file, string dir)
+        {
+            await Task.Delay(0);
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// ClassZip
+    /// </summary>
+    public static class ClassZip
+    {
+        #region 压缩
+
+        /// <summary>
+        /// 压缩
+        /// </summary>
+        /// <param name="fileToZip">待压缩的文件目录或文件</param>
+        /// <param name="zipedFile">生成的目标文件</param>
+        /// <param name="level">压缩级别，默认值6</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
+        public static bool Zip(string fileToZip, string zipedFile, int level = 6)
+        {
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
+        }
+
+        /// <summary>
+        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// </summary>
+        /// <param name="files">多个文件路径，文件或文件夹</param>
+        /// <returns>文件流</returns>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.ZipStream方法替代")]
+        public static byte[] ZipStream(List<string> files)
+        {
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.ZipStream方法替代");
         }
 
         #endregion
@@ -227,150 +320,11 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="fileToUpZip">待解压的文件</param>
         /// <param name="zipedFolder">解压目标存放目录</param>
+        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
         public static void UnZip(string fileToUpZip, string zipedFolder)
         {
-            if (!File.Exists(fileToUpZip))
-                return;
-            if (!Directory.Exists(zipedFolder))
-                Directory.CreateDirectory(zipedFolder);
-            using (ZipInputStream s = new ZipInputStream(File.OpenRead(fileToUpZip)))
-            {
-                ZipEntry theEntry;
-                while ((theEntry = s.GetNextEntry()) != null)
-                {
-                    if (theEntry.Name != string.Empty)
-                    {
-                        var fileName = Path.Combine(zipedFolder, theEntry.Name);
-                        if (fileName.EndsWith("/") || fileName.EndsWith("\\"))
-                        {
-                            Directory.CreateDirectory(fileName);
-                            continue;
-                        }
-
-                        using (FileStream streamWriter = File.Create(fileName))
-                        {
-                            byte[] data = new byte[2048];
-                            while (true)
-                            {
-                                var size = s.Read(data, 0, data.Length);
-                                if (size > 0)
-                                    streamWriter.Write(data, 0, size);
-                                else
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
+            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
         }
-
-        #endregion
-
-        #region 私有方法
-
-        #region 递归压缩文件夹方法
-
-        /// <summary>
-        /// 递归压缩文件夹方法
-        /// </summary>
-        /// <param name="folderToZip">需要压缩的文件夹</param>
-        /// <param name="s">压缩流</param>
-        /// <param name="parentFolderName">父级文件夹</param>
-        private static bool ZipFileDictory(string folderToZip, ZipOutputStream s, string parentFolderName)
-        {
-            Crc32 crc = new Crc32();
-            var entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/"));
-            s.PutNextEntry(entry);
-            s.Flush();
-            var filenames = Directory.GetFiles(folderToZip);
-            foreach (string file in filenames)
-            {
-                using (FileStream fs = File.OpenRead(file))
-                {
-                    byte[] buffer = new byte[fs.Length];
-                    fs.Read(buffer, 0, buffer.Length);
-                    entry = new ZipEntry(Path.Combine(parentFolderName, Path.GetFileName(folderToZip) + "/" + Path.GetFileName(file)))
-                    {
-                        DateTime = DateTime.Now,
-                        Size = fs.Length
-                    };
-                    crc.Reset();
-                    crc.Update(buffer);
-                    entry.Crc = crc.Value;
-                    s.PutNextEntry(entry);
-                    s.Write(buffer, 0, buffer.Length);
-                }
-            }
-
-            var folders = Directory.GetDirectories(folderToZip);
-            foreach (string folder in folders)
-            {
-                if (!ZipFileDictory(folder, s, Path.Combine(parentFolderName, Path.GetFileName(folderToZip))))
-                    return false;
-            }
-
-            return true;
-        }
-
-        #endregion
-
-        #region 压缩目录
-
-        /// <summary>
-        /// 压缩目录
-        /// </summary>
-        /// <param name="folderToZip">待压缩的文件夹，全路径格式</param>
-        /// <param name="zipedFile">压缩后的文件名，全路径格式</param>
-        /// <param name="level">压缩等级</param>
-        private static bool ZipFileDictory(string folderToZip, string zipedFile, int level)
-        {
-            bool res;
-            if (!Directory.Exists(folderToZip))
-                return false;
-            using (ZipOutputStream s = new ZipOutputStream(File.Create(zipedFile)))
-            {
-                s.SetLevel(level);
-                res = ZipFileDictory(folderToZip, s, "");
-                s.Finish();
-            }
-
-            return res;
-        }
-
-        #endregion
-
-        #region 压缩文件
-
-        /// <summary>
-        /// 压缩文件
-        /// </summary>
-        /// <param name="fileToZip">要进行压缩的文件名</param>
-        /// <param name="zipedFile">压缩后生成的压缩文件名</param>
-        /// <param name="level">压缩等级</param>
-        /// <exception cref="FileNotFoundException"></exception>
-        private static bool ZipFile(string fileToZip, string zipedFile, int level)
-        {
-            if (!File.Exists(fileToZip))
-                throw new FileNotFoundException("指定要压缩的文件: " + fileToZip + " 不存在!");
-            FileStream zipFile = File.OpenRead(fileToZip);
-            byte[] buffer = new byte[zipFile.Length];
-            zipFile.Read(buffer, 0, buffer.Length);
-            zipFile = File.Create(zipedFile);
-            using (zipFile)
-            {
-                using (ZipOutputStream zipStream = new ZipOutputStream(zipFile))
-                {
-                    var zipEntry = new ZipEntry(Path.GetFileName(fileToZip));
-                    zipStream.PutNextEntry(zipEntry);
-                    zipStream.SetLevel(level);
-                    zipStream.Write(buffer, 0, buffer.Length);
-                }
-            }
-
-            return true;
-        }
-
-        #endregion
 
         #endregion
     }
@@ -388,7 +342,7 @@ namespace Masuit.Tools.Files
         /// <param name="zipname">要解压的文件名</param>
         /// <param name="zippath">要压缩的文件目录</param>
         /// <param name="dirpath">初始目录</param>
-        public static void EnZip(string zipname, string zippath, string dirpath)
+        public static void Rar(string zipname, string zippath, string dirpath)
         {
             _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRAR.exe\Shell\Open\Command");
             if (_theReg != null)
@@ -423,7 +377,7 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="zipname">要解压的文件名</param>
         /// <param name="zippath">要解压的文件路径</param>
-        public static void DeZip(string zipname, string zippath)
+        public static void UnRar(string zipname, string zippath)
         {
             _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRar.exe\Shell\Open\Command");
             if (_theReg != null)
