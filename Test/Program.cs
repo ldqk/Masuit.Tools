@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using Masuit.Tools.Files;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Test
 {
@@ -7,34 +8,14 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            //double time = HiPerfTimer.Execute(() =>
-            //{
-            //    for (int i = 0; i < 1000000; i++)
-            //    {
-            //        A a = new A()
-            //        {
-            //            C = new C()
-            //            {
-            //                MyProperty = "c"
-            //            },
-            //            List = new List<C>()
-            //            {
-            //                new C()
-            //                {
-            //                    MyProperty = "cc",
-            //                    Obj = new D()
-            //                    {
-            //                        MyProperty = "dd"
-            //                    }
-            //                }
-            //            }
-            //        };
-            //        var b = a.Map<A, B>();
-            //    }
-            //});
-            //Console.WriteLine(time);
-            NewExpression newExpression = Expression.New(typeof(int[]));
-
+            byte[] bytes = ClassZip.ZipStream(new List<string>()
+            {
+                @"D:\vsix2017\ReSharper\JetBrains Resharper 2018.3 Patch\JetBrains Resharper 2018.2.x AutoPatch.cmd",
+                @"D:\vsix2017\ReSharper\JetBrains Resharper 2018.3 Patch\JetBrains Resharper 2018.3 Patch.cmd",
+                @"D:\vsix2017\ReSharper\JetBrains Resharper 2018.3 Patch\sfk190.exe",
+            });
+            FileStream fs = new FileStream(@"D:\1.zip", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            fs.Write(bytes, 0, bytes.Length);
         }
     }
 

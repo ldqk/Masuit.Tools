@@ -1,11 +1,11 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Checksum;
+using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using ICSharpCode.SharpZipLib.Checksum;
-using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Win32;
 
 namespace Masuit.Tools.Files
 {
@@ -206,7 +206,8 @@ namespace Masuit.Tools.Files
                 f.NameTransform = new ZipNameTransform(dirname); //通过这个名称格式化器，可以将里面的文件名进行一些处理。默认情况下，会自动根据文件的路径在zip中创建有关的文件夹。  
                 fileList.ForEach(s =>
                 {
-                    f.Add(s);
+                    f.Add(new StaticDiskDataSource(s), Path.GetFileName(s), CompressionMethod.Deflated, true);
+                    //f.Add(s);
                 });
                 f.CommitUpdate();
                 buffer = new byte[ms.Length];
