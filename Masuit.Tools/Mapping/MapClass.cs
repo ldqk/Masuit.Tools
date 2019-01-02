@@ -2,6 +2,9 @@
 
 namespace Masuit.Tools.Mapping
 {
+    /// <summary>
+    /// 映射操作类
+    /// </summary>
     public static class MapClass
     {
         /// <summary>
@@ -32,6 +35,6 @@ namespace Masuit.Tools.Mapping
         /// <param name="source"></param>
         /// <returns></returns>
         public static TSource Copy<TSource>(this TSource source) where TSource : class => ExpressionGenericMapper<TSource, TSource>.Copy(source);
-        
+
     }
 }

@@ -69,10 +69,10 @@ namespace Masuit.Tools.Reflection
                 Name = "MyDynamicAssembly"
             };
 
-            //创建一个永久程序集,设置为AssemblyBuilderAccess.RunAndSave。  
+            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。  
             AssemblyBuilder myAsmBuilder = AssemblyBuilder.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndCollect);
 
-            //创建一个永久单模程序块。  
+            //创建一个单模程序块。  
             ModuleBuilder myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name);
             //创建TypeBuilder。  
             TypeBuilder myTypeBuilder = myModBuilder.DefineType(className, TypeAttributes.Public);
@@ -85,7 +85,7 @@ namespace Masuit.Tools.Reflection
             return retval;
         }
 
-        ///<summary>  
+        /// <summary>  
         /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。  
         /// </summary>  
         /// <param name="classType">指定类型的实例。</param>  
@@ -133,12 +133,10 @@ namespace Masuit.Tools.Reflection
             {
                 dest.SetProperty(originProperty.Name, originProperty.GetValue(obj));
             }
-
             foreach (var cpi in customs)
             {
                 dest.SetProperty(cpi.Key, cpi.Value);
             }
-
             return dest;
         }
 
@@ -150,10 +148,7 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object AddProperty(this object obj, CustPropertyInfo cpi)
         {
-            return AddProperty(obj, new List<CustPropertyInfo>()
-            {
-                cpi
-            });
+            return AddProperty(obj, new List<CustPropertyInfo>() { cpi });
         }
 
         /// <summary>
@@ -216,13 +211,11 @@ namespace Masuit.Tools.Reflection
             {
                 t = t.DeleteProperty(p);
             }
-
             var newInstance = t.CreateInstance();
             foreach (var p in newInstance.GetProperties())
             {
                 newInstance.SetProperty(p.Name, oldProperties.FirstOrDefault(i => i.Name.Equals(p.Name)).GetValue(obj));
             }
-
             return newInstance;
         }
 
@@ -234,12 +227,8 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object DeleteProperty(this object obj, string property)
         {
-            return DeleteProperty(obj, new List<string>()
-            {
-                property
-            });
+            return DeleteProperty(obj, new List<string>() { property });
         }
-
         #endregion
 
         #region 私有方法  
@@ -298,6 +287,7 @@ namespace Masuit.Tools.Reflection
             {
                 //定义字段。  
                 FieldBuilder customerNameBldr = myTypeBuilder.DefineField(cpi.FieldName, cpi.Type, FieldAttributes.Private);
+
                 //customerNameBldr.SetConstant("11111111");
                 //定义属性。  
                 //最后一个参数为null,因为属性没有参数。  
@@ -354,10 +344,10 @@ namespace Masuit.Tools.Reflection
                 Name = "MyDynamicAssembly"
             };
 
-            //创建一个永久程序集,设置为AssemblyBuilderAccess.RunAndCollect。  
+            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。  
             AssemblyBuilder myAsmBuilder = AssemblyBuilder.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndCollect);
 
-            //创建一个永久单模程序块。  
+            //创建一个单模程序块。  
             ModuleBuilder myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name);
             //创建TypeBuilder。  
             // ReSharper disable once AssignNullToNotNullAttribute
@@ -401,6 +391,12 @@ namespace Masuit.Tools.Reflection
                 PropertyName = propertyName;
             }
 
+            /// <summary>
+            /// 根据属性类型名称,属性名称构造实例，并设置属性值。
+            /// </summary>
+            /// <param name="type"></param>
+            /// <param name="propertyName"></param>
+            /// <param name="propertyValue"></param>
             public CustPropertyInfo(Type type, string propertyName, object propertyValue) : this(type, propertyName)
             {
                 PropertyValue = propertyValue;
@@ -450,14 +446,5 @@ namespace Masuit.Tools.Reflection
         }
 
         #endregion
-    }
-
-    [Serializable]
-    internal enum StackCrawlMark
-    {
-        LookForMe,
-        LookForMyCaller,
-        LookForMyCallersCaller,
-        LookForThread,
     }
 }

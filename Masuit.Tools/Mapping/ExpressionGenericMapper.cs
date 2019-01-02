@@ -8,6 +8,11 @@ using System.Reflection;
 
 namespace Masuit.Tools.Mapping
 {
+    /// <summary>
+    /// 表达式树实体映射器
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TDest"></typeparam>
     public static class ExpressionGenericMapper<TSource, TDest> where TSource : class where TDest : class
     {
         // 缓存委托

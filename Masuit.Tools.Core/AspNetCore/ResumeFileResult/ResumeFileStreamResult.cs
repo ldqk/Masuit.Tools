@@ -19,7 +19,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult
         /// <param name="fileStream">文件流</param>
         /// <param name="contentType">Content-Type</param>
         /// <param name="etag">ETag</param>
-        public ResumeFileStreamResult(Stream fileStream, string contentType, string etag = null) : this(fileStream, MediaTypeHeaderValue.Parse(contentType), !string.IsNullOrEmpty(etag) ? EntityTagHeaderValue.Parse(etag) : null)
+        public ResumeFileStreamResult(FileStream fileStream, string contentType, string etag = null) : this(fileStream, MediaTypeHeaderValue.Parse(contentType), !string.IsNullOrEmpty(etag) ? EntityTagHeaderValue.Parse(etag) : null)
         {
         }
 
@@ -29,7 +29,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult
         /// <param name="fileStream">文件流</param>
         /// <param name="contentType">Content-Type</param>
         /// <param name="etag">ETag</param>
-        public ResumeFileStreamResult(Stream fileStream, MediaTypeHeaderValue contentType, EntityTagHeaderValue etag = null) : base(fileStream, contentType)
+        public ResumeFileStreamResult(FileStream fileStream, MediaTypeHeaderValue contentType, EntityTagHeaderValue etag = null) : base(fileStream, contentType)
         {
             EntityTag = etag;
             EnableRangeProcessing = true;

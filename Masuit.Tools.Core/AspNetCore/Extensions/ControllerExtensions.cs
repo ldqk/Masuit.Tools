@@ -58,7 +58,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
         /// <param name="fileStream">文件二进制流</param>
         /// <param name="contentType">Content-Type</param>
         /// <returns></returns>
-        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string contentType)
+        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, FileStream fileStream, string contentType)
         {
             return ResumeFile(controller, fileStream, contentType, fileDownloadName: null);
         }
@@ -71,7 +71,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
         /// <param name="contentType">Content-Type</param>
         /// <param name="fileDownloadName">下载的文件名</param>
         /// <returns></returns>
-        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string contentType, string fileDownloadName)
+        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, FileStream fileStream, string contentType, string fileDownloadName)
         {
             return ResumeFile(controller, fileStream, contentType, fileDownloadName, etag: null);
         }
@@ -85,7 +85,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
         /// <param name="fileDownloadName">下载的文件名</param>
         /// <param name="etag">ETag</param>
         /// <returns></returns>
-        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string contentType, string fileDownloadName, string etag)
+        public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, FileStream fileStream, string contentType, string fileDownloadName, string etag)
         {
             return new ResumeFileStreamResult(fileStream, contentType, etag)
             {
