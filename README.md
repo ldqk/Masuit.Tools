@@ -532,6 +532,10 @@ var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
 object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
 Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
+### 31.获取线程内唯一对象
+```csharp
+CallContext<T>.GetData("db");
+```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
