@@ -185,18 +185,21 @@ var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTab
 ```
 ### 14.文件压缩解压
 ```csharp
-SharpZip.PackFiles("D:\\1.zip","D:\\test");
-SharpZip.UnpackFiles("D:\\1.zip","D:\\test");
+MemoryStream ms = SevenZipCompressor.ZipStream(new List<string>()
+{
+    @"D:\1.txt",
+    "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
+});//压缩成内存流
 ```
 ```csharp
-ClassZip.Zip("D:\\1.txt","D:\\1.zip");
-ClassZip.UnZip("D:\\1.zip","D:\\1");
-byte[] bytes = ClassZip.ZipStream(new List<string>()
+SevenZipCompressor.Zip(new List<string>()
 {
-    "D:\\1.txt",
-    "E:\\2.txt",
-    "D:\\test\\3.txt"
-});
+    @"D:\1.txt",
+    "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
+}, zip);//压缩成zip
+SevenZipCompressor.UnRar(@"D:\Download\test.rar", @"D:\Download\");//解压rar
+SevenZipCompressor.Decompress(@"D:\Download\test.tar", @"D:\Download\");//自动识别解压压缩包
+SevenZipCompressor.Decompress(@"D:\Download\test.7z", @"D:\Download\");
 ```
 ### 15.日志组件
 ```csharp
