@@ -70,7 +70,7 @@ string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&l
     <Copyright>Copyright © 懒得勤快</Copyright>
     <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
     <PackageTags>Masuit.Tools</PackageTags>
-    <PackageReleaseNotes>如有问题请联系QQ:1170397736，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+    <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
