@@ -16,6 +16,7 @@ namespace Masuit.Tools.UnitTest
             {
                 //AppContext.BaseDirectory,
                 "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
+                "http://192.168.16.150:3000string",
             });
             Assert.True(ms.Length > 0);
         }
@@ -28,6 +29,7 @@ namespace Masuit.Tools.UnitTest
             {
                 AppContext.BaseDirectory,
                 "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
+                "http://192.168.16.150:3000string",
             }, zip);
             using (FileStream stream = File.OpenRead(zip))
             {

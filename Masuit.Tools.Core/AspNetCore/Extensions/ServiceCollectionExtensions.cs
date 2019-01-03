@@ -30,13 +30,11 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
         /// 注入7z压缩
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="enableCache">是否启用缓存</param>
         /// <returns></returns>
-        public static IServiceCollection AddSevenZipCompressor(this IServiceCollection services, bool enableCache = true)
+        public static IServiceCollection AddSevenZipCompressor(this IServiceCollection services)
         {
             services.AddHttpClient();
             services.TryAddTransient<ISevenZipCompressor, SevenZipCompressor>();
-            SevenZipCompressor.EnableCache = enableCache;
             return services;
         }
     }

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Masuit.Tools.Files
 {
@@ -77,6 +78,7 @@ namespace Masuit.Tools.Files
             {
                 dir = Path.GetDirectoryName(rar);
             }
+
             using (var archive = RarArchive.Open(rar))
             {
                 var entries = ignoreEmptyDir ? archive.Entries.Where(entry => !entry.IsDirectory) : archive.Entries;
@@ -103,6 +105,7 @@ namespace Masuit.Tools.Files
             {
                 dir = Path.GetDirectoryName(compressedFile);
             }
+
             using (Stream stream = File.OpenRead(compressedFile))
             {
                 using (var reader = ReaderFactory.Open(stream))
@@ -143,19 +146,36 @@ namespace Masuit.Tools.Files
         {
             var archive = ZipArchive.Create();
             var dic = GetFileEntryMaps(files);
-            var remoteFiles = files.Where(s => s.StartsWith("http")).ToList();
+            var remoteUrls = files.Distinct().Where(s => s.StartsWith("http")).Select(s =>
+            {
+                try
+                {
+                    return new Uri(s);
+                }
+                catch (UriFormatException)
+                {
+                    return null;
+                }
+            }).Where(u => u != null).ToList();
             foreach (var fileEntry in dic)
             {
                 archive.AddEntry(Path.Combine(rootdir, fileEntry.Value), fileEntry.Key);
             }
-            if (remoteFiles.Any())
+
+            if (remoteUrls.Any())
             {
-                //var paths = remoteFiles.Select(s => new Uri(s).PathAndQuery).ToList();
-                //string pathname = new string(paths.First().Substring(0, paths.Min(s => s.Length)).TakeWhile((c, i) => paths.All(s => s[i] == c)).ToArray());
-                //Dictionary<string, string> pathDic = paths.ToDictionary(s => s, s => s.Substring(pathname.Length));
+                //var dicList = remoteUrls.GroupBy(u => u.Authority).Select(g =>
+                //{
+                //    if (g.Count() > 1)
+                //    {
+                //        string pathname = new string(g.First().AbsolutePath.Substring(0, g.Min(s => s.AbsolutePath.Length)).TakeWhile((c, i) => g.All(s => s.AbsolutePath[i] == c)).ToArray());
+                //        return g.ToDictionary(s => s, s => HttpUtility.UrlDecode(s.AbsolutePath.Substring(pathname.Length)));
+                //    }
+                //    return g.ToDictionary(s => s, s => Path.GetFileName(HttpUtility.UrlDecode(s.AbsolutePath)));
+                //}).SelectMany(d => d).ToDictionary(x => x.Key, x => x.Value);
                 using (var httpClient = new HttpClient())
                 {
-                    Parallel.ForEach(remoteFiles, url =>
+                    Parallel.ForEach(remoteUrls, url =>
                     {
                         httpClient.GetAsync(url).ContinueWith(async t =>
                         {
@@ -166,13 +186,14 @@ namespace Masuit.Tools.Files
                                 {
                                     Stream stream = await res.Content.ReadAsStreamAsync();
                                     //archive.AddEntry(Path.Combine(rootdir, pathDic[new Uri(url).AbsolutePath.Trim('/')]), stream);
-                                    archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(new Uri(url).AbsolutePath.Trim('/'))), stream);
+                                    archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath))), stream);
                                 }
                             }
                         }).Wait();
                     });
                 }
             }
+
             return archive;
         }
 
@@ -215,11 +236,13 @@ namespace Masuit.Tools.Files
             {
                 return new Dictionary<string, string>();
             }
+
             string dirname = new string(fileList.First().Substring(0, fileList.Min(s => s.Length)).TakeWhile((c, i) => fileList.All(s => s[i] == c)).ToArray());
             Dictionary<string, string> dic = fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
             return dic;
         }
     }
+
     /// <summary>
     /// SharpZip
     /// </summary>
@@ -263,7 +286,6 @@ namespace Masuit.Tools.Files
         public static bool UnpackFiles(string file, string dir)
         {
             throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
-
         }
 
         /// <summary>
