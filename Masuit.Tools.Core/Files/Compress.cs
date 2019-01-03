@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Win32;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Rar;
 using SharpCompress.Archives.Zip;
@@ -19,15 +20,28 @@ namespace Masuit.Tools.Files
     /// <summary>
     /// 7z压缩
     /// </summary>
-    public static class SevenZipCompressor
+    public class SevenZipCompressor : ISevenZipCompressor
     {
+        private readonly HttpClient _httpClient;
+        private static readonly MemoryCache _memoryCache = new MemoryCache(new MemoryCacheOptions());
+        internal static bool EnableCache { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="httpClientFactory"></param>
+        public SevenZipCompressor(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient();
+        }
+
         /// <summary>
         /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
         /// </summary>
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>
         /// <returns>文件流</returns>
-        public static MemoryStream ZipStream(List<string> files, string rootdir = "")
+        public MemoryStream ZipStream(List<string> files, string rootdir = "")
         {
             using (var archive = CreateZipArchive(files, rootdir))
             {
@@ -50,7 +64,7 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹</param>
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
-        public static void Zip(List<string> files, string zipFile, string rootdir = "")
+        public void Zip(List<string> files, string zipFile, string rootdir = "")
         {
             using (var archive = CreateZipArchive(files, rootdir))
             {
@@ -71,7 +85,7 @@ namespace Masuit.Tools.Files
         /// <param name="rar">rar文件</param>
         /// <param name="dir">解压到...</param>
         /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public static void UnRar(string rar, string dir = "", bool ignoreEmptyDir = true)
+        public void UnRar(string rar, string dir = "", bool ignoreEmptyDir = true)
         {
             if (string.IsNullOrEmpty(dir))
             {
@@ -97,7 +111,7 @@ namespace Masuit.Tools.Files
         /// <param name="compressedFile">rar文件</param>
         /// <param name="dir">解压到...</param>
         /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public static void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true)
+        public void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true)
         {
             if (string.IsNullOrEmpty(dir))
             {
@@ -139,7 +153,7 @@ namespace Masuit.Tools.Files
         /// <param name="files"></param>
         /// <param name="rootdir"></param>
         /// <returns></returns>
-        private static ZipArchive CreateZipArchive(List<string> files, string rootdir)
+        private ZipArchive CreateZipArchive(List<string> files, string rootdir)
         {
             var archive = ZipArchive.Create();
             var dic = GetFileEntryMaps(files);
@@ -153,11 +167,15 @@ namespace Masuit.Tools.Files
                 //var paths = remoteFiles.Select(s => new Uri(s).PathAndQuery).ToList();
                 //string pathname = new string(paths.First().Substring(0, paths.Min(s => s.Length)).TakeWhile((c, i) => paths.All(s => s[i] == c)).ToArray());
                 //Dictionary<string, string> pathDic = paths.ToDictionary(s => s, s => s.Substring(pathname.Length));
-                using (var httpClient = new HttpClient())
+                Parallel.ForEach(remoteFiles, url =>
                 {
-                    Parallel.ForEach(remoteFiles, url =>
+                    if (_memoryCache.TryGetValue(url, out Stream ms))
                     {
-                        httpClient.GetAsync(url).ContinueWith(async t =>
+                        archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(new Uri(url).AbsolutePath.Trim('/'))), ms);
+                    }
+                    else
+                    {
+                        _httpClient.GetAsync(url).ContinueWith(async t =>
                         {
                             if (t.IsCompleted)
                             {
@@ -165,13 +183,16 @@ namespace Masuit.Tools.Files
                                 if (res.IsSuccessStatusCode)
                                 {
                                     Stream stream = await res.Content.ReadAsStreamAsync();
-                                    //archive.AddEntry(Path.Combine(rootdir, pathDic[new Uri(url).AbsolutePath.Trim('/')]), stream);
                                     archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(new Uri(url).AbsolutePath.Trim('/'))), stream);
+                                    if (EnableCache)
+                                    {
+                                        _memoryCache.Set(url, stream, TimeSpan.FromMinutes(10));
+                                    }
                                 }
                             }
                         }).Wait();
-                    });
-                }
+                    }
+                });
             }
             return archive;
         }
@@ -181,7 +202,7 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        private static Dictionary<string, string> GetFileEntryMaps(List<string> files)
+        private Dictionary<string, string> GetFileEntryMaps(List<string> files)
         {
             List<string> fileList = new List<string>();
 
