@@ -16,6 +16,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
         /// <param name="result"></param>
         public static void SetContentDispositionHeaderInline(this ActionContext context, IResumeFileResult result)
         {
+            context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
             if (string.IsNullOrEmpty(result.FileDownloadName))
             {
                 var contentDisposition = new ContentDispositionHeaderValue("inline");
@@ -25,7 +26,6 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
                     contentDisposition.SetHttpFileName(result.FileInlineName);
                 }
 
-                context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
                 context.HttpContext.Response.Headers[HeaderNames.ContentDisposition] = contentDisposition.ToString();
             }
         }

@@ -45,7 +45,6 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult
                 throw new ArgumentNullException(nameof(context));
             }
 
-            context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
             var executor = context.HttpContext.RequestServices.GetRequiredService<IActionResultExecutor<ResumeVirtualFileResult>>();
             return executor.ExecuteAsync(context, this);
         }
