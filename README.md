@@ -184,6 +184,7 @@ var list = new List<MyClass>()
 var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
 ```
 ### 14.文件压缩解压
+.NET Framework
 ```csharp
 MemoryStream ms = SevenZipCompressor.ZipStream(new List<string>()
 {
@@ -201,6 +202,21 @@ SevenZipCompressor.UnRar(@"D:\Download\test.rar", @"D:\Download\");//解压rar
 SevenZipCompressor.Decompress(@"D:\Download\test.tar", @"D:\Download\");//自动识别解压压缩包
 SevenZipCompressor.Decompress(@"D:\Download\test.7z", @"D:\Download\");
 ```
+ASP.NET Core
+
+Startup.cs
+```csharp
+services.AddSevenZipCompressor();
+```
+构造函数注入ISevenZipCompressor
+```csharp
+private readonly ISevenZipCompressor _sevenZipCompressor;
+public Test(ISevenZipCompressor sevenZipCompressor)
+{
+    _sevenZipCompressor = sevenZipCompressor;
+}
+```
+使用方式同.NET Framework版本
 ### 15.日志组件
 ```csharp
 LogManager.LogDirectory=AppDomain.CurrentDomain.BaseDirectory+"/logs";
