@@ -553,7 +553,8 @@ Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Nu
 ```
 ### 31.获取线程内唯一对象
 ```csharp
-CallContext<T>.GetData("db");
+CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
+CallContext<T>.GetData("db");//获取线程内唯一对象
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
