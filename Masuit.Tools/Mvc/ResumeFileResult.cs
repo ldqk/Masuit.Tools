@@ -66,6 +66,7 @@ namespace Masuit.Tools.Mvc
             response.AppendHeader(HttpHeaders.Etag, _etag);
             response.AppendHeader(HttpHeaders.LastModified, _lastModified);
             response.AppendHeader(HttpHeaders.Expires, Util.FormatDate(DateTime.Now));
+            response.AppendHeader(HttpHeaders.AccessControlExposeHeaders, HttpHeaders.ContentDisposition);
 
             if (IsNotModified())
             {
@@ -119,6 +120,7 @@ namespace Masuit.Tools.Mvc
             response.AppendHeader(HttpHeaders.ContentLength, contentLength.ToString(CultureInfo.InvariantCulture));
             response.AppendHeader(HttpHeaders.AcceptRanges, "bytes");
             response.AppendHeader(HttpHeaders.ContentRange, $"bytes {_range.Start}-{_range.End}/{_file.Length}");
+            response.AppendHeader(HttpHeaders.AccessControlExposeHeaders, HttpHeaders.ContentDisposition);
 
             if (!string.IsNullOrWhiteSpace(_downloadFileName))
             {

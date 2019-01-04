@@ -25,6 +25,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
                     contentDisposition.SetHttpFileName(result.FileInlineName);
                 }
 
+                context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
                 context.HttpContext.Response.Headers[HeaderNames.ContentDisposition] = contentDisposition.ToString();
             }
         }
