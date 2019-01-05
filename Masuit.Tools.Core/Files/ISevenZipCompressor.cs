@@ -17,6 +17,14 @@ namespace Masuit.Tools.Files
         void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true);
 
         /// <summary>
+        /// 解压文件，自动检测压缩包类型
+        /// </summary>
+        /// <param name="compressedFile">rar文件</param>
+        /// <param name="dir">解压到...</param>
+        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
+        void Extract(string compressedFile, string dir = "", bool ignoreEmptyDir = true);
+
+        /// <summary>
         /// 解压rar文件
         /// </summary>
         /// <param name="rar">rar文件</param>

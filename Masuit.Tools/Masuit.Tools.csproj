@@ -52,6 +52,7 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
@@ -97,10 +98,13 @@
     <Compile Include="DateTimeExt\DateInfoStruct.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
     <Compile Include="DateTimeExt\WeekHolidayStruct.cs" />
+    <Compile Include="Files\ClassZip.cs" />
+    <Compile Include="Files\SharpZip.cs" />
+    <Compile Include="Files\WinrarHelper.cs" />
     <Compile Include="Mapping\EnumerableCopier.cs" />
     <Compile Include="Mapping\ExpressionGenericMapper.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Files\Compress.cs" />
+    <Compile Include="Files\SevenZipCompressor.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
     <Compile Include="Files\INIFile.cs" />
     <Compile Include="Hardware\CpuInfo.cs" />

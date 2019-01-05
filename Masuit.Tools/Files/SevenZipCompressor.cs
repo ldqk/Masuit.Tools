@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using SharpCompress.Archives;
+﻿using SharpCompress.Archives;
 using SharpCompress.Archives.Rar;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
@@ -7,7 +6,6 @@ using SharpCompress.Readers;
 using SharpCompress.Writers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -92,6 +90,14 @@ namespace Masuit.Tools.Files
                 }
             }
         }
+
+        /// <summary>
+        /// 解压文件，自动检测压缩包类型
+        /// </summary>
+        /// <param name="compressedFile">rar文件</param>
+        /// <param name="dir">解压到...</param>
+        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
+        public static void Extract(string compressedFile, string dir = "", bool ignoreEmptyDir = true) => Decompress(compressedFile, dir, ignoreEmptyDir);
 
         /// <summary>
         /// 解压文件，自动检测压缩包类型
@@ -241,200 +247,5 @@ namespace Masuit.Tools.Files
             Dictionary<string, string> dic = fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
             return dic;
         }
-    }
-
-    /// <summary>
-    /// SharpZip
-    /// </summary>
-    public static class SharpZip
-    {
-        #region 文件压缩
-
-        /// <summary>
-        /// 文件压缩
-        /// </summary> 
-        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
-        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
-        public static void PackFiles(string filename, string directory)
-        {
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
-        }
-
-        /// <summary>
-        /// 文件压缩
-        /// </summary> 
-        /// <param name="filename"> 压缩后的文件名(包含物理路径)</param>
-        /// <param name="directory">待压缩的文件夹(包含物理路径)</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
-        public static async void PackFilesAsync(string filename, string directory)
-        {
-            await Task.Delay(0);
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
-        }
-
-        #endregion
-
-        #region 文件解压缩
-
-        /// <summary>
-        /// 文件解压缩
-        /// </summary>
-        /// <param name="file">待解压文件名(包含物理路径)</param>
-        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
-        public static bool UnpackFiles(string file, string dir)
-        {
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
-        }
-
-        /// <summary>
-        /// 文件解压缩
-        /// </summary>
-        /// <param name="file">待解压文件名(包含物理路径)</param>
-        /// <param name="dir"> 解压到哪个目录中(包含物理路径)</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
-        public static async Task<bool> UnpackFilesAsync(string file, string dir)
-        {
-            await Task.Delay(0);
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// ClassZip
-    /// </summary>
-    public static class ClassZip
-    {
-        #region 压缩
-
-        /// <summary>
-        /// 压缩
-        /// </summary>
-        /// <param name="fileToZip">待压缩的文件目录或文件</param>
-        /// <param name="zipedFile">生成的目标文件</param>
-        /// <param name="level">压缩级别，默认值6</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Zip方法替代")]
-        public static bool Zip(string fileToZip, string zipedFile, int level = 6)
-        {
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Zip方法替代");
-        }
-
-        /// <summary>
-        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
-        /// </summary>
-        /// <param name="files">多个文件路径，文件或文件夹</param>
-        /// <returns>文件流</returns>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.ZipStream方法替代")]
-        public static byte[] ZipStream(List<string> files)
-        {
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.ZipStream方法替代");
-        }
-
-        #endregion
-
-        #region 解压
-
-        /// <summary>
-        /// 解压
-        /// </summary>
-        /// <param name="fileToUpZip">待解压的文件</param>
-        /// <param name="zipedFolder">解压目标存放目录</param>
-        [Obsolete("该方法已过时，请使用SevenZipCompressor.Decompress方法替代")]
-        public static void UnZip(string fileToUpZip, string zipedFolder)
-        {
-            throw new NotImplementedException("该方法已过时，请使用SevenZipCompressor.Decompress方法替代");
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// WinRAR压缩操作
-    /// </summary>
-    public static class WinrarHelper
-    {
-        #region 压缩
-
-        /// <summary>
-        /// 压缩
-        /// </summary>
-        /// <param name="zipname">要解压的文件名</param>
-        /// <param name="zippath">要压缩的文件目录</param>
-        /// <param name="dirpath">初始目录</param>
-        public static void Rar(string zipname, string zippath, string dirpath)
-        {
-            _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRAR.exe\Shell\Open\Command");
-            if (_theReg != null)
-            {
-                _theObj = _theReg.GetValue("");
-                _theRar = _theObj.ToString();
-                _theReg?.Close();
-            }
-
-            _theRar = _theRar.Substring(1, _theRar.Length - 7);
-            _theInfo = " a  " + zipname + " " + zippath;
-            _theStartInfo = new ProcessStartInfo
-            {
-                FileName = _theRar,
-                Arguments = _theInfo,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                WorkingDirectory = dirpath
-            };
-            _theProcess = new Process
-            {
-                StartInfo = _theStartInfo
-            };
-            _theProcess.Start();
-        }
-
-        #endregion
-
-        #region 解压缩
-
-        /// <summary>
-        /// 解压缩
-        /// </summary>
-        /// <param name="zipname">要解压的文件名</param>
-        /// <param name="zippath">要解压的文件路径</param>
-        public static void UnRar(string zipname, string zippath)
-        {
-            _theReg = Registry.ClassesRoot.OpenSubKey(@"Applications\WinRar.exe\Shell\Open\Command");
-            if (_theReg != null)
-            {
-                _theObj = _theReg.GetValue("");
-                _theRar = _theObj.ToString();
-                _theReg.Close();
-            }
-
-            _theRar = _theRar.Substring(1, _theRar.Length - 7);
-            _theInfo = " X " + zipname + " " + zippath;
-            _theStartInfo = new ProcessStartInfo
-            {
-                FileName = _theRar,
-                Arguments = _theInfo,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-            _theProcess = new Process
-            {
-                StartInfo = _theStartInfo
-            };
-            _theProcess.Start();
-        }
-
-        #endregion
-
-        #region 私有变量
-
-        private static string _theRar;
-        private static RegistryKey _theReg;
-        private static object _theObj;
-        private static string _theInfo;
-        private static ProcessStartInfo _theStartInfo;
-        private static Process _theProcess;
-
-        #endregion
     }
 }
