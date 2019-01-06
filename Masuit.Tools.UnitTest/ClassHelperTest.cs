@@ -22,7 +22,7 @@ namespace Masuit.Tools.UnitTest
             // act
             Assert.Equal("张三", newObj.Name);
             Assert.Equal(20, newObj.Age);
-            Assert.IsType(typeof(List<string>), newObj.List);
+            Assert.IsType<List<string>>(newObj.List);
         }
 
         [Fact]
