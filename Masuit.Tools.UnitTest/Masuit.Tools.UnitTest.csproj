@@ -111,7 +111,6 @@
     <Compile Include="HtmlToolsTest.cs" />
     <Compile Include="LinqExtensionTest.cs" />
     <Compile Include="Mvc\BaseTests.cs" />
-    <Compile Include="Mvc\MimeMapperTests.cs" />
     <Compile Include="Mvc\Mocks\MockHttpFilesCollection.cs" />
     <Compile Include="Mvc\Mocks\MockHttpPostedFileBase.cs" />
     <Compile Include="Mvc\Mocks\MockHttpRequest.cs" />

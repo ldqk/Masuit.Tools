@@ -5,11 +5,11 @@ namespace Masuit.Tools.UnitTest.Mvc.Mocks
 {
     public class MockResumeFileResult : ResumeFileResult
     {
-        public MockResumeFileResult(string fileName, string contentType, HttpRequestBase request) : base(fileName, contentType, request)
+        public MockResumeFileResult(string fileName, HttpRequestBase request) : base(fileName, request)
         {
         }
 
-        public MockResumeFileResult(string fileName, string contentType, HttpRequestBase request, string downloadFileName) : base(fileName, contentType, request, downloadFileName)
+        public MockResumeFileResult(string fileName, HttpRequestBase request, string downloadFileName) : base(fileName,request, downloadFileName)
         {
         }
 

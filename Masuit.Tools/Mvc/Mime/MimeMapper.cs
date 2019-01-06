@@ -11,7 +11,7 @@ namespace Masuit.Tools.Mvc.Mime
         /// <summary>
         /// 默认Mime  - 如果没有找到任何其他映射则作为默认的Mime-Type
         /// </summary>
-        private const string DefaultMime = "application/octet-stream";
+        public const string DefaultMime = "application/octet-stream";
 
         /// <summary>
         /// 在文件路径中搜索文件扩展名的默认正则表达式

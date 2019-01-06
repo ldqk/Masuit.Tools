@@ -1,4 +1,5 @@
 ﻿using Masuit.Tools.Mvc.Internal;
+using Masuit.Tools.Mvc.Mime;
 using System;
 using System.Globalization;
 using System.IO;
@@ -27,27 +28,27 @@ namespace Masuit.Tools.Mvc
         private readonly string _ifUnmodifiedSince;
         private readonly string _ifRange;
         private readonly string _etag;
-        private readonly Range _range;
+        private readonly ByteRange _byteRange;
         private readonly FileInfo _file;
         private readonly string _lastModified;
         private readonly bool _rangeRequest;
         private readonly string _downloadFileName;
 
-        public ResumeFileResult(string fileName, string contentType, HttpRequestBase request) : this(fileName, contentType, request, null)
+        public ResumeFileResult(string fileName, HttpRequestBase request) : this(fileName, request, null)
         {
         }
 
-        public ResumeFileResult(string fileName, string contentType, HttpRequestBase request, string downloadFileName) : this(fileName, contentType, request.Headers[HttpHeaders.IfNoneMatch], request.Headers[HttpHeaders.IfModifiedSince], request.Headers[HttpHeaders.IfMatch], request.Headers[HttpHeaders.IfUnmodifiedSince], request.Headers[HttpHeaders.IfRange], request.Headers[HttpHeaders.Range], downloadFileName)
+        public ResumeFileResult(string fileName, HttpRequestBase request, string downloadFileName) : this(fileName, request.Headers[HttpHeaders.IfNoneMatch], request.Headers[HttpHeaders.IfModifiedSince], request.Headers[HttpHeaders.IfMatch], request.Headers[HttpHeaders.IfUnmodifiedSince], request.Headers[HttpHeaders.IfRange], request.Headers[HttpHeaders.Range], downloadFileName)
         {
         }
 
 
-        public ResumeFileResult(string fileName, string contentType, string ifNoneMatch, string ifModifiedSince, string ifMatch, string ifUnmodifiedSince, string ifRange, string range, string downloadFileName) : base(fileName, contentType)
+        public ResumeFileResult(string fileName, string ifNoneMatch, string ifModifiedSince, string ifMatch, string ifUnmodifiedSince, string ifRange, string range, string downloadFileName) : base(fileName, new MimeMapper().GetMimeFromPath(fileName))
         {
             _file = new FileInfo(fileName);
             _lastModified = Util.FormatDate(_file.LastWriteTime);
             _rangeRequest = range != null;
-            _range = Range(range);
+            _byteRange = Range(range);
             _etag = Etag();
             _ifNoneMatch = ifNoneMatch;
             _ifModifiedSince = ifModifiedSince;
@@ -93,7 +94,7 @@ namespace Masuit.Tools.Mvc
         /// <returns></returns>
         protected long ContentLength()
         {
-            return _range.End - _range.Start + 1;
+            return _byteRange.End - _byteRange.Start + 1;
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace Masuit.Tools.Mvc
 
             response.AppendHeader(HttpHeaders.ContentLength, contentLength.ToString(CultureInfo.InvariantCulture));
             response.AppendHeader(HttpHeaders.AcceptRanges, "bytes");
-            response.AppendHeader(HttpHeaders.ContentRange, $"bytes {_range.Start}-{_range.End}/{_file.Length}");
+            response.AppendHeader(HttpHeaders.ContentRange, $"bytes {_byteRange.Start}-{_byteRange.End}/{_file.Length}");
             response.AppendHeader(HttpHeaders.AccessControlExposeHeaders, HttpHeaders.ContentDisposition);
 
             if (!string.IsNullOrWhiteSpace(_downloadFileName))
@@ -129,7 +130,7 @@ namespace Masuit.Tools.Mvc
 
             try
             {
-                response.TransmitFile(FileName, _range.Start, contentLength);
+                response.TransmitFile(FileName, _byteRange.Start, contentLength);
             }
             catch (Exception ex)
             {
@@ -148,7 +149,7 @@ namespace Masuit.Tools.Mvc
         /// <returns></returns>
         protected bool IsRangeNotSatisfiable()
         {
-            return _range.Start >= _file.Length || _range.Start < 0 || _range.End >= _file.Length || _range.Start > _range.End;
+            return _byteRange.Start >= _file.Length || _byteRange.Start < 0 || _byteRange.End >= _file.Length || _byteRange.Start > _byteRange.End;
         }
 
         /// <summary>
@@ -211,7 +212,7 @@ namespace Masuit.Tools.Mvc
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        private Range Range(string range)
+        private ByteRange Range(string range)
         {
             var lastByte = _file.Length - 1;
 
@@ -235,20 +236,20 @@ namespace Masuit.Tools.Mvc
                             end = lastByte;
                         }
 
-                        return new Range
+                        return new ByteRange
                         {
                             Start = start,
                             End = end
                         };
                     }
                 }
-                return new Range
+                return new ByteRange
                 {
                     Start = -1,
                     End = -1
                 };
             }
-            return new Range
+            return new ByteRange
             {
                 Start = 0,
                 End = lastByte
