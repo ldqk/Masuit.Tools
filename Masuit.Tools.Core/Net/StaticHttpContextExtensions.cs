@@ -13,7 +13,7 @@ namespace Masuit.Tools.Core.Net
         /// 注入HttpContext静态对象，方便在任意地方获取HttpContext，services.AddHttpContextAccessor();
         /// </summary>
         /// <param name="services"></param>
-        public static void AddHttpContextAccessor(this IServiceCollection services)
+        public static void AddStaticHttpContext(this IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }

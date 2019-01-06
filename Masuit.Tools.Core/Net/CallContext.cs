@@ -10,6 +10,7 @@ namespace Masuit.Tools.Core.Net
     public static class CallContext<T>
     {
         static ConcurrentDictionary<string, AsyncLocal<T>> state = new ConcurrentDictionary<string, AsyncLocal<T>>();
+
         /// <summary>
         /// 设置值
         /// </summary>

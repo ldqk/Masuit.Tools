@@ -4,8 +4,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.Media
@@ -753,7 +751,7 @@ namespace Masuit.Tools.Media
         /// <param name="width">缩略图宽度</param>
         /// <param name="height">缩略图高度</param>
         /// <param name="mode">生成缩略图的方式</param>    
-        public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, string mode)
+        public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, ThumbnailCutMode mode)
         {
             int towidth = width;
             int toheight = height;
@@ -765,15 +763,15 @@ namespace Masuit.Tools.Media
 
             switch (mode)
             {
-                case "HW": //指定高宽缩放（可能变形）                
+                case ThumbnailCutMode.Fixed: //指定高宽缩放（可能变形）                
                     break;
-                case "W": //指定宽，高按比例                    
+                case ThumbnailCutMode.LockWidth: //指定宽，高按比例                    
                     toheight = originalImage.Height * width / originalImage.Width;
                     break;
-                case "H": //指定高，宽按比例
+                case ThumbnailCutMode.LockHeight: //指定高，宽按比例
                     towidth = originalImage.Width * height / originalImage.Height;
                     break;
-                case "Cut": //指定高宽裁减（不变形）                
+                case ThumbnailCutMode.Cut: //指定高宽裁减（不变形）                
                     if (originalImage.Width / (double)originalImage.Height > towidth / (double)toheight)
                     {
                         oh = originalImage.Height;
@@ -1181,56 +1179,6 @@ namespace Masuit.Tools.Media
                 }
             }
             return bmp2;
-        }
-
-        /// <summary>
-        /// 上传图片到百度图床
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <returns></returns>
-        public static async Task<string> UploadImageAsync(Stream stream)
-        {
-            using (HttpClient httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri("https://sm.ms"),
-            })
-            {
-                httpClient.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse("Mozilla/5.0"));
-                using (var bc = new StreamContent(stream))
-                {
-                    bc.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
-                    {
-                        FileName = "1.jpg",
-                        Name = "smfile"
-                    };
-                    bc.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
-                    using (var content = new MultipartFormDataContent { bc })
-                    {
-                        return await await httpClient.PostAsync("/api/upload", content).ContinueWith(async t =>
-                        {
-                            if (t.IsCanceled || t.IsFaulted)
-                            {
-                                Console.WriteLine("发送请求出错了" + t.Exception);
-                                return string.Empty;
-                            }
-                            var res = await t;
-                            if (res.IsSuccessStatusCode)
-                            {
-                                string s = await res.Content.ReadAsStringAsync();
-                                //var token = JObject.Parse(s);
-                                //if ((int)token["errno"] == 0)
-                                //{
-                                //    s = (string)token["data"]["imageUrl"];
-                                //    return s;
-                                //}
-                                //s = (string)token["errmsg"];
-                                return s;
-                            }
-                            return string.Empty;
-                        });
-                    }
-                }
-            }
         }
     } //end class
 }
