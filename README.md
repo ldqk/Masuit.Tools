@@ -366,6 +366,8 @@ var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标�
 ### 24.DateTime扩展
 ```csharp
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
+double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
+double nanoseconds = DateTime.Now.GetTotalNanoseconds();// 获取纳秒级时间戳
 double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
 double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 ...
