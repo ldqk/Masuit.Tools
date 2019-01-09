@@ -2,6 +2,8 @@
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。
 [官网教程](http://masuit.com/55)
 
+⭐⭐⭐喜欢的话就点个star关注一下吧⭐⭐⭐
+
 # 特色功能示例代码
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
 ```csharp
@@ -555,6 +557,68 @@ Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Nu
 ```csharp
 CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
 CallContext<T>.GetData("db");//获取线程内唯一对象
+```
+### 32.asp.net core 获取静态的HttpContext对象
+Startup.cs
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    // ...
+    services.AddStaticHttpContext();
+    // ...
+}
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    // ...
+    app.UseStaticHttpContext();
+    // ...
+}
+```
+
+```csharp
+public async Task<IActionResult> Index()
+{
+    HttpContext context = HttpContext2.Current;
+}
+```
+### 33.邮件发送
+```csharp
+new Email()
+{
+    SmtpServer = "smtp.masuit.com",// SMTP服务器
+    SmtpPort = 25, // SMTP服务器端口
+    EnableSsl = true,//使用SSL
+    Username = "admin@masuit.com",// 邮箱用户名
+    Password = "123456",// 邮箱密码
+    Tos = "10000@qq.com,10001@qq.com", //收件人
+    Subject = "测试邮件",//邮件标题
+    Body = "你好啊",//邮件内容
+}.SendAsync(s =>
+{
+    Console.WriteLine(s);// 发送成功后的回调
+});// 异步发送邮件
+```
+### 34.图像的简单处理
+```csharp
+ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
+
+"base64".SaveDataUriAsImageFile();// 将Base64编码转换成图片
+
+Image image = Image.FromFile(@"D:\1.jpg");
+image.MakeThumbnail(@"D:\2.jpg", 120, 80, ThumbnailCutMode.LockWidth);//生成缩略图
+
+Bitmap bmp = new Bitmap(@"D:\1.jpg");
+Bitmap newBmp = bmp.BWPic(bmp.Width, bmp.Height);//转换成黑白
+Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁剪并缩放
+bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
+bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
+```
+### 35.随机数
+```csharp
+Random rnd = new Random();
+int num = rnd.StrictNext();//产生真随机数
+double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
 ```
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 

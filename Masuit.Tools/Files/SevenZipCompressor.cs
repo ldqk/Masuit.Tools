@@ -21,7 +21,7 @@ namespace Masuit.Tools.Files
     public static class SevenZipCompressor
     {
         /// <summary>
-        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// 将多个文件压缩到一个内存流中，可保存为zip文件，方便于web方式下载
         /// </summary>
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>

@@ -6,8 +6,6 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using ModelBindingContext = System.Web.ModelBinding.ModelBindingContext;
-using ModelMetadataProviders = System.Web.ModelBinding.ModelMetadataProviders;
 
 namespace Masuit.Tools.UnitTest.Mvc
 {

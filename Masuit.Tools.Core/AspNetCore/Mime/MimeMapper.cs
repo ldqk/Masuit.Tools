@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Masuit.Tools.Mvc.Mime
+namespace Masuit.Tools.AspNetCore.Mime
 {
     /// <summary>
     /// 默认MIME映射器，可以根据文件扩展名获取标准内容类型。
@@ -23,10 +23,17 @@ namespace Masuit.Tools.Mvc.Mime
         /// </summary>
         private static Dictionary<string, string> _items;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public MimeMapper() : this(null)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extensions"></param>
         public MimeMapper(params MimeMappingItem[] extensions)
         {
             _items = new Dictionary<string, string>();
@@ -75,6 +82,7 @@ namespace Masuit.Tools.Mvc.Mime
         }
 
         /// <summary>
+        /// 根据路径获取MimeType
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -84,6 +92,11 @@ namespace Masuit.Tools.Mvc.Mime
             return GetMimeFromExtension(extension);
         }
 
+        /// <summary>
+        /// 获取扩展名
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         protected string GetExtension(string path)
         {
             var match = _pathExtensionPattern.Match(path ?? string.Empty);
