@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Masuit.Tools.DateTimeExt
 {
@@ -8,6 +9,7 @@ namespace Masuit.Tools.DateTimeExt
     public static class DateUtil
     {
         private static readonly DateTime Start1970 = DateTime.Parse("1970-01-01 00:00:00");
+
         /// <summary>
         /// 返回相对于当前时间的相对天数
         /// </summary>
@@ -61,6 +63,20 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="dt"></param>
         /// <returns></returns>
         public static double GetTotalMilliseconds(this DateTime dt) => (dt - Start1970).TotalMilliseconds;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的微秒时间戳
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static long GetTotalMicroseconds(this DateTime dt) => (dt - Start1970).Ticks / 10;
+
+        /// <summary>
+        /// 获取该时间相对于1970-01-01 00:00:00的纳秒时间戳
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static long GetTotalNanoseconds(this DateTime dt) => (dt - Start1970).Ticks * 100 + Stopwatch.GetTimestamp() % 100;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的分钟数

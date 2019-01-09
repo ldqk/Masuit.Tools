@@ -1523,33 +1523,12 @@ namespace Masuit.Tools
         /// 生成唯一短字符串
         /// </summary>
         /// <param name="str"></param>
-        /// <param name="length">生成的字符串长度，越长冲突的概率越小，默认长度为6，最小长度为5，最大长度为22</param>
+        /// <param name="chars">可用字符数数量，0-9,a-z,A-Z</param>
         /// <returns></returns>
-        public static string CreateShortToken(this string str, int length)
+        public static string CreateShortToken(this string str, byte chars = 36)
         {
-            var temp = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Trim('=');
-            if (length <= 22)
-            {
-                if (length < 5)
-                {
-                    length = 5;
-                }
-
-                temp = temp.Substring(0, length);
-            }
-
-            return Regex.Replace(temp, @"\p{P}|\+", string.Empty);
-        }
-
-        /// <summary>
-        /// 生成唯一短字符串
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static string CreateShortToken(this string str)
-        {
-            var nf = new NumberFormater(36);
-            return nf.ToString(Stopwatch.GetTimestamp());
+            var nf = new NumberFormater(chars);
+            return nf.ToString((DateTime.Now.Ticks - 630822816000000000) * 100 + Stopwatch.GetTimestamp() % 100);
         }
 
         /// <summary>
