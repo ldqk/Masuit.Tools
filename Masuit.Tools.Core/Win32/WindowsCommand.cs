@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Security.Cryptography;
 
 namespace Masuit.Tools.Win32
 {
@@ -10,7 +9,6 @@ namespace Masuit.Tools.Win32
     /// </summary>
     public static class WindowsCommand
     {
-
         /// <summary>
         /// 生成真正的随机数
         /// </summary>
@@ -19,9 +17,7 @@ namespace Masuit.Tools.Win32
         /// <returns></returns>
         public static int StrictNext(this Random r, int seed = Int32.MaxValue)
         {
-            byte[] b = new byte[4];
-            new RNGCryptoServiceProvider().GetBytes(b);
-            return new Random(BitConverter.ToInt32(b, 0)).Next(seed);
+            return new Random((int)Stopwatch.GetTimestamp()).Next(seed);
         }
 
         /// <summary>
