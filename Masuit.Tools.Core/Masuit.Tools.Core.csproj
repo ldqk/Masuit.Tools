@@ -2,71 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>2.2.3.4</Version>
+    <Version>2.2.3.5</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
     <Description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，html处理，验证码、NoSql等常用封装。
-
-示例代码：
-
-1.检验字符串是否是Email
-
-bool isEmail="1170397736@qq.com".MatchEmail();
-
-2.获取线程内唯一对象
-
-CallContext&lt;T&gt;.GetData("db");
-
-3.获取当前请求上下文
-
-var context=HttpContext2.Current;
-
-4.获取IP详细地理信息
-
-var address="114.114.114.114".GetPhysicsAddress();
-
-5.大文件操作
-
-FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-
-{
-
-//fs.CopyToFile(@"D:\1.bak");//同步复制大文件
-
-fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
-
-string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
-
-}
-
-6.html的防XSS处理：
-
-string html = @"&lt;link href="/Content/font-awesome/css" rel="stylesheet" /&gt;
-
-&lt;!--[if IE 7]&gt;
-
-&lt;link href='/Content/font-awesome-ie7.min.css' rel='stylesheet'/&gt;
-
-&lt;![endif]--&gt;
-
-&lt;script src="/Scripts/modernizr"&gt;&lt;/script&gt;
-
-&lt;div id="searchBox" role="search"&gt;
-
-&lt;form action="/packages" method="get"&gt;
-
-&lt;span class="user-actions"&gt;&lt;a href="/users/account/LogOff"&gt;退出&lt;/a&gt;&lt;/span&gt;
-
-&lt;input name="q" id="searchBoxInput" /&gt;
-
-&lt;input id="searchBoxSubmit" type="submit" value="Submit" /&gt;
-
-&lt;/form&gt;
-
-&lt;/div&gt;";
-
-string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&lt;a href="/users/account/LogOff"&gt;退出&lt;/a&gt;&lt;/span&gt;&lt;/div&gt;
-</Description>
+官网教程：https://masuit.com/55
+github：https://github.com/ldqk/Masuit.Tools</Description>
     <Copyright>Copyright © 懒得勤快</Copyright>
     <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
     <PackageTags>Masuit.Tools</PackageTags>
@@ -92,7 +33,7 @@ string s = html.HtmlSantinizerStandard();//清理后：&lt;div&gt;&lt;span&gt;&l
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.11" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.199" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.201" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="SharpCompress" Version="0.22.0" />
