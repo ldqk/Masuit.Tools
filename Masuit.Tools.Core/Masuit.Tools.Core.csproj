@@ -33,7 +33,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.9.11" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.201" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.204" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="SharpCompress" Version="0.22.0" />
