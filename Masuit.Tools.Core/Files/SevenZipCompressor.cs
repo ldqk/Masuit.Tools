@@ -5,6 +5,7 @@ using SharpCompress.Common;
 using SharpCompress.Readers;
 using SharpCompress.Writers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -181,15 +182,7 @@ namespace Masuit.Tools.Files
 
             if (remoteUrls.Any())
             {
-                //var dicList = remoteUrls.GroupBy(u => u.Authority).Select(g =>
-                //{
-                //    if (g.Count() > 1)
-                //    {
-                //        string pathname = new string(g.First().AbsolutePath.Substring(0, g.Min(s => s.AbsolutePath.Length)).TakeWhile((c, i) => g.All(s => s.AbsolutePath[i] == c)).ToArray());
-                //        return g.ToDictionary(s => s, s => HttpUtility.UrlDecode(s.AbsolutePath.Substring(pathname.Length)));
-                //    }
-                //    return g.ToDictionary(s => s, s => Path.GetFileName(HttpUtility.UrlDecode(s.AbsolutePath)));
-                //}).SelectMany(d => d).ToDictionary(x => x.Key, x => x.Value);
+                var streams = new ConcurrentDictionary<string, Stream>();
                 Parallel.ForEach(remoteUrls, url =>
                 {
                     _httpClient.GetAsync(url).ContinueWith(async t =>
@@ -200,12 +193,15 @@ namespace Masuit.Tools.Files
                             if (res.IsSuccessStatusCode)
                             {
                                 Stream stream = await res.Content.ReadAsStreamAsync();
-                                //archive.AddEntry(Path.Combine(rootdir, pathDic[new Uri(url).AbsolutePath.Trim('/')]), stream);
-                                archive.AddEntry(Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath))), stream);
+                                streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
                             }
                         }
                     }).Wait();
                 });
+                foreach (var kv in streams)
+                {
+                    archive.AddEntry(kv.Key, kv.Value);
+                }
             }
 
             return archive;
