@@ -19,11 +19,21 @@ namespace Masuit.Tools.Mapping.Core
             _items = new HashSet<MapperConfigurationBase>();
         }
 
-
+        /// <summary>
+        /// mapper映射容器
+        /// </summary>
         public static MapperConfigurationCollectionContainer Instance => currentInstance ?? (currentInstance = new MapperConfigurationCollectionContainer());
 
+        /// <summary>
+        /// count
+        /// </summary>
         public int Count => _items.Count;
 
+        /// <summary>
+        /// 索引器
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         internal MapperConfigurationBase this[int index]
         {
             get
@@ -73,6 +83,10 @@ namespace Masuit.Tools.Mapping.Core
             return this.Any(match);
         }
 
+        /// <summary>
+        /// 移除指定的元素
+        /// </summary>
+        /// <param name="index"></param>
         public void RemoveAt(int index)
         {
             MapperConfigurationBase itemToDelete = this[index];
@@ -90,16 +104,28 @@ namespace Masuit.Tools.Mapping.Core
             _items.Clear();
         }
 
+        /// <summary>
+        /// 添加
+        /// </summary>
+        /// <param name="value"></param>
         public void Add(MapperConfigurationBase value)
         {
             _items.Add(value);
         }
 
+        /// <summary>
+        /// 迭代器
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<MapperConfigurationBase> GetEnumerator()
         {
             return _items.GetEnumerator();
         }
 
+        /// <summary>
+        /// 迭代器
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

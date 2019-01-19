@@ -14,7 +14,11 @@ namespace Masuit.Tools.Mapping.Visitor
         private readonly Type _destinationType;
         private MapperConfigurationBase _mapper;
 
-
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="parameterMap"></param>
+        /// <param name="typeDestination"></param>
         public ConverterExpressionVisitor(Dictionary<Expression, Expression> parameterMap, Type typeDestination)
         {
             _parameterMap = parameterMap;

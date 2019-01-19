@@ -4,6 +4,10 @@ using System.Linq.Expressions;
 
 namespace Masuit.Tools.Mapping
 {
+    /// <summary>
+    /// 表达式树复制对象
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public static class Copier<T>
     {
         private static readonly ParameterExpression ParameterExpression = Expression.Parameter(typeof(T), "p");

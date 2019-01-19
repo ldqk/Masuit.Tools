@@ -4,6 +4,9 @@ using System.Linq.Expressions;
 
 namespace Masuit.Tools.Mapping.Visitor
 {
+    /// <summary>
+    /// mapper表达式树访问器
+    /// </summary>
     public class MapperExpressionVisitor : ExpressionVisitor
     {
         private bool _checkNull;
@@ -11,6 +14,10 @@ namespace Masuit.Tools.Mapping.Visitor
 
         internal Expression Parameter { get; }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="paramClassSource"></param>
         public MapperExpressionVisitor(Expression paramClassSource)
         {
             Parameter = paramClassSource;

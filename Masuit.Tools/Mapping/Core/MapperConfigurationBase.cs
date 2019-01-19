@@ -371,6 +371,9 @@ namespace Masuit.Tools.Mapping.Core
             CreateMemberAssignementForExistingTarget();
         }
 
+        /// <summary>
+        /// 为现有目标对象创建成员
+        /// </summary>
         public virtual void CreateMemberAssignementForExistingTarget()
         {
             if (PropertiesMapping.Count > 0)
@@ -471,6 +474,10 @@ namespace Masuit.Tools.Mapping.Core
             return null;
         }
 
+        /// <summary>
+        /// 创建映射表达式树
+        /// </summary>
+        /// <param name="constructor"></param>
         public virtual void CreateMappingExpression(Func<Type, object> constructor)
         {
             if (!_isInitialized)
@@ -523,9 +530,13 @@ namespace Masuit.Tools.Mapping.Core
             return result;
         }
 
+        /// <summary>
+        /// 获取排序表达式树
+        /// </summary>
+        /// <param name="propertySource">属性名</param>
+        /// <returns></returns>
         public LambdaExpression GetSortedExpression(string propertySource)
         {
-            Expression result = null;
             var exp = PropertiesMapping.Find(x => GetPropertyInfo(x.Item2).Name == propertySource);
             if (exp == null)
             {
@@ -534,7 +545,7 @@ namespace Masuit.Tools.Mapping.Core
 
             // 更改参数
             var visitor = new MapperExpressionVisitor(paramClassSource);
-            result = visitor.Visit(exp.Item1);
+            var result = visitor.Visit(exp.Item1);
             return Expression.Lambda(result, paramClassSource);
         }
 
