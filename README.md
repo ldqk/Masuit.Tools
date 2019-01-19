@@ -406,6 +406,9 @@ Console.WriteLine(classes.Count==1);//True
 ### 27.对象实体映射
 在使用前需要像automapper那样，对mapper进行初始化操作
 ```csharp
+using Masuit.Tools.Mapping;
+```
+```csharp
 ExpressionMapper.CreateMap<ClassA, ClassADto>();// 默认关系映射
 ExpressionMapper.CreateMap<ClassB, ClassBDto>().ForMember(s => s.ClassC.PropertyName, d => d.CustomName, true);// 自定义关系映射
 
