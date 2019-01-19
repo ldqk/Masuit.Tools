@@ -179,7 +179,7 @@ namespace Masuit.Tools.ExpressionMapperBenchmark
             Console.WriteLine($"ExpressionMapper映射2次耗时：{time}s");
             time = HiPerfTimer.Execute(() =>
             {
-                for (int i = 0; i < 100000; i++)
+                for (int i = 0; i < 1000000; i++)
                 {
                     var b = a.Map<TestClassA, TestClassB>();
                 }
@@ -194,7 +194,7 @@ namespace Masuit.Tools.ExpressionMapperBenchmark
             Console.WriteLine($"AutoMapper映射2次耗时：{time}s");
             time = HiPerfTimer.Execute(() =>
             {
-                for (int i = 0; i < 100000; i++)
+                for (int i = 0; i < 1000000; i++)
                 {
                     var b = Mapper.Map<TestClassB>(a);
                 }
