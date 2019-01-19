@@ -25,7 +25,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest", "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest\Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.csproj", "{49E16577-01CD-4104-B73E-449B2960D956}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest", "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest\Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.csproj", "{49E16577-01CD-4104-B73E-449B2960D956}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.ExpressionMapperBenchmark", "Masuit.Tools.ExpressionMapperBenchmark\Masuit.Tools.ExpressionMapperBenchmark.csproj", "{1D51DC49-6626-41AF-B1B5-085C83307FF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{49E16577-01CD-4104-B73E-449B2960D956}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49E16577-01CD-4104-B73E-449B2960D956}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49E16577-01CD-4104-B73E-449B2960D956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +93,7 @@ Global
 		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{49E16577-01CD-4104-B73E-449B2960D956} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
+		{1D51DC49-6626-41AF-B1B5-085C83307FF2} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B57FDA8F-95CF-478B-A0A8-7FF0F01CCFAB}
