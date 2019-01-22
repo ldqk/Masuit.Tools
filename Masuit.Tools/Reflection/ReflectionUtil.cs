@@ -29,9 +29,8 @@ namespace Masuit.Tools.Reflection
         /// <returns>T类型</returns>
         public static T InvokeMethod<T>(this object obj, string methodName, object[] args) where T : class
         {
-            T objReturn;
             Type type = obj.GetType();
-            objReturn = type.InvokeMember(methodName, bf | BindingFlags.InvokeMethod, null, obj, args) as T;
+            var objReturn = type.InvokeMember(methodName, bf | BindingFlags.InvokeMethod, null, obj, args) as T;
             return objReturn;
         }
 
@@ -112,27 +111,22 @@ namespace Masuit.Tools.Reflection
 
         #region 获取Description
 
-        /// <overloads>
-        ///		Get The Member Description using Description Attribute.
-        /// </overloads>
         /// <summary>
-        /// Get The Enum Field Description using Description Attribute.
+        /// 获取枚举成员的Description信息
         /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns>return description or value.ToString()</returns>
+        /// <param name="value">枚举值</param>
+        /// <returns>返回枚举的Description或ToString</returns>
         public static string GetDescription(this Enum value)
         {
             return GetDescription(value, null);
         }
 
         /// <summary>
-        /// Get The Enum Field Description using Description Attribute and 
-        /// objects to format the Description.
+        /// 获取枚举值的Description信息
         /// </summary>
-        /// <param name="value">Enum For Which description is required.</param>
-        /// <param name="args">An Object array containing zero or more objects to format.</param>
-        /// <returns>return null if DescriptionAttribute is not found or return type description</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/>"/> is <c>null</c>.</exception>
+        /// <param name ="value">枚举值</param>
+        /// <param name ="args">要格式化的对象</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
         public static string GetDescription(this Enum value, params object[] args)
         {
             if (value == null)
@@ -141,9 +135,9 @@ namespace Masuit.Tools.Reflection
             }
 
             FieldInfo fi = value.GetType().GetField(value.ToString());
-            DescriptionAttribute[] attributes = (DescriptionAttribute[]) fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            var text1 = (attributes.Length > 0) ? attributes[0].Description : value.ToString();
-            if ((args != null) && (args.Length > 0))
+            DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var text1 = attributes.Length > 0 ? attributes[0].Description : value.ToString();
+            if ((args != null) && args.Length > 0)
             {
                 return string.Format(null, text1, args);
             }
@@ -152,24 +146,21 @@ namespace Masuit.Tools.Reflection
         }
 
         /// <summary>
-        ///	Get The Type Description using Description Attribute.
+        ///	根据成员信息获取Description信息
         /// </summary>
-        /// <param name="member">Specified Member for which Info is Required</param>
-        /// <returns>return null if DescriptionAttribute is not found or return type description</returns>
+        /// <param name="member">成员信息</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
         public static string GetDescription(this MemberInfo member)
         {
             return GetDescription(member, null);
         }
 
         /// <summary>
-        /// Get The Type Description using Description Attribute and 
-        /// objects to format the Description.
+        /// 根据成员信息获取Description信息
         /// </summary>
-        /// <param name="member"> Specified Member for which Info is Required</param>
-        /// <param name="args">An Object array containing zero or more objects to format.</param>
-        /// <returns>return <see cref="String.Empty"/> if DescriptionAttribute is 
-        /// not found or return type description</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="member"/>"/> is <c>null</c>.</exception>
+        /// <param name="member">成员信息</param>
+        /// <param name="args">格式化占位对象</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
         public static string GetDescription(this MemberInfo member, params object[] args)
         {
             string text1;
@@ -181,7 +172,7 @@ namespace Masuit.Tools.Reflection
 
             if (member.IsDefined(typeof(DescriptionAttribute), false))
             {
-                DescriptionAttribute[] attributes = (DescriptionAttribute[]) member.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                DescriptionAttribute[] attributes = (DescriptionAttribute[])member.GetCustomAttributes(typeof(DescriptionAttribute), false);
                 text1 = attributes[0].Description;
             }
             else
@@ -201,16 +192,12 @@ namespace Masuit.Tools.Reflection
 
         #region 获取Attribute信息
 
-        /// <overloads>
-        /// Gets the specified object attributes
-        /// </overloads>
         /// <summary>
-        /// Gets the specified object attributes for assembly as specified by type
+        /// 获取对象的Attributes
         /// </summary>
-        /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
-        /// <param name="assembly">the assembly in which the specified attribute is defined</param>
-        /// <returns>Attribute as Object or null if not found.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="attributeType"/>"/> is <c>null</c>.</exception>
+        /// <param name="attributeType">Type类型</param>
+        /// <param name="assembly">程序集信息</param>
+        /// <returns></returns>
         public static object GetAttribute(this Type attributeType, Assembly assembly)
         {
             if (attributeType == null)
@@ -233,25 +220,23 @@ namespace Masuit.Tools.Reflection
         }
 
         /// <summary>
-        /// Gets the specified object attributes for type as specified by type
+        /// 获取对象的Attributes
         /// </summary>
-        /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
-        /// <param name="type">the type on which the specified attribute is defined</param>
-        /// <returns>Attribute as Object or null if not found.</returns>
+        /// <param name="attributeType">Type类型</param>
+        /// <param name="type">成员信息</param>
+        /// <returns></returns>
         public static object GetAttribute(this Type attributeType, MemberInfo type)
         {
             return GetAttribute(attributeType, type, false);
         }
 
         /// <summary>
-        /// Gets the specified object attributes for type as specified by type with option to serach parent
+        /// 获取对象的Attributes
         /// </summary>
-        /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
-        /// <param name="type">the type on which the specified attribute is defined</param>
-        /// <param name="searchParent">if set to <see langword="true"/> [search parent].</param>
-        /// <returns>
-        /// Attribute as Object or null if not found.
-        /// </returns>
+        /// <param name="attributeType">Type类型</param>
+        /// <param name="type">成员信息</param>
+        /// <param name="searchParent">是否在父类中去查找</param>
+        /// <returns></returns>
         public static object GetAttribute(this Type attributeType, MemberInfo type, bool searchParent)
         {
             if (type == null)
@@ -278,25 +263,23 @@ namespace Masuit.Tools.Reflection
         }
 
         /// <summary>
-        /// Gets the collection of all specified object attributes for type as specified by type
+        /// 获取对象的Attributes
         /// </summary>
-        /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
-        /// <param name="type">the type on which the specified attribute is defined</param>
-        /// <returns>Attribute as Object or null if not found.</returns>
+        /// <param name="attributeType">Type类型</param>
+        /// <param name="type">成员信息</param>
+        /// <returns></returns>
         public static object[] GetAttributes(this Type attributeType, MemberInfo type)
         {
             return GetAttributes(attributeType, type, false);
         }
 
         /// <summary>
-        /// Gets the collection of all specified object attributes for type as specified by type with option to serach parent
+        /// 获取对象的Attributes
         /// </summary>
-        /// <param name="attributeType">The attribute Type for which the custom attributes are to be returned.</param>
-        /// <param name="type">the type on which the specified attribute is defined</param>
-        /// <param name="searchParent">The attribute Type for which the custom attribute is to be returned.</param>
-        /// <returns>
-        /// Attribute as Object or null if not found.
-        /// </returns>
+        /// <param name="attributeType">Type类型</param>
+        /// <param name="type">成员信息</param>
+        /// <param name="searchParent">是否在父类中去查找</param>
+        /// <returns></returns>
         public static object[] GetAttributes(this Type attributeType, MemberInfo type, bool searchParent)
         {
             if (type == null)
@@ -343,7 +326,7 @@ namespace Masuit.Tools.Reflection
         {
             Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
             ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
-            return (Bitmap) rm.GetObject(imageName);
+            return (Bitmap)rm.GetObject(imageName);
         }
 
         /// <summary>
@@ -375,7 +358,7 @@ namespace Masuit.Tools.Reflection
                 return "";
             }
 
-            int iLen = (int) st.Length;
+            int iLen = (int)st.Length;
             byte[] bytes = new byte[iLen];
             st.Read(bytes, 0, iLen);
             return (bytes != null) ? Encoding.GetEncoding(charset).GetString(bytes) : "";
@@ -403,7 +386,6 @@ namespace Masuit.Tools.Reflection
             }
 
             return null;
-            //return Assembly.GetExecutingAssembly().CreateInstance(type);
         }
 
         /// <summary>

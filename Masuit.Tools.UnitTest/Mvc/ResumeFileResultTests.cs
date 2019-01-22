@@ -1,4 +1,5 @@
 ﻿using Masuit.Tools.Mvc;
+using Masuit.Tools.Mvc.ActionResults;
 using Masuit.Tools.UnitTest.Mvc.Mocks;
 using NUnit.Framework;
 using System;
@@ -21,13 +22,6 @@ namespace Masuit.Tools.UnitTest.Mvc
             _file2 = new FileInfo(FilePath("download-test-file2.txt"));
             Request.Headers.Clear();
             Response.ClearTestResponse();
-        }
-
-        [Test]
-        public void FormatDateTest()
-        {
-            var dateToTest = new DateTime(2010, 5, 25, 7, 44, 57);
-            Assert.AreEqual(dateToTest.ToString("R"), ResumeFileResult.Util.FormatDate(dateToTest));
         }
 
         [Test]
@@ -90,14 +84,14 @@ namespace Masuit.Tools.UnitTest.Mvc
         [Test]
         public void IsNotModified_Is_False_If_Etag_Is_Empty_And_IfModifiedSince_Is_Invalid()
         {
-            Request.Headers[HttpHeaders.IfModifiedSince] = ResumeFileResult.Util.FormatDate(DateTime.Now);
+            Request.Headers[HttpHeaders.IfModifiedSince] = DateTime.Now.ToString("R");
             Assert.IsFalse(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
         }
 
         [Test]
         public void IsNotModified_Is_False_If_Etag_Is_Empty_And_IfModifiedSince_Is_LastFileWriteTime()
         {
-            Request.Headers[HttpHeaders.IfModifiedSince] = ResumeFileResult.Util.FormatDate(_file.LastWriteTime);
+            Request.Headers[HttpHeaders.IfModifiedSince] = _file.LastWriteTime.ToString("R");
             Assert.IsTrue(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
         }
 
@@ -133,14 +127,14 @@ namespace Masuit.Tools.UnitTest.Mvc
         [Test]
         public void IsPreconditionFailedTest_Is_IsTrue_If_ifUnmodifiedSince_Doesnot_Equal_FileLastWriteTime()
         {
-            Request.Headers[HttpHeaders.IfUnmodifiedSince] = ResumeFileResult.Util.FormatDate(DateTime.Now);
+            Request.Headers[HttpHeaders.IfUnmodifiedSince] = DateTime.Now.ToString("R");
             Assert.IsTrue(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
         }
 
         [Test]
         public void IsPreconditionFailedTest_Is_IsFalse_If_ifUnmodifiedSince_Equals_FileLastWriteTime()
         {
-            Request.Headers[HttpHeaders.IfUnmodifiedSince] = ResumeFileResult.Util.FormatDate(_file.LastWriteTime);
+            Request.Headers[HttpHeaders.IfUnmodifiedSince] = _file.LastWriteTime.ToString("R");
             Assert.IsFalse(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
         }
 

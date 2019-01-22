@@ -366,7 +366,7 @@ namespace Masuit.Tools.Reflection
 
         #endregion
 
-        #region 辅助类  
+        #region Class辅助类  
 
         /// <summary>  
         /// 自定义的属性信息类型。  

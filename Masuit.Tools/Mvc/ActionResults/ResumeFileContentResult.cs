@@ -9,7 +9,7 @@ namespace Masuit.Tools.Mvc.ActionResults
         {
             if (fileContents == null)
             {
-                throw new ArgumentNullException("fileContents");
+                throw new ArgumentNullException(nameof(fileContents));
             }
 
             FileContents = new MemoryStream(fileContents);

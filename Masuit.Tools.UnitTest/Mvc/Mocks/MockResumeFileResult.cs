@@ -1,5 +1,5 @@
-﻿using System.Web;
-using Masuit.Tools.Mvc;
+﻿using Masuit.Tools.Mvc.ActionResults;
+using System.Web;
 
 namespace Masuit.Tools.UnitTest.Mvc.Mocks
 {
@@ -9,7 +9,7 @@ namespace Masuit.Tools.UnitTest.Mvc.Mocks
         {
         }
 
-        public MockResumeFileResult(string fileName, HttpRequestBase request, string downloadFileName) : base(fileName,request, downloadFileName)
+        public MockResumeFileResult(string fileName, HttpRequestBase request, string downloadFileName) : base(fileName, request, downloadFileName)
         {
         }
 

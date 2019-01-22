@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.DateTimeExt;
+﻿using Masuit.Tools.Security;
 using System;
 
 namespace Test
@@ -7,10 +7,9 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            DateTime time = DateTime.Now;
-            Console.WriteLine(time.GetTotalMilliseconds());
-            Console.WriteLine(time.GetTotalMicroseconds());
-            Console.WriteLine(time.GetTotalNanoseconds());
+            RsaKey keys = RsaCrypt.GenerateRsaKeys();
+            Console.WriteLine(keys.PublicKey);
+            Console.WriteLine(keys.PrivateKey);
         }
     }
 }

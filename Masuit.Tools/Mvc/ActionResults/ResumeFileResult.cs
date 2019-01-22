@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Masuit.Tools.Mvc
+namespace Masuit.Tools.Mvc.ActionResults
 {
     /// <summary>
     /// 扩展自带的FilePathResult来支持断点续传
@@ -46,7 +46,7 @@ namespace Masuit.Tools.Mvc
         public ResumeFileResult(string fileName, string ifNoneMatch, string ifModifiedSince, string ifMatch, string ifUnmodifiedSince, string ifRange, string range, string downloadFileName) : base(fileName, new MimeMapper().GetMimeFromPath(fileName))
         {
             _file = new FileInfo(fileName);
-            _lastModified = Util.FormatDate(_file.LastWriteTime);
+            _lastModified = _file.LastWriteTime.ToString("R");
             _rangeRequest = range != null;
             _byteRange = Range(range);
             _etag = Etag();
@@ -66,7 +66,7 @@ namespace Masuit.Tools.Mvc
         {
             response.AppendHeader(HttpHeaders.Etag, _etag);
             response.AppendHeader(HttpHeaders.LastModified, _lastModified);
-            response.AppendHeader(HttpHeaders.Expires, Util.FormatDate(DateTime.Now));
+            response.AppendHeader(HttpHeaders.Expires, DateTime.Now.ToString("R"));
             response.AppendHeader(HttpHeaders.AccessControlExposeHeaders, HttpHeaders.ContentDisposition);
 
             if (IsNotModified())
@@ -199,7 +199,7 @@ namespace Masuit.Tools.Mvc
 
         private bool IsMatch(string values, string etag)
         {
-            var matches = (values ?? string.Empty).Split(new[]
+            var matches = values.Split(new[]
             {
                 ","
             }, StringSplitOptions.RemoveEmptyEntries);
@@ -267,7 +267,7 @@ namespace Masuit.Tools.Mvc
             /// <returns></returns>
             public static string Etag(FileInfo file)
             {
-                return Etag(file.FullName, FormatDate(file.LastWriteTime));
+                return Etag(file.FullName, file.LastWriteTime.ToString("R"));
             }
 
             /// <summary>
@@ -289,17 +289,7 @@ namespace Masuit.Tools.Mvc
             /// <returns></returns>
             public static string Etag(string fullName, DateTime lastWriteTime)
             {
-                return Etag(fullName, FormatDate(lastWriteTime));
-            }
-
-            /// <summary>
-            /// 格式是绝对日期和时间。它必须是RFC 1123日期格式。
-            /// </summary>
-            /// <param name="date"></param>
-            /// <returns></returns>
-            public static string FormatDate(DateTime date)
-            {
-                return date.ToString("R");
+                return Etag(fullName, lastWriteTime.ToString("R"));
             }
         }
     }

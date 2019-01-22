@@ -37,7 +37,7 @@ namespace Masuit.Tools.Mvc.ActionResults
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             ResumeRequest resumingRequest = new ResumeRequest(context.HttpContext, FileContents.Length)

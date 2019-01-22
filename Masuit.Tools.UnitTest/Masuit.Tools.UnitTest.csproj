@@ -135,6 +135,7 @@
     <Compile Include="Mvc\ResumeFileResultTests.cs" />
     <Compile Include="NumberFormaterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RSATest.cs" />
     <Compile Include="TemplateTest.cs" />
   </ItemGroup>
   <ItemGroup>
