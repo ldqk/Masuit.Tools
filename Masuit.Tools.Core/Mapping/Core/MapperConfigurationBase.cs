@@ -414,6 +414,7 @@ namespace Masuit.Tools.Mapping.Core
                                     Expression toListExp = Expression.Call(_toListMethod.MakeGenericMethod(sourceType), assignExpression);
                                     Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
                                     finalAssign.Add(setIf);
+                                    finalAssign.Add(toListExp);
                                 }
                             }
                         }
@@ -437,7 +438,7 @@ namespace Masuit.Tools.Mapping.Core
                             }
                             else
                             {
-                                Expression selectExp = Expression.Call(_selectMethod.MakeGenericMethod(sourceType), Expression.Constant(mapper.GetDelegate()));
+                                //Expression selectExp = Expression.Call(_selectMethod.MakeGenericMethod(sourceType), Expression.Constant(mapper.GetDelegate()));
                                 Expression checkIfNull = Expression.NotEqual(propToAssign, defaultExpression);
                                 Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
                                 assignExpression = setIf;
@@ -596,7 +597,7 @@ namespace Masuit.Tools.Mapping.Core
                 Expression mapExpression = externalMapper.GetMemberInitExpression();
                 Expression defaultExpression = Expression.Constant(MapperHelper.GetDefaultValue(configExpression.Item1.Type), configExpression.Item1.Type);
                 // 修改成员
-                Expression expSource = visitorMapper.Visit(configExpression.Item1, false);
+                Expression expSource = visitorMapper.Visit(configExpression.Item1);
                 ChangParameterExpressionVisitor changeParamaterVisitor = new ChangParameterExpressionVisitor(expSource);
                 mapExpression = changeParamaterVisitor.Visit(mapExpression);
                 // 现在可以创建正确的参数。
@@ -639,7 +640,7 @@ namespace Masuit.Tools.Mapping.Core
                 // 为了与EF / LINQ2SQL兼容。
                 LambdaExpression expMappeur = externalMapper.GetGenericLambdaExpression();
                 // 创建对Select方法的调用，在Enumerable的Select中插入一个lambda表达式（参数是一个委托），通常情况下，这是不可能的，但（个人认为）编译器就像这样创建并且LINQ2SQL / EF是可以进行sql查询的
-                Expression select = Expression.Call(_selectMethod.MakeGenericMethod(sourceTypeList, destTypeList), new Expression[]
+                Expression select = Expression.Call(_selectMethod.MakeGenericMethod(sourceTypeList, destTypeList), new[]
                 {
                     expSource,
                     expMappeur

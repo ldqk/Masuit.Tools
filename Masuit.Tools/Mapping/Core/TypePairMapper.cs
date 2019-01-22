@@ -11,8 +11,8 @@ namespace Masuit.Tools.Mapping.Core
             Name = name;
         }
 
-        public Type Source { get; private set; }
-        public Type Target { get; private set; }
+        public Type Source { get; }
+        public Type Target { get; }
 
         public string Name { get; private set; }
 
@@ -21,9 +21,9 @@ namespace Masuit.Tools.Mapping.Core
             return new TypePairMapper(source, target, name);
         }
 
-        public static TypePairMapper Create<TSource, TTarget>(string name = null)
+        public static TypePairMapper Create<TSource, TDest>(string name = null)
         {
-            return new TypePairMapper(typeof(TSource), typeof(TTarget), name);
+            return new TypePairMapper(typeof(TSource), typeof(TDest), name);
         }
 
         public override bool Equals(object obj)

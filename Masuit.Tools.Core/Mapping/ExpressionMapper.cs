@@ -17,13 +17,13 @@ namespace Masuit.Tools.Mapping
         /// 映射指定的源。
         /// </summary>
         /// <typeparam name="TSource">源类型</typeparam>
-        /// <typeparam name="TTarget">目标类型</typeparam>
+        /// <typeparam name="TDest">目标类型</typeparam>
         /// <param name="source">源对象</param>
         /// <param name="name">别名</param>
         /// <returns>
         /// 目标对象的新实例
         /// </returns>
-        public static TTarget Map<TSource, TTarget>(this TSource source, string name = null) where TSource : class where TTarget : class
+        public static TDest Map<TSource, TDest>(this TSource source, string name = null) where TSource : class where TDest : class
         {
             if (source == null)
             {
@@ -34,9 +34,9 @@ namespace Masuit.Tools.Mapping
             {
                 Initialize();
             }
-            TTarget result = null;
-            MapperConfiguration<TSource, TTarget> mapper = GetMapper<TSource, TTarget>(name);
-            Func<TSource, TTarget> query = mapper.GetFuncDelegate();
+            TDest result = null;
+            MapperConfiguration<TSource, TDest> mapper = GetMapper<TSource, TDest>(name);
+            Func<TSource, TDest> query = mapper.GetFuncDelegate();
             if (query != null)
             {
                 result = query(source);
@@ -50,19 +50,19 @@ namespace Masuit.Tools.Mapping
         /// 将指定的源映射到目标。
         /// </summary>
         /// <typeparam name="TSource">源类型</typeparam>
-        /// <typeparam name="TTarget">目标类型</typeparam>
+        /// <typeparam name="TDest">目标类型</typeparam>
         /// <param name="source">源对象</param>
         /// <param name="target">目标对象</param>
         /// <param name="name">别名</param>
-        public static void Map<TSource, TTarget>(this TSource source, TTarget target, string name = null) where TSource : class where TTarget : class
+        public static void Map<TSource, TDest>(this TSource source, TDest target, string name = null) where TSource : class where TDest : class
         {
             if (!_initialized)
             {
                 Initialize();
             }
-            TTarget result = null;
-            MapperConfiguration<TSource, TTarget> mapper = GetMapper<TSource, TTarget>(name);
-            Action<TSource, TTarget> query = mapper.GetDelegateForExistingTarget() as Action<TSource, TTarget>;
+            TDest result = null;
+            MapperConfiguration<TSource, TDest> mapper = GetMapper<TSource, TDest>(name);
+            Action<TSource, TDest> query = mapper.GetDelegateForExistingTarget() as Action<TSource, TDest>;
             if (query != null)
             {
                 query(source, target);
@@ -75,29 +75,29 @@ namespace Masuit.Tools.Mapping
         /// 获取查询表达式树
         /// </summary>
         /// <typeparam name="TSource">源类型</typeparam>
-        /// <typeparam name="TTarget">目标类型</typeparam>
+        /// <typeparam name="TDest">目标类型</typeparam>
         /// <returns></returns>
-        public static Expression<Func<TSource, TTarget>> GetQueryExpression<TSource, TTarget>() where TSource : class where TTarget : class
+        public static Expression<Func<TSource, TDest>> GetQueryExpression<TSource, TDest>() where TSource : class where TDest : class
         {
-            return GetMapper<TSource, TTarget>().GetLambdaExpression();
+            return GetMapper<TSource, TDest>().GetLambdaExpression();
         }
 
         /// <summary>
         /// 创建mapper对象
         /// </summary>
         /// <typeparam name="TSource">源类型</typeparam>
-        /// <typeparam name="TTarget">目标类型</typeparam>
+        /// <typeparam name="TDest">目标类型</typeparam>
         /// <returns></returns>
-        public static MapperConfiguration<TSource, TTarget> CreateMap<TSource, TTarget>(string name = null) where TSource : class where TTarget : class
+        public static MapperConfiguration<TSource, TDest> CreateMap<TSource, TDest>(string name = null) where TSource : class where TDest : class
         {
-            MapperConfigurationBase map = MapperConfigurationCollectionContainer.Instance.Find(typeof(TSource), typeof(TTarget), name);
+            MapperConfigurationBase map = MapperConfigurationCollectionContainer.Instance.Find(typeof(TSource), typeof(TDest), name);
             if (map == null)
             {
                 string finalName = string.IsNullOrEmpty(name) ? "s" + MapperConfigurationCollectionContainer.Instance.Count.ToString() : name;
-                map = new MapperConfiguration<TSource, TTarget>(finalName);
+                map = new MapperConfiguration<TSource, TDest>(finalName);
                 MapperConfigurationCollectionContainer.Instance.Add(map);
             }
-            return map as MapperConfiguration<TSource, TTarget>;
+            return map as MapperConfiguration<TSource, TDest>;
         }
 
         /// <summary>
