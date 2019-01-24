@@ -2,7 +2,6 @@
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
-using Masuit.Tools.Security;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -301,12 +300,12 @@ namespace Masuit.Tools.Core.Net
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
 
-            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
-            if (string.IsNullOrEmpty(sessionKey))
-            {
-                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
-                HttpContext2.Current.Response.Cookies.Append("SessionID", sessionKey);
-            }
+            //var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
+            //if (string.IsNullOrEmpty(sessionKey))
+            //{
+            //    sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+            //    HttpContext2.Current.Response.Cookies.Append("SessionID", sessionKey);
+            //}
 
             if (session != null)
             {
@@ -317,7 +316,7 @@ namespace Masuit.Tools.Core.Net
             {
                 using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                    redisHelper.SetHash("Session:" + HttpContext2.Current.Connection.Id, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
             }
             catch
@@ -337,7 +336,15 @@ namespace Masuit.Tools.Core.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T Get<T>(this ISession session, string key) => JsonConvert.DeserializeObject<T>(session.GetString(key));
+        public static T Get<T>(this ISession session, string key)
+        {
+            string value = session.GetString(key);
+            if (string.IsNullOrEmpty(value))
+            {
+                return default(T);
+            }
+            return JsonConvert.DeserializeObject<T>(value);
+        }
 
         /// <summary>
         /// 从Redis取Session
@@ -353,42 +360,35 @@ namespace Masuit.Tools.Core.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-
-            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
-            if (!string.IsNullOrEmpty(sessionKey))
+            T obj = default(T);
+            if (_ != null)
             {
-                T obj = default(T);
-                if (_ != default(T))
-                {
-                    obj = _.Get<T>(key);
-                }
+                obj = _.Get<T>(key);
+            }
 
-                if (obj == default(T))
+            if (obj == default(T))
+            {
+                try
                 {
-                    try
+                    var sessionKey = "Session:" + HttpContext2.Current.Connection.Id;
+                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                     {
-                        sessionKey = "Session:" + sessionKey;
-                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
-                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                            {
-                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
-                                return redisHelper.GetHash<T>(sessionKey, key);
-                            }
-
-                            return default(T);
+                            redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                            return redisHelper.GetHash<T>(sessionKey, key);
                         }
-                    }
-                    catch
-                    {
+
                         return default(T);
                     }
                 }
-
-                return obj;
+                catch
+                {
+                    return default(T);
+                }
             }
 
-            return default(T);
+            return obj;
         }
 
         /// <summary>
@@ -404,29 +404,25 @@ namespace Masuit.Tools.Core.Net
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
 
-            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
-            if (!string.IsNullOrEmpty(sessionKey))
+            if (session != null)
             {
-                if (session != null)
-                {
-                    session.Remove(key);
-                }
+                session.Remove(key);
+            }
 
-                try
+            try
+            {
+                var sessionKey = "Session:" + HttpContext2.Current.Connection.Id;
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
                 {
-                    sessionKey = "Session:" + sessionKey;
-                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                    if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                     {
-                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                        {
-                            redisHelper.DeleteHash(sessionKey, key);
-                        }
+                        redisHelper.DeleteHash(sessionKey, key);
                     }
                 }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
             }
         }
 
