@@ -93,9 +93,9 @@ namespace Masuit.Tools.Mapping.Extensions
         /// <param name="query">分类化的序列值</param>
         /// <param name="predicate">用于根据条件测试每个元素的功能。</param>
         /// <returns></returns>
-        public static IQueryable<TDest> Where<TSource, TDest>(this IQueryable<TDest> query, Expression<Func<TSource, bool>> predicate)
+        public static IQueryable<TDest> WhereTo<TSource, TDest>(this IQueryable<TDest> query, Expression<Func<TSource, bool>> predicate)
         {
-            return Queryable.Where(query, predicate.ConvertTo<TSource, TDest>());
+            return query.Where(predicate.ConvertTo<TSource, TDest>());
         }
 
         private static TQueryable CreateSortedMethodCall<TSource, TDest, TQueryable>(IQueryable<TSource> query, string methodName, string sortedPropertySourceName) where TSource : class where TDest : class where TQueryable : class, IQueryable<TSource>

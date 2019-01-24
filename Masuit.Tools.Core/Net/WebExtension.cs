@@ -1,14 +1,18 @@
-﻿using System;
+﻿using Masuit.Tools.Core.Config;
+using Masuit.Tools.Logging;
+using Masuit.Tools.Models;
+using Masuit.Tools.NoSQL;
+using Masuit.Tools.Security;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Masuit.Tools.Core.Config;
-using Masuit.Tools.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.Core.Net
 {
@@ -263,5 +267,191 @@ namespace Masuit.Tools.Core.Net
                 }
             }
         }
+
+        #region 写Session
+
+        //private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
+        /// <summary>
+        /// 写Session
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        public static void Set(this ISession session, string key, object value)
+        {
+            session.SetString(key, value.ToJsonString());
+        }
+
+        /// <summary>
+        /// 将Session存到Redis，需要先在config中配置链接字符串，连接字符串在config配置文件中的ConnectionStrings节下配置，name固定为RedisHosts，值的格式：127.0.0.1:6379,allowadmin=true，若未正确配置，将按默认值“127.0.0.1:6379,allowadmin=true”进行操作，如：<br/>
+        /// &lt;connectionStrings&gt;<br/>
+        ///      &lt;add name = "RedisHosts" connectionString="127.0.0.1:6379,allowadmin=true"/&gt;<br/>
+        /// &lt;/connectionStrings&gt;
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="session"></param>
+        /// <param name="key">键</param>
+        /// <param name="obj">需要存的对象</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns>
+        public static void SetByRedis<T>(this ISession session, string key, T obj, int expire = 20)
+        {
+            if (HttpContext2.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
+
+            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
+            if (string.IsNullOrEmpty(sessionKey))
+            {
+                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+                HttpContext2.Current.Response.Cookies.Append("SessionID", sessionKey);
+            }
+
+            if (session != null)
+            {
+                session.SetString(key, obj.ToJsonString());
+            }
+
+            try
+            {
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        #endregion
+
+        #region 获取Session
+
+        /// <summary>
+        /// 获取Session
+        /// </summary>
+        /// <typeparam name="T">对象</typeparam>
+        /// <param name="session"></param>
+        /// <param name="key">键</param>
+        /// <returns>对象</returns>
+        public static T Get<T>(this ISession session, string key) => JsonConvert.DeserializeObject<T>(session.GetString(key));
+
+        /// <summary>
+        /// 从Redis取Session
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="_"></param>
+        /// <param name="key">键</param>
+        /// <param name="expire">过期时间，默认20分钟</param>
+        /// <returns></returns> 
+        public static T GetByRedis<T>(this ISession _, string key, int expire = 20) where T : class
+        {
+            if (HttpContext2.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
+
+            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
+            if (!string.IsNullOrEmpty(sessionKey))
+            {
+                T obj = default(T);
+                if (_ != default(T))
+                {
+                    obj = _.Get<T>(key);
+                }
+
+                if (obj == default(T))
+                {
+                    try
+                    {
+                        sessionKey = "Session:" + sessionKey;
+                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                        {
+                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                            {
+                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                                return redisHelper.GetHash<T>(sessionKey, key);
+                            }
+
+                            return default(T);
+                        }
+                    }
+                    catch
+                    {
+                        return default(T);
+                    }
+                }
+
+                return obj;
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// 从Redis移除对应键的Session
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static void RemoveByRedis(this ISession session, string key)
+        {
+            if (HttpContext2.Current is null)
+            {
+                throw new Exception("请确保此方法调用是在同步线程中执行！");
+            }
+
+            var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
+            if (!string.IsNullOrEmpty(sessionKey))
+            {
+                if (session != null)
+                {
+                    session.Remove(key);
+                }
+
+                try
+                {
+                    sessionKey = "Session:" + sessionKey;
+                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                    {
+                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                        {
+                            redisHelper.DeleteHash(sessionKey, key);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Session个数
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public static int SessionCount(this ISession session)
+        {
+            try
+            {
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                {
+                    return redisHelper.GetServer().Keys(1, "Session:*").Count();
+                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
+                return 0;
+            }
+        }
+
+        #endregion
+
     }
 }
