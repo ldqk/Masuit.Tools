@@ -61,6 +61,7 @@
         public const string Jpeg = "image/jpeg";
         public const string Jpg = "image/jpeg";
         public const string Js = "text/javascript";
+        public const string Json = "application/json";
         public const string Jsf = "text/plain";
         public const string Jspf = "text/plain";
         public const string Kar = "audio/x-midi";
