@@ -40,10 +40,4 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PackageReference Include="System.Management" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Diagnostics.PerformanceCounter">
-      <HintPath>C:\Users\Administrator\.nuget\packages\system.diagnostics.performancecounter\4.5.0\ref\netstandard2.0\System.Diagnostics.PerformanceCounter.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
