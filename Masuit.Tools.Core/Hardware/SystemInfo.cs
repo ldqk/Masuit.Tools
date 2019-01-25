@@ -84,7 +84,7 @@ namespace Masuit.Tools.Hardware
 
         #endregion
 
-        public static bool CompactFormat { get; set; }
+        private static bool CompactFormat { get; set; }
 
         #region CPU核心 
 

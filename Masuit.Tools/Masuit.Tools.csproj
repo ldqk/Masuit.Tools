@@ -112,7 +112,6 @@
     <Compile Include="Hardware\DiskData.cs" />
     <Compile Include="Hardware\MemoryInfo.cs" />
     <Compile Include="Hardware\NetData.cs" />
-    <Compile Include="Hardware\OnLogicalDiskProc.cs" />
     <Compile Include="Hardware\RamInfo.cs" />
     <Compile Include="Hardware\SystemtimeInfo.cs" />
     <Compile Include="Hardware\Unit.cs" />
