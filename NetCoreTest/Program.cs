@@ -1,9 +1,7 @@
-﻿using System;
-using Masuit.Tools.Media;
+﻿using Masuit.Tools.Hardware;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using System.Drawing;
-using Masuit.Tools.Win32;
+using System;
 
 namespace NetCoreTest
 {
@@ -11,9 +9,7 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            Random rnd = new Random();
-            int num = rnd.StrictNext();//产生真随机数
-            double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
+            Console.WriteLine(SystemInfo.CpuLoad);
             CreateWebHostBuilder(args).Build().Run();
         }
 
