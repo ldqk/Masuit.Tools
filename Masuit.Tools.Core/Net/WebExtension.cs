@@ -1,4 +1,5 @@
 ﻿using Masuit.Tools.Core.Config;
+using Masuit.Tools.Core.NoSQL;
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
@@ -269,7 +270,6 @@ namespace Masuit.Tools.Core.Net
 
         #region 写Session
 
-        //private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
         /// <summary>
         /// 写Session
         /// </summary>
@@ -299,22 +299,11 @@ namespace Masuit.Tools.Core.Net
             {
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
-
-            //var sessionKey = HttpContext2.Current.Request.Cookies["SessionID"];
-            //if (string.IsNullOrEmpty(sessionKey))
-            //{
-            //    sessionKey = Guid.NewGuid().ToString().AESEncrypt();
-            //    HttpContext2.Current.Response.Cookies.Append("SessionID", sessionKey);
-            //}
-
-            if (session != null)
-            {
-                session.SetString(key, obj.ToJsonString());
-            }
+            session?.SetString(key, obj.ToJsonString());
 
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(RedisHelperFactory.ConnectionCache.Values.FirstOrDefault() ?? throw new ArgumentException("在使用该方法之前，请先在Startup.cs中配置services.AddxxxRedisHelper"), 1))
                 {
                     redisHelper.SetHash("Session:" + HttpContext2.Current.Connection.Id, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
                 }
@@ -371,7 +360,7 @@ namespace Masuit.Tools.Core.Net
                 try
                 {
                     var sessionKey = "Session:" + HttpContext2.Current.Connection.Id;
-                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                    using (RedisHelper redisHelper = RedisHelper.GetInstance(RedisHelperFactory.ConnectionCache.Values.FirstOrDefault() ?? throw new ArgumentException("在使用该方法之前，请先在Startup.cs中配置services.AddxxxRedisHelper"), 1))
                     {
                         if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                         {
@@ -404,15 +393,12 @@ namespace Masuit.Tools.Core.Net
                 throw new Exception("请确保此方法调用是在同步线程中执行！");
             }
 
-            if (session != null)
-            {
-                session.Remove(key);
-            }
+            session?.Remove(key);
 
             try
             {
                 var sessionKey = "Session:" + HttpContext2.Current.Connection.Id;
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(RedisHelperFactory.ConnectionCache.Values.FirstOrDefault() ?? throw new ArgumentException("在使用该方法之前，请先在Startup.cs中配置services.AddxxxRedisHelper"), 1))
                 {
                     if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                     {
@@ -435,7 +421,7 @@ namespace Masuit.Tools.Core.Net
         {
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
+                using (RedisHelper redisHelper = RedisHelper.GetInstance(RedisHelperFactory.ConnectionCache.Values.FirstOrDefault() ?? throw new ArgumentException("在使用该方法之前，请先在Startup.cs中配置services.AddxxxRedisHelper"), 1))
                 {
                     return redisHelper.GetServer().Keys(1, "Session:*").Count();
                 }
