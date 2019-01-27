@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Masuit.Tools.Core.Config;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Collections.Concurrent;
@@ -19,7 +20,7 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// Redis服务器默认连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
         /// </summary>
-        internal static string RedisConnectionString { get; set; } = "127.0.0.1:6379,allowadmin=true";
+        internal static string RedisConnectionString { get; set; } = CoreConfig.Configuration["Redis"] ?? "127.0.0.1:6379,allowadmin=true";
 
         /// <summary>
         /// 自定义键

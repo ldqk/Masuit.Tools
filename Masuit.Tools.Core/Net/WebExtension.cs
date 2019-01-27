@@ -110,10 +110,10 @@ namespace Masuit.Tools.Core.Net
             ip.MatchInetAddress(out var isIpAddress);
             if (isIpAddress)
             {
-                string ak = CoreConfig.Configuration["AppSettings:BaiduAK"];
+                string ak = CoreConfig.Configuration["BaiduAK"];
                 if (string.IsNullOrEmpty(ak))
                 {
-                    throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
+                    throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中下添加BaiduAK配置节(注意大小写)");
                 }
                 using (HttpClient client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") })
                 {
