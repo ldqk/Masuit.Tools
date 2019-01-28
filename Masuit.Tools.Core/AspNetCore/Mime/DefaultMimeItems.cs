@@ -172,6 +172,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "tiff", MimeType = "image/tiff"},
             new MimeMappingItem{Extension = "tr", MimeType = "application/x-troff"},
             new MimeMappingItem{Extension = "tsv", MimeType = "text/tab-separated-values"},
+            new MimeMappingItem{Extension = "ttf", MimeType = "application/x-font-ttf"},
             new MimeMappingItem{Extension = "txt", MimeType = "text/plain"},
             new MimeMappingItem{Extension = "ulw", MimeType = "audio/basic"},
             new MimeMappingItem{Extension = "ustar", MimeType = "application/x-ustar"},
@@ -204,6 +205,8 @@ namespace Masuit.Tools.AspNetCore.Mime
             //<!-- Compiled WML Script -->
             new MimeMappingItem{Extension = "wmlscriptc", MimeType = "application/vnd.wap.wmlscriptc"},
             new MimeMappingItem{Extension = "wmv", MimeType = "video/x-ms-wmv"},
+            new MimeMappingItem{Extension = "woff", MimeType = "font/woff2"},
+            new MimeMappingItem{Extension = "woff2", MimeType = "font/woff2"},
             new MimeMappingItem{Extension = "wrl", MimeType = "x-world/x-vrml"},
             new MimeMappingItem{Extension = "wspolicy", MimeType = "application/wspolicy+xml"},
             new MimeMappingItem{Extension = "Z", MimeType = "application/x-compress"},
