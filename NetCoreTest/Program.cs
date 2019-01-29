@@ -9,7 +9,7 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine(SystemInfo.CpuLoad);
+            Console.WriteLine((long)SystemInfo.GetRamInfo().MemoryAvailable);
             CreateWebHostBuilder(args).Build().Run();
         }
 

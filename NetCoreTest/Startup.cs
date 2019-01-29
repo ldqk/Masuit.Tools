@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Core.Net;
+﻿using Masuit.Tools.Core.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace NetCoreTest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddStaticHttpContext();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
