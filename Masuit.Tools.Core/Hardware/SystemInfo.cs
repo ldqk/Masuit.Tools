@@ -246,15 +246,17 @@ namespace Masuit.Tools.Hardware
         /// 获取内存信息
         /// </summary>
         /// <returns>内存信息</returns>
-        public static RamInfo GetRamInfo() => new RamInfo
+        public static RamInfo GetRamInfo()
         {
-            MemoryAvailable = GetFreePhysicalMemory(),
-            PhysicalMemory = GetTotalPhysicalMemory(),
-            TotalPageFile = GetTotalVirtualMemory(),
-            AvailablePageFile = GetTotalVirtualMemory() - GetUsedVirtualMemory(),
-            AvailableVirtual = 1 - GetUsageVirtualMemory(),
-            TotalVirtual = 1 - GetUsedPhysicalMemory()
-        };
+            var info = new RamInfo();
+            info.MemoryAvailable = GetFreePhysicalMemory();
+            info.PhysicalMemory = GetTotalPhysicalMemory();
+            info.TotalPageFile = GetTotalVirtualMemory();
+            info.AvailablePageFile = GetTotalVirtualMemory() - GetUsedVirtualMemory();
+            info.AvailableVirtual = 1 - GetUsageVirtualMemory();
+            info.TotalVirtual = 1 - GetUsedPhysicalMemory();
+            return info;
+        }
 
         #endregion
 
@@ -375,7 +377,7 @@ namespace Masuit.Tools.Hardware
         public static double GetTotalPhysicalMemory()
         {
             string s = QueryComputerSystem("totalphysicalmemory");
-            return Convert.ToDouble(s);
+            return s.ToDouble();
         }
 
         /// <summary>
@@ -496,7 +498,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new List<string>()
                 {
-                    "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
+                    "未能获取到当前计算机的IP地址，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
                 };
             }
         }
@@ -524,7 +526,7 @@ namespace Masuit.Tools.Hardware
             }
             catch (Exception)
             {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+                return "未能获取当前使用的IP，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
 
@@ -652,9 +654,9 @@ namespace Masuit.Tools.Hardware
                 foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
                 return str;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+                return "未能获取到当前计算机系统信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。异常信息：" + e.Message;
             }
         }
 
@@ -702,7 +704,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, string>()
                 {
-                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
                 };
             }
         }
@@ -769,7 +771,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, string>()
                 {
-                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
                 };
             }
         }
@@ -804,7 +806,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, double>()
                 {
-                    { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
+                    { "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
                 };
             }
         }

@@ -1078,7 +1078,11 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
-            int.TryParse(s, out int result);
+            bool b = int.TryParse(s, out int result);
+            if (!b)
+            {
+                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
+            }
             return result;
         }
 
@@ -1089,7 +1093,11 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static long ToInt64(this string s)
         {
-            long.TryParse(s, out var result);
+            bool b = long.TryParse(s, out var result);
+            if (!b)
+            {
+                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
+            }
             return result;
         }
 
@@ -1100,7 +1108,11 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
-            double.TryParse(s, out var result);
+            bool b = double.TryParse(s, out var result);
+            if (!b)
+            {
+                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
+            }
             return result;
         }
 
@@ -1111,7 +1123,11 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this string s)
         {
-            decimal.TryParse(s, out var result);
+            var b = decimal.TryParse(s, out var result);
+            if (!b)
+            {
+                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
+            }
             return result;
         }
 
