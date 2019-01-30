@@ -29,8 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.Res
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.ExpressionMapperBenchmark", "Masuit.Tools.ExpressionMapperBenchmark\Masuit.Tools.ExpressionMapperBenchmark.csproj", "{1D51DC49-6626-41AF-B1B5-085C83307FF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{921E4274-9D0A-4C0F-914F-953743AE3859}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,10 +83,6 @@ Global
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{921E4274-9D0A-4C0F-914F-953743AE3859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{921E4274-9D0A-4C0F-914F-953743AE3859}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{921E4274-9D0A-4C0F-914F-953743AE3859}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{921E4274-9D0A-4C0F-914F-953743AE3859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
