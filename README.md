@@ -1086,3 +1086,5 @@ public IActionResult VirtualFile(bool fileName)
     return result;
 }
 ```
+### 推荐项目
+基于EntityFrameworkCore和Lucene.NET实现的全文检索搜索引擎：[Masuit.LuceneEFCore.SearchEngine](https://github.com/ldqk/Masuit.LuceneEFCore.SearchEngine "Masuit.LuceneEFCore.SearchEngine")
