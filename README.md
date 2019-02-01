@@ -1092,5 +1092,5 @@ public IActionResult VirtualFile(bool fileName)
 开源博客系统：[Masuit.MyBlogs](https://github.com/ldqk/Masuit.MyBlogs "Masuit.MyBlogs")
 ### 友情赞助
 <figure class="third">
-        <img src="https://ww3.sinaimg.cn/large/006LWy2zgy1fvn02jlkdej30go0p0404.jpg"/><img src="https://ww3.sinaimg.cn/large/87c01ec7gy1fsqnp6iaj4j20u715fjuc.jpg"/><img src="https://ww4.sinaimg.cn/large/006LWy2zgy1fvci5pnydhj30k00u0myw.jpg"/>
+        <img src="https://ww3.sinaimg.cn/large/006LWy2zgy1fvn02jlkdej30go0p0404.jpg" width=33%/><img src="https://ww3.sinaimg.cn/large/87c01ec7gy1fsqnp6iaj4j20u715fjuc.jpg" width=33%/><img src="https://ww4.sinaimg.cn/large/006LWy2zgy1fvci5pnydhj30k00u0myw.jpg" width=33%/>
 </figure>
