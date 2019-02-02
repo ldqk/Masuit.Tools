@@ -13,7 +13,7 @@ bool isUrl = "http://masuit.com".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 ```
-### 2.硬件监测
+### 2.硬件监测(仅支持Windows)
 ```csharp
 float load = SystemInfo.CpuLoad;// 获取CPU占用率
 long physicalMemory = SystemInfo.PhysicalMemory;// 获取物理内存总数
