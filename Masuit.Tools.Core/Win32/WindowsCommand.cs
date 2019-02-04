@@ -15,7 +15,7 @@ namespace Masuit.Tools.Win32
         /// <param name="r"></param>
         /// <param name="seed"></param>
         /// <returns></returns>
-        public static int StrictNext(this Random r, int seed = Int32.MaxValue)
+        public static int StrictNext(this Random r, int seed = int.MaxValue)
         {
             return new Random((int)Stopwatch.GetTimestamp()).Next(seed);
         }

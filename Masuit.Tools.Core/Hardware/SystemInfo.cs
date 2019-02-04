@@ -46,8 +46,10 @@ namespace Masuit.Tools.Hardware
         static SystemInfo()
         {
             //初始化CPU计数器 
-            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            PcCpuLoad.MachineName = ".";
+            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+            {
+                MachineName = "."
+            };
             PcCpuLoad.NextValue();
 
             //CPU个数 
@@ -69,10 +71,12 @@ namespace Masuit.Tools.Hardware
                 PerformanceCounterCategory cat = new PerformanceCounterCategory("Network Interface");
                 InstanceNames = cat.GetInstanceNames();
                 NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
-                for (int i = 0; i < InstanceNames.Length; i++) NetRecvCounters[i] = new PerformanceCounter();
-
                 NetSentCounters = new PerformanceCounter[InstanceNames.Length];
-                for (int i = 0; i < InstanceNames.Length; i++) NetSentCounters[i] = new PerformanceCounter();
+                for (int i = 0; i < InstanceNames.Length; i++)
+                {
+                    NetRecvCounters[i] = new PerformanceCounter();
+                    NetSentCounters[i] = new PerformanceCounter();
+                }
 
                 CompactFormat = false;
             }
@@ -120,7 +124,10 @@ namespace Masuit.Tools.Hardware
                     foreach (var o in mos.GetInstances())
                     {
                         var mo = (ManagementObject)o;
-                        if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                        if (mo["FreePhysicalMemory"] != null)
+                        {
+                            availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                        }
                     }
 
                     return availablebytes;
@@ -153,7 +160,6 @@ namespace Masuit.Tools.Hardware
         public static ArrayList FindAllApps(int handle)
         {
             ArrayList apps = new ArrayList();
-
             int hwCurr = GetWindow(handle, GwHwndfirst);
 
             while (hwCurr > 0)
@@ -167,7 +173,10 @@ namespace Masuit.Tools.Hardware
                     StringBuilder sb = new StringBuilder(2 * length + 1);
                     GetWindowText(hwCurr, sb, sb.Capacity);
                     string strTitle = sb.ToString();
-                    if (!string.IsNullOrEmpty(strTitle)) apps.Add(strTitle);
+                    if (!string.IsNullOrEmpty(strTitle))
+                    {
+                        apps.Add(strTitle);
+                    }
                 }
 
                 hwCurr = GetWindow(hwCurr, GwHwndnext);
@@ -420,10 +429,32 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static double GetNetData(NetData nd)
         {
-            if (InstanceNames.Length == 0) return 0;
+            if (InstanceNames.Length == 0)
+            {
+                return 0;
+            }
 
             double d = 0;
-            for (int i = 0; i < InstanceNames.Length; i++) d += nd == NetData.Received ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) : nd == NetData.Sent ? GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : nd == NetData.ReceivedAndSent ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) + GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : 0;
+            for (int i = 0; i < InstanceNames.Length; i++)
+            {
+                double receied = GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]);
+                double send = GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]);
+                switch (nd)
+                {
+                    case NetData.Received:
+                        d += receied;
+                        break;
+                    case NetData.Sent:
+                        d += send;
+                        break;
+                    case NetData.ReceivedAndSent:
+                        d += receied + send;
+                        break;
+                    default:
+                        d += 0;
+                        break;
+                }
+            }
 
             return d;
         }
@@ -518,11 +549,12 @@ namespace Masuit.Tools.Hardware
 
             try
             {
-                System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient();
-                c.Connect("www.baidu.com", 80);
-                string ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-                c.Close();
-                return ip;
+                using (System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient())
+                {
+                    c.Connect("www.baidu.com", 80);
+                    var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
+                    return ip;
+                }
             }
             catch (Exception)
             {
@@ -572,7 +604,9 @@ namespace Masuit.Tools.Hardware
                     string txt = sr.ReadToEnd();
                     sr.Close();
                     if (recordLog)
+                    {
                         Trace.WriteLine(txt);
+                    }
                     return txt;
                 }
             }
@@ -651,7 +685,10 @@ namespace Masuit.Tools.Hardware
             {
                 string str = null;
                 ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
-                foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
+                foreach (ManagementObject objMgmt in objCS.Get())
+                {
+                    str = objMgmt[type].ToString();
+                }
                 return str;
             }
             catch (Exception e)
