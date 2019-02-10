@@ -1079,10 +1079,6 @@ namespace Masuit.Tools
         public static int ToInt32(this string s)
         {
             bool b = int.TryParse(s, out int result);
-            if (!b)
-            {
-                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
-            }
             return result;
         }
 
@@ -1094,10 +1090,6 @@ namespace Masuit.Tools
         public static long ToInt64(this string s)
         {
             bool b = long.TryParse(s, out var result);
-            if (!b)
-            {
-                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
-            }
             return result;
         }
 
@@ -1109,10 +1101,6 @@ namespace Masuit.Tools
         public static double ToDouble(this string s)
         {
             bool b = double.TryParse(s, out var result);
-            if (!b)
-            {
-                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
-            }
             return result;
         }
 
@@ -1124,10 +1112,6 @@ namespace Masuit.Tools
         public static decimal ToDecimal(this string s)
         {
             var b = decimal.TryParse(s, out var result);
-            if (!b)
-            {
-                Console.WriteLine($"未能将字符串【{s}】转换为数字！");
-            }
             return result;
         }
 
