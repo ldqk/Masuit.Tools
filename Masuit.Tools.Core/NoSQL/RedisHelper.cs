@@ -20,7 +20,7 @@ namespace Masuit.Tools.NoSQL
         /// <summary>
         /// Redis服务器默认连接字符串，默认为：127.0.0.1:6379,allowadmin=true<br/>
         /// </summary>
-        internal static string RedisConnectionString { get; set; } = CoreConfig.Configuration["Redis"] ?? "127.0.0.1:6379,allowadmin=true";
+        internal static string RedisConnectionString { get; set; } = CoreConfig.Configuration["Redis"] ?? "127.0.0.1:6379,allowadmin=true,connectTimeout=20000,connectRetry=1,responseTimeout=20000,syncTimeout=10000";
 
         /// <summary>
         /// 自定义键
