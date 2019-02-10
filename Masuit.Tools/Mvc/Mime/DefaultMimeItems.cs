@@ -49,6 +49,7 @@ namespace Masuit.Tools.Mvc.Mime
             new MimeMappingItem{Extension = "html", MimeType = "text/html"},
             new MimeMappingItem{Extension = "hqx", MimeType = "application/mac-binhex40"},
             new MimeMappingItem{Extension = "ief", MimeType = "image/ief"},
+            new MimeMappingItem{Extension = "ico", MimeType = " image/vnd.microsoft.icon"},
             new MimeMappingItem{Extension = "jad", MimeType = "text/vnd.sun.j2me.app-descriptor"},
             new MimeMappingItem{Extension = "jar", MimeType = "application/java-archive"},
             new MimeMappingItem{Extension = "java", MimeType = "text/plain"},
