@@ -171,6 +171,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "texinfo", MimeType = "application/x-texinfo"},
             new MimeMappingItem{Extension = "tif", MimeType = "image/tiff"},
             new MimeMappingItem{Extension = "tiff", MimeType = "image/tiff"},
+            new MimeMappingItem{Extension = "torrent", MimeType = "application/octet-stream"},
             new MimeMappingItem{Extension = "tr", MimeType = "application/x-troff"},
             new MimeMappingItem{Extension = "tsv", MimeType = "text/tab-separated-values"},
             new MimeMappingItem{Extension = "ttf", MimeType = "application/x-font-ttf"},
