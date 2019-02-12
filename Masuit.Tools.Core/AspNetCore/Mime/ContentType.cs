@@ -41,6 +41,8 @@
         public const string Eps = "application/postscript";
         public const string Etx = "text/x-setext";
         public const string Exe = "application/octet-stream";
+        public const string FormData = "multipart/form-data";
+        public const string FormUrlencoded = "application/x-www-form-urlencoded";
         public const string Gif = "image/gif";
         public const string Gtar = "application/x-gtar";
         public const string Gz = "application/x-gzip";
