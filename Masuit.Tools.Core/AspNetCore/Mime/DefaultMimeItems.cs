@@ -147,6 +147,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "qtif", MimeType = "image/x-quicktime"},
             new MimeMappingItem{Extension = "ras", MimeType = "image/x-cmu-raster"},
             new MimeMappingItem{Extension = "rdf", MimeType = "application/rdf+xml"},
+            new MimeMappingItem{Extension = "reg", MimeType = "application/octet-stream"},
             new MimeMappingItem{Extension = "rgb", MimeType = "image/x-rgb"},
             new MimeMappingItem{Extension = "rm", MimeType = "application/vnd.rn-realmedia"},
             new MimeMappingItem{Extension = "roff", MimeType = "application/x-troff"},
