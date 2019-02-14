@@ -54,6 +54,22 @@ namespace Masuit.Tools.Files
         }
 
         /// <summary>
+        /// 将内存流转储成文件
+        /// </summary>
+        /// <param name="ms"></param>
+        /// <param name="filename"></param>
+        public static void SaveFile(this MemoryStream ms, string filename)
+        {
+            using (var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                byte[] buffer = ms.ToArray(); // 转化为byte格式存储
+                fs.Write(buffer, 0, buffer.Length);
+                fs.Flush();
+                buffer = null;
+            }
+        }
+
+        /// <summary>
         /// 计算文件的 MD5 值
         /// </summary>
         /// <param name="fs">源文件流</param>
