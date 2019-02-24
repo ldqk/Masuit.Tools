@@ -2,7 +2,7 @@
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。
 [官网教程](http://masuit.com/55)
 
-⭐⭐⭐喜欢这个项目的话就点个star关♂注一下吧⭐⭐⭐
+⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐
 
 # 特色功能示例代码
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
@@ -316,10 +316,10 @@ string s = aes.AESDecrypt(); //AES解密为明文
 string aes = "123456".AESEncrypt("abc");// AES密钥加密为密文
 string s = aes.AESDecrypt("abc"); //AES密钥解密为明文
 
-string aes = "123456".DesEncrypt();// DES加密为密文
-string s = aes.DesDecrypt(); //DES解密为明文
-string aes = "123456".DesEncrypt("abcdefgh");// DES密钥加密为密文
-string s = aes.DesDecrypt("abcdefgh"); //DES密钥加密为密文
+string enc = "123456".DesEncrypt();// DES加密为密文
+string s = enc.DesDecrypt(); //DES解密为明文
+string enc = "123456".DesEncrypt("abcdefgh");// DES密钥加密为密文
+string s = enc.DesDecrypt("abcdefgh"); //DES密钥解密为明文
 
 RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();// 生成RSA密钥对
 string encrypt = "123456".RSAEncrypt(rsaKey.PublicKey);// 公钥加密
