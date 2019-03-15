@@ -18,13 +18,14 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Masuit.Tools.Core.xml</DocumentationFile>
+    <DocumentationFile>.\Masuit.Tools.Core.xml</DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet />
+    <DocumentationFile>.\Masuit.Tools.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,6 +35,12 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
     <PackageReference Include="System.Management" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Masuit.Tools.Core.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

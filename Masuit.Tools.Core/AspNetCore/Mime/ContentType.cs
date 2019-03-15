@@ -35,6 +35,7 @@
         public const string Css = "text/css";
         public const string Dib = "image/bmp";
         public const string Doc = "application/msword";
+        public const string Docx = "application/msword";
         public const string Dtd = "application/xml-dtd";
         public const string Dv = "video/x-dv";
         public const string Dvi = "application/x-dvi";
@@ -117,6 +118,7 @@
         public const string Pnt = "image/x-macpaint";
         public const string Ppm = "image/x-portable-pixmap";
         public const string Ppt = "application/vnd.ms-powerpoint";
+        public const string Pptx = "application/vnd.ms-powerpoint";
         public const string Pps = "application/vnd.ms-powerpoint";
         public const string Ps = "application/postscript";
         public const string Psd = "image/x-photoshop";
@@ -159,6 +161,7 @@
         public const string Xht = "application/xhtml+xml";
         public const string Xhtml = "application/xhtml+xml";
         public const string Xls = "application/vnd.ms-excel";
+        public const string Xlsx = "application/vnd.ms-excel";
         public const string Xml = "application/xml";
         public const string Xpm = "image/x-xpixmap";
         public const string Xsl = "application/xml";
