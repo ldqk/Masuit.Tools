@@ -1,9 +1,7 @@
 ﻿using Masuit.Tools.AspNetCore.ResumeFileResults.Executor;
 using Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult;
 using Masuit.Tools.Core.Net;
-using Masuit.Tools.Core.NoSQL;
 using Masuit.Tools.Files;
-using Masuit.Tools.NoSQL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -40,42 +38,6 @@ namespace Masuit.Tools.Core.AspNetCore
         {
             services.AddHttpClient();
             services.TryAddTransient<ISevenZipCompressor, SevenZipCompressor>();
-            return services;
-        }
-
-        /// <summary>
-        /// 注入一个本地化的RedisHelper
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddLocalRedisHelper(this IServiceCollection services)
-        {
-            return AddRedisHelper(services, "local");
-        }
-
-        /// <summary>
-        /// 注入一个默认的RedisHelper实例
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="redisHost"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddDefaultRedisHelper(this IServiceCollection services, string redisHost)
-        {
-            return AddRedisHelper(services, "default", redisHost);
-        }
-
-        /// <summary>
-        /// 注入RedisHelper
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="name"></param>
-        /// <param name="redisHost"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddRedisHelper(this IServiceCollection services, string name, string redisHost = null)
-        {
-            RedisHelperFactory.ConnectionCache[name] = redisHost;
-            services.TryAddTransient<RedisHelperFactory>();
-            services.TryAddTransient(s => RedisHelper.GetInstance(redisHost));
             return services;
         }
 
