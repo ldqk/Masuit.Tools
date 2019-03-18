@@ -1220,85 +1220,34 @@ namespace Masuit.Tools
         #region 匹配完整的URL
 
         /// <summary>
-        /// 匹配完整格式的URL，支持以下格式的URL,支持中文域名：<br/>
-        /// 支持不带协议名的网址，支持自适应协议的网址，支持完整路径，支持查询参数，支持锚点，支持锚点查询参数，支持16进制编码<br/>
-        /// www.baidu.com <br/>
-        /// www.baidu.com <br/>
-        /// baidu.com <br/>
-        /// //www.baidu.com <br/>
-        /// http://www.baidu.com <br/>
-        /// https://www.baidu.com <br/>
-        /// https://baidu.com <br/>
-        /// ftp://baidu.com <br/>
-        /// ftp://baidu.com/abc/def <br/>
-        /// ftp://admin:123456@baidu.com <br/>
-        /// ftp://admin:123456@baidu.com/abc/def <br/>
-        /// https://baidu.com:8080 <br/>
-        /// https://baidu.com/abc/def <br/>
-        /// https://baidu.com:8080/abc/def <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www <br/>
-        /// https://baidu.com/abc/def/hhh.html?s=w@w{w}!s <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yy+y <br/>
-        /// https://baidu.com/abc/def/hhh.html?s=www&amp;x=yyy <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yyy#top <br/>
-        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA/hhh.html?s=www&amp;x=yyy#top <br/>
-        /// https://baidu.com:8080/abc/def/hi_j+k-mn%ADF%AA?s=www&amp;x=yyy#top/aaa <br/>
-        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&amp;x=yyy#top/aaa/bbb/ccc <br/>
-        /// http://music.163.com/#/my/m/music/empty <br/>
-        /// http://music.163.com/abc/#/my/m/music/empty <br/>
-        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy#/my/m/music/empty <br/>
-        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy/#/my/m/music/empty <br/>
-        /// http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&amp;s=fade&amp;type=1!k <br/>
+        /// 匹配完整格式的URL
         /// </summary>
         /// <param name="s">源字符串</param>
         /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
         /// <returns>匹配对象</returns>
-        public static Match MatchUrl(this string s, out bool isMatch)
+        public static Uri MatchUrl(this string s, out bool isMatch)
         {
-            Match match = Regex.Match(s, @"^((\w*):?//)?([a-zA-Z0-9\-]{0,61}:?[a-zA-Z0-9\-]{0,61}@?)?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}(:(\d{1,5}))?(/([a-z0-9A-Z-_@{}!+%/]+(\.\w+)?)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]+&?)+)?(/?#[a-z0-9A-Z-_@{}!+%/]+)?(\?([a-z0-9A-Z-_@{}!+%]+=[a-z0-9A-Z-_@{}!+%]*&?)+)?)?$");
-            isMatch = match.Success;
-            return isMatch ? match : null;
+            try
+            {
+                isMatch = true;
+                return new Uri(s);
+            }
+            catch (Exception e)
+            {
+                isMatch = false;
+                return null;
+            }
         }
 
         /// <summary>
-        /// 匹配完整格式的URL，支持以下格式的URL,支持中文域名：<br/>
-        /// 支持不带协议名的网址，支持自适应协议的网址，支持完整路径，支持查询参数，支持锚点，支持锚点查询参数，支持16进制编码<br/>
-        /// www.baidu.com <br/>
-        /// www.baidu.com <br/>
-        /// baidu.com <br/>
-        /// //www.baidu.com <br/>
-        /// http://www.baidu.com <br/>
-        /// https://www.baidu.com <br/>
-        /// https://baidu.com <br/>
-        /// ftp://baidu.com <br/>
-        /// ftp://baidu.com/abc/def <br/>
-        /// ftp://admin:123456@baidu.com <br/>
-        /// ftp://admin:123456@baidu.com/abc/def <br/>
-        /// https://baidu.com:8080 <br/>
-        /// https://baidu.com/abc/def <br/>
-        /// https://baidu.com:8080/abc/def <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www <br/>
-        /// https://baidu.com/abc/def/hhh.html?s=w@w{w}!s <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yy+y <br/>
-        /// https://baidu.com/abc/def/hhh.html?s=www&amp;x=yyy <br/>
-        /// https://baidu.com:8080/abc/def/hhh.html?s=www&amp;x=yyy#top <br/>
-        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA/hhh.html?s=www&amp;x=yyy#top <br/>
-        /// https://baidu.com:8080/abc/def/hi_j+k-mn%ADF%AA?s=www&amp;x=yyy#top/aaa <br/>
-        /// https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&amp;x=yyy#top/aaa/bbb/ccc <br/>
-        /// http://music.163.com/#/my/m/music/empty <br/>
-        /// http://music.163.com/abc/#/my/m/music/empty <br/>
-        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy#/my/m/music/empty <br/>
-        /// http://music.163.com/def/hhh.html?s=www&amp;x=yyy/#/my/m/music/empty <br/>
-        /// http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&amp;s=fade&amp;type=1!k <br/>
+        /// 匹配完整格式的URL
         /// </summary>
         /// <param name="s">源字符串</param>
         /// <returns>是否匹配成功</returns>
         public static bool MatchUrl(this string s)
         {
-            MatchUrl(s, out bool success);
-            return success;
+            MatchUrl(s, out var isMatch);
+            return isMatch;
         }
 
         #endregion
