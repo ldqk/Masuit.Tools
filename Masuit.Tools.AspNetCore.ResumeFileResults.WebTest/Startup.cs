@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
+﻿using Masuit.Tools.Core.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
