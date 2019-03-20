@@ -5,21 +5,13 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tools\Masuit.Tools.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.NoSQL.MongoDBClient", "Masuit.Tools.NoSQL.MongoDBClient\Masuit.Tools.NoSQL.MongoDBClient.csproj", "{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient.Core", "Masuit.Tools.NoSQL.MongoDBClient.Core\Masuit.Tools.NoSQL.MongoDBClient.Core.csproj", "{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.UnitTest", "Masuit.Tools.UnitTest\Masuit.Tools.UnitTest.csproj", "{174474CB-0C9A-4C99-B461-1A2158F00A98}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core.UnitTest", "Masuit.Tools.Core.UnitTest\Masuit.Tools.Core.UnitTest.csproj", "{82383331-259E-4FB8-BA90-47C0E1AFB4FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.NoSQL.MongoDBClient.UnitTest", "Masuit.Tools.NoSQL.MongoDBClient.UnitTest\Masuit.Tools.NoSQL.MongoDBClient.UnitTest.csproj", "{6CA28B75-2F2D-401A-BDF7-EE314C14C95F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试", "测试", "{E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest", "Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest\Masuit.Tools.NoSQL.MongoDBClient.Core.UnitTest.csproj", "{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{91954D82-A5FC-417B-8FD9-D9C165C8F16C}"
 EndProject
@@ -28,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest", "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest\Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.csproj", "{49E16577-01CD-4104-B73E-449B2960D956}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.ExpressionMapperBenchmark", "Masuit.Tools.ExpressionMapperBenchmark\Masuit.Tools.ExpressionMapperBenchmark.csproj", "{1D51DC49-6626-41AF-B1B5-085C83307FF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient", "Masuit.Tools.NoSQL.MongoDBClient\Masuit.Tools.NoSQL.MongoDBClient.csproj", "{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,18 +33,10 @@ Global
 		{275D5A0D-C49C-497E-A4B5-F40285C2495F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{275D5A0D-C49C-497E-A4B5-F40285C2495F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{275D5A0D-C49C-497E-A4B5-F40285C2495F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D45BDC4-74C4-4356-8B93-7F7A09106BB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85EEA76D-CDAB-44CB-A08C-A49FDBA4659D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,14 +45,6 @@ Global
 		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -83,6 +61,10 @@ Global
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,8 +72,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{174474CB-0C9A-4C99-B461-1A2158F00A98} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{82383331-259E-4FB8-BA90-47C0E1AFB4FA} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
-		{6CA28B75-2F2D-401A-BDF7-EE314C14C95F} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
-		{9D2E3A00-9E94-4C3D-AAAE-70B0DA236FE6} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{49E16577-01CD-4104-B73E-449B2960D956} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 	EndGlobalSection

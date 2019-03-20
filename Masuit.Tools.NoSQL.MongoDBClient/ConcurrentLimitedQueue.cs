@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Masuit.Tools.NoSQL.MongoDBClient.Core
+namespace Masuit.Tools.NoSQL.MongoDBClient
 {
     /// <summary>
     /// 定长队列

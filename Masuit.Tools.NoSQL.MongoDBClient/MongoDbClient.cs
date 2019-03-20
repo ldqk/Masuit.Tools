@@ -1,32 +1,21 @@
-﻿using Masuit.Tools.Systems;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.NoSQL.MongoDBClient
 {
-    /// <summary>
-    /// MongoDB客户端类
-    /// </summary>
     public class MongoDbClient
     {
-        /// <summary>
-        /// 客户端对象
-        /// </summary>
         public MongoClient Client { get; set; }
-        /// <summary>
-        /// 数据库对象
-        /// </summary>
         public IMongoDatabase Database { get; set; }
         private static ConcurrentDictionary<string, MongoDbClient> InstancePool { get; set; } = new ConcurrentDictionary<string, MongoDbClient>();
         private static ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>> InstanceQueue { get; set; } = new ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>>();
+
         private MongoDbClient(string url, string database)
         {
             Client = new MongoClient(url);
@@ -53,23 +42,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                 instance = new MongoDbClient(url, database);
                 InstancePool.TryAdd(url + database, instance);
             }
-            return instance;
-        }
 
-        /// <summary>
-        /// 获取mongo默认单例
-        /// </summary>
-        /// <param name="database">数据库</param>
-        /// <returns></returns>
-        public static MongoDbClient GetDefaultInstance(string database)
-        {
-            string cs = ConfigurationManager.ConnectionStrings["MongoDB"].ConnectionString ?? "mongodb://127.0.0.1:27017";
-            InstancePool.TryGetValue(cs + database, out var instance);
-            if (instance is null)
-            {
-                instance = new MongoDbClient(cs, database);
-                InstancePool.TryAdd(cs + database, instance);
-            }
             return instance;
         }
 
@@ -89,13 +62,15 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     queue.Enqueue(new MongoDbClient(url, database));
                 });
             }
+
             MongoDbClient instance;
-            if (CallContext.GetData(url + database) == null)
+            if (CallContext<MongoDbClient>.GetData(url + database) == null)
             {
                 queue.TryDequeue(out instance);
-                CallContext.SetData(url + database, instance);
+                CallContext<MongoDbClient>.SetData(url + database, instance);
             }
-            instance = (MongoDbClient)CallContext.GetData(url + database);
+
+            instance = CallContext<MongoDbClient>.GetData(url + database);
             return instance;
         }
 
@@ -261,7 +236,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public string UpdateOne<T>(string collection, Expression<Func<T, Boolean>> filter, UpdateDefinition<T> update, bool upsert)
         {
-            UpdateResult result = Database.GetCollection<T>(collection).UpdateOne(filter, update, new UpdateOptions() { IsUpsert = upsert });
+            UpdateResult result = Database.GetCollection<T>(collection).UpdateOne(filter, update, new UpdateOptions()
+            {
+                IsUpsert = upsert
+            });
             return result.ToJson();
         }
 
@@ -275,7 +253,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public string UpdateOne(string collection, Expression<Func<BsonDocument, Boolean>> filter, UpdateDefinition<BsonDocument> update, bool upsert)
         {
-            UpdateResult result = Database.GetCollection<BsonDocument>(collection).UpdateOne(filter, update, new UpdateOptions() { IsUpsert = upsert });
+            UpdateResult result = Database.GetCollection<BsonDocument>(collection).UpdateOne(filter, update, new UpdateOptions()
+            {
+                IsUpsert = upsert
+            });
             return result.ToJson();
         }
 
@@ -290,7 +271,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public async Task<string> UpdateOneAsync<T>(string collection, Expression<Func<T, Boolean>> filter, UpdateDefinition<T> update, bool upsert)
         {
-            UpdateResult result = await Database.GetCollection<T>(collection).UpdateOneAsync(filter, update, new UpdateOptions() { IsUpsert = upsert });
+            UpdateResult result = await Database.GetCollection<T>(collection).UpdateOneAsync(filter, update, new UpdateOptions()
+            {
+                IsUpsert = upsert
+            });
             return result.ToJson();
         }
 
@@ -304,7 +288,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public async Task<string> UpdateOneAsync(string collection, Expression<Func<BsonDocument, Boolean>> filter, UpdateDefinition<BsonDocument> update, bool upsert)
         {
-            UpdateResult result = await Database.GetCollection<BsonDocument>(collection).UpdateOneAsync(filter, update, new UpdateOptions() { IsUpsert = upsert });
+            UpdateResult result = await Database.GetCollection<BsonDocument>(collection).UpdateOneAsync(filter, update, new UpdateOptions()
+            {
+                IsUpsert = upsert
+            });
             return result.ToJson();
         }
 
@@ -318,7 +305,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public Int64 UpdateMany<T>(String collName, Expression<Func<T, Boolean>> filter, UpdateDefinition<T> update, Boolean upsert = false)
         {
-            UpdateResult result = Database.GetCollection<T>(collName).UpdateMany(filter, update, new UpdateOptions { IsUpsert = upsert });
+            UpdateResult result = Database.GetCollection<T>(collName).UpdateMany(filter, update, new UpdateOptions
+            {
+                IsUpsert = upsert
+            });
             return result.ModifiedCount;
         }
 
@@ -332,7 +322,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public Int64 UpdateMany(String collName, Expression<Func<BsonDocument, Boolean>> filter, UpdateDefinition<BsonDocument> update, Boolean upsert = false)
         {
-            UpdateResult result = Database.GetCollection<BsonDocument>(collName).UpdateMany(filter, update, new UpdateOptions { IsUpsert = upsert });
+            UpdateResult result = Database.GetCollection<BsonDocument>(collName).UpdateMany(filter, update, new UpdateOptions
+            {
+                IsUpsert = upsert
+            });
             return result.ModifiedCount;
         }
 
@@ -347,7 +340,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public async Task<long> UpdateManyAsync<T>(String collName, Expression<Func<T, Boolean>> filter, UpdateDefinition<T> update, Boolean upsert = false)
         {
-            UpdateResult result = await Database.GetCollection<T>(collName).UpdateManyAsync(filter, update, new UpdateOptions { IsUpsert = upsert });
+            UpdateResult result = await Database.GetCollection<T>(collName).UpdateManyAsync(filter, update, new UpdateOptions
+            {
+                IsUpsert = upsert
+            });
             return result.ModifiedCount;
         }
 
@@ -361,7 +357,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public async Task<long> UpdateManyAsync(String collName, Expression<Func<BsonDocument, Boolean>> filter, UpdateDefinition<BsonDocument> update, Boolean upsert = false)
         {
-            UpdateResult result = await Database.GetCollection<BsonDocument>(collName).UpdateManyAsync(filter, update, new UpdateOptions { IsUpsert = upsert });
+            UpdateResult result = await Database.GetCollection<BsonDocument>(collName).UpdateManyAsync(filter, update, new UpdateOptions
+            {
+                IsUpsert = upsert
+            });
             return result.ModifiedCount;
         }
 
@@ -1060,6 +1059,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     return mgr.CreateOne(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
                 }
             }
+
             return string.Empty;
         }
 
@@ -1081,6 +1081,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
                 }
             }
+
             return string.Empty;
         }
 
@@ -1151,6 +1152,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     return mgr.CreateOne(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
                 }
             }
+
             return String.Empty;
         }
 
@@ -1173,6 +1175,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
                     return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
                 }
             }
+
             return String.Empty;
         }
 
