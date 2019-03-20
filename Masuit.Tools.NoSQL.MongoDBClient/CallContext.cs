@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Masuit.Tools.NoSQL.MongoDBClient.Core
+namespace Masuit.Tools.NoSQL.MongoDBClient
 {
     /// <summary>
     /// 取线程内唯一对象
