@@ -514,22 +514,13 @@
             <param name="dt">DataTable</param>
             <returns>是否有数据行</returns>
         </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.DataTableToList``1(System.Data.DataTable)">
+        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ToList``1(System.Data.DataTable)">
             <summary>
-            DataTable转换成实体列表
+            datatable转List
             </summary>
-            <typeparam name="T">实体 T </typeparam>
-            <param name="table">datatable</param>
-            <returns>强类型的数据集合</returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ListToDataTable``1(System.Collections.Generic.IList{``0})">
-            <summary>
-            实体列表转换成DataTable
-            </summary>
-            <typeparam name="T">实体</typeparam>
-            <param name="list"> 实体列表</param>
-            <returns>映射为数据表</returns>
-            <exception cref="T:System.OverflowException">The array is multidimensional and contains more than <see cref="F:System.Int32.MaxValue" /> elements.</exception>
+            <typeparam name="T"></typeparam>
+            <param name="dt"></param>
+            <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0})">
             <summary>
@@ -586,22 +577,6 @@
             </summary>
             <param name="rows">行数组</param>
             <returns>将内存行组装成内存表</returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.SortedTable(System.Data.DataTable,System.String[])">
-            <summary>
-            排序表的视图
-            </summary>
-            <param name="dt">原内存表</param>
-            <param name="sorts">排序方式</param>
-            <returns>排序后的内存表</returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.FilterDataTable(System.Data.DataTable,System.String)">
-            <summary>
-            根据条件过滤表的内容
-            </summary>
-            <param name="dt">原内存表</param>
-            <param name="condition">过滤条件</param>
-            <returns>过滤后的内存表</returns>
         </member>
         <member name="T:Masuit.Tools.Core.Linq.LinqExtension">
             <summary>

@@ -91,6 +91,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Database\DataTableBuilder.cs" />
     <Compile Include="Database\DataTableHelper.cs" />
     <Compile Include="DateTimeExt\ChineseCalendar.cs" />
     <Compile Include="Database\DataExt.cs" />
