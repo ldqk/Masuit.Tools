@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -1062,7 +1063,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
-            int.TryParse(s, out int result);
+            Int32.TryParse(s, out int result);
             return result;
         }
 
@@ -1073,7 +1074,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static long ToInt64(this string s)
         {
-            long.TryParse(s, out var result);
+            Int64.TryParse(s, out var result);
             return result;
         }
 
@@ -1084,7 +1085,7 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
-            double.TryParse(s, out var result);
+            Double.TryParse(s, out var result);
             return result;
         }
 
@@ -1095,7 +1096,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this string s)
         {
-            decimal.TryParse(s, out var result);
+            Decimal.TryParse(s, out var result);
             return result;
         }
 
@@ -1147,7 +1148,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static long ToLong(this string str, long defaultResult)
         {
-            if (!long.TryParse(str, out var result))
+            if (!Int64.TryParse(str, out var result))
             {
                 result = defaultResult;
             }
@@ -1184,7 +1185,7 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="keys">关键词列表</param>
         /// <returns></returns>
-        public static bool Contains(this string s, string[] keys) => Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+        public static bool Contains(this string s, string[] keys) => Regex.IsMatch(s.ToLower(), String.Join("|", keys).ToLower());
 
         #endregion
 
@@ -1262,7 +1263,7 @@ namespace Masuit.Tools
         {
             if (s.Length == 18)
             {
-                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                if (Int64.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || Int64.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
                 {
                     return false; //数字验证  
                 }
@@ -1301,7 +1302,7 @@ namespace Masuit.Tools
 
             if (s.Length == 15)
             {
-                if (long.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
+                if (Int64.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
                 {
                     return false; //数字验证  
                 }
@@ -1408,14 +1409,14 @@ namespace Masuit.Tools
         /// <param name="_this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
+        public new static bool ReferenceEquals(this object _this, object o) => Object.ReferenceEquals(_this, o);
 
         /// <summary>
         /// 判断字符串是否为空
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
+        public static bool IsNullOrEmpty(this string s) => String.IsNullOrEmpty(s);
 
         /// <summary>
         /// 类型直转
@@ -1542,9 +1543,9 @@ namespace Masuit.Tools
                 string[] ipStarts = begin.Split('.');
                 string[] ipEnds = ends.Split('.');
                 string[] inputs = input.Split('.');
-                uint start = uint.Parse(ipStarts[0]) << 24 | uint.Parse(ipStarts[1]) << 16 | uint.Parse(ipStarts[2]) << 8 | uint.Parse(ipStarts[3]);
-                uint end = uint.Parse(ipEnds[0]) << 24 | uint.Parse(ipEnds[1]) << 16 | uint.Parse(ipEnds[2]) << 8 | uint.Parse(ipEnds[3]);
-                uint current = uint.Parse(inputs[0]) << 24 | uint.Parse(inputs[1]) << 16 | uint.Parse(inputs[2]) << 8 | uint.Parse(inputs[3]);
+                uint start = UInt32.Parse(ipStarts[0]) << 24 | UInt32.Parse(ipStarts[1]) << 16 | UInt32.Parse(ipStarts[2]) << 8 | UInt32.Parse(ipStarts[3]);
+                uint end = UInt32.Parse(ipEnds[0]) << 24 | UInt32.Parse(ipEnds[1]) << 16 | UInt32.Parse(ipEnds[2]) << 8 | UInt32.Parse(ipEnds[3]);
+                uint current = UInt32.Parse(inputs[0]) << 24 | UInt32.Parse(inputs[1]) << 16 | UInt32.Parse(inputs[2]) << 8 | UInt32.Parse(inputs[3]);
                 return current >= start && current <= end;
             }
 
@@ -1559,7 +1560,7 @@ namespace Masuit.Tools
         public static bool IsPrivateIP(this IPAddress myIPAddress)
         {
             if (IPAddress.IsLoopback(myIPAddress)) return true;
-            if (myIPAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            if (myIPAddress.AddressFamily == AddressFamily.InterNetwork)
             {
                 byte[] ipBytes = myIPAddress.GetAddressBytes();
                 // 10.0.0.0/24 
@@ -1614,7 +1615,7 @@ namespace Masuit.Tools
                     var ipHostEntry = Dns.GetHostEntry(uri.DnsSafeHost);
                     foreach (IPAddress ipAddress in ipHostEntry.AddressList)
                     {
-                        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
                         {
                             if (!ipAddress.IsPrivateIP())
                             {
@@ -1628,6 +1629,32 @@ namespace Masuit.Tools
                     return !IPAddress.Parse(uri.DnsSafeHost).IsPrivateIP();
             }
             return false;
+        }
+
+        /// <summary>
+        /// 生成真正的随机数
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="seed"></param>
+        /// <returns></returns>
+        public static int StrictNext(this Random r, int seed = Int32.MaxValue)
+        {
+            return new Random((int)Stopwatch.GetTimestamp()).Next(seed);
+        }
+
+        /// <summary>
+        /// 产生正态分布的随机数
+        /// </summary>
+        /// <param name="rand"></param>
+        /// <param name="mean">均值</param>
+        /// <param name="stdDev">方差</param>
+        /// <returns></returns>
+        public static double NextGauss(this Random rand, double mean, double stdDev)
+        {
+            double u1 = 1.0 - rand.NextDouble();
+            double u2 = 1.0 - rand.NextDouble();
+            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+            return mean + stdDev * randStdNormal;
         }
     }
 }

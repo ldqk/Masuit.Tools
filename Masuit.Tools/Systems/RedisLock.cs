@@ -12,8 +12,6 @@ namespace Masuit.Tools.Systems
     /// </summary>
     public class RedisLock : IDisposable
     {
-        #region Property
-
         private bool _isDisposed;
 
         /// <summary>
@@ -81,10 +79,6 @@ namespace Masuit.Tools.Systems
 
         private ConnectionMultiplexer _server;
 
-        #endregion
-
-        #region Constructor
-
         /// <summary>
         /// 默认连接127.0.0.1:6379,synctimeout=20000
         /// </summary>
@@ -95,10 +89,6 @@ namespace Masuit.Tools.Systems
             _server.PreserveAsyncOrder = false;
         }
 
-        #endregion
-
-
-        #region Public
 
         /// <summary>
         /// 加锁
@@ -194,10 +184,6 @@ namespace Masuit.Tools.Systems
             return _server.GetDatabase().ScriptEvaluate(UnLockScript, key, values);
         }
 
-        #endregion
-
-
-        #region Private
 
         private void Subscriber(RedisKey resource)
         {
@@ -322,8 +308,6 @@ namespace Masuit.Tools.Systems
             }
         }
 
-        #endregion
-
         /// <summary>执行与释放或重置非托管资源关联的应用程序定义的任务。</summary>
         public void Dispose()
         {
@@ -344,7 +328,6 @@ namespace Masuit.Tools.Systems
 
             _server?.Dispose();
             _isDisposed = true;
-            //_server = null;
         }
     }
 }

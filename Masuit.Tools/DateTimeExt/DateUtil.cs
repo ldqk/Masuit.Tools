@@ -183,9 +183,6 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>天数</returns>
         public static int GetDaysOfMonth(this DateTime dt)
         {
-            //--------------------------------//
-            //从dt中取得当前的年，月信息  --//
-            //--------------------------------//
             int days = 0;
             var year = dt.Year;
             var month = dt.Month;

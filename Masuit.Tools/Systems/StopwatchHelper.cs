@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Masuit.Tools.Systems
 {
-    public static class StopwatchExtension
+    public static class StopwatchHelper
     {
         public static double Execute(Action action)
         {

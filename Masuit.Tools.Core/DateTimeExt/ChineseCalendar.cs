@@ -499,7 +499,6 @@ namespace Masuit.Tools.DateTimeExt
         public ChineseCalendar(DateTime dt)
         {
             int i;
-            CheckDateLimit(dt);
             _date = dt.Date;
             _datetime = dt;
             //农历日期计算部分
@@ -717,18 +716,6 @@ namespace Masuit.Tools.DateTimeExt
             var indexGan = ((i % 10 + 1) * 2 - 1) % 10 - 1;
             var tmpGan = GanStr.Substring(indexGan) + GanStr.Substring(0, indexGan + 2);
             return tmpGan[offset].ToString() + ZhiStr[offset];
-        }
-
-        /// <summary>
-        /// 检查公历日期是否符合要求
-        /// </summary>
-        /// <param name="dt"></param>
-        private void CheckDateLimit(DateTime dt)
-        {
-            if ((dt < MinDay) || (dt > MaxDay))
-            {
-                throw new ChineseCalendarException("超出可转换的日期");
-            }
         }
 
         /// <summary>
@@ -1543,14 +1530,14 @@ namespace Masuit.Tools.DateTimeExt
                 {
                     days--;
                 }
-                else
-                {
-                    Console.WriteLine("阳历：" + cc.DateString);
-                    Console.WriteLine("节日：" + cc.DateHoliday);
-                    Console.WriteLine("农历节日：" + cc.ChineseCalendarHoliday);
-                    Console.WriteLine("星期：" + cc.WeekDayStr);
-                    Console.WriteLine("----------------------------");
-                }
+                //else
+                //{
+                //    Console.WriteLine("阳历：" + cc.DateString);
+                //    Console.WriteLine("节日：" + cc.DateHoliday);
+                //    Console.WriteLine("农历节日：" + cc.ChineseCalendarHoliday);
+                //    Console.WriteLine("星期：" + cc.WeekDayStr);
+                //    Console.WriteLine("----------------------------");
+                //}
 
                 if (days == 0)
                 {

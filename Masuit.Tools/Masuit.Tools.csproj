@@ -115,7 +115,6 @@
     <Compile Include="Hardware\RamInfo.cs" />
     <Compile Include="Hardware\SystemtimeInfo.cs" />
     <Compile Include="Hardware\Unit.cs" />
-    <Compile Include="Html\HtmlHelper.cs" />
     <Compile Include="Html\HtmlTools.cs" />
     <Compile Include="Linq\LinqExtension.cs" />
     <Compile Include="Linq\ParameterReplacer.cs" />
@@ -196,7 +195,7 @@
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
     <Compile Include="Systems\SnowFlake.cs" />
-    <Compile Include="Systems\StopwatchExtension.cs" />
+    <Compile Include="Systems\StopwatchHelper.cs" />
     <Compile Include="Validator\ComplexPassword.cs" />
     <Compile Include="Validator\IsEmailAttribute.cs" />
     <Compile Include="Validator\IsIPAddressAttribute.cs" />

@@ -17,7 +17,6 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>返回Datatable 增加字段 identityid </returns>
-        /// <exception cref="DuplicateNameException">The collection already has a column with the specified name. (The comparison is not case-sensitive.) </exception>
         public static DataTable AddIdentityColumn(this DataTable dt)
         {
             if (!dt.Columns.Contains("identityid"))
@@ -100,7 +99,7 @@ namespace Masuit.Tools.Database
                 return result;
             }
 
-            PropertyInfo[] propertys = list[0].GetType().GetProperties();
+            var propertys = list[0].GetType().GetProperties();
             propertys.ForEach(pi =>
             {
                 if (propertyNameList.Count == 0)
@@ -236,7 +235,6 @@ namespace Masuit.Tools.Database
                 case "float":
                     newType = typeof(float);
                     break;
-
                 case "string":
                     newType = typeof(string);
                     break;
@@ -271,7 +269,7 @@ namespace Masuit.Tools.Database
         public static DataRow[] GetDataRowArray(this DataRowCollection drc)
         {
             int count = drc.Count;
-            DataRow[] drs = new DataRow[count];
+            var drs = new DataRow[count];
             for (int i = 0; i < count; i++)
             {
                 drs[i] = drc[i];

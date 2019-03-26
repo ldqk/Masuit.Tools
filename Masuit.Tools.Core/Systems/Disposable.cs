@@ -31,6 +31,7 @@ namespace Masuit.Tools.Systems
             isDisposed = true;
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// 释放
         /// </summary>

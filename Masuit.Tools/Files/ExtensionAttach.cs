@@ -1,7 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.IO;
-using System.Security;
 
 namespace Masuit.Tools.Files
 {
@@ -15,9 +12,6 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="filePathString">应用程序路径</param>
         /// <param name="pFileTypeName">文件类型</param>
-        /// <exception cref="SecurityException">The user does not have the permissions required to access the registry key in the specified mode. </exception>
-        /// <exception cref="UnauthorizedAccessException">The user does not have the necessary registry rights.</exception>
-        /// <exception cref="IOException">The nesting level exceeds 510.-or-A system error occurred, such as deletion of the key, or an attempt to create a key in the <see cref="F:Microsoft.Win32.Registry.LocalMachine" /> root.</exception>
         public static void SaveReg(string filePathString, string pFileTypeName)
         {
             RegistryKey regKey = Registry.ClassesRoot.OpenSubKey("", true); //打开注册表
@@ -49,9 +43,6 @@ namespace Masuit.Tools.Files
         /// 取消文件关联
         /// </summary>
         /// <param name="pFileTypeName">文件类型</param>
-        /// <exception cref="SecurityException">The user does not have the permissions required to access the registry key in the specified mode. </exception>
-        /// <exception cref="UnauthorizedAccessException">The user does not have the necessary registry rights.</exception>
-        /// <exception cref="IOException">An I/O error has occurred.</exception>
         public static void DelReg(string pFileTypeName)
         {
             RegistryKey regkey = Registry.ClassesRoot.OpenSubKey("", true);

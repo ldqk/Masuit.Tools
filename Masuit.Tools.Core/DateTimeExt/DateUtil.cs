@@ -9,7 +9,6 @@ namespace Masuit.Tools.DateTimeExt
     public static class DateUtil
     {
         private static readonly DateTime Start1970 = DateTime.Parse("1970-01-01 00:00:00");
-        private static readonly long Ticks1970 = Start1970.Ticks;
 
         /// <summary>
         /// 返回相对于当前时间的相对天数
@@ -184,9 +183,6 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>天数</returns>
         public static int GetDaysOfMonth(this DateTime dt)
         {
-            //--------------------------------//
-            //从dt中取得当前的年，月信息  --//
-            //--------------------------------//
             int days = 0;
             var year = dt.Year;
             var month = dt.Month;

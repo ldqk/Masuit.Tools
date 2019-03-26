@@ -168,7 +168,6 @@ namespace Masuit.Tools.Security
 
         #region 获取Hash描述表 
 
-        //获取Hash描述表 
         /// <summary>
         /// 获取Hash描述表
         /// </summary>
@@ -182,7 +181,6 @@ namespace Masuit.Tools.Security
             return md5?.ComputeHash(buffer);
         }
 
-        //获取Hash描述表 
         /// <summary>
         /// 获取Hash描述表
         /// </summary>
@@ -197,7 +195,6 @@ namespace Masuit.Tools.Security
             return Convert.ToBase64String(hashData);
         }
 
-        //获取Hash描述表 
         /// <summary>
         /// 从文件流获取Hash描述表
         /// </summary>
@@ -213,7 +210,6 @@ namespace Masuit.Tools.Security
             }
         }
 
-        //获取Hash描述表 
         /// <summary>
         /// 从文件流获取Hash描述表
         /// </summary>
@@ -234,7 +230,6 @@ namespace Masuit.Tools.Security
 
         #region RSA签名 
 
-        //RSA签名 
         /// <summary>
         /// RSA签名
         /// </summary>
@@ -254,7 +249,6 @@ namespace Masuit.Tools.Security
             return rsaFormatter.CreateSignature(hashbyteSignature);
         }
 
-        //RSA签名 
         /// <summary>
         /// RSA签名
         /// </summary>
@@ -275,7 +269,6 @@ namespace Masuit.Tools.Security
             return Convert.ToBase64String(encryptedSignatureData);
         }
 
-        //RSA签名 
         /// <summary>
         /// RSA签名
         /// </summary>
@@ -296,7 +289,6 @@ namespace Masuit.Tools.Security
             return rsaFormatter.CreateSignature(hashbyteSignature);
         }
 
-        //RSA签名 
         /// <summary>
         /// RSA签名
         /// </summary>
