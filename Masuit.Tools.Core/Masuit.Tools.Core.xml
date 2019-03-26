@@ -505,7 +505,6 @@
             </summary>
             <param name="dt">DataTable</param>
             <returns>返回Datatable 增加字段 identityid </returns>
-            <exception cref="T:System.Data.DuplicateNameException">The collection already has a column with the specified name. (The comparison is not case-sensitive.) </exception>
         </member>
         <member name="M:Masuit.Tools.Core.Database.DataTableHelper.HasRows(System.Data.DataTable)">
             <summary>
@@ -967,12 +966,6 @@
             <param name="dt"></param>
             <returns></returns>
             
-        </member>
-        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.CheckDateLimit(System.DateTime)">
-            <summary>
-            检查公历日期是否符合要求
-            </summary>
-            <param name="dt"></param>
         </member>
         <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.CheckChineseDateLimit(System.Int32,System.Int32,System.Int32,System.Boolean)">
             <summary>
@@ -2163,6 +2156,23 @@
             <param name="url"></param>
             <returns></returns>
         </member>
+        <member name="M:Masuit.Tools.Extensions.StrictNext(System.Random,System.Int32)">
+            <summary>
+            生成真正的随机数
+            </summary>
+            <param name="r"></param>
+            <param name="seed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Extensions.NextGauss(System.Random,System.Double,System.Double)">
+            <summary>
+            产生正态分布的随机数
+            </summary>
+            <param name="rand"></param>
+            <param name="mean">均值</param>
+            <param name="stdDev">方差</param>
+            <returns></returns>
+        </member>
         <member name="T:Masuit.Tools.Files.ClassZip">
             <summary>
             ClassZip
@@ -2189,30 +2199,6 @@
             </summary>
             <param name="fileToUpZip">待解压的文件</param>
             <param name="zipedFolder">解压目标存放目录</param>
-        </member>
-        <member name="T:Masuit.Tools.Files.ExtensionAttach">
-            <summary>
-            文件关联
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Files.ExtensionAttach.SaveReg(System.String,System.String)">
-            <summary>
-            关联文件
-            </summary>
-            <param name="filePathString">应用程序路径</param>
-            <param name="pFileTypeName">文件类型</param>
-            <exception cref="T:System.Security.SecurityException">The user does not have the permissions required to access the registry key in the specified mode. </exception>
-            <exception cref="T:System.UnauthorizedAccessException">The user does not have the necessary registry rights.</exception>
-            <exception cref="T:System.IO.IOException">The nesting level exceeds 510.-or-A system error occurred, such as deletion of the key, or an attempt to create a key in the <see cref="F:Microsoft.Win32.Registry.LocalMachine" /> root.</exception>
-        </member>
-        <member name="M:Masuit.Tools.Files.ExtensionAttach.DelReg(System.String)">
-            <summary>
-            取消文件关联
-            </summary>
-            <param name="pFileTypeName">文件类型</param>
-            <exception cref="T:System.Security.SecurityException">The user does not have the permissions required to access the registry key in the specified mode. </exception>
-            <exception cref="T:System.UnauthorizedAccessException">The user does not have the necessary registry rights.</exception>
-            <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
         </member>
         <member name="T:Masuit.Tools.Files.FileExt">
             <summary>
@@ -2891,37 +2877,26 @@
             </summary>
         </member>
         <member name="T:Masuit.Tools.Html.HtmlTools">
-             <summary>
-            1、获取HTML<br/>
-            1.1获取指定页面的HTML代码 GetHtml(string url, string postData, bool isPost, CookieContainer cookieContainer)<br/>
-            1.2获取HTMLGetHtml(string url, CookieContainer cookieContainer)<br/>
-            2、获取字符流<br/>
-            2.1获取字符流GetStream(string url, CookieContainer cookieContainer)<br/>
-            3、清除HTML标记 <br/>
-            3.1清除HTML标记  NoHTML(string Htmlstring)<br/>
-            4、匹配页面的链接 <br/>
-            4.1获取页面的链接正则 GetHref(string HtmlCode)<br/>
-            5、匹配页面的图片地址<br/>
-             5.1匹配页面的图片地址 GetImgSrc(string HtmlCode, string imgHttp)<br/>
-            5.2匹配<img src="" />中的图片路径实际链接  GetImg(string ImgString, string imgHttp)<br/>
-            6、抓取远程页面内容<br/>
-             6.1以GET方式抓取远程页面内容 Get_Http(string tUrl)<br/>
-             6.2以POST方式抓取远程页面内容 Post_Http(string url, string postData, string encodeType)<br/>
-            7、压缩HTML输出<br/>
-            7.1压缩HTML输出 ZipHtml(string Html)<br/>
-            8、过滤HTML标签<br/>
-             8.1过滤指定HTML标签 DelHtml(string s_TextStr, string html_Str)  <br/>
-             8.2过滤HTML中的不安全标签 RemoveUnsafeHtml(string content)<br/>
-             HTML转行成TEXT HtmlToTxt(string strHtml)<br/>
-             字符串转换为 HtmlStringToHtml(string str)<br/>
-             html转换成字符串HtmlToString(string strHtml)<br/>
-             获取URL编码<br/>
-             判断URL是否有效<br/>
-             返回 HTML 字符串的编码解码结果
-             </summary>
             <summary>
             html工具类
             </summary>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlSantinizerStandard(System.String)">
+            <summary>
+            标准的防止html的xss净化器
+            </summary>
+            <param name="html"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlSantinizerCustom(System.String,System.String[],System.String[],System.String[])">
+            <summary>
+            自定义的防止html的xss净化器
+            </summary>
+            <param name="html">源html</param>
+            <param name="labels">需要移除的标签集合</param>
+            <param name="attributes">需要移除的属性集合</param>
+            <param name="styles">需要移除的样式集合</param>
+            <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.RemoveHtmlTag(System.String,System.Int32)">
             <summary>
@@ -2930,26 +2905,6 @@
             <param name="html">源html</param>
             <param name="length">截取长度</param>
             <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtml(System.Net.Http.HttpClient,System.String)">
-            <summary>
-            获取HTML
-            </summary>
-            <param name="_"></param>
-            <param name="url">地址</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetStream(System.Net.Http.HttpClient,System.String)">
-             <summary>
-             2.1获取字符流
-             </summary>
-            ---------------------------------------------------------------------------------------------------------------
-             示例:
-             System.Net.CookieContainer cookie = new System.Net.CookieContainer(); 
-             Stream s = HttpHelper.GetStream("http://www.baidu.com", cookie);
-             picVerify.Image = Image.FromStream(s);
-            ---------------------------------------------------------------------------------------------------------------
-            <param name="_"></param>
-            <param name="url">地址</param>
         </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.ClearHtml(System.String)">
             <summary>
@@ -2960,30 +2915,10 @@
         </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.RemoveHtml(System.String)">
             <summary>   
-            3.1清除HTML标记   
+             清除HTML标记   
             </summary>   
             <param name="htmlstring">包括HTML的源码</param>   
             <returns>已经去除后的文字</returns>   
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHref(System.String)">
-            <summary>
-            4.1获取页面的链接正则
-            </summary>
-            <param name="HtmlCode">html代码</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetAllUrl(System.String)">
-            <summary>
-            4.2取得所有链接URL
-            </summary>
-            <param name="html">html代码</param>
-            <returns>提取到的url</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetAllLinkText(System.String)">
-            <summary>
-            4.3获取所有连接文本
-            </summary>
-            <param name="html">html代码</param>
-            <returns>所有的带链接的a标签</returns>
         </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.ReplaceHtmlImgSource(System.String,System.String)">
             <summary>
@@ -3035,108 +2970,6 @@
             <param name="html"></param>
             <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.Get_Http(System.Net.HttpWebRequest,System.String)">
-            <summary>
-            6.1以GET方式抓取远程页面内容
-            </summary>
-            <param name="_"></param>
-            <param name="tUrl">URL</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.Post_Http(System.Net.HttpWebRequest,System.String,System.String,System.String)">
-            <summary>
-            6.2以POST方式抓取远程页面内容
-            </summary>
-            <param name="_"></param>
-            <param name="url">URL</param>
-            <param name="postData">参数列表</param>
-            <param name="encodeType">编码类型</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ZipHtml(System.String)">
-            <summary>
-            7.1压缩HTML输出
-            </summary>
-            <param name="html">html</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.DelHtml(System.String,System.String)">
-            <summary>
-            8.1过滤指定HTML标签
-            </summary>
-            <param name="sTextStr">要过滤的字符</param>
-            <param name="htmlStr">a img p div</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.RemoveUnsafeHtml(System.String)">
-            <summary>
-            8.2过滤HTML中的不安全标签，去掉尖括号
-            </summary>
-            <param name="content">html代码</param>
-            <returns>过滤后的安全内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlToTxt(System.String)">
-            <summary>
-            HTML转行成TEXT HtmlToTxt(string strHtml)
-            </summary>
-            <param name="strHtml">html代码</param>
-            <returns>普通文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.StringToHtml(System.String)">
-            <summary>
-            字符串转换为 HtmlStringToHtml(string str)
-            </summary>
-            <param name="str">字符串</param>
-            <returns>html标签</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlToString(System.String)">
-            <summary>
-            html转换成字符串
-            </summary>
-            <param name="strHtml">html代码</param>
-            <returns>安全的字符串</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetEncoding(System.Net.HttpWebRequest,System.String)">
-            <summary>
-            获取URL编码
-            </summary>
-            <param name="_"></param>
-            <param name="url">URL</param>
-            <returns>编码类型</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlEncode(System.String)">
-            <summary>
-            返回 HTML 字符串的编码结果
-            </summary>
-            <param name="inputData">字符串</param>
-            <returns>编码结果</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlDecode(System.String)">
-            <summary>
-            返回 HTML 字符串的解码结果
-            </summary>
-            <param name="str">字符串</param>
-            <returns>解码结果</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetCookieCollection(System.Net.CookieCollection,System.String)">
-            <summary>
-            获取Cookie集合
-            </summary>
-            <param name="cookie"></param>
-            <param name="cookieString">Cookie的键</param>
-            <returns>Cookie键值集合</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTextFromHTML(System.String)">
-            <summary>
-            从HTML中获取文本,保留br,p,img
-            </summary>
-            <param name="HTML">html代码</param>
-            <returns>保留br,p,img的文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHiddenKeyValue(System.String,System.String)">
-            <summary>
-            获取HTML页面内制定Key的Value内容
-            </summary>
-            <param name="html">html源代码</param>
-            <param name="key">键</param>
-            <returns>获取到的值</returns>
-        </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.StrFormat(System.String)">
             <summary>
             替换回车换行符为html换行符
@@ -3148,457 +2981,6 @@
             替换html字符
             </summary>
             <param name="strHtml">html</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ReplaceStrToScript(System.String)">
-            <summary>
-            为脚本替换特殊字符串
-            </summary>
-            <param name="str"> </param>
-            <returns> </returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlSantinizerStandard(System.String)">
-            <summary>
-            标准的防止html的xss净化器
-            </summary>
-            <param name="html"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.HtmlSantinizerCustom(System.String,System.String[],System.String[],System.String[])">
-            <summary>
-            自定义的防止html的xss净化器
-            </summary>
-            <param name="html">源html</param>
-            <param name="labels">需要移除的标签集合</param>
-            <param name="attributes">需要移除的属性集合</param>
-            <param name="styles">需要移除的样式集合</param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetList(System.String,System.String,System.Int32)">
-            <summary>
-            多个匹配内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="iGroupIndex">第几个分组, 从1开始, 0代表不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetList(System.String,System.String,System.String)">
-            <summary>
-            多个匹配内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="sGroupName">分组名, ""代表不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetText(System.String,System.String,System.Int32)">
-            <summary>
-            单个匹配内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="iGroupIndex">分组序号, 从1开始, 0不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetText(System.String,System.String,System.String)">
-            <summary>
-            单个匹配内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="sGroupName">分组名, ""代表不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.Replace(System.String,System.String,System.String,System.Int32)">
-            <summary>
-            替换指定内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="sReplace">替换值</param>
-            <param name="iGroupIndex">分组序号, 0代表不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.Replace(System.String,System.String,System.String,System.String)">
-            <summary>
-            替换指定内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="sReplace">替换值</param>
-            <param name="sGroupName">分组名, "" 代表不分组</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.Split(System.String,System.String,System.Int32)">
-            <summary>
-            分割指定内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-            <param name="iStrLen">最小保留字符串长度</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetLinks(System.String)">
-            <summary>
-            多个链接
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetLinkHelp(System.String)">
-            <summary>
-            单个链接
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetImgTag(System.String)">
-            <summary>
-            图片标签
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetImgSrc(System.String)">
-            <summary>
-            图片地址
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetDomain(System.String)">
-            <summary>
-            根据URL获得域名
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTitle(System.String,System.String)">
-            <summary>
-            文章标题
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTitle(System.String)">
-            <summary>
-            网页标题
-            </summary>
-            <param name="sInput">html</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtml(System.String)">
-            <summary>
-            网页内容
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetBodyHelp(System.String)">
-            <summary>
-            网页Body内容
-            </summary>
-            <param name="sInput">html</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetBody(System.String,System.String)">
-            <summary>
-            网页Body内容
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetSource(System.String,System.String)">
-            <summary>
-            文章来源
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetAuthor(System.String,System.String)">
-            <summary>
-            作者名
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetPageLinks(System.String,System.String)">
-            <summary>
-            分页链接地址
-            </summary>
-            <param name="sInput">输入内容</param>
-            <param name="sRegex">表达式字符串</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetUrl(System.String,System.String)">
-            <summary>
-            根据相对路径得到绝对路径
-            </summary>
-            <param name="sInput">原始网站地址</param>
-            <param name="sRelativeUrl">相对链接地址</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools._GetStandardUrlDepth(System.String)">
-            <summary>
-            获得标准的URL路径深度
-            </summary>
-            <param name="url">URL路径</param>
-            <returns>返回标准的形式：http://www.163.com/或http://www.163.com/news/。</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetKeyWord(System.String)">
-            <summary>
-            关键字
-            </summary>
-            <param name="sInput">输入内容</param>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetContent(System.String,System.String,System.String,System.Data.DataTable)">
-            <summary>
-            获取内容
-            </summary>
-            <param name="sOriContent">原始数据</param>
-            <param name="sOtherRemoveReg">需要移除的字符</param>
-            <param name="sPageUrl">URL</param>
-            <param name="dtAntiLink">反链 表数据</param>
-            <returns>转码后的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.IsXml(System.String)">
-            <summary>
-            判断是否是xml格式
-            </summary>
-            <param name="sFormartted">输入内容</param>
-            <returns>是否是xml数据</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ClearTag(System.String)">
-            <summary>
-            清除html标签
-            </summary>
-            <param name="sHtml">html代码</param>
-            <returns>清理后的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ClearTag(System.String,System.String)">
-            <summary>
-            根据正则清除html标签
-            </summary>
-            <param name="sHtml">html代码</param>
-            <param name="sRegex">正则表达式</param>
-            <returns>清理后的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ConvertToJavascript(System.String)">
-            <summary>
-            将html转换成js代码
-            </summary>
-            <param name="sHtml">html代码</param>
-            <returns>js代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.DelTag(System.String,System.String,System.Boolean)">
-            <summary>
-            删除字符串中的特定标记 
-            </summary>
-            <param name="str">html代码</param>
-            <param name="tag">指定的标记</param>
-            <param name="isContent">是否清除内容 </param>
-            <returns>清理后的代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.DelTagArray(System.String,System.String,System.Boolean)">
-            <summary>
-            删除字符串中的一组标记 
-            </summary>
-            <param name="str">html代码</param>
-            <param name="tagA">标记</param>
-            <param name="isContent">是否清除内容 </param>
-            <returns>清理后的代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetLink(System.String)">
-            <summary>
-            根据内容获得链接
-            </summary>
-            <param name="sContent">html代码</param>
-            <returns>链接</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTextByLink(System.String)">
-            <summary>
-            根据链接得到文本
-            </summary>
-            <param name="sContent">链接</param>
-            <returns>文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.IsExistsScriptLink(System.String)">
-            <summary>
-            判断是否是js链接
-            </summary>
-            <param name="sHtml">html</param>
-            <returns>判断是否是js链接</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetLinksFromRss(System.String,System.String)">
-            <summary>
-            从RSS FEED中读取
-            </summary>
-            <param name="sContent">RSS内容</param>
-            <param name="sUrl">URL</param>
-            <returns>读取到的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetLinksFromRss(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String}@)">
-            <summary>
-            从RSS FEED中读取
-            </summary>
-            <param name="sContent">RSS内容</param>
-            <param name="sUrl">URL</param>
-            <param name="lisDes">过滤条件</param>
-            <returns>读取到的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTitleFromRss(System.String)">
-            <summary>
-             从RSS FEED中读取标题
-            </summary>
-            <param name="sContent">RSS</param>
-            <returns>标题</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.RemoveByReg(System.String,System.String)">
-            <summary>
-            根据标签进行移除
-            </summary>
-            <param name="sContent">html</param>
-            <param name="sRegex">正则表达式</param>
-            <returns>清理后的代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.ReplaceByReg(System.String,System.String,System.String)">
-            <summary>
-            根据正则表达式替换内容
-            </summary>
-            <param name="sContent">html</param>
-            <param name="sReplace">需要替换的内容</param>
-            <param name="sRegex">符合正则的内容</param>
-            <returns>替换后内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetBody(System.String)">
-            <summary>
-             网页Body内容
-            </summary>
-            <param name="sContent">html源代码</param>
-            <returns>网页Body内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTextByReg(System.String,System.String)">
-            <summary>
-            根据标签获取文本
-            </summary>
-            <param name="sContent">html</param>
-            <param name="sRegex">正则表达式</param>
-            <returns>文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTextByReg(System.String,System.String,System.String)">
-            <summary>
-            根据标签获取文本
-            </summary>
-            <param name="sContent">html</param>
-            <param name="sRegex">正则表达式</param>
-            <param name="sGroupName">分组名</param>
-            <returns>文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetUrlByRelative(System.String,System.String)">
-            <summary>
-            获得链接的绝对路径
-            </summary>
-            <param name="sUrl">原链接地址</param>
-            <param name="sRUrl">相对地址</param>
-            <returns>获得链接的绝对路径</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetListByReg(System.String,System.String)">
-            <summary>
-            根据标签获取数据集合
-            </summary>
-            <param name="sContent">html</param>
-            <param name="sRegex">正则表达式</param>
-            <returns>数据集合</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetDomainUrl(System.String)">
-            <summary>
-            获得主域
-            </summary>
-            <param name="sUrl">URL</param>
-            <returns>域名</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTxtFromHtml(System.String)">
-            <summary>
-            从html中过滤出文本
-            </summary>
-            <param name="sHtml">html</param>
-            <returns>纯文本</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetTxtFromHtml2(System.String)">
-            <summary>
-            从html中过滤出文本，不过保留换行符号
-            </summary>
-            <param name="sHtml">html源代码</param>
-            <returns>从html中过滤出文本，不过保留换行符号</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.RemoveEndWith(System.String,System.String)">
-            <summary>
-            按结尾移除内容
-            </summary>
-            <param name="sOrg">原始数据</param>
-            <param name="sEnd">结束的字符串</param>
-            <returns>清理后的内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtmlByUrl(System.String)">
-            <summary>
-            根据超链接地址获取页面内容
-            </summary>
-            <param name="sUrl">URL</param>
-            <returns>页面内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtmlByUrl(System.String,System.String)">
-            <summary>
-            根据超链接地址获取页面内容
-            </summary>
-            <param name="sUrl">URL</param>
-            <param name="sCoding">文件编码</param>
-            <returns>页面内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtmlByUrl(System.String@,System.String)">
-            <summary>
-            根据超链接地址获取页面内容，并将url作为引用类型
-            </summary>
-            <param name="sUrl">URL</param>
-            <param name="sCoding">文件编码</param>
-            <returns>页面内容</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHttpHead(System.String)">
-            <summary>
-            获取http报文头
-            </summary>
-            <param name="sUrl">URL</param>
-            <returns>报文信息</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.DealWithFrame(System.String,System.String)">
-            <summary>
-            处理框架页面问题。如果该页面是框架结构的话，返回该框架
-            </summary>
-            <param name="url">URL</param>
-            <param name="content">内容</param>
-            <returns>框架结构</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.DealWithIFrame(System.String,System.String)">
-            <summary>
-            处理浮动桢问题。如果该页面存在浮动桢，返回浮动桢
-            </summary>
-            <param name="url">URL</param>
-            <param name="content">内容</param>
-            <returns>浮动桢</returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetHtmlByUrlList(System.Collections.Generic.Dictionary{System.Int32,System.String},System.String)">
-            <summary>
-            获得多个页面
-            </summary>
-            <param name="listUrl">URL集合</param>
-            <param name="sCoding">文件编码</param>
-            <returns>页面集合</returns>
-            <exception cref="T:System.Exception"> </exception>
-        </member>
-        <member name="T:Masuit.Tools.Html.HtmlTools.PageType">
-            <summary>
-            页面类型枚举
-            </summary>
-        </member>
-        <member name="F:Masuit.Tools.Html.HtmlTools.PageType.HTML">
-            <summary>
-            HTML格式
-            </summary>
-        </member>
-        <member name="F:Masuit.Tools.Html.HtmlTools.PageType.RSS">
-            <summary>
-            RSS格式
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.GetPageType(System.String,System.String@)">
-            <summary>
-            获取页面类型
-            </summary>
-            <param name="sUrl">URL</param>
-            <param name="sHtml">内容</param>
-            <returns>页面类型枚举</returns>
         </member>
         <member name="T:Masuit.Tools.Logging.LogInfo">
             <summary>
@@ -7286,119 +6668,6 @@
             </summary>
             <param name="item"></param>
         </member>
-        <member name="T:Masuit.Tools.Systems.Lock">
-            <summary>
-            分布式锁
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Systems.Lock.#ctor(StackExchange.Redis.RedisKey,StackExchange.Redis.RedisValue,System.TimeSpan)">
-            <summary>
-            分布式锁
-            </summary>
-            <param name="resource"></param>
-            <param name="val"></param>
-            <param name="validity"></param>
-        </member>
-        <member name="P:Masuit.Tools.Systems.Lock.Resource">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Systems.Lock.Value">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Systems.Lock.Validity">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:Masuit.Tools.Systems.RedisLock">
-            <summary>
-            Redis分布式锁
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.Finalize">
-            <summary>
-            终结器
-            </summary>
-        </member>
-        <member name="F:Masuit.Tools.Systems.RedisLock.LockScript">
-            <summary>
-            KEYS[1] ：需要加锁的key，这里需要是字符串类型。
-            ARGV[1] ：锁的超时时间，防止死锁
-            ARGV[2] ：锁的唯一标识
-            </summary>
-        </member>
-        <member name="F:Masuit.Tools.Systems.RedisLock.UnLockScript">
-            <summary>
-            – KEYS[1] ：需要加锁的key，这里需要是字符串类型。
-            – KEYS[2] ：redis消息的ChannelName,一个分布式锁对应唯一的一个channelName:“redisson_lock__channel__{” + getName() + “}”
-            – ARGV[1] ：reids消息体，这里只需要一个字节的标记就可以，主要标记redis的key已经解锁，再结合redis的Subscribe，能唤醒其他订阅解锁消息的客户端线程申请锁。
-            – ARGV[2] ：锁的超时时间，防止死锁
-            – ARGV[3] ：锁的唯一标识
-            </summary>
-        </member>
-        <member name="F:Masuit.Tools.Systems.RedisLock._leaseTimeSpan">
-            <summary>
-            默认的30秒过期时间
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.#ctor(System.String)">
-            <summary>
-            默认连接127.0.0.1:6379,synctimeout=20000
-            </summary>
-            <param name="connstr"></param>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.TryLock(StackExchange.Redis.RedisKey,System.TimeSpan,System.TimeSpan,Masuit.Tools.Systems.Lock@)">
-            <summary>
-            加锁
-            </summary>
-            <param name="resource">锁名</param>
-            <param name="waitTimeSpan">如果没有锁成功,允许动重试申请锁的最大时长</param>
-            <param name="leaseTimeSpan">如果锁成功,对于锁(key)的过期时间</param>
-            <param name="lockObject">锁成功信息包装成对象返回</param>
-            <returns>true:成功</returns>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.UnLock(Masuit.Tools.Systems.Lock)">
-            <summary>
-            解锁
-            </summary>
-            <param name="lockObject">锁成功的返回对象</param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.CreateUniqueLockId">
-            <summary>
-            创建唯一锁id
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.SetTimeOut(System.Timers.ElapsedEventHandler,System.Int32)">
-            <summary>
-            设置超时
-            </summary>
-            <param name="doWork"></param>
-            <param name="time"></param>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.TaskTimeOut(System.Func{Masuit.Tools.Systems.Lock,System.Boolean},Masuit.Tools.Systems.Lock,System.Int32)">
-            <summary>
-            任务超时
-            </summary>
-            <param name="action"></param>
-            <param name="lockObj"></param>
-            <param name="time"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.Dispose">
-            <summary>执行与释放或重置非托管资源关联的应用程序定义的任务。</summary>
-        </member>
-        <member name="M:Masuit.Tools.Systems.RedisLock.Dispose(System.Boolean)">
-            <summary>
-            释放锁
-            </summary>
-            <param name="disposing"></param>
-        </member>
         <member name="T:Masuit.Tools.Systems.SnowFlake">
             <summary>
             动态生产有规律的分布式ID
@@ -7445,18 +6714,6 @@
             获取一个字符串表示形式的id
             </summary>
             <param name="maxLength">最大长度，至少6位</param>
-            <returns></returns>
-        </member>
-        <member name="T:Masuit.Tools.Systems.StopwatchExtension">
-            <summary>
-            stopwatch扩展
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Systems.StopwatchExtension.Execute(System.Action)">
-            <summary>
-            检测方法执行时间
-            </summary>
-            <param name="action"></param>
             <returns></returns>
         </member>
         <member name="T:Masuit.Tools.Win32.Windows">
@@ -7577,23 +6834,6 @@
             <summary>
             命令提示符
             </summary>
-        </member>
-        <member name="M:Masuit.Tools.Win32.WindowsCommand.StrictNext(System.Random,System.Int32)">
-            <summary>
-            生成真正的随机数
-            </summary>
-            <param name="r"></param>
-            <param name="seed"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Win32.WindowsCommand.NextGauss(System.Random,System.Double,System.Double)">
-            <summary>
-            产生正态分布的随机数
-            </summary>
-            <param name="rand"></param>
-            <param name="mean">均值</param>
-            <param name="stdDev">方差</param>
-            <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Win32.WindowsCommand.Execute(System.String,System.Int32)">
             <summary>
