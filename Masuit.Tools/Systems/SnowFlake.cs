@@ -36,6 +36,11 @@ namespace Masuit.Tools.Systems
         #endregion
 
         /// <summary>
+        /// 获取一个新的id
+        /// </summary>
+        public static string NewId => _snowFlake.GetUniqueId();
+
+        /// <summary>
         /// 创建一个实例
         /// </summary>
         /// <returns></returns>

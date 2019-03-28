@@ -6673,6 +6673,11 @@
             动态生产有规律的分布式ID
             </summary>
         </member>
+        <member name="P:Masuit.Tools.Systems.SnowFlake.NewId">
+            <summary>
+            获取一个新的id
+            </summary>
+        </member>
         <member name="M:Masuit.Tools.Systems.SnowFlake.GetInstance">
             <summary>
             创建一个实例
