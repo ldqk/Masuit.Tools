@@ -30,7 +30,7 @@ namespace Masuit.Tools.Systems
         private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一毫秒内可以产生计数，如果达到该值则等到下一毫秒在进行生成
 
         private static readonly object SyncRoot = new object(); //加锁对象
-        private static readonly NumberFormater NumberFormater = new NumberFormater(36);
+        private static NumberFormater _numberFormater = new NumberFormater(36);
         private static SnowFlake _snowFlake;
 
         #endregion
@@ -38,7 +38,7 @@ namespace Masuit.Tools.Systems
         /// <summary>
         /// 获取一个新的id
         /// </summary>
-        public static string NewId => _snowFlake.GetUniqueId();
+        public static string NewId => GetInstance().GetUniqueId();
 
         /// <summary>
         /// 创建一个实例
@@ -100,6 +100,15 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
+        /// 设置数制格式化器
+        /// </summary>
+        /// <param name="nf"></param>
+        public static void SetNumberFormater(NumberFormater nf)
+        {
+            _numberFormater = nf;
+        }
+
+        /// <summary>
         /// 获取长整形的ID
         /// </summary>
         /// <returns></returns>
@@ -136,7 +145,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public string GetUniqueId()
         {
-            return NumberFormater.ToString(GetLongId());
+            return _numberFormater.ToString(GetLongId());
         }
 
         /// <summary>
