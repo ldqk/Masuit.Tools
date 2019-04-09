@@ -579,56 +579,26 @@
         </member>
         <member name="T:Masuit.Tools.Core.Linq.LinqExtension">
             <summary>
-            linq扩展类
+            LINQ扩展方法
             </summary>
         </member>
         <member name="M:Masuit.Tools.Core.Linq.LinqExtension.And``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
             <summary>
             与连接
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">类型</typeparam>
             <param name="left">左条件</param>
             <param name="right">右条件</param>
-            <returns></returns>
+            <returns>新表达式</returns>
         </member>
         <member name="M:Masuit.Tools.Core.Linq.LinqExtension.Or``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
             <summary>
             或连接
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">类型</typeparam>
             <param name="left">左条件</param>
             <param name="right">右条件</param>
-            <returns></returns>
-        </member>
-        <member name="T:Masuit.Tools.Core.Linq.ParameterReplacer">
-            <summary>
-            linq参数替换器
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Core.Linq.ParameterReplacer.#ctor(System.Linq.Expressions.ParameterExpression)">
-            <summary>
-            linq参数替换器
-            </summary>
-            <param name="paramExpr"></param>
-        </member>
-        <member name="P:Masuit.Tools.Core.Linq.ParameterReplacer.ParameterExpression">
-            <summary>
-            参数表达式
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Core.Linq.ParameterReplacer.Replace(System.Linq.Expressions.Expression)">
-            <summary>
-            表达式替换
-            </summary>
-            <param name="expr"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Linq.ParameterReplacer.VisitParameter(System.Linq.Expressions.ParameterExpression)">
-            <summary>
-            表达式参数访问
-            </summary>
-            <param name="p"></param>
-            <returns></returns>
+            <returns>新表达式</returns>
         </member>
         <member name="T:Masuit.Tools.Core.Net.CallContext`1">
             <summary>
@@ -6701,6 +6671,12 @@
             </summary>
             <param name="machineId">机器码</param>
             <param name="datacenterId">数据中心id</param>
+        </member>
+        <member name="M:Masuit.Tools.Systems.SnowFlake.SetNumberFormater(Masuit.Tools.Strings.NumberFormater)">
+            <summary>
+            设置数制格式化器
+            </summary>
+            <param name="nf"></param>
         </member>
         <member name="M:Masuit.Tools.Systems.SnowFlake.GetLongId">
             <summary>

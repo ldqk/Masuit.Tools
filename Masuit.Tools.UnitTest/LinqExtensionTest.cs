@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Core.Linq;
+﻿using Masuit.Tools.Linq;
 using System;
 using System.Linq.Expressions;
 using Xunit;

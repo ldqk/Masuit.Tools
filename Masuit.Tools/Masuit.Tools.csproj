@@ -117,7 +117,6 @@
     <Compile Include="Hardware\Unit.cs" />
     <Compile Include="Html\HtmlTools.cs" />
     <Compile Include="Linq\LinqExtension.cs" />
-    <Compile Include="Linq\ParameterReplacer.cs" />
     <Compile Include="Logging\LogInfo.cs" />
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\LogManager.cs" />
