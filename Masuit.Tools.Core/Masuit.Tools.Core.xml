@@ -6702,6 +6702,12 @@
             <param name="machineId">机器码</param>
             <param name="datacenterId">数据中心id</param>
         </member>
+        <member name="M:Masuit.Tools.Systems.SnowFlake.SetNumberFormater(Masuit.Tools.Strings.NumberFormater)">
+            <summary>
+            设置数制格式化器
+            </summary>
+            <param name="nf"></param>
+        </member>
         <member name="M:Masuit.Tools.Systems.SnowFlake.GetLongId">
             <summary>
             获取长整形的ID

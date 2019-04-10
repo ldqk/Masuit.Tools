@@ -29,7 +29,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="4.0.207" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.210" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
     <PackageReference Include="SharpCompress" Version="0.23.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
