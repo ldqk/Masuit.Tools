@@ -1,5 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.Files
@@ -77,13 +78,6 @@ namespace Masuit.Tools.Files
         public static string GetFileMD5(this FileStream fs) => HashFile(fs, "md5");
 
         /// <summary>
-        /// 计算文件的 MD5 值
-        /// </summary>
-        /// <param name="fs">源文件流</param>
-        /// <returns>MD5 值16进制字符串</returns>
-        public static Task<string> GetFileMD5Async(this FileStream fs) => HashFileAsync(fs, "md5");
-
-        /// <summary>
         /// 计算文件的 sha1 值
         /// </summary>
         /// <param name="fs">源文件流</param>
@@ -91,101 +85,30 @@ namespace Masuit.Tools.Files
         public static string GetFileSha1(this Stream fs) => HashFile(fs, "sha1");
 
         /// <summary>
-        /// 计算文件的 sha1 值
-        /// </summary>
-        /// <param name="fs">源文件流</param>
-        /// <returns>sha1 值16进制字符串</returns>
-        public static Task<string> GetFileSha1Async(this FileStream fs) => HashFileAsync(fs, "sha1");
-
-        /// <summary>
         /// 计算文件的哈希值
         /// </summary>
         /// <param name="fs">被操作的源数据流</param>
-        /// <param name="algName">算法:sha1,md5</param>
+        /// <param name="algo">加密算法</param>
         /// <returns>哈希值16进制字符串</returns>
-        private static string HashFile(Stream fs, string algName)
+        private static string HashFile(Stream fs, string algo)
         {
-            byte[] hashBytes = HashData(fs, algName);
-            return ByteArrayToHexString(hashBytes);
+            HashAlgorithm crypto;
+            switch (algo)
+            {
+                case "sha1":
+                    crypto = new SHA1CryptoServiceProvider();
+                    break;
+                default:
+                    crypto = new MD5CryptoServiceProvider();
+                    break;
+            }
+            byte[] retVal = crypto.ComputeHash(fs);
+            StringBuilder sb = new StringBuilder();
+            foreach (var t in retVal)
+            {
+                sb.Append(t.ToString("x2"));
+            }
+            return sb.ToString();
         }
-
-        /// <summary>
-        /// 计算文件的哈希值
-        /// </summary>
-        /// <param name="fs">被操作的源数据流</param>
-        /// <param name="algName">算法:sha1,md5</param>
-        /// <returns>哈希值16进制字符串</returns>
-        private static async Task<string> HashFileAsync(Stream fs, string algName)
-        {
-            byte[] hashBytes = await HashDataAsync(fs, algName).ConfigureAwait(false);
-            return ByteArrayToHexString(hashBytes);
-        }
-
-        /// <summary>
-        /// 计算哈希值
-        /// </summary>
-        /// <param name="stream">要计算哈希值的 Stream</param>
-        /// <param name="algName">算法:sha1,md5</param>
-        /// <returns>哈希值字节数组</returns>
-        private static byte[] HashData(System.IO.Stream stream, string algName)
-        {
-            System.Security.Cryptography.HashAlgorithm algorithm;
-            if (algName == null)
-            {
-                throw new ArgumentNullException("algName 不能为 null");
-            }
-
-            if (string.Compare(algName, "sha1", true) == 0)
-            {
-                algorithm = System.Security.Cryptography.SHA1.Create();
-            }
-            else
-            {
-                if (string.Compare(algName, "md5", true) != 0)
-                {
-                    throw new Exception("algName 只能使用 sha1 或 md5");
-                }
-
-                algorithm = System.Security.Cryptography.MD5.Create();
-            }
-
-            return algorithm.ComputeHash(stream);
-        }
-
-        /// <summary>
-        /// 计算哈希值
-        /// </summary>
-        /// <param name="stream">要计算哈希值的 Stream</param>
-        /// <param name="algName">算法:sha1,md5</param>
-        /// <returns>哈希值字节数组</returns>
-        private static async Task<byte[]> HashDataAsync(this Stream stream, string algName)
-        {
-            System.Security.Cryptography.HashAlgorithm algorithm;
-            if (algName == null)
-            {
-                throw new ArgumentNullException("algName 不能为 null");
-            }
-
-            if (string.Compare(algName, "sha1", true) == 0)
-            {
-                algorithm = System.Security.Cryptography.SHA1.Create();
-            }
-            else
-            {
-                if (string.Compare(algName, "md5", true) != 0)
-                {
-                    throw new Exception("algName 只能使用 sha1 或 md5");
-                }
-
-                algorithm = System.Security.Cryptography.MD5.Create();
-            }
-
-            return await Task.Run(() => algorithm.ComputeHash(stream)).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// 字节数组转换为16进制表示的字符串
-        /// </summary>
-        private static string ByteArrayToHexString(byte[] buf) => BitConverter.ToString(buf).Replace("-", "");
     }
 }
