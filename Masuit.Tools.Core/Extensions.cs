@@ -1185,7 +1185,7 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="keys">关键词列表</param>
         /// <returns></returns>
-        public static bool Contains(this string s, string[] keys) => Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+        public static bool Contains(this string s, IEnumerable<string> keys) => Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
 
         #endregion
 
