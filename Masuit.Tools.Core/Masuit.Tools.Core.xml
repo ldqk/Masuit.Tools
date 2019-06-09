@@ -2820,13 +2820,6 @@
             <param name="html"></param>
             <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.RemoveHtml(System.String)">
-            <summary>   
-             清除HTML标记   
-            </summary>   
-            <param name="htmlstring">包括HTML的源码</param>   
-            <returns>已经去除后的文字</returns>   
-        </member>
         <member name="M:Masuit.Tools.Html.HtmlTools.ReplaceHtmlImgSource(System.String,System.String)">
             <summary>
             替换html的img路径为绝对路径
@@ -2852,13 +2845,6 @@
         <member name="M:Masuit.Tools.Html.HtmlTools.MatchImgSrcs(System.String)">
             <summary>
             匹配html的所有img标签的src集合
-            </summary>
-            <param name="html"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Html.HtmlTools.MatchImgTag(System.String)">
-            <summary>
-            匹配html的一个img标签
             </summary>
             <param name="html"></param>
             <returns></returns>

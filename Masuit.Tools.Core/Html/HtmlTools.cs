@@ -1,7 +1,8 @@
 ﻿using Ganss.XSS;
-using Masuit.Tools.Win32;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.Html
@@ -80,8 +81,9 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string RemoveHtmlTag(this string html, int length = 0)
         {
-            string strText = Regex.Replace(html, "<[^>]+>", "");
-            strText = Regex.Replace(strText, "&[^;]+;", "");
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            var strText = doc.DocumentNode.InnerText;
             if (length > 0 && strText.Length > length)
             {
                 return strText.Substring(0, length);
@@ -104,41 +106,6 @@ namespace Masuit.Tools.Html
             return s;
         }
 
-        ///<summary>   
-        /// 清除HTML标记   
-        ///</summary>   
-        ///<param name="htmlstring">包括HTML的源码</param>   
-        ///<returns>已经去除后的文字</returns>   
-        public static string RemoveHtml(this string htmlstring)
-        {
-            //删除脚本   
-            htmlstring = Regex.Replace(htmlstring, "<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
-
-            //删除HTML   
-            Regex regex = new Regex("<.+?>", RegexOptions.IgnoreCase);
-            htmlstring = regex.Replace(htmlstring, "");
-            htmlstring = Regex.Replace(htmlstring, "<(.[^>]*)>", "", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, @"([\r\n])[\s]+", "", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "-->", "", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "<!--.*", "", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(quot|#34);", "\"", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(amp|#38);", "&", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(lt|#60);", "<", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(gt|#62);", ">", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(nbsp|#160);", "   ", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(iexcl|#161);", "\xa1", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(cent|#162);", "\xa2", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(pound|#163);", "\xa3", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, "&(copy|#169);", "\xa9", RegexOptions.IgnoreCase);
-            htmlstring = Regex.Replace(htmlstring, @"&#(\d+);", "", RegexOptions.IgnoreCase);
-
-            htmlstring.Replace("<", "");
-            htmlstring.Replace(">", "");
-            htmlstring.Replace("\r\n", "");
-
-            return htmlstring;
-        }
-
         /// <summary>
         /// 替换html的img路径为绝对路径
         /// </summary>
@@ -157,14 +124,18 @@ namespace Masuit.Tools.Html
             return Regex.Replace(s, @"<img src=""(http:\/\/.+?)/", @"<img src=""/");
         }
 
-        private static readonly Regex ImgRegex = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<src>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>");
-
         /// <summary>
         /// 匹配html的所有img标签集合
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static MatchCollection MatchImgTags(this string html) => ImgRegex.Matches(html);
+        public static IEnumerable<HtmlNode> MatchImgTags(this string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            var nodes = doc.DocumentNode.Descendants("img");
+            return nodes;
+        }
 
         /// <summary>
         /// 匹配html的所有img标签的src集合
@@ -173,18 +144,8 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static IEnumerable<string> MatchImgSrcs(this string html)
         {
-            foreach (Match m in ImgRegex.Matches(html))
-            {
-                yield return m.Groups["src"].Value;
-            }
+            return MatchImgTags(html).Where(n => n.Attributes.Contains("src")).Select(n => n.Attributes["src"].Value);
         }
-
-        /// <summary>
-        /// 匹配html的一个img标签
-        /// </summary>
-        /// <param name="html"></param>
-        /// <returns></returns>
-        public static Match MatchImgTag(this string html) => ImgRegex.Match(html);
 
         /// <summary>
         /// 获取html中第一个img标签的src
@@ -193,14 +154,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchFirstImgSrc(this string html)
         {
-            string src = ImgRegex.Match(html).Groups["src"].Value;
-            int index = src.IndexOf("\"", StringComparison.Ordinal);
-            if (index > 0)
-            {
-                src = src.Substring(0, index);
-            }
-
-            return src;
+            return MatchImgSrcs(html).FirstOrDefault();
         }
 
         /// <summary>
@@ -210,20 +164,9 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            var collection = ImgRegex.Matches(html);
-            if (collection.Count > 0)
-            {
-                string src = collection[new Random().StrictNext(collection.Count)].Groups["src"].Value;
-                int index = src.IndexOf("\"", StringComparison.Ordinal);
-                if (index > 0)
-                {
-                    src = src.Substring(0, index);
-                }
-
-                return src;
-            }
-
-            return string.Empty;
+            int count = MatchImgSrcs(html).Count();
+            var rnd = new Random();
+            return MatchImgSrcs(html).ElementAtOrDefault(rnd.Next(count));
         }
 
         /// <summary>
