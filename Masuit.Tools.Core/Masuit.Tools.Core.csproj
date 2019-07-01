@@ -29,7 +29,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.7" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.8" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
     <PackageReference Include="SharpCompress" Version="0.23.0" />

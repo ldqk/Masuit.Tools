@@ -1538,19 +1538,31 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool IpAddressInRange(this string input, string begin, string ends)
         {
-            if (input.MatchInetAddress() && begin.MatchInetAddress() && ends.MatchInetAddress())
+            uint current = IPToID(input);
+            return current >= IPToID(begin) && current <= IPToID(ends);
+        }
+
+        /// <summary>
+        /// IP地址转换成数字
+        /// </summary>
+        /// <param name="addr">IP地址</param>
+        /// <returns>数字,输入无效IP地址返回0</returns>
+        private static uint IPToID(string addr)
+        {
+            if (!IPAddress.TryParse(addr, out var ip))
             {
-                string[] ipStarts = begin.Split('.');
-                string[] ipEnds = ends.Split('.');
-                string[] inputs = input.Split('.');
-                uint start = uint.Parse(ipStarts[0]) << 24 | uint.Parse(ipStarts[1]) << 16 | uint.Parse(ipStarts[2]) << 8 | uint.Parse(ipStarts[3]);
-                uint end = uint.Parse(ipEnds[0]) << 24 | uint.Parse(ipEnds[1]) << 16 | uint.Parse(ipEnds[2]) << 8 | uint.Parse(ipEnds[3]);
-                uint current = uint.Parse(inputs[0]) << 24 | uint.Parse(inputs[1]) << 16 | uint.Parse(inputs[2]) << 8 | uint.Parse(inputs[3]);
-                return current >= start && current <= end;
+                return 0;
             }
 
-            return false;
+            byte[] bInt = ip.GetAddressBytes();
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bInt);
+            }
+
+            return BitConverter.ToUInt32(bInt, 0);
         }
+
         /// <summary>
         /// 判断IP是否是私有地址
         /// </summary>
