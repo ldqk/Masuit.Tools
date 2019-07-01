@@ -1099,4 +1099,4 @@ public IActionResult VirtualFile(bool fileName)
 ||||
 |---|--|---|
 |支付宝|微信收款码|QQ转账|
-|![支付宝](https://ww3.sinaimg.cn/large/006LWy2zgy1fvn02jlkdej30go0p0404.jpg)|![微信](https://ww3.sinaimg.cn/large/87c01ec7gy1fsqnp6iaj4j20u715fjuc.jpg)|![QQ](https://ww4.sinaimg.cn/large/006LWy2zgy1fvci5pnydhj30k00u0myw.jpg)|
+|![支付宝](https://git.lug.ustc.edu.cn/ldqk/imgbed/raw/master/5ccadc6a30077.jpg)|![微信](https://git.lug.ustc.edu.cn/ldqk/imgbed/raw/master/5ccadc6b53f28.jpg)|![QQ](https://git.lug.ustc.edu.cn/ldqk/imgbed/raw/master/5ccadc6c9aa5b.jpg)|
