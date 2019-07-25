@@ -1914,12 +1914,13 @@
             <param name="num">int类型</param>
             <returns>int类型</returns>
         </member>
-        <member name="M:Masuit.Tools.Extensions.Contains(System.String,System.Collections.Generic.IEnumerable{System.String})">
+        <member name="M:Masuit.Tools.Extensions.Contains(System.String,System.Collections.Generic.IEnumerable{System.String},System.Boolean)">
             <summary>
             检测字符串中是否包含列表中的关键词
             </summary>
             <param name="s">源字符串</param>
             <param name="keys">关键词列表</param>
+            <param name="ignoreCase">忽略大小写</param>
             <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Extensions.MatchEmail(System.String,System.Boolean@)">
@@ -2084,6 +2085,13 @@
             <param name="begin">起始地址</param>
             <param name="ends">结束地址</param>
             <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Extensions.IPToID(System.String)">
+            <summary>
+            IP地址转换成数字
+            </summary>
+            <param name="addr">IP地址</param>
+            <returns>数字,输入无效IP地址返回0</returns>
         </member>
         <member name="M:Masuit.Tools.Extensions.IsPrivateIP(System.Net.IPAddress)">
             <summary>
