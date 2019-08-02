@@ -5654,19 +5654,85 @@
             <param name="resName">嵌入资源相对路径</param>
             <returns>如没找到该资源则返回空字符</returns>
         </member>
-        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.CreateInstance``1(System.String)">
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance(System.Type)">
             <summary>
-            创建对应实例
+            获取默认实例
             </summary>
             <param name="type">类型</param>
-            <returns>对应实例</returns>
+            <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.CreateInstance``1(System.Type)">
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance(System.String)">
             <summary>
-            创建对应实例
+            获取默认实例
             </summary>
             <param name="type">类型</param>
-            <returns>对应实例</returns>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``1(System.Type,``0)">
+            <summary>
+            获取一个构造参数的实例
+            </summary>
+            <typeparam name="TArg">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``1(System.String,``0)">
+            <summary>
+            获取一个构造参数的实例
+            </summary>
+            <typeparam name="TArg">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``2(System.Type,``0,``1)">
+            <summary>
+            获取2个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``2(System.String,``0,``1)">
+            <summary>
+            获取2个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``3(System.Type,``0,``1,``2)">
+            <summary>
+            获取3个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="TArg3">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <param name="argument3">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``3(System.String,``0,``1,``2)">
+            <summary>
+            获取3个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="TArg3">参数类型</typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <param name="argument3">参数值</param>
+            <returns></returns>
         </member>
         <member name="T:Masuit.Tools.Security.Encrypt">
             <summary>

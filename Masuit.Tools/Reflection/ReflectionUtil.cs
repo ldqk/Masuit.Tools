@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
 using System.Text;
@@ -366,38 +369,157 @@ namespace Masuit.Tools.Reflection
 
         #endregion
 
-        #region 创建对应实例
+        #region 创建实例
 
         /// <summary>
-        /// 创建对应实例
+        /// 获取默认实例
         /// </summary>
         /// <param name="type">类型</param>
-        /// <returns>对应实例</returns>
-        public static T CreateInstance<T>(string type) where T : class
+        /// <returns></returns>
+        public static object GetInstance(this Type type)
         {
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly t in assemblies)
+            return GetInstance<TypeToIgnore>(type, null);
+        }
+
+        /// <summary>
+        /// 获取默认实例
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static object GetInstance(string type)
+        {
+            return GetInstance<TypeToIgnore>(Type.GetType(type), null);
+        }
+
+        /// <summary>
+        /// 获取一个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg>(this Type type, TArg argument)
+        {
+            return GetInstance<TArg, TypeToIgnore>(type, argument, null);
+        }
+
+        /// <summary>
+        /// 获取一个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg>(string type, TArg argument)
+        {
+            return GetInstance<TArg, TypeToIgnore>(Type.GetType(type), argument, null);
+        }
+
+        /// <summary>
+        /// 获取2个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg1">参数类型</typeparam>
+        /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument1">参数值</param>
+        /// <param name="argument2">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg1, TArg2>(this Type type, TArg1 argument1, TArg2 argument2)
+        {
+            return GetInstance<TArg1, TArg2, TypeToIgnore>(type, argument1, argument2, null);
+        }
+
+        /// <summary>
+        /// 获取2个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg1">参数类型</typeparam>
+        /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument1">参数值</param>
+        /// <param name="argument2">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg1, TArg2>(string type, TArg1 argument1, TArg2 argument2)
+        {
+            return GetInstance<TArg1, TArg2, TypeToIgnore>(Type.GetType(type), argument1, argument2, null);
+        }
+
+        /// <summary>
+        /// 获取3个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg1">参数类型</typeparam>
+        /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <typeparam name="TArg3">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument1">参数值</param>
+        /// <param name="argument2">参数值</param>
+        /// <param name="argument3">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg1, TArg2, TArg3>(this Type type, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+        {
+            return InstanceCreationFactory<TArg1, TArg2, TArg3>.CreateInstanceOf(type, argument1, argument2, argument3);
+        }
+
+        /// <summary>
+        /// 获取3个构造参数的实例
+        /// </summary>
+        /// <typeparam name="TArg1">参数类型</typeparam>
+        /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <typeparam name="TArg3">参数类型</typeparam>
+        /// <param name="type">实例类型</param>
+        /// <param name="argument1">参数值</param>
+        /// <param name="argument2">参数值</param>
+        /// <param name="argument3">参数值</param>
+        /// <returns></returns>
+        public static object GetInstance<TArg1, TArg2, TArg3>(string type, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+        {
+            return InstanceCreationFactory<TArg1, TArg2, TArg3>.CreateInstanceOf(Type.GetType(type), argument1, argument2, argument3);
+        }
+
+        private class TypeToIgnore
+        {
+        }
+
+        private static class InstanceCreationFactory<TArg1, TArg2, TArg3>
+        {
+            private static readonly Dictionary<Type, Func<TArg1, TArg2, TArg3, object>> InstanceCreationMethods = new Dictionary<Type, Func<TArg1, TArg2, TArg3, object>>();
+
+            public static object CreateInstanceOf(Type type, TArg1 arg1, TArg2 arg2, TArg3 arg3)
             {
-                var tmp = t.GetType(type);
-                if (tmp != null)
-                {
-                    return t.CreateInstance(type) as T;
-                }
+                CacheInstanceCreationMethodIfRequired(type);
+
+                return InstanceCreationMethods[type].Invoke(arg1, arg2, arg3);
             }
 
-            return null;
-        }
+            private static void CacheInstanceCreationMethodIfRequired(Type type)
+            {
+                if (InstanceCreationMethods.ContainsKey(type))
+                {
+                    return;
+                }
 
-        /// <summary>
-        /// 创建对应实例
-        /// </summary>
-        /// <param name="type">类型</param>
-        /// <returns>对应实例</returns>
-        public static T CreateInstance<T>(this Type type) where T : class
-        {
-            return CreateInstance<T>(type.FullName);
-        }
+                var argumentTypes = new[]
+                {
+                    typeof(TArg1),
+                    typeof(TArg2),
+                    typeof(TArg3)
+                };
 
+                Type[] constructorArgumentTypes = argumentTypes.Where(t => t != typeof(TypeToIgnore)).ToArray();
+                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, new ParameterModifier[0]);
+
+                var lamdaParameterExpressions = new[]
+                {
+                    Expression.Parameter(typeof(TArg1), "param1"),
+                    Expression.Parameter(typeof(TArg2), "param2"),
+                    Expression.Parameter(typeof(TArg3), "param3")
+                };
+
+                var constructorParameterExpressions = lamdaParameterExpressions.Take(constructorArgumentTypes.Length).ToArray();
+                var constructorCallExpression = Expression.New(constructor, constructorParameterExpressions);
+                var constructorCallingLambda = Expression.Lambda<Func<TArg1, TArg2, TArg3, object>>(constructorCallExpression, lamdaParameterExpressions).Compile();
+                InstanceCreationMethods[type] = constructorCallingLambda;
+            }
+        }
         #endregion
     }
 }
