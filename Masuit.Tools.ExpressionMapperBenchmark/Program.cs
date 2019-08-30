@@ -12,11 +12,11 @@ namespace Masuit.Tools.ExpressionMapperBenchmark
         {
             #region 配置automapper
 
-            Mapper.Initialize(e =>
+            var mapper = new MapperConfiguration(e =>
             {
                 e.CreateMap<TestClassA, TestClassB>().ReverseMap();
                 e.CreateMap<TestClassC, TestClassD>().ReverseMap();
-            });
+            }).CreateMapper();
 
             #endregion
 
@@ -188,15 +188,15 @@ namespace Masuit.Tools.ExpressionMapperBenchmark
 
             time = HiPerfTimer.Execute(() =>
             {
-                Mapper.Map<TestClassB>(a);
-                Mapper.Map<TestClassB>(a);
+                mapper.Map<TestClassB>(a);
+                mapper.Map<TestClassB>(a);
             });
             Console.WriteLine($"AutoMapper映射2次耗时：{time}s");
             time = HiPerfTimer.Execute(() =>
             {
                 for (int i = 0; i < 1000000; i++)
                 {
-                    var b = Mapper.Map<TestClassB>(a);
+                    var b = mapper.Map<TestClassB>(a);
                 }
             });
             Console.WriteLine($"AutoMapper映射100000次耗时：{time}s");
