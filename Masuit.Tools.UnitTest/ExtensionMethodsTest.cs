@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Masuit.Tools.UnitTest
 {
@@ -23,6 +25,14 @@ namespace Masuit.Tools.UnitTest
         {
             bool expect = "513901199509120610".MatchIdentifyCard();
             Assert.AreEqual(false, expect);
+        }
+
+        [Theory]
+        [InlineData("16666666666")]
+        [InlineData("19999999999")]
+        public async void Can_MatchPhoneNumber_(string phone)
+        {
+            Xunit.Assert.True(phone.MatchPhoneNumber());
         }
     }
 }

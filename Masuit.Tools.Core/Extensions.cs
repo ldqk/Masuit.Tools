@@ -1394,7 +1394,7 @@ namespace Masuit.Tools
         /// <returns>匹配对象</returns>
         public static Match MatchPhoneNumber(this string s, out bool isMatch)
         {
-            Match match = Regex.Match(s, @"^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,3,6,7,8])|(19[8,9]))\d{8}$");
+            Match match = Regex.Match(s, @"^((1[3,5,6,8][0-9])|(14[5,7])|(17[0,1,3,6,7,8])|(19[8,9]))\d{8}$");
             isMatch = match.Success;
             return isMatch ? match : null;
         }

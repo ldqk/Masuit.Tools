@@ -239,8 +239,13 @@ namespace Masuit.Tools.Files
                 return new Dictionary<string, string>();
             }
 
-            string dirname = new string(fileList.First().Substring(0, fileList.Min(s => s.Length)).TakeWhile((c, i) => fileList.All(s => s[i] == c)).ToArray());
-            Dictionary<string, string> dic = fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
+            var dirname = new string(fileList.First().Substring(0, fileList.Min(s => s.Length)).TakeWhile((c, i) => fileList.All(s => s[i] == c)).ToArray());
+            if (!Directory.Exists(dirname))
+            {
+                dirname = Directory.GetParent(dirname).FullName;
+            }
+
+            var dic = fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
             return dic;
         }
     }
