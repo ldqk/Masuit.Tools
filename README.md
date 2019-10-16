@@ -273,41 +273,7 @@ socket.SendFile("D:\\test\\1.txt",false,i =>
     Console.WriteLine("已发送"+i+"%");
 });
 ```
-### 19.RedisHelper
-.Net Framework:
-```csharp
-RedisHelper redisHelper = RedisHelper.GetInstance();// 获取新实例并指定连接第0个数据库
-//RedisHelper redisHelper = RedisHelper.GetInstance(2);// 获取新实例并指定连接第2个数据库
-//RedisHelper redisHelper = RedisHelper.GetInstance("192.168.3.150:6379");// 获取新实例并指定连接第0个数据库
-//RedisHelper redisHelper = RedisHelper.GetInstance("192.168.3.150:6379",2);// 获取新实例并指定连接第2个数据库
-//RedisHelper redisHelper = RedisHelper.GetSingleInstance();// 获取单例实例并指定连接第2个数据库
-//RedisHelper redisHelper = RedisHelper.GetSingleInstance(2);// 获取单例实例并指定连接第2个数据库
-//RedisHelper redisHelper = RedisHelper.GetSingleInstance("192.168.3.150:6379");// 获取单例实例并指定连接第0个数据库
-//RedisHelper redisHelper = RedisHelper.GetSingleInstance("192.168.3.150:6379",2);// 获取单例实例并指定连接第2个数据库
-redisHelper.SetString("key","value");
-string value = redisHelper.GetString("key");
-redisHelper.ListLeftPush("list","value");
-List<string> list = redisHelper.ListRange<string>("list");
-```
-Asp.Net Core依赖注入方式:
-Startup.cs:
-```csharp
-services.AddDefaultRedisHelper("192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");//注入一个默认实例
-services.AddLocalRedisHelper();// 注入本地实例
-services.AddRedisHelper("aa", "192.168.16.145:6379,password=xilife2018,connectTimeout=1000,connectRetry=1,syncTimeout=1000");// 通用注入
-```
-Controller:
-```csharp
-public RedisHelper RedisHelper { get; set; }
-public HomeController(RedisHelperFactory redisHelperFactory)
-{
-    RedisHelper=redisHelperFactory.Create("aa",0);// 创建命名为aa的RedisHelper，指定数据库0
-    RedisHelper=redisHelperFactory.CreateDefault(0); // 创建默认的RedisHelper，指定数据库0
-    RedisHelper=redisHelperFactory.CreateLocal(0); // 创建连接本机的RedisHelper，指定数据库0
-}
-```
-方法调用方式和.NET Framework方式相同
-### 20.加密解密
+### 19.加密解密
 ```csharp
 var enc="123456".MDString();// MD5加密
 var enc="123456".MDString("abc");// MD5加盐加密
@@ -330,19 +296,7 @@ RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();// 生成RSA密钥对
 string encrypt = "123456".RSAEncrypt(rsaKey.PublicKey);// 公钥加密
 string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
 ```
-### 21.Redis分布式锁
-```csharp
-using (RedisLock redisLock = new RedisLock("127.0.0.1:6379"))
-{
-    if (redisLock.TryLock("lock", TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10), out var lockObject))// 加锁
-    {
-        //todo:需要执行的原子操作
-    }
-
-    var redisResult = redisLock.UnLock(lockObject);// 释放锁
-}
-```
-### 22.实体校验
+### 20.实体校验
 ```csharp
 public class MyClass
 {
@@ -362,13 +316,13 @@ public class MyClass
     public string Password { get; set; }
 }
 ```
-### 23.HTML操作
+### 21.HTML操作
 ```csharp
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
 var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
 ...
 ```
-### 24.DateTime扩展
+### 22.DateTime扩展
 ```csharp
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
 double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
@@ -377,7 +331,7 @@ double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
 double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 ...
 ```
-### 25.IP地址和URL
+### 23.IP地址和URL
 ```csharp
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
 bool isPrivateIp = "172.16.23.25".IsPrivateIP();// 判断是否是私有地址
@@ -388,7 +342,7 @@ string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
 PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
 ```
-### 26.元素去重
+### 24.元素去重
 ```csharp
 var list = new List<MyClass>()
 {
@@ -408,7 +362,7 @@ var list = new List<MyClass>()
 List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
-### 27.对象实体映射
+### 25.对象实体映射
 在使用前需要像automapper那样，对mapper进行初始化操作
 ```csharp
 using Masuit.Tools.Mapping;
@@ -797,7 +751,7 @@ time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine($"AutoMapper映射1000000次耗时：{time}s");// 4.1858825s
 ```
-### 28.枚举扩展
+### 26.枚举扩展
 ```csharp
 public enum MyEnum
 {
@@ -818,12 +772,12 @@ string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
-### 29.定长队列实现
+### 27.定长队列实现
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
 ```
-### 30.反射操作
+### 28.反射操作
 ```csharp
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
@@ -839,12 +793,12 @@ var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
 object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
 Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
-### 31.获取线程内唯一对象
+### 29.获取线程内唯一对象
 ```csharp
 CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
 CallContext<T>.GetData("db");//获取线程内唯一对象
 ```
-### 32.asp.net core 获取静态的HttpContext对象
+### 30.asp.net core 获取静态的HttpContext对象
 Startup.cs
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -868,7 +822,7 @@ public async Task<IActionResult> Index()
     HttpContext context = HttpContext2.Current;
 }
 ```
-### 33.邮件发送
+### 31.邮件发送
 ```csharp
 new Email()
 {
@@ -885,7 +839,7 @@ new Email()
     Console.WriteLine(s);// 发送成功后的回调
 });// 异步发送邮件
 ```
-### 34.图像的简单处理
+### 32.图像的简单处理
 ```csharp
 ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
 
@@ -900,7 +854,7 @@ Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁�
 bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
 bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
 ```
-### 35.随机数
+### 33.随机数
 ```csharp
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数

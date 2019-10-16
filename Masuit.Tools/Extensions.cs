@@ -1409,7 +1409,7 @@ namespace Masuit.Tools
         /// <param name="_this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o) => Object.ReferenceEquals(_this, o);
+        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
 
         /// <summary>
         /// 判断字符串是否为空
