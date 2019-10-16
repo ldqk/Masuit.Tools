@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Version>2.2.6.4</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
@@ -12,9 +12,11 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
     <PackageTags>Masuit.Tools</PackageTags>
     <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
+    <Product>Masuit.Tools.Core</Product>
+    <PackageId>Masuit.Tools.Core</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -29,13 +31,13 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.7" />
     <PackageReference Include="SharpCompress" Version="0.24.0" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
-    <PackageReference Include="System.Management" Version="4.5.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.6.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
+    <PackageReference Include="System.Management" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

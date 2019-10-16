@@ -26,9 +26,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.9.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.9.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.9.2" />
+    <PackageReference Include="MongoDB.Driver" Version="2.9.2" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.9.2" />
   </ItemGroup>
 
 </Project>

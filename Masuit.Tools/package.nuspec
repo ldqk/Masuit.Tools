@@ -1,34 +1,34 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <package>
   <metadata>
     <!--*-->
-    <id>$id$</id>
+    <id>Masuit.Tools</id>
     <!--*-->
-    <version>$version$</version>
-    <title></title>
+    <version>2.2.6.4</version>
+    <title>Masuit.Tools</title>
     <!--*-->
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-<!--
+    <authors>masuit.com</authors>
+    <owners>masuit.com</owners>
+    <!--
     <licenseUrl></licenseUrl>
     <projectUrl></projectUrl>
     <iconUrl></iconUrl>
 -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--*-->
-    <description>$description$</description>
+    <description>一系列的常用的操作类扩展，大都是静态类，加密解密，反射操作，动态编译，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码，断点续传，实体映射等常用封装。</description>
     <!--*-->
-    <releaseNotes> </releaseNotes>
-    <copyright>$copyright$</copyright>
-    <tags> </tags>
+    <releaseNotes>如有问题请联系QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</releaseNotes>
+    <copyright>Copyright ©  懒得勤快</copyright>
+    <tags>Tools</tags>
     <dependencies>
-         <group targetFramework="net45">
-            <dependency id="AngleSharp" version="0.9.9" />
-            <dependency id="HtmlSanitizer" version="4.0.181" />
-            <dependency id="Newtonsoft.Json" version="9.0.1" />
-            <dependency id="SharpZipLib" version="0.86.0" />
-            <dependency id="StackExchange.Redis" version="1.2.0" />
-         </group>
-      </dependencies>
+      <group targetFramework="net45">
+        <dependency id="AngleSharp" version="0.9.9" />
+        <dependency id="HtmlSanitizer" version="4.0.181" />
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="SharpZipLib" version="0.86.0" />
+        <dependency id="StackExchange.Redis" version="1.2.0" />
+      </group>
+    </dependencies>
   </metadata>
 </package>
