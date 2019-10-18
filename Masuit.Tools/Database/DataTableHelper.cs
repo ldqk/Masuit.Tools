@@ -75,6 +75,18 @@ namespace Masuit.Tools.Database
         /// <param name="list">集合</param>
         /// <param name="tableName">表名</param>
         /// <returns>数据集(表)</returns>
+        public static DataTable ToDataTable<T>(this IEnumerable<T> list, string tableName = null)
+        {
+            return ToDataTable(list.ToList(), tableName);
+        }
+
+        /// <summary>
+        /// 将泛型集合类转换成DataTable
+        /// </summary>
+        /// <typeparam name="T">集合项类型</typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="tableName">表名</param>
+        /// <returns>数据集(表)</returns>
         public static DataTable ToDataTable<T>(this IList<T> list, string tableName = null)
         {
             DataTable result = new DataTable(tableName);
