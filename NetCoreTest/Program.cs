@@ -1,7 +1,9 @@
-﻿using Masuit.Tools.Hardware;
+﻿using Masuit.Tools.Core.Database;
+using Masuit.Tools.Hardware;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace NetCoreTest
@@ -10,6 +12,8 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            var table = new List<MyClass>() { new MyClass() { MyProperty = "sss", MyProperty1 = 222 } }.ToDataTable();
+
             Console.WriteLine((long)SystemInfo.GetRamInfo().MemoryAvailable);
             CreateWebHostBuilder(args).Build().Run();
         }
