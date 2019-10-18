@@ -521,21 +521,13 @@
             <param name="dt"></param>
             <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0})">
+        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0},System.String)">
             <summary>
             将泛型集合类转换成DataTable
             </summary>
             <typeparam name="T">集合项类型</typeparam>
             <param name="list">集合</param>
-            <returns>数据集(表)</returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IList{``0},System.String[])">
-            <summary>
-            将泛型集合类转换成DataTable
-            </summary>
-            <typeparam name="T">集合项类型</typeparam>
-            <param name="list">集合</param>
-            <param name="propertyName">需要返回的列的列名</param>
+            <param name="tableName">表名</param>
             <returns>数据集(表)</returns>
         </member>
         <member name="M:Masuit.Tools.Core.Database.DataTableHelper.CreateTable(System.Collections.Generic.List{System.String})">
