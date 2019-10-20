@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 
 namespace Masuit.Tools.Database
@@ -72,10 +73,11 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <typeparam name="T">集合项类型</typeparam>
         /// <param name="list">集合</param>
+        /// <param name="tableName">表名</param>
         /// <returns>数据集(表)</returns>
-        public static DataTable ToDataTable<T>(this IList<T> list)
+        public static DataTable ToDataTable<T>(this IEnumerable<T> list, string tableName = null)
         {
-            return ToDataTable(list, null);
+            return ToDataTable(list.ToList(), tableName);
         }
 
         /// <summary>
@@ -83,61 +85,19 @@ namespace Masuit.Tools.Database
         /// </summary>
         /// <typeparam name="T">集合项类型</typeparam>
         /// <param name="list">集合</param>
-        /// <param name="propertyName">需要返回的列的列名</param>
+        /// <param name="tableName">表名</param>
         /// <returns>数据集(表)</returns>
-        public static DataTable ToDataTable<T>(this IList<T> list, params string[] propertyName)
+        public static DataTable ToDataTable<T>(this IList<T> list, string tableName = null)
         {
-            List<string> propertyNameList = new List<string>();
-            if (propertyName != null)
-            {
-                propertyNameList.AddRange(propertyName);
-            }
-
-            DataTable result = new DataTable();
+            DataTable result = new DataTable(tableName);
             if (list.Count <= 0)
             {
                 return result;
             }
 
-            var propertys = list[0].GetType().GetProperties();
-            propertys.ForEach(pi =>
-            {
-                if (propertyNameList.Count == 0)
-                {
-                    result.Columns.Add(pi.Name, pi.PropertyType);
-                }
-                else
-                {
-                    if (propertyNameList.Contains(pi.Name))
-                    {
-                        result.Columns.Add(pi.Name, pi.PropertyType);
-                    }
-                }
-            });
-            list.ForEach(item =>
-            {
-                ArrayList tempList = new ArrayList();
-                foreach (PropertyInfo pi in propertys)
-                {
-                    if (propertyNameList.Count == 0)
-                    {
-                        object obj = pi.GetValue(item, null);
-                        tempList.Add(obj);
-                    }
-                    else
-                    {
-                        if (propertyNameList.Contains(pi.Name))
-                        {
-                            object obj = pi.GetValue(item, null);
-                            tempList.Add(obj);
-                        }
-                    }
-                }
-
-                object[] array = tempList.ToArray();
-                result.LoadDataRow(array, true);
-            });
-
+            var properties = list[0].GetType().GetProperties();
+            result.Columns.AddRange(properties.Select(p => new DataColumn(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name, p.PropertyType)).ToArray());
+            list.ForEach(item => result.LoadDataRow(properties.Select(p => p.GetValue(item)).ToArray(), true));
             return result;
         }
 
