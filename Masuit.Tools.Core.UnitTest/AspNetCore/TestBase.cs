@@ -17,16 +17,20 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             var di = new DirectoryInfo(path).Parent.Parent.Parent;
 
             // Arrange
-            Server = new TestServer(new WebHostBuilder().UseStartup<Startup>().UseContentRoot(di.FullName));
+            //var hostBuilder = Host.CreateDefaultBuilder().ConfigureWebHostDefaults(configurationBuilder => configurationBuilder.UseStartup<Startup>().UseContentRoot(di.FullName));
+            //var host = hostBuilder.Build();
+            //host.Run();
+            //todo:.NET Core3.0创建测试服务器
+            Server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             Client = Server.CreateClient();
         }
 
-        public HttpClient Client { get; }
+        public HttpClient Client { get; private set; }
 
         public EntityTagHeaderValue EntityTag { get; } = new EntityTagHeaderValue("\"TestFile\"");
 
         public DateTimeOffset LastModified { get; } = new DateTimeOffset(2016, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-        public TestServer Server { get; }
+        public TestServer Server { get; private set; }
     }
 }

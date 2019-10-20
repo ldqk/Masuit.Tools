@@ -772,14 +772,6 @@
             SqlDataReader扩展类
             </summary>
         </member>
-        <member name="M:Masuit.Tools.Database.DataExt.MapEntity``1(System.Data.SqlClient.SqlDataReader)">
-            <summary>
-            根据SqlDataReader映射到实体模型
-            </summary>
-            <typeparam name="T">实体模型</typeparam>
-            <param name="reader">SqlDataReader</param>
-            <returns>映射后的实体模型</returns>
-        </member>
         <member name="M:Masuit.Tools.Database.DataExt.MapEntity``1(System.Data.DataRow)">
             <summary>
             根据DataRow映射到实体模型

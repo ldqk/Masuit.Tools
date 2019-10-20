@@ -1,12 +1,13 @@
 ﻿using Masuit.Tools.Core.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
-using Swashbuckle.AspNetCore.Swagger;
-using System.IO;
+using Microsoft.Extensions.WebEncoders;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
 {
@@ -24,29 +25,25 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
             services.AddResumeFileResult();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "API文档",
                     Version = "v1",
-                    Contact = new Contact()
-                    {
-                        Email = "admin@masuit.com",
-                        Name = "懒得勤快",
-                        Url = "https://masuit.com"
-                    },
-                    Description = "断点续传和多线程下载测试站点",
-                    License = new License()
-                    {
-                        Name = "懒得勤快",
-                        Url = "https://masuit.com"
-                    }
+                    Title = $"接口文档",
+                    Description = $"HTTP API ",
+                    Contact = new OpenApiContact { Name = "懒得勤快", Email = "admin@masuit.com", Url = new Uri("https://masuit.coom") },
+                    License = new OpenApiLicense { Name = "懒得勤快", Url = new Uri("https://masuit.com") }
                 });
-                c.DescribeAllEnumsAsStrings();
-                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                var xmlPath = Path.Combine(basePath, "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.xml");
+                var xmlPath = AppContext.BaseDirectory + "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.xml";
                 c.IncludeXmlComments(xmlPath);
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllers().AddControllersAsServices(); // WebAPI
+            services.AddControllersWithViews().AddControllersAsServices().AddViewComponentsAsServices().AddTagHelpersAsServices(); // MVC
+            services.AddRazorPages().AddViewComponentsAsServices().AddTagHelpersAsServices(); // RazorPage
+
+            services.Configure<WebEncoderOptions>(options =>
+            {
+                options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
+            }); //解决razor视图中中文被编码的问题
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -59,7 +56,12 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
             {
                 c.SwaggerEndpoint($"{Configuration["Swagger:VirtualPath"]}/swagger/v1/swagger.json", "断点续传和多线程下载测试站点");
             });
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting(); // 放在 UseStaticFiles 之后
+            app.UseEndpoints(endpoints =>
+           {
+               endpoints.MapControllers(); // 属性路由
+               endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}"); // 默认路由
+           });
         }
     }
 }
