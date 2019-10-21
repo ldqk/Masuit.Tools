@@ -530,7 +530,7 @@ namespace Masuit.Tools.Hardware
         public static string GetLocalUsedIP()
         {
             string result = RunApp("route", "print", true);
-            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)", RegexOptions.Compiled);
+            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
             if (m.Success)
             {
                 return m.Groups[2].Value;

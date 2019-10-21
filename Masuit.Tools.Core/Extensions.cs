@@ -1190,10 +1190,10 @@ namespace Masuit.Tools
         {
             if (ignoreCase)
             {
-                return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower(), RegexOptions.Compiled);
+                return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
             }
 
-            return Regex.IsMatch(s, string.Join("|", keys), RegexOptions.Compiled);
+            return Regex.IsMatch(s, string.Join("|", keys));
         }
 
         #endregion
