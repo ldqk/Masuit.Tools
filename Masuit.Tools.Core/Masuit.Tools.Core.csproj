@@ -17,6 +17,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
     <Product>Masuit.Tools.Core</Product>
     <PackageId>Masuit.Tools.Core</PackageId>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

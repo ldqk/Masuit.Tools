@@ -104,23 +104,18 @@ namespace Masuit.Tools.Security
                 0xEF
             };
             var byKey = Encoding.UTF8.GetBytes(strEncrKey.Substring(0, 8));
-            using (fin)
+            using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+            fout.SetLength(0);
+            byte[] bin = new byte[100];
+            long rdlen = 0;
+            long totlen = fin.Length;
+            DES des = new DESCryptoServiceProvider();
+            var encStream = new CryptoStream(fout, des.CreateEncryptor(byKey, iv), CryptoStreamMode.Write);
+            while (rdlen < totlen)
             {
-                using (FileStream fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    fout.SetLength(0);
-                    byte[] bin = new byte[100];
-                    long rdlen = 0;
-                    long totlen = fin.Length;
-                    DES des = new DESCryptoServiceProvider();
-                    var encStream = new CryptoStream(fout, des.CreateEncryptor(byKey, iv), CryptoStreamMode.Write);
-                    while (rdlen < totlen)
-                    {
-                        var len = fin.Read(bin, 0, 100);
-                        encStream.Write(bin, 0, len);
-                        rdlen += len;
-                    }
-                }
+                var len = fin.Read(bin, 0, 100);
+                encStream.Write(bin, 0, len);
+                rdlen += len;
             }
         }
 
@@ -144,23 +139,18 @@ namespace Masuit.Tools.Security
                 0xEF
             };
             var byKey = Encoding.UTF8.GetBytes(sDecrKey.Substring(0, 8));
-            using (fin)
+            using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
+            fout.SetLength(0);
+            byte[] bin = new byte[100];
+            long rdlen = 0;
+            long totlen = fin.Length;
+            DES des = new DESCryptoServiceProvider();
+            var encStream = new CryptoStream(fout, des.CreateDecryptor(byKey, iv), CryptoStreamMode.Write);
+            while (rdlen < totlen)
             {
-                using (FileStream fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    fout.SetLength(0);
-                    byte[] bin = new byte[100];
-                    long rdlen = 0;
-                    long totlen = fin.Length;
-                    DES des = new DESCryptoServiceProvider();
-                    CryptoStream encStream = new CryptoStream(fout, des.CreateDecryptor(byKey, iv), CryptoStreamMode.Write);
-                    while (rdlen < totlen)
-                    {
-                        var len = fin.Read(bin, 0, 100);
-                        encStream.Write(bin, 0, len);
-                        rdlen += len;
-                    }
-                }
+                var len = fin.Read(bin, 0, 100);
+                encStream.Write(bin, 0, len);
+                rdlen += len;
             }
         }
 
@@ -421,7 +411,7 @@ namespace Masuit.Tools.Security
                 Key = Encoding.UTF8.GetBytes(decryptKey),
                 IV = Keys
             };
-            ICryptoTransform decrypto = rijndaelProvider.CreateDecryptor();
+            var decrypto = rijndaelProvider.CreateDecryptor();
             return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
         }
 
@@ -432,13 +422,11 @@ namespace Masuit.Tools.Security
         /// <param name="outputPath">输出文件路径</param>
         public static void AESEncryptFile(this FileStream input, string outputPath)
         {
-            using (FileStream fren = new FileStream(outputPath, FileMode.Create))
-            {
-                CryptoStream enfr = AESEncryptStrream(fren, Default_AES_Key);
-                byte[] bytearrayinput = new byte[input.Length];
-                input.Read(bytearrayinput, 0, bytearrayinput.Length);
-                enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
-            }
+            using var fren = new FileStream(outputPath, FileMode.Create);
+            var enfr = AESEncryptStrream(fren, Default_AES_Key);
+            byte[] bytearrayinput = new byte[input.Length];
+            input.Read(bytearrayinput, 0, bytearrayinput.Length);
+            enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
         }
 
         /// <summary>
@@ -1214,26 +1202,17 @@ namespace Masuit.Tools.Security
         /// <param name="toEncryptText">要加密的文本数据</param>
         /// <param name="filePath">要保存的文件</param>
         /// <returns>是否加密成功</returns>
-        public static bool EncryptToFile(this string toEncryptText, string filePath)
+        public static void EncryptToFile(this string toEncryptText, string filePath)
         {
-            bool r;
-            using (var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true))
-            {
-                using (var encryptor = _rc2Csp.CreateEncryptor(_key, _iv))
-                {
-                    var msEncrypt = new MemoryStream();
-                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        var tmp = _textConverter.GetBytes(toEncryptText);
-                        csEncrypt.Write(tmp, 0, tmp.Length);
-                        csEncrypt.FlushFinalBlock();
-                    }
-                    var encrypted = msEncrypt.ToArray();
-                    tmpFileStream.Write(encrypted, 0, encrypted.Length);
-                    r = true;
-                }
-            }
-            return r;
+            using var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true);
+            using var encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
+            var msEncrypt = new MemoryStream();
+            using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+            var tmp = _textConverter.GetBytes(toEncryptText);
+            csEncrypt.Write(tmp, 0, tmp.Length);
+            csEncrypt.FlushFinalBlock();
+            var encrypted = msEncrypt.ToArray();
+            tmpFileStream.Write(encrypted, 0, encrypted.Length);
         }
 
         #endregion
@@ -1247,26 +1226,17 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的文本</returns>
         public static string DecryptFromFile(this string filePath)
         {
-            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
-            {
-                using (var decryptor = _rc2Csp.CreateDecryptor(_key, _iv))
-                {
-                    var msDecrypt = new MemoryStream();
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
-                    {
-                        var tmp = new byte[tmpFileStream.Length];
-                        tmpFileStream.Read(tmp, 0, tmp.Length);
-                        csDecrypt.Write(tmp, 0, tmp.Length);
-                        csDecrypt.FlushFinalBlock();
-                    }
-
-                    var decrypted = msDecrypt.ToArray();
-                    var r = _textConverter.GetString(decrypted, 0, decrypted.Length);
-                    return r;
-                }
-
-            }
-
+            using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
+            using var decryptor = _rc2Csp.CreateDecryptor(_key, _iv);
+            var msDecrypt = new MemoryStream();
+            using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
+            var tmp = new byte[tmpFileStream.Length];
+            tmpFileStream.Read(tmp, 0, tmp.Length);
+            csDecrypt.Write(tmp, 0, tmp.Length);
+            csDecrypt.FlushFinalBlock();
+            var decrypted = msDecrypt.ToArray();
+            var r = _textConverter.GetString(decrypted, 0, decrypted.Length);
+            return r;
         }
 
         #endregion
@@ -1284,54 +1254,50 @@ namespace Masuit.Tools.Security
         /// <param name="IV">初始化向量</param>
         /// <param name="Key">加密密匙</param>
         /// <returns>是否操作成功</returns>
-        public static bool EncryptToFile(this string toEncryptText, string filePath, int dataIndex, byte[] IV, byte[] Key)
+        public static void EncryptToFile(this string toEncryptText, string filePath, int dataIndex, byte[] IV, byte[] Key)
         {
-            var r = false;
             if ((dataIndex > 10) && (dataIndex < 1))
             {
-                return r;
+                return;
             }
             //打开要写入的文件，主要是为了保持原文件的内容不丢失
-            var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
-
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
             var index = new byte[10261];
             //将读取的内容写到byte数组
-            tmpFileStream.Read(index, 0, 10261);
-            tmpFileStream.Close();
-            //定义基本的加密转换运算
-            using (var encryptor = _rc2Csp.CreateEncryptor(Key, IV))
-            {
-                var msEncrypt = new MemoryStream();
-                //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
-                using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                {
-                    var tmp = _textConverter.GetBytes(toEncryptText);
-                    //将tmp输入csEncrypt,将通过Encryptor来加密。
-                    csEncrypt.Write(tmp, 0, tmp.Length);
-                    //输出到msEnctypt
-                    csEncrypt.FlushFinalBlock();
-                }
+            fs.Read(index, 0, 10261);
 
-                //将流转成byte[]
-                var encrypted = msEncrypt.ToArray();
-                if (encrypted.Length > 1024)
-                    return false;
-                //得到加密后数据的大小，将结果存在指定的位置。
-                index[dataIndex * 2 - 1] = Convert.ToByte(Convert.ToString(encrypted.Length / 128));
-                index[dataIndex * 2] = Convert.ToByte(Convert.ToString(encrypted.Length % 128));
-                //将加密后的结果写入index（覆盖）
-                for (var i = 0; i < encrypted.Length; i++)
-                    index[1024 * (dataIndex - 1) + 21 + i] = encrypted[i];
-                //建立文件流
-                tmpFileStream = new FileStream(filePath, FileMode.Truncate, FileAccess.Write, FileShare.None, 1024, true);
-                //写文件
-                tmpFileStream.Write(index, 0, 10261);
-                tmpFileStream.Flush();
-                r = true;
-                tmpFileStream.Close();
-                return r;
+            //定义基本的加密转换运算
+            using var encryptor = _rc2Csp.CreateEncryptor(Key, IV);
+            var msEncrypt = new MemoryStream();
+            //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
+            using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+            var tmp = _textConverter.GetBytes(toEncryptText);
+            //将tmp输入csEncrypt,将通过Encryptor来加密。
+            csEncrypt.Write(tmp, 0, tmp.Length);
+            //输出到msEnctypt
+            csEncrypt.FlushFinalBlock();
+
+            //将流转成byte[]
+            var encrypted = msEncrypt.ToArray();
+            if (encrypted.Length > 1024)
+            {
+                return;
             }
 
+            //得到加密后数据的大小，将结果存在指定的位置。
+            index[dataIndex * 2 - 1] = Convert.ToByte(Convert.ToString(encrypted.Length / 128));
+            index[dataIndex * 2] = Convert.ToByte(Convert.ToString(encrypted.Length % 128));
+            //将加密后的结果写入index（覆盖）
+            for (int i = 0; i < encrypted.Length; i++)
+            {
+                index[1024 * (dataIndex - 1) + 21 + i] = encrypted[i];
+            }
+
+            //建立文件流
+            using var newStream = new FileStream(filePath, FileMode.Truncate, FileAccess.Write, FileShare.None, 1024, true);
+            newStream.Write(index, 0, 10261);
+            newStream.Flush();
+            newStream.Close();
         }
 
         #endregion
@@ -1348,35 +1314,26 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的文本</returns>
         public static string DecryptFromFile(this string filePath, int dataIndex, byte[] iv, byte[] key)
         {
-            var r = "";
             if ((dataIndex > 10) && (dataIndex < 1))
             {
-                return r;
+                return "";
             }
 
-            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
-            {
-                using (var decryptor = _rc2Csp.CreateDecryptor(key, iv))
-                {
-                    var msDecrypt = new MemoryStream();
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
-                    {
-                        var index = new byte[10261];
+            using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
+            using var decryptor = _rc2Csp.CreateDecryptor(key, iv);
+            var msDecrypt = new MemoryStream();
+            using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
+            var index = new byte[10261];
 
-                        tmpFileStream.Read(index, 0, 10261);
-                        var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
-                        var tmp = new byte[count];
+            tmpFileStream.Read(index, 0, 10261);
+            var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
+            var tmp = new byte[count];
 
-                        Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
-                        csDecrypt.Write(tmp, 0, count);
-                        csDecrypt.FlushFinalBlock();
-                        var decrypted = msDecrypt.ToArray();
-                        r = _textConverter.GetString(decrypted, 0, decrypted.Length);
-                    }
-                }
-            }
-
-            return r;
+            Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
+            csDecrypt.Write(tmp, 0, count);
+            csDecrypt.FlushFinalBlock();
+            var decrypted = msDecrypt.ToArray();
+            return _textConverter.GetString(decrypted, 0, decrypted.Length);
         }
 
         #endregion
@@ -1391,26 +1348,18 @@ namespace Masuit.Tools.Security
         /// <param name="iv">初始化向量</param>
         /// <param name="key">加密密匙</param>
         /// <returns>是否加密成功</returns>
-        public static bool EncryptToFile(this string toEncryptText, string filePath, byte[] iv, byte[] key)
+        public static void EncryptToFile(this string toEncryptText, string filePath, byte[] iv, byte[] key)
         {
-            using (var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true))
-            {
-                using (var encryptor = _rc2Csp.CreateEncryptor(key, iv))
-                {
-                    var msEncrypt = new MemoryStream();
-                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                    {
-                        var tmp = _textConverter.GetBytes(toEncryptText);
-                        csEncrypt.Write(tmp, 0, tmp.Length);
-                        csEncrypt.FlushFinalBlock();
-                        var encrypted = msEncrypt.ToArray();
-                        tmpFileStream.Write(encrypted, 0, encrypted.Length);
-                        tmpFileStream.Flush();
-                        var r = true;
-                        return r;
-                    }
-                }
-            }
+            using var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true);
+            using var encryptor = _rc2Csp.CreateEncryptor(key, iv);
+            var msEncrypt = new MemoryStream();
+            using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
+            var tmp = _textConverter.GetBytes(toEncryptText);
+            csEncrypt.Write(tmp, 0, tmp.Length);
+            csEncrypt.FlushFinalBlock();
+            var encrypted = msEncrypt.ToArray();
+            tmpFileStream.Write(encrypted, 0, encrypted.Length);
+            tmpFileStream.Flush();
         }
 
         #endregion
@@ -1426,23 +1375,16 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的文本</returns>
         public static string DecryptFromFile(this string filePath, byte[] iv, byte[] key)
         {
-            using (var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true))
-            {
-                using (var decryptor = _rc2Csp.CreateDecryptor(key, iv))
-                {
-                    var msDecrypt = new MemoryStream();
-                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
-                    {
-                        var tmp = new byte[tmpFileStream.Length];
-                        tmpFileStream.Read(tmp, 0, tmp.Length);
-                        csDecrypt.Write(tmp, 0, tmp.Length);
-                        csDecrypt.FlushFinalBlock();
-                        var decrypted = msDecrypt.ToArray();
-                        var r = _textConverter.GetString(decrypted, 0, decrypted.Length);
-                        return r;
-                    }
-                }
-            }
+            using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
+            using var decryptor = _rc2Csp.CreateDecryptor(key, iv);
+            var msDecrypt = new MemoryStream();
+            using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
+            var tmp = new byte[tmpFileStream.Length];
+            tmpFileStream.Read(tmp, 0, tmp.Length);
+            csDecrypt.Write(tmp, 0, tmp.Length);
+            csDecrypt.FlushFinalBlock();
+            var decrypted = msDecrypt.ToArray();
+            return _textConverter.GetString(decrypted, 0, decrypted.Length);
         }
 
         #endregion

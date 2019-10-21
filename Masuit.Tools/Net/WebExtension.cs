@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Masuit.Tools.Logging;
+using Masuit.Tools.Models;
+using Masuit.Tools.NoSQL;
+using Masuit.Tools.Security;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -7,11 +12,6 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
-using Masuit.Tools.Logging;
-using Masuit.Tools.Models;
-using Masuit.Tools.NoSQL;
-using Masuit.Tools.Security;
-using Newtonsoft.Json;
 
 namespace Masuit.Tools.Net
 {
@@ -36,7 +36,7 @@ namespace Masuit.Tools.Net
                 CallContext.SetData("db", db);
             }
 
-            db = (T) CallContext.GetData("db");
+            db = (T)CallContext.GetData("db");
             return db;
         }
 
@@ -140,10 +140,8 @@ namespace Masuit.Tools.Net
 
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                {
-                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
-                }
+                using var redisHelper = RedisHelper.GetInstance(1);
+                redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
             }
             catch
             {
@@ -162,7 +160,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T Get<T>(this HttpSessionStateBase session, string key) => (T) session[key];
+        public static T Get<T>(this HttpSessionStateBase session, string key) => (T)session[key];
 
         /// <summary>
         /// 获取Session
@@ -171,7 +169,7 @@ namespace Masuit.Tools.Net
         /// <param name="session"></param>
         /// <param name="key">键</param>
         /// <returns>对象</returns>
-        public static T Get<T>(this HttpSessionState session, string key) => (T) session[key];
+        public static T Get<T>(this HttpSessionState session, string key) => (T)session[key];
 
         /// <summary>
         /// 从Redis取Session
@@ -189,40 +187,29 @@ namespace Masuit.Tools.Net
             }
 
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
-            if (!string.IsNullOrEmpty(sessionKey))
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                T obj = default(T);
-                if (_ != default(T))
-                {
-                    obj = _.Get<T>(key);
-                }
-
-                if (obj == default(T))
-                {
-                    try
-                    {
-                        sessionKey = "Session:" + sessionKey;
-                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                        {
-                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                            {
-                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
-                                return redisHelper.GetHash<T>(sessionKey, key);
-                            }
-
-                            return default(T);
-                        }
-                    }
-                    catch
-                    {
-                        return default(T);
-                    }
-                }
-
-                return obj;
+                return default(T);
             }
 
-            return default(T);
+            T obj = _.Get<T>(key);
+
+            try
+            {
+                sessionKey = "Session:" + sessionKey;
+                using var redisHelper = RedisHelper.GetInstance(1);
+                if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                {
+                    redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetHash<T>(sessionKey, key);
+                }
+
+                return default(T);
+            }
+            catch
+            {
+                return default(T);
+            }
         }
 
         /// <summary>
@@ -241,40 +228,33 @@ namespace Masuit.Tools.Net
             }
 
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
-            if (!string.IsNullOrEmpty(sessionKey))
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                T obj = default(T);
-                if (_ != default(T))
-                {
-                    obj = _.Get<T>(key);
-                }
+                return default(T);
+            }
 
-                if (obj == null)
-                {
-                    try
-                    {
-                        sessionKey = "Session:" + sessionKey;
-                        using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                        {
-                            if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                            {
-                                redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
-                                return redisHelper.GetHash<T>(sessionKey, key);
-                            }
-
-                            return default(T);
-                        }
-                    }
-                    catch
-                    {
-                        return default(T);
-                    }
-                }
-
+            T obj = _.Get<T>(key);
+            if (obj != null)
+            {
                 return obj;
             }
 
-            return default(T);
+            try
+            {
+                sessionKey = "Session:" + sessionKey;
+                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
+                {
+                    redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
+                    return redisHelper.GetHash<T>(sessionKey, key);
+                }
+
+                return default(T);
+            }
+            catch
+            {
+                return default(T);
+            }
         }
 
         /// <summary>
@@ -291,28 +271,24 @@ namespace Masuit.Tools.Net
             }
 
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
-            if (!string.IsNullOrEmpty(sessionKey))
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                if (_ != null)
-                {
-                    _[key] = null;
-                }
+                return;
+            }
 
-                try
+            try
+            {
+                _[key] = null;
+                sessionKey = "Session:" + sessionKey;
+                using var redisHelper = RedisHelper.GetInstance(1);
+                if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                 {
-                    sessionKey = "Session:" + sessionKey;
-                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                    {
-                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                        {
-                            redisHelper.DeleteHash(sessionKey, key);
-                        }
-                    }
+                    redisHelper.DeleteHash(sessionKey, key);
                 }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
             }
         }
 
@@ -330,28 +306,24 @@ namespace Masuit.Tools.Net
             }
 
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
-            if (!string.IsNullOrEmpty(sessionKey))
+            if (string.IsNullOrEmpty(sessionKey))
             {
-                if (_ != null)
-                {
-                    _[key] = null;
-                }
+                return;
+            }
 
-                try
+            _[key] = null;
+            try
+            {
+                sessionKey = "Session:" + sessionKey;
+                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                 {
-                    sessionKey = "Session:" + sessionKey;
-                    using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                    {
-                        if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
-                        {
-                            redisHelper.DeleteHash(sessionKey, key);
-                        }
-                    }
+                    redisHelper.DeleteHash(sessionKey, key);
                 }
-                catch (Exception e)
-                {
-                    LogManager.Error(e);
-                }
+            }
+            catch (Exception e)
+            {
+                LogManager.Error(e);
             }
         }
 
@@ -364,10 +336,8 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                {
-                    return redisHelper.GetServer().Keys(1, "Session:*").Count();
-                }
+                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                return redisHelper.GetServer().Keys(1, "Session:*").Count();
             }
             catch (Exception e)
             {
@@ -385,10 +355,8 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                {
-                    return redisHelper.GetServer().Keys(1, "Session:*").Count();
-                }
+                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                return redisHelper.GetServer().Keys(1, "Session:*").Count();
             }
             catch (Exception e)
             {
@@ -432,91 +400,91 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static async Task<PhysicsAddress> GetPhysicsAddressInfo(this string ip)
         {
-            ip.MatchInetAddress(out var isIpAddress);
-            if (isIpAddress)
+            if (!ip.MatchInetAddress())
             {
-                string ak = ConfigurationManager.AppSettings["BaiduAK"];
-                if (string.IsNullOrEmpty(ak))
+                return null;
+            }
+
+            string ak = ConfigurationManager.AppSettings["BaiduAK"];
+            if (string.IsNullOrEmpty(ak))
+            {
+                throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
+            }
+
+            using var client = new HttpClient()
+            {
+                BaseAddress = new Uri("http://api.map.baidu.com")
+            };
+            client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
+            var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
+            {
+                if (t.IsFaulted || t.IsCanceled)
                 {
-                    throw new Exception("未配置BaiduAK，请先在您的应用程序web.config或者App.config中的AppSettings节点下添加BaiduAK配置节(注意大小写)");
+                    return null;
                 }
 
-                using (HttpClient client = new HttpClient()
+                var res = await t;
+                if (!res.IsSuccessStatusCode)
                 {
-                    BaseAddress = new Uri("http://api.map.baidu.com")
-                })
+                    return null;
+                }
+
+                var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(await res.Content.ReadAsStringAsync());
+                if (ipAddress.Status == 0)
                 {
-                    client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
-                    var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
+                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                    var result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                    var address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
+                    if (address.Status == 0)
                     {
-                        if (t.IsFaulted || t.IsCanceled)
+                        return address;
+                    }
+                }
+                else
+                {
+                    using var client2 = new HttpClient
+                    {
+                        BaseAddress = new Uri("http://ip.taobao.com")
+                    };
+                    return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
+                    {
+                        if (tt.IsFaulted || tt.IsCanceled)
                         {
                             return null;
                         }
 
-                        var res = await t;
-                        if (res.IsSuccessStatusCode)
+                        var result = await tt;
+                        if (!result.IsSuccessStatusCode)
                         {
-                            var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(await res.Content.ReadAsStringAsync());
-                            if (ipAddress.Status == 0)
+                            return null;
+                        }
+
+                        var taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
+                        if (taobaoIp.Code == 0)
+                        {
+                            return new PhysicsAddress()
                             {
-                                LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
-                                string result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
-                                PhysicsAddress address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
-                                if (address.Status == 0)
+                                Status = 0,
+                                AddressResult = new AddressResult()
                                 {
-                                    return address;
-                                }
-                            }
-                            else
-                            {
-                                using (var client2 = new HttpClient
-                                {
-                                    BaseAddress = new Uri("http://ip.taobao.com")
-                                })
-                                {
-                                    return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
+                                    FormattedAddress = taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City,
+                                    AddressComponent = new AddressComponent()
                                     {
-                                        if (tt.IsFaulted || tt.IsCanceled)
-                                        {
-                                            return null;
-                                        }
-
-                                        var result = await tt;
-                                        if (result.IsSuccessStatusCode)
-                                        {
-                                            TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
-                                            if (taobaoIp.Code == 0)
-                                            {
-                                                return new PhysicsAddress()
-                                                {
-                                                    Status = 0,
-                                                    AddressResult = new AddressResult()
-                                                    {
-                                                        FormattedAddress = taobaoIp.IpData.Country + taobaoIp.IpData.Region + taobaoIp.IpData.City,
-                                                        AddressComponent = new AddressComponent()
-                                                        {
-                                                            Province = taobaoIp.IpData.Region
-                                                        },
-                                                        Pois = new List<Pois>()
-                                                    }
-                                                };
-                                            }
-                                        }
-
-                                        return null;
-                                    });
+                                        Province = taobaoIp.IpData.Region
+                                    },
+                                    Pois = new List<Pois>()
                                 }
-                            }
+                            };
                         }
 
                         return null;
                     });
-                    return await await task;
                 }
-            }
 
-            return null;
+                return null;
+            });
+            return await await task;
+
         }
 
         /// <summary>
@@ -526,37 +494,36 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static string GetISP(this string ip)
         {
-            if (ip.MatchInetAddress())
+            if (!ip.MatchInetAddress())
             {
-                using (var client = new HttpClient
-                {
-                    BaseAddress = new Uri("http://ip.taobao.com")
-                })
-                {
-                    var task = client.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
-                    {
-                        if (t.IsFaulted)
-                        {
-                            return $"未能找到{ip}的ISP信息";
-                        }
-
-                        var result = await t;
-                        if (result.IsSuccessStatusCode)
-                        {
-                            TaobaoIP taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
-                            if (taobaoIp.Code == 0)
-                            {
-                                return taobaoIp.IpData.Isp;
-                            }
-                        }
-
-                        return $"未能找到{ip}的ISP信息";
-                    });
-                    return task.Result.Result;
-                }
+                return $"{ip}不是一个合法的IP";
             }
 
-            return $"{ip}不是一个合法的IP";
+            using var client = new HttpClient
+            {
+                BaseAddress = new Uri("http://ip.taobao.com")
+            };
+            var task = client.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
+            {
+                if (t.IsFaulted)
+                {
+                    return $"未能找到{ip}的ISP信息";
+                }
+
+                var result = await t;
+                if (result.IsSuccessStatusCode)
+                {
+                    var taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
+                    if (taobaoIp.Code == 0)
+                    {
+                        return taobaoIp.IpData.Isp;
+                    }
+                }
+
+                return $"未能找到{ip}的ISP信息";
+            });
+            return task.Result.Result;
+
         }
 
         #endregion

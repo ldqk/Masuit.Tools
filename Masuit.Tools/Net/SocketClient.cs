@@ -232,7 +232,7 @@ namespace Masuit.Tools.Net
             }
 
             stream.Seek(0, SeekOrigin.Begin); //必须要这个 或者stream.Position = 0;
-            T t = (T) format.Deserialize(stream);
+            T t = (T)format.Deserialize(stream);
             stream.Close();
             return t;
         }
@@ -248,51 +248,57 @@ namespace Masuit.Tools.Net
         /// <param name="progress">处理过程</param>
         public static bool ReceiveFile(this Socket socket, string path, string filename, long size, Action<int> progress)
         {
-            bool ret = false;
-            if (Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                //主要是防止有重名文件
-                string savepath = GetPath(path, filename); //得到文件路径
-                //缓冲区
-                byte[] file = new byte[m_maxpacket];
-                int receivedata = m_maxpacket; //每次要接收的长度
-                long offset = 0; //循环接收的总长度
-                long lastdata = size; //剩余多少还没接收
-                int mark = 0;
-                using (FileStream fs = new FileStream(savepath, FileMode.OpenOrCreate, FileAccess.Write))
+                return false;
+            }
+
+            //主要是防止有重名文件
+            string savepath = GetPath(path, filename); //得到文件路径
+            //缓冲区
+            byte[] file = new byte[m_maxpacket];
+            int receivedata = m_maxpacket; //每次要接收的长度
+            long offset = 0; //循环接收的总长度
+            long lastdata = size; //剩余多少还没接收
+            int mark = 0;
+            using var fs = new FileStream(savepath, FileMode.OpenOrCreate, FileAccess.Write);
+            if (size <= 0)
+            {
+                return false;
+            }
+
+            bool ret = false;
+            while (true)
+            {
+                if (lastdata < receivedata)
                 {
-                    if (size > 0)
-                        while (true)
-                        {
-                            if (lastdata < receivedata)
-                                receivedata = Convert.ToInt32(lastdata);
-                            var count = socket.Receive(file, 0, receivedata, SocketFlags.None); //每次接收的实际长度
-                            if (count > 0)
-                            {
-                                fs.Write(file, 0, count);
-                                offset += count;
-                                lastdata -= count;
-                                mark = 0;
-                            }
-                            else
-                            {
-                                mark++; //连续5次接收为0字节 则跳出循环
-                                if (mark == 10)
-                                    break;
-                            }
+                    receivedata = Convert.ToInt32(lastdata);
+                }
 
-                            //接收进度
-                            if (progress != null)
-                                progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(size) * 100));
-                            //接收完毕
-                            if (offset == size)
-                            {
-                                ret = true;
-                                break;
-                            }
-                        }
+                var count = socket.Receive(file, 0, receivedata, SocketFlags.None); //每次接收的实际长度
+                if (count > 0)
+                {
+                    fs.Write(file, 0, count);
+                    offset += count;
+                    lastdata -= count;
+                    mark = 0;
+                }
+                else
+                {
+                    mark++; //连续5次接收为0字节 则跳出循环
+                    if (mark == 10)
+                    {
+                        break;
+                    }
+                }
 
-                    fs.Close();
+                //接收进度
+                progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(size) * 100));
+                //接收完毕
+                if (offset == size)
+                {
+                    ret = true;
+                    break;
                 }
             }
 
@@ -467,50 +473,55 @@ namespace Masuit.Tools.Net
         /// <returns>处理结果</returns>
         public static bool SendFile(this Socket socket, string path, bool issend, Action<int> progress)
         {
-            bool ret = false;
-            if (File.Exists(path))
+            if (!File.Exists(path))
             {
-                FileInfo fileinfo = new FileInfo(path);
-                string filename = fileinfo.Name;
-                long length = fileinfo.Length;
-                //发送文件信息
-                if (issend)
-                    SendVarData(socket, filename + "|" + length);
-                //发送文件
-                long offset = 0;
-                byte[] b = new byte[m_maxpacket];
-                int mark = 0;
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    int senddata = b.Length;
-                    long i = length;
-                    //循环读取发送
-                    while (true)
-                    {
-                        int count = fs.Read(b, 0, senddata);
-                        if (count > 0)
-                        {
-                            socket.Send(b, 0, count, SocketFlags.None);
-                            offset += count;
-                            mark = 0;
-                        }
-                        else
-                        {
-                            mark++;
-                            if (mark == 10)
-                                break;
-                        }
-
-                        if (progress != null)
-                            progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(length) * 100));
-                        if (offset == length)
-                            break;
-                        Thread.Sleep(50); //设置等待时间,以免粘包
-                    }
-                }
+                return false;
             }
 
-            return ret;
+            var fileinfo = new FileInfo(path);
+            string filename = fileinfo.Name;
+            long length = fileinfo.Length;
+            //发送文件信息
+            if (issend)
+            {
+                SendVarData(socket, filename + "|" + length);
+            }
+
+            //发送文件
+            long offset = 0;
+            byte[] b = new byte[m_maxpacket];
+            int mark = 0;
+            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            int senddata = b.Length;
+            //循环读取发送
+            while (true)
+            {
+                int count = fs.Read(b, 0, senddata);
+                if (count > 0)
+                {
+                    socket.Send(b, 0, count, SocketFlags.None);
+                    offset += count;
+                    mark = 0;
+                }
+                else
+                {
+                    mark++;
+                    if (mark == 10)
+                    {
+                        break;
+                    }
+                }
+
+                progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(length) * 100));
+                if (offset == length)
+                {
+                    return true;
+                }
+
+                Thread.Sleep(50); //设置等待时间,以免粘包
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -539,11 +550,9 @@ namespace Masuit.Tools.Net
         private static byte[] SerializeObject(object obj)
         {
             IFormatter format = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
+            using var stream = new MemoryStream();
             format.Serialize(stream, obj);
-            byte[] ret = stream.ToArray();
-            stream.Close();
-            return ret;
+            return stream.ToArray();
         }
 
         private static string GetSendPacketLengthStr(int size)

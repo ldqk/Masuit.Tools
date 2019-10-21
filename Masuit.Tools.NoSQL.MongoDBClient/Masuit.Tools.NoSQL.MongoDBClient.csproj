@@ -18,6 +18,7 @@
     <Product>Masuit.Tools.NoSQL.MongoDBClient</Product>
     <PackageId>Masuit.Tools.NoSQL.MongoDBClient</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

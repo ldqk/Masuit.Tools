@@ -46,7 +46,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static SnowFlake GetInstance()
         {
-            return _snowFlake ?? (_snowFlake = new SnowFlake());
+            return _snowFlake ??= new SnowFlake();
         }
 
         /// <summary>

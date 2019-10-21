@@ -22,7 +22,7 @@ namespace Masuit.Tools.Mapping.Core
         /// <summary>
         /// mapper映射容器
         /// </summary>
-        public static MapperConfigurationCollectionContainer Instance => currentInstance ?? (currentInstance = new MapperConfigurationCollectionContainer());
+        public static MapperConfigurationCollectionContainer Instance => currentInstance ??= new MapperConfigurationCollectionContainer();
 
         /// <summary>
         /// count

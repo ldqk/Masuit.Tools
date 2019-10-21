@@ -1241,7 +1241,7 @@ namespace Masuit.Tools
                 isMatch = true;
                 return new Uri(s);
             }
-            catch (Exception e)
+            catch
             {
                 isMatch = false;
                 return null;

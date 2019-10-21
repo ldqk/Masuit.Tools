@@ -440,10 +440,8 @@ namespace Masuit.Tools.Logging
                     File.CreateText(logPath).Close();
                 }
 
-                using (StreamWriter sw = File.AppendText(logPath))
-                {
-                    sw.Write(logContent);
-                }
+                using var sw = File.AppendText(logPath);
+                sw.Write(logContent);
             }
             catch (Exception)
             {

@@ -21,7 +21,7 @@ namespace Masuit.Tools.Win32
         public static string GetLocalUsedIP()
         {
             string result = RunApp("route", "print", true);
-            Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
             if (m.Success)
             {
                 return m.Groups[2].Value;
@@ -29,12 +29,9 @@ namespace Masuit.Tools.Win32
 
             try
             {
-                string ip;
-                using (System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient())
-                {
-                    c.Connect("www.baidu.com", 80);
-                    ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-                }
+                using var c = new System.Net.Sockets.TcpClient();
+                c.Connect("www.baidu.com", 80);
+                var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
 
                 return ip;
             }
@@ -73,22 +70,23 @@ namespace Masuit.Tools.Win32
                 };
                 proc.Start();
 
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
+                using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
+                //上面标记的是原文，下面是我自己调试错误后自行修改的  
+                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
                 {
-                    //上面标记的是原文，下面是我自己调试错误后自行修改的  
-                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                    //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
-                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                    {
-                        //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
-                        proc.Kill();
-                    }
-
-                    string txt = sr.ReadToEnd();
-                    if (recordLog)
-                        Trace.WriteLine(txt);
-                    return txt;
+                    //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                    proc.Kill();
                 }
+
+                string txt = sr.ReadToEnd();
+                if (recordLog)
+                {
+                    Trace.WriteLine(txt);
+                }
+
+                return txt;
             }
             catch (Exception ex)
             {
@@ -196,14 +194,12 @@ namespace Masuit.Tools.Win32
             {
                 //获取CPU序列号代码 
                 string cpuInfo = " "; //cpu序列号 
-                using (var mc = new ManagementClass("Win32_Processor"))
+                using var mc = new ManagementClass("Win32_Processor");
+                foreach (ManagementObject mo in mc.GetInstances())
                 {
-                    foreach (ManagementObject mo in mc.GetInstances())
+                    using (mo)
                     {
-                        using (mo)
-                        {
-                            cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
-                        }
+                        cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
                     }
                 }
 
@@ -223,13 +219,9 @@ namespace Masuit.Tools.Win32
         {
             try
             {
-                using (var mCpu = new ManagementClass("Win32_Processor"))
-                {
-                    using (ManagementObjectCollection cpus = mCpu.GetInstances())
-                    {
-                        return cpus.Count;
-                    }
-                }
+                using var mCpu = new ManagementClass("Win32_Processor");
+                using var cpus = mCpu.GetInstances();
+                return cpus.Count;
             }
             catch
             {
@@ -245,27 +237,21 @@ namespace Masuit.Tools.Win32
         /// <returns></returns>
         public static string[] GetCpuMHZ()
         {
-            using (var mc = new ManagementClass("Win32_Processor"))
+            using var mc = new ManagementClass("Win32_Processor");
+            using ManagementObjectCollection cpus = mc.GetInstances();
+            var mhz = new string[cpus.Count];
+            int c = 0;
+            using var mySearch = new ManagementObjectSearcher("select * from Win32_Processor");
+            foreach (ManagementObject mo in mySearch.Get())
             {
-                using (ManagementObjectCollection cpus = mc.GetInstances())
+                using (mo)
                 {
-                    var mhz = new string[cpus.Count];
-                    int c = 0;
-                    using (var mySearch = new ManagementObjectSearcher("select * from Win32_Processor"))
-                    {
-                        foreach (ManagementObject mo in mySearch.Get())
-                        {
-                            using (mo)
-                            {
-                                mhz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
-                                c++;
-                            }
-                        }
-                    }
-
-                    return mhz;
+                    mhz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
+                    c++;
                 }
             }
+
+            return mhz;
         }
 
         /// <summary>
@@ -274,14 +260,12 @@ namespace Masuit.Tools.Win32
         /// <returns></returns>
         public static string GetSizeOfDisk()
         {
-            using (var mc = new ManagementClass("Win32_DiskDrive"))
+            using var mc = new ManagementClass("Win32_DiskDrive");
+            foreach (ManagementObject m in mc.GetInstances())
             {
-                foreach (ManagementObject m in mc.GetInstances())
+                using (m)
                 {
-                    using (m)
-                    {
-                        return m.Properties["Size"].Value.ToString();
-                    }
+                    return m.Properties["Size"].Value.ToString();
                 }
             }
 
@@ -294,17 +278,15 @@ namespace Masuit.Tools.Win32
             {
                 //获取网卡硬件地址 
                 string mac = " ";
-                using (var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                foreach (ManagementObject mo in mc.GetInstances())
                 {
-                    foreach (ManagementObject mo in mc.GetInstances())
+                    using (mo)
                     {
-                        using (mo)
+                        if ((bool)mo["IPEnabled"])
                         {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                mac = mo["MacAddress"].ToString();
-                                break;
-                            }
+                            mac = mo["MacAddress"].ToString();
+                            break;
                         }
                     }
                 }
@@ -323,20 +305,18 @@ namespace Masuit.Tools.Win32
             {
                 //获取IP地址 
                 string st = Empty;
-                using (var mc = new ManagementClass("Win32_NetworkAdapterConfiguration"))
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                foreach (ManagementObject mo in mc.GetInstances())
                 {
-                    foreach (ManagementObject mo in mc.GetInstances())
+                    using (mo)
                     {
-                        using (mo)
+                        if ((bool)mo["IPEnabled"])
                         {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                //st=mo[ "IpAddress "].ToString(); 
-                                Array ar;
-                                ar = (Array)(mo.Properties["IpAddress"].Value);
-                                st = ar.GetValue(0).ToString();
-                                break;
-                            }
+                            //st=mo[ "IpAddress "].ToString(); 
+                            Array ar;
+                            ar = (Array)(mo.Properties["IpAddress"].Value);
+                            st = ar.GetValue(0).ToString();
+                            break;
                         }
                     }
                 }
@@ -355,14 +335,12 @@ namespace Masuit.Tools.Win32
             {
                 //获取硬盘ID 
                 string hdid = Empty;
-                using (var mc = new ManagementClass("Win32_DiskDrive"))
+                using var mc = new ManagementClass("Win32_DiskDrive");
+                foreach (ManagementObject mo in mc.GetInstances())
                 {
-                    foreach (ManagementObject mo in mc.GetInstances())
+                    using (mo)
                     {
-                        using (mo)
-                        {
-                            hdid = (string)mo.Properties["Model"].Value;
-                        }
+                        hdid = (string)mo.Properties["Model"].Value;
                     }
                 }
 
@@ -383,14 +361,12 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = Empty;
-                using (var mc = new ManagementClass("Win32_ComputerSystem"))
+                using var mc = new ManagementClass("Win32_ComputerSystem");
+                foreach (ManagementObject mo in mc.GetInstances())
                 {
-                    foreach (ManagementObject mo in mc.GetInstances())
+                    using (mo)
                     {
-                        using (mo)
-                        {
-                            st = mo["UserName"].ToString();
-                        }
+                        st = mo["UserName"].ToString();
                     }
                 }
 
@@ -407,15 +383,13 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = Empty;
-                using (var mc = new ManagementClass("Win32_ComputerSystem"))
+                using var mc = new ManagementClass("Win32_ComputerSystem");
+                foreach (var o in mc.GetInstances())
                 {
-                    foreach (var o in mc.GetInstances())
+                    using (o)
                     {
-                        using (o)
-                        {
-                            var mo = (ManagementObject)o;
-                            st = mo["SystemType"].ToString();
-                        }
+                        var mo = (ManagementObject)o;
+                        st = mo["SystemType"].ToString();
                     }
                 }
 
@@ -432,17 +406,13 @@ namespace Masuit.Tools.Win32
             try
             {
                 string st = Empty;
-                using (var mc = new ManagementClass("Win32_ComputerSystem"))
+                using var mc = new ManagementClass("Win32_ComputerSystem");
+                using var moc = mc.GetInstances();
+                foreach (var o in moc)
                 {
-                    using (ManagementObjectCollection moc = mc.GetInstances())
-                    {
-                        foreach (var o in moc)
-                        {
-                            var mo = (ManagementObject)o;
+                    var mo = (ManagementObject)o;
 
-                            st = mo["TotalPhysicalMemory"].ToString();
-                        }
-                    }
+                    st = mo["TotalPhysicalMemory"].ToString();
                 }
 
                 return st;

@@ -30,7 +30,7 @@ namespace Masuit.Tools.UnitTest
         [Theory]
         [InlineData("16666666666")]
         [InlineData("19999999999")]
-        public async void Can_MatchPhoneNumber_(string phone)
+        public void Can_MatchPhoneNumber_(string phone)
         {
             Xunit.Assert.True(phone.MatchPhoneNumber());
         }

@@ -36,14 +36,12 @@ namespace Masuit.Tools.Security
         /// </summary>
         public static RsaKey GenerateRsaKeys()
         {
-            using (var rsa = new RSACryptoServiceProvider())
+            using var rsa = new RSACryptoServiceProvider();
+            return RsaKey ??= new RsaKey
             {
-                return RsaKey ?? (RsaKey = new RsaKey
-                {
-                    PrivateKey = rsa.ToXmlString(true),
-                    PublicKey = rsa.ToXmlString(false)
-                });
-            }
+                PrivateKey = rsa.ToXmlString(true),
+                PublicKey = rsa.ToXmlString(false)
+            };
         }
 
         #endregion
@@ -189,7 +187,7 @@ namespace Masuit.Tools.Security
         public static string GetHashString(this string mStrSource)
         {
             //从字符串中取得Hash描述 
-            HashAlgorithm md5 = HashAlgorithm.Create("MD5");
+            var md5 = HashAlgorithm.Create("MD5");
             var buffer = Encoding.UTF8.GetBytes(mStrSource);
             var hashData = md5?.ComputeHash(buffer);
             return Convert.ToBase64String(hashData);
@@ -203,11 +201,8 @@ namespace Masuit.Tools.Security
         public static byte[] GetHashBytes(this FileStream objFile)
         {
             //从文件中取得Hash描述 
-            using (objFile)
-            {
-                HashAlgorithm md5 = HashAlgorithm.Create("MD5");
-                return md5?.ComputeHash(objFile);
-            }
+            var md5 = HashAlgorithm.Create("MD5");
+            return md5?.ComputeHash(objFile);
         }
 
         /// <summary>
@@ -218,12 +213,9 @@ namespace Masuit.Tools.Security
         public static string GetHashString(this FileStream objFile)
         {
             //从文件中取得Hash描述 
-            using (objFile)
-            {
-                HashAlgorithm md5 = HashAlgorithm.Create("MD5");
-                var hashData = md5?.ComputeHash(objFile);
-                return Convert.ToBase64String(hashData);
-            }
+            HashAlgorithm md5 = HashAlgorithm.Create("MD5");
+            var hashData = md5?.ComputeHash(objFile);
+            return Convert.ToBase64String(hashData);
         }
 
         #endregion

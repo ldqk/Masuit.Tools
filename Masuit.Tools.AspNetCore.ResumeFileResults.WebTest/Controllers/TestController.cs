@@ -15,7 +15,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.Controllers
     {
         private const string EntityTag = "\"TestFile\"";
 
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
         private readonly DateTimeOffset _lastModified = new DateTimeOffset(2016, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
@@ -23,7 +23,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.Controllers
         /// 
         /// </summary>
         /// <param name="hostingEnvironment"></param>
-        public TestController(IHostingEnvironment hostingEnvironment)
+        public TestController(IWebHostEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }

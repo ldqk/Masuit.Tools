@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -46,8 +47,10 @@ namespace Masuit.Tools.Hardware
         static SystemInfo()
         {
             //初始化CPU计数器 
-            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            PcCpuLoad.MachineName = ".";
+            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+            {
+                MachineName = "."
+            };
             PcCpuLoad.NextValue();
 
             //CPU个数 
@@ -69,10 +72,12 @@ namespace Masuit.Tools.Hardware
                 PerformanceCounterCategory cat = new PerformanceCounterCategory("Network Interface");
                 InstanceNames = cat.GetInstanceNames();
                 NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
-                for (int i = 0; i < InstanceNames.Length; i++) NetRecvCounters[i] = new PerformanceCounter();
-
                 NetSentCounters = new PerformanceCounter[InstanceNames.Length];
-                for (int i = 0; i < InstanceNames.Length; i++) NetSentCounters[i] = new PerformanceCounter();
+                for (int i = 0; i < InstanceNames.Length; i++)
+                {
+                    NetRecvCounters[i] = new PerformanceCounter();
+                    NetSentCounters[i] = new PerformanceCounter();
+                }
 
                 CompactFormat = false;
             }
@@ -120,7 +125,10 @@ namespace Masuit.Tools.Hardware
                     foreach (var o in mos.GetInstances())
                     {
                         var mo = (ManagementObject)o;
-                        if (mo["FreePhysicalMemory"] != null) availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                        if (mo["FreePhysicalMemory"] != null)
+                        {
+                            availablebytes = 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                        }
                     }
 
                     return availablebytes;
@@ -153,7 +161,6 @@ namespace Masuit.Tools.Hardware
         public static ArrayList FindAllApps(int handle)
         {
             ArrayList apps = new ArrayList();
-
             int hwCurr = GetWindow(handle, GwHwndfirst);
 
             while (hwCurr > 0)
@@ -167,7 +174,10 @@ namespace Masuit.Tools.Hardware
                     StringBuilder sb = new StringBuilder(2 * length + 1);
                     GetWindowText(hwCurr, sb, sb.Capacity);
                     string strTitle = sb.ToString();
-                    if (!string.IsNullOrEmpty(strTitle)) apps.Add(strTitle);
+                    if (!string.IsNullOrEmpty(strTitle))
+                    {
+                        apps.Add(strTitle);
+                    }
                 }
 
                 hwCurr = GetWindow(hwCurr, GwHwndnext);
@@ -246,15 +256,17 @@ namespace Masuit.Tools.Hardware
         /// 获取内存信息
         /// </summary>
         /// <returns>内存信息</returns>
-        public static RamInfo GetRamInfo() => new RamInfo
+        public static RamInfo GetRamInfo()
         {
-            MemoryAvailable = GetFreePhysicalMemory(),
-            PhysicalMemory = GetTotalPhysicalMemory(),
-            TotalPageFile = GetTotalVirtualMemory(),
-            AvailablePageFile = GetTotalVirtualMemory() - GetUsedVirtualMemory(),
-            AvailableVirtual = 1 - GetUsageVirtualMemory(),
-            TotalVirtual = 1 - GetUsedPhysicalMemory()
-        };
+            var info = new RamInfo();
+            info.MemoryAvailable = GetFreePhysicalMemory();
+            info.PhysicalMemory = GetTotalPhysicalMemory();
+            info.TotalPageFile = GetTotalVirtualMemory();
+            info.AvailablePageFile = GetTotalVirtualMemory() - GetUsedVirtualMemory();
+            info.AvailableVirtual = 1 - GetUsageVirtualMemory();
+            info.TotalVirtual = 1 - GetUsedPhysicalMemory();
+            return info;
+        }
 
         #endregion
 
@@ -375,7 +387,7 @@ namespace Masuit.Tools.Hardware
         public static double GetTotalPhysicalMemory()
         {
             string s = QueryComputerSystem("totalphysicalmemory");
-            return Convert.ToDouble(s);
+            return s.ToDouble();
         }
 
         /// <summary>
@@ -418,10 +430,32 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static double GetNetData(NetData nd)
         {
-            if (InstanceNames.Length == 0) return 0;
+            if (InstanceNames.Length == 0)
+            {
+                return 0;
+            }
 
             double d = 0;
-            for (int i = 0; i < InstanceNames.Length; i++) d += nd == NetData.Received ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) : nd == NetData.Sent ? GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : nd == NetData.ReceivedAndSent ? GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]) + GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]) : 0;
+            for (int i = 0; i < InstanceNames.Length; i++)
+            {
+                double receied = GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]);
+                double send = GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]);
+                switch (nd)
+                {
+                    case NetData.Received:
+                        d += receied;
+                        break;
+                    case NetData.Sent:
+                        d += send;
+                        break;
+                    case NetData.ReceivedAndSent:
+                        d += receied + send;
+                        break;
+                    default:
+                        d += 0;
+                        break;
+                }
+            }
 
             return d;
         }
@@ -438,19 +472,13 @@ namespace Masuit.Tools.Hardware
             try
             {
                 IList<string> list = new List<string>();
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                using (mc)
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using var moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
                 {
-                    ManagementObjectCollection moc = mc.GetInstances();
-                    using (moc)
+                    if ((bool)mo["IPEnabled"])
                     {
-                        foreach (ManagementObject mo in moc)
-                        {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                list.Add(mo["MacAddress"].ToString());
-                            }
-                        }
+                        list.Add(mo["MacAddress"].ToString());
                     }
                 }
 
@@ -472,31 +500,25 @@ namespace Masuit.Tools.Hardware
             try
             {
                 IList<string> list = new List<string>();
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                using (mc)
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using var moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
                 {
-                    ManagementObjectCollection moc = mc.GetInstances();
-                    using (moc)
+                    if ((bool)mo["IPEnabled"])
                     {
-                        foreach (ManagementObject mo in moc)
-                        {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                var ar = (Array)(mo.Properties["IpAddress"].Value);
-                                var st = ar.GetValue(0).ToString();
-                                list.Add(st);
-                            }
-                        }
-
-                        return list;
+                        var ar = (Array)(mo.Properties["IpAddress"].Value);
+                        var st = ar.GetValue(0).ToString();
+                        list.Add(st);
                     }
                 }
+
+                return list;
             }
             catch (Exception)
             {
                 return new List<string>()
                 {
-                    "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
+                    "未能获取到当前计算机的IP地址，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
                 };
             }
         }
@@ -508,7 +530,7 @@ namespace Masuit.Tools.Hardware
         public static string GetLocalUsedIP()
         {
             string result = RunApp("route", "print", true);
-            Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)", RegexOptions.Compiled);
             if (m.Success)
             {
                 return m.Groups[2].Value;
@@ -516,15 +538,14 @@ namespace Masuit.Tools.Hardware
 
             try
             {
-                System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient();
+                using var c = new TcpClient();
                 c.Connect("www.baidu.com", 80);
-                string ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-                c.Close();
+                var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
                 return ip;
             }
             catch (Exception)
             {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+                return "未能获取当前使用的IP，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
 
@@ -557,22 +578,22 @@ namespace Masuit.Tools.Hardware
                 };
                 proc.Start();
 
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
+                using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
+                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
                 {
-                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                    //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
-                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                    {
-                        //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
-                        proc.Kill();
-                    }
-
-                    string txt = sr.ReadToEnd();
-                    sr.Close();
-                    if (recordLog)
-                        Trace.WriteLine(txt);
-                    return txt;
+                    //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                    proc.Kill();
                 }
+
+                string txt = sr.ReadToEnd();
+                sr.Close();
+                if (recordLog)
+                {
+                    Trace.WriteLine(txt);
+                }
+                return txt;
             }
             catch (Exception ex)
             {
@@ -649,12 +670,15 @@ namespace Masuit.Tools.Hardware
             {
                 string str = null;
                 ManagementObjectSearcher objCS = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
-                foreach (ManagementObject objMgmt in objCS.Get()) str = objMgmt[type].ToString();
+                foreach (ManagementObject objMgmt in objCS.Get())
+                {
+                    str = objMgmt[type].ToString();
+                }
                 return str;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+                return "未能获取到当前计算机系统信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。异常信息：" + e.Message;
             }
         }
 
@@ -702,7 +726,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, string>()
                 {
-                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
                 };
             }
         }
@@ -769,7 +793,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, string>()
                 {
-                    { "null", "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
+                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
                 };
             }
         }
@@ -804,7 +828,7 @@ namespace Masuit.Tools.Hardware
             {
                 return new Dictionary<string, double>()
                 {
-                    { "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
+                    { "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
                 };
             }
         }

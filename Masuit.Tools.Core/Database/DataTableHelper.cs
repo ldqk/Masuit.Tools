@@ -51,21 +51,14 @@ namespace Masuit.Tools.Core.Database
         public static List<T> ToList<T>(this DataTable dt) where T : class, new()
         {
             List<T> list = new List<T>();
-            using (dt)
+            if (dt == null || dt.Rows.Count == 0)
             {
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    return list;
-                }
-
-                DataTableBuilder<T> eblist = DataTableBuilder<T>.CreateBuilder(dt.Rows[0]);
-                foreach (DataRow info in dt.Rows)
-                {
-                    list.Add(eblist.Build(info));
-                }
-
                 return list;
             }
+
+            list.AddRange(dt.Rows.Cast<DataRow>().Select(info => DataTableBuilder<T>.CreateBuilder(dt.Rows[0]).Build(info)));
+
+            return list;
         }
 
         /// <summary>

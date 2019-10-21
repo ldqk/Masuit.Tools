@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -471,19 +472,13 @@ namespace Masuit.Tools.Hardware
             try
             {
                 IList<string> list = new List<string>();
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                using (mc)
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using var moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
                 {
-                    ManagementObjectCollection moc = mc.GetInstances();
-                    using (moc)
+                    if ((bool)mo["IPEnabled"])
                     {
-                        foreach (ManagementObject mo in moc)
-                        {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                list.Add(mo["MacAddress"].ToString());
-                            }
-                        }
+                        list.Add(mo["MacAddress"].ToString());
                     }
                 }
 
@@ -505,25 +500,19 @@ namespace Masuit.Tools.Hardware
             try
             {
                 IList<string> list = new List<string>();
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                using (mc)
+                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                using var moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
                 {
-                    ManagementObjectCollection moc = mc.GetInstances();
-                    using (moc)
+                    if ((bool)mo["IPEnabled"])
                     {
-                        foreach (ManagementObject mo in moc)
-                        {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                var ar = (Array)(mo.Properties["IpAddress"].Value);
-                                var st = ar.GetValue(0).ToString();
-                                list.Add(st);
-                            }
-                        }
-
-                        return list;
+                        var ar = (Array)(mo.Properties["IpAddress"].Value);
+                        var st = ar.GetValue(0).ToString();
+                        list.Add(st);
                     }
                 }
+
+                return list;
             }
             catch (Exception)
             {
@@ -541,7 +530,7 @@ namespace Masuit.Tools.Hardware
         public static string GetLocalUsedIP()
         {
             string result = RunApp("route", "print", true);
-            Match m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
+            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)", RegexOptions.Compiled);
             if (m.Success)
             {
                 return m.Groups[2].Value;
@@ -549,12 +538,10 @@ namespace Masuit.Tools.Hardware
 
             try
             {
-                using (System.Net.Sockets.TcpClient c = new System.Net.Sockets.TcpClient())
-                {
-                    c.Connect("www.baidu.com", 80);
-                    var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-                    return ip;
-                }
+                using var c = new TcpClient();
+                c.Connect("www.baidu.com", 80);
+                var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
+                return ip;
             }
             catch (Exception)
             {
@@ -591,24 +578,22 @@ namespace Masuit.Tools.Hardware
                 };
                 proc.Start();
 
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default))
+                using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
+                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
+                //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
+                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
                 {
-                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                    //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
-                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                    {
-                        //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
-                        proc.Kill();
-                    }
-
-                    string txt = sr.ReadToEnd();
-                    sr.Close();
-                    if (recordLog)
-                    {
-                        Trace.WriteLine(txt);
-                    }
-                    return txt;
+                    //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
+                    proc.Kill();
                 }
+
+                string txt = sr.ReadToEnd();
+                sr.Close();
+                if (recordLog)
+                {
+                    Trace.WriteLine(txt);
+                }
+                return txt;
             }
             catch (Exception ex)
             {

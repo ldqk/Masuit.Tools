@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Microsoft.Extensions.Hosting;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
 {
@@ -46,7 +47,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
             }); //解决razor视图中中文被编码的问题
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

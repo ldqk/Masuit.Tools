@@ -83,55 +83,45 @@ namespace Masuit.Tools.Net
         /// <param name="updateProgress">报告进度的处理(第一个参数：总大小，第二个参数：当前进度)</param>
         public void Download(string remoteFileName, string localFileName, bool ifCredential = false, Action<int, int> updateProgress = null)
         {
-            using (FileStream outputStream = new FileStream(localFileName, FileMode.Create))
+            using FileStream outputStream = new FileStream(localFileName, FileMode.Create);
+            if (FtpServer == null || FtpServer.Trim().Length == 0)
             {
-                if (FtpServer == null || FtpServer.Trim().Length == 0)
-                {
-                    throw new Exception("ftp下载目标服务器地址未设置！");
-                }
+                throw new Exception("ftp下载目标服务器地址未设置！");
+            }
 
-                Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
-                var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
-                ftpsize.UseBinary = true;
-                var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
-                reqFtp.UseBinary = true;
-                reqFtp.KeepAlive = false;
-                if (ifCredential) //使用用户身份认证
-                {
-                    ftpsize.Credentials = new NetworkCredential(Username, Password);
-                    reqFtp.Credentials = new NetworkCredential(Username, Password);
-                }
+            Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
+            var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
+            ftpsize.UseBinary = true;
+            var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
+            reqFtp.UseBinary = true;
+            reqFtp.KeepAlive = false;
+            if (ifCredential) //使用用户身份认证
+            {
+                ftpsize.Credentials = new NetworkCredential(Username, Password);
+                reqFtp.Credentials = new NetworkCredential(Username, Password);
+            }
 
-                ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
-                using (FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse())
+            ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
+            using var re = (FtpWebResponse)ftpsize.GetResponse();
+            long totalBytes = re.ContentLength;
+            reqFtp.Method = WebRequestMethods.Ftp.DownloadFile;
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
+            using var ftpStream = response.GetResponseStream();
+            //更新进度 
+            updateProgress?.Invoke((int)totalBytes, 0); //更新进度条 
+            long totalDownloadedByte = 0;
+            int bufferSize = 1024 * 1024;
+            byte[] buffer = new byte[bufferSize];
+            if (ftpStream != null)
+            {
+                var readCount = ftpStream.Read(buffer, 0, bufferSize);
+                while (readCount > 0)
                 {
-                    long totalBytes = re.ContentLength;
-                    reqFtp.Method = WebRequestMethods.Ftp.DownloadFile;
-                    var response = (FtpWebResponse)reqFtp.GetResponse();
-                    using (response)
-                    {
-                        var ftpStream = response.GetResponseStream();
-                        //更新进度 
-                        using (ftpStream)
-                        {
-                            updateProgress?.Invoke((int)totalBytes, 0); //更新进度条 
-                            long totalDownloadedByte = 0;
-                            int bufferSize = 1024 * 1024;
-                            byte[] buffer = new byte[bufferSize];
-                            if (ftpStream != null)
-                            {
-                                var readCount = ftpStream.Read(buffer, 0, bufferSize);
-                                while (readCount > 0)
-                                {
-                                    totalDownloadedByte = readCount + totalDownloadedByte;
-                                    outputStream.Write(buffer, 0, readCount);
-                                    //更新进度 
-                                    updateProgress?.Invoke((int)totalBytes, (int)totalDownloadedByte); //更新进度条 
-                                    readCount = ftpStream.Read(buffer, 0, bufferSize);
-                                }
-                            }
-                        }
-                    }
+                    totalDownloadedByte = readCount + totalDownloadedByte;
+                    outputStream.Write(buffer, 0, readCount);
+                    //更新进度 
+                    updateProgress?.Invoke((int)totalBytes, (int)totalDownloadedByte); //更新进度条 
+                    readCount = ftpStream.Read(buffer, 0, bufferSize);
                 }
             }
         }
@@ -146,54 +136,46 @@ namespace Masuit.Tools.Net
         /// <param name="updateProgress">报告进度的处理(第一个参数：总大小，第二个参数：当前进度)</param>
         public void BrokenDownload(string remoteFileName, string localFileName, bool ifCredential, long size, Action<int, int> updateProgress = null)
         {
-            using (FileStream outputStream = new FileStream(localFileName, FileMode.Append))
+            using var outputStream = new FileStream(localFileName, FileMode.Append);
+            if (FtpServer == null || FtpServer.Trim().Length == 0)
             {
-                if (FtpServer == null || FtpServer.Trim().Length == 0)
-                {
-                    throw new Exception("ftp下载目标服务器地址未设置！");
-                }
+                throw new Exception("ftp下载目标服务器地址未设置！");
+            }
 
-                Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
-                var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
-                ftpsize.UseBinary = true;
-                ftpsize.ContentOffset = size;
-                var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
-                reqFtp.UseBinary = true;
-                reqFtp.KeepAlive = false;
-                reqFtp.ContentOffset = size;
-                if (ifCredential) //使用用户身份认证
-                {
-                    ftpsize.Credentials = new NetworkCredential(Username, Password);
-                    reqFtp.Credentials = new NetworkCredential(Username, Password);
-                }
+            Uri uri = new Uri("ftp://" + FtpServer + "/" + remoteFileName);
+            var ftpsize = (FtpWebRequest)WebRequest.Create(uri);
+            ftpsize.UseBinary = true;
+            ftpsize.ContentOffset = size;
+            var reqFtp = (FtpWebRequest)WebRequest.Create(uri);
+            reqFtp.UseBinary = true;
+            reqFtp.KeepAlive = false;
+            reqFtp.ContentOffset = size;
+            if (ifCredential) //使用用户身份认证
+            {
+                ftpsize.Credentials = new NetworkCredential(Username, Password);
+                reqFtp.Credentials = new NetworkCredential(Username, Password);
+            }
 
-                ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
-                using (FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse())
+            ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
+            using FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse();
+            var totalBytes = re.ContentLength;
+            reqFtp.Method = WebRequestMethods.Ftp.DownloadFile;
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
+            using var ftpStream = response.GetResponseStream();
+            updateProgress?.Invoke((int)totalBytes, 0); //更新进度条 
+            long totalDownloadedByte = 0;
+            int bufferSize = 1024 * 1024;
+            byte[] buffer = new byte[bufferSize];
+            if (ftpStream != null)
+            {
+                var readCount = ftpStream.Read(buffer, 0, bufferSize);
+                while (readCount > 0)
                 {
-                    var totalBytes = re.ContentLength;
-                    reqFtp.Method = WebRequestMethods.Ftp.DownloadFile;
-                    using (var response = (FtpWebResponse)reqFtp.GetResponse())
-                    {
-                        using (var ftpStream = response.GetResponseStream())
-                        {
-                            updateProgress?.Invoke((int)totalBytes, 0); //更新进度条 
-                            long totalDownloadedByte = 0;
-                            int bufferSize = 1024 * 1024;
-                            byte[] buffer = new byte[bufferSize];
-                            if (ftpStream != null)
-                            {
-                                var readCount = ftpStream.Read(buffer, 0, bufferSize);
-                                while (readCount > 0)
-                                {
-                                    totalDownloadedByte = readCount + totalDownloadedByte;
-                                    outputStream.Write(buffer, 0, readCount);
-                                    //更新进度 
-                                    updateProgress?.Invoke((int)totalBytes, (int)totalDownloadedByte); //更新进度条 
-                                    readCount = ftpStream.Read(buffer, 0, bufferSize);
-                                }
-                            }
-                        }
-                    }
+                    totalDownloadedByte = readCount + totalDownloadedByte;
+                    outputStream.Write(buffer, 0, readCount);
+                    //更新进度 
+                    updateProgress?.Invoke((int)totalBytes, (int)totalDownloadedByte); //更新进度条 
+                    readCount = ftpStream.Read(buffer, 0, bufferSize);
                 }
             }
         }
@@ -213,10 +195,8 @@ namespace Masuit.Tools.Net
                 long size = 0;
                 if (File.Exists(localFileName))
                 {
-                    using (FileStream outputStream = new FileStream(localFileName, FileMode.Open))
-                    {
-                        size = outputStream.Length;
-                    }
+                    using var outputStream = new FileStream(localFileName, FileMode.Open);
+                    size = outputStream.Length;
                 }
 
                 BrokenDownload(remoteFileName, localFileName, ifCredential, size, updateProgress);
@@ -252,24 +232,20 @@ namespace Masuit.Tools.Net
             reqFtp.ContentLength = finfo.Length; //为request指定上传文件的大小
             int buffLength = 1024 * 1024;
             byte[] buff = new byte[buffLength];
-            using (var fs = finfo.OpenRead())
+            using var fs = finfo.OpenRead();
+            using var stream = reqFtp.GetRequestStream();
+            var contentLen = fs.Read(buff, 0, buffLength);
+            int allbye = (int)finfo.Length;
+            //更新进度 
+            updateProgress?.Invoke(allbye, 0); //更新进度条 
+            int startbye = 0;
+            while (contentLen != 0)
             {
-                using (var stream = reqFtp.GetRequestStream())
-                {
-                    var contentLen = fs.Read(buff, 0, buffLength);
-                    int allbye = (int)finfo.Length;
-                    //更新进度 
-                    updateProgress?.Invoke(allbye, 0); //更新进度条 
-                    int startbye = 0;
-                    while (contentLen != 0)
-                    {
-                        startbye = contentLen + startbye;
-                        stream.Write(buff, 0, contentLen);
-                        //更新进度 
-                        updateProgress?.Invoke(allbye, startbye); //更新进度条 
-                        contentLen = fs.Read(buff, 0, buffLength);
-                    }
-                }
+                startbye = contentLen + startbye;
+                stream.Write(buff, 0, contentLen);
+                //更新进度 
+                updateProgress?.Invoke(allbye, startbye); //更新进度条 
+                contentLen = fs.Read(buff, 0, buffLength);
             }
         }
 
@@ -336,24 +312,20 @@ namespace Masuit.Tools.Net
             int buffLength = 1024 * 1024; // 缓冲大小设置为2kb 
             byte[] buff = new byte[buffLength];
             // 打开一个文件流 (System.IO.FileStream) 去读上传的文件 
-            using (FileStream fs = fileInf.OpenRead())
+            using FileStream fs = fileInf.OpenRead();
+            using var strm = reqFtp.GetRequestStream();
+            // 把上传的文件写入流 
+            fs.Seek(startfilesize, 0);
+            int contentLen = fs.Read(buff, 0, buffLength);
+            // 流内容没有结束 
+            while (contentLen != 0)
             {
-                using (var strm = reqFtp.GetRequestStream())
-                {
-                    // 把上传的文件写入流 
-                    fs.Seek(startfilesize, 0);
-                    int contentLen = fs.Read(buff, 0, buffLength);
-                    // 流内容没有结束 
-                    while (contentLen != 0)
-                    {
-                        // 把内容从file stream 写入 upload stream 
-                        strm.Write(buff, 0, contentLen);
-                        contentLen = fs.Read(buff, 0, buffLength);
-                        startbye += contentLen;
-                        //更新进度 
-                        updateProgress?.Invoke((int)allbye, (int)startbye); //更新进度条 
-                    }
-                }
+                // 把内容从file stream 写入 upload stream 
+                strm.Write(buff, 0, contentLen);
+                contentLen = fs.Read(buff, 0, buffLength);
+                startbye += contentLen;
+                //更新进度 
+                updateProgress?.Invoke((int)allbye, (int)startbye); //更新进度条 
             }
 
             return true;
@@ -406,7 +378,7 @@ namespace Masuit.Tools.Net
                 reqFtp.UseBinary = true;
                 reqFtp.Credentials = new NetworkCredential(Username, Password); //用户，密码
                 reqFtp.Method = WebRequestMethods.Ftp.GetFileSize;
-                FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse();
+                var response = (FtpWebResponse)reqFtp.GetResponse();
                 var filesize = response.ContentLength;
                 return filesize;
             }
@@ -426,21 +398,17 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public List<string> GetFilesDetails(string relativePath = "")
         {
-            List<string> result = new List<string>();
+            var result = new List<string>();
             var ftp = (FtpWebRequest)WebRequest.Create(new Uri(Path.Combine("ftp://" + FtpServer, relativePath).Replace("\\", "/")));
             ftp.Credentials = new NetworkCredential(Username, Password);
             ftp.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-            using (WebResponse response = ftp.GetResponse())
+            using var response = ftp.GetResponse();
+            using var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8);
+            string line = reader.ReadLine();
+            while (line != null)
             {
-                using (StreamReader reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
-                {
-                    string line = reader.ReadLine();
-                    while (line != null)
-                    {
-                        result.Add(line);
-                        line = reader.ReadLine();
-                    }
-                }
+                result.Add(line);
+                line = reader.ReadLine();
             }
 
             return result;
@@ -457,29 +425,25 @@ namespace Masuit.Tools.Net
             reqFtp.UseBinary = true;
             reqFtp.Credentials = new NetworkCredential(Username, Password);
             reqFtp.Method = WebRequestMethods.Ftp.ListDirectory;
-            using (WebResponse response = reqFtp.GetResponse())
+            using var response = reqFtp.GetResponse();
+            using var reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8);
+            string line = reader.ReadLine();
+            while (line != null)
             {
-                using (StreamReader reader = new StreamReader(response.GetResponseStream() ?? throw new InvalidOperationException(), Encoding.UTF8))
+                if (mask.Trim() != string.Empty && mask.Trim() != "*.*")
                 {
-                    string line = reader.ReadLine();
-                    while (line != null)
+                    string temp = mask.Substring(0, mask.IndexOf("*", StringComparison.Ordinal));
+                    if (line.Substring(0, temp.Length) == temp)
                     {
-                        if (mask.Trim() != string.Empty && mask.Trim() != "*.*")
-                        {
-                            string temp = mask.Substring(0, mask.IndexOf("*", StringComparison.Ordinal));
-                            if (line.Substring(0, temp.Length) == temp)
-                            {
-                                result.Add(line);
-                            }
-                        }
-                        else
-                        {
-                            result.Add(line);
-                        }
-
-                        line = reader.ReadLine();
+                        result.Add(line);
                     }
                 }
+                else
+                {
+                    result.Add(line);
+                }
+
+                line = reader.ReadLine();
             }
 
             return result;
@@ -536,16 +500,10 @@ namespace Masuit.Tools.Net
             reqFtp.KeepAlive = false;
             reqFtp.Method = WebRequestMethods.Ftp.DeleteFile;
 
-            using (FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse())
-            {
-                using (Stream datastream = response.GetResponseStream())
-                {
-                    using (StreamReader sr = new StreamReader(datastream ?? throw new InvalidOperationException()))
-                    {
-                        sr.ReadToEnd();
-                    }
-                }
-            }
+            using FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse();
+            using Stream datastream = response.GetResponseStream();
+            using StreamReader sr = new StreamReader(datastream ?? throw new InvalidOperationException());
+            sr.ReadToEnd();
         }
 
         /// <summary>
@@ -559,16 +517,10 @@ namespace Masuit.Tools.Net
             reqFtp.Credentials = new NetworkCredential(Username, Password);
             reqFtp.KeepAlive = false;
             reqFtp.Method = WebRequestMethods.Ftp.RemoveDirectory;
-            using (FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse())
-            {
-                using (Stream datastream = response.GetResponseStream())
-                {
-                    using (StreamReader sr = new StreamReader(datastream ?? throw new InvalidOperationException()))
-                    {
-                        sr.ReadToEnd();
-                    }
-                }
-            }
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
+            using var datastream = response.GetResponseStream();
+            using var sr = new StreamReader(datastream ?? throw new InvalidOperationException());
+            sr.ReadToEnd();
         }
 
         #endregion
@@ -586,11 +538,9 @@ namespace Masuit.Tools.Net
             reqFtp.Method = WebRequestMethods.Ftp.GetFileSize;
             reqFtp.UseBinary = true;
             reqFtp.Credentials = new NetworkCredential(Username, Password);
-            using (FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse())
-            {
-                var fileSize = response.ContentLength;
-                return fileSize;
-            }
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
+            var fileSize = response.ContentLength;
+            return fileSize;
         }
 
         /// <summary>
@@ -648,12 +598,8 @@ namespace Masuit.Tools.Net
             reqFtp.Method = WebRequestMethods.Ftp.MakeDirectory;
             reqFtp.UseBinary = true;
             reqFtp.Credentials = new NetworkCredential(Username, Password);
-            using (FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse())
-            {
-                using (response.GetResponseStream())
-                {
-                }
-            }
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
+            using var _ = response.GetResponseStream();
         }
 
         /// <summary>
@@ -669,12 +615,8 @@ namespace Masuit.Tools.Net
             reqFtp.RenameTo = newFilename;
             reqFtp.UseBinary = true;
             reqFtp.Credentials = new NetworkCredential(Username, Password);
-            using (FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse())
-            {
-                using (response.GetResponseStream())
-                {
-                }
-            }
+            using FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse();
+            using var _ = response.GetResponseStream();
         }
 
         /// <summary>

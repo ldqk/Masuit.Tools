@@ -233,31 +233,27 @@ namespace Masuit.Tools.Net
         void MergeParts()
         {
             List<PartialDownloader> mergeOrderedList = SortPDsByFrom(PartialDownloaderList);
-            using (var fs = new FileStream(FilePath, FileMode.Create, FileAccess.ReadWrite))
+            using var fs = new FileStream(FilePath, FileMode.Create, FileAccess.ReadWrite);
+            long totalBytesWritten = 0;
+            int mergeProgress = 0;
+            foreach (var item in mergeOrderedList)
             {
-                long totalBytesWritten = 0;
-                int mergeProgress = 0;
-                foreach (var item in mergeOrderedList)
+                using var pds = new FileStream(item.FullPath, FileMode.Open, FileAccess.Read);
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = pds.Read(buffer, 0, buffer.Length)) > 0)
                 {
-                    using (FileStream pds = new FileStream(item.FullPath, FileMode.Open, FileAccess.Read))
+                    fs.Write(buffer, 0, read);
+                    totalBytesWritten += read;
+                    int temp = (int)(totalBytesWritten * 1d / Size * 100);
+                    if (temp != mergeProgress && FileMergeProgressChanged != null)
                     {
-                        byte[] buffer = new byte[4096];
-                        int read;
-                        while ((read = pds.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            fs.Write(buffer, 0, read);
-                            totalBytesWritten += read;
-                            int temp = (int)(totalBytesWritten * 1d / Size * 100);
-                            if (temp != mergeProgress && FileMergeProgressChanged != null)
-                            {
-                                mergeProgress = temp;
-                                _aop.Post(state => FileMergeProgressChanged(this, temp), null);
-                            }
-                        }
+                        mergeProgress = temp;
+                        _aop.Post(state => FileMergeProgressChanged(this, temp), null);
                     }
-
-                    File.Delete(item.FullPath);
                 }
+
+                File.Delete(item.FullPath);
             }
         }
 
@@ -338,22 +334,17 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         public static long GetContentLength(string url, ref bool rangeAllowed, ref string redirectedUrl)
         {
-            HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+            var req = WebRequest.Create(url) as HttpWebRequest;
             req.UserAgent = "Mozilla/4.0 (compatible; MSIE 11.0; Windows NT 6.2; .NET CLR 1.0.3705;)";
             req.ServicePoint.ConnectionLimit = 4;
-            long ctl;
-            using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+            using var resp = req.GetResponse() as HttpWebResponse;
+            redirectedUrl = resp.ResponseUri.OriginalString;
+            var ctl = resp.ContentLength;
+            rangeAllowed = resp.Headers.AllKeys.Select((v, i) => new
             {
-                redirectedUrl = resp.ResponseUri.OriginalString;
-                ctl = resp.ContentLength;
-                rangeAllowed = resp.Headers.AllKeys.Select((v, i) => new
-                {
-                    HeaderName = v,
-                    HeaderValue = resp.Headers[i]
-                }).Any(k => k.HeaderName.ToLower().Contains("range") && k.HeaderValue.ToLower().Contains("byte"));
-                resp.Close();
-            }
-
+                HeaderName = v,
+                HeaderValue = resp.Headers[i]
+            }).Any(k => k.HeaderName.ToLower().Contains("range") && k.HeaderValue.ToLower().Contains("byte"));
             req.Abort();
             return ctl;
         }

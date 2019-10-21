@@ -83,20 +83,16 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public void SendAsync(Action<string> completedCallback)
         {
-            using (SmtpClient smtpClient = GetSmtpClient)
-            {
-                using (MailMessage mailMessage = GetClient)
-                {
-                    if (smtpClient == null || mailMessage == null) return;
-                    Subject = Subject;
-                    Body = Body;
-                    //EnableSsl = false;
-                    //发送邮件回调方法
-                    actionSendCompletedCallback = completedCallback;
-                    smtpClient.SendCompleted += SendCompletedCallback;
-                    smtpClient.SendAsync(mailMessage, "true"); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
-                }
-            }
+            using var smtpClient = GetSmtpClient;
+            using var mailMessage = GetClient;
+            if (smtpClient == null || mailMessage == null) return;
+            Subject = Subject;
+            Body = Body;
+            //EnableSsl = false;
+            //发送邮件回调方法
+            actionSendCompletedCallback = completedCallback;
+            smtpClient.SendCompleted += SendCompletedCallback;
+            smtpClient.SendAsync(mailMessage, "true"); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
         }
 
         /// <summary>
@@ -104,17 +100,13 @@ namespace Masuit.Tools.Models
         /// </summary>
         public void Send()
         {
-            using (SmtpClient smtpClient = GetSmtpClient)
-            {
-                using (MailMessage mailMessage = GetClient)
-                {
-                    if (smtpClient == null || mailMessage == null) return;
-                    Subject = Subject;
-                    Body = Body;
-                    //EnableSsl = false;
-                    smtpClient.Send(mailMessage); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
-                }
-            }
+            using SmtpClient smtpClient = GetSmtpClient;
+            using MailMessage mailMessage = GetClient;
+            if (smtpClient == null || mailMessage == null) return;
+            Subject = Subject;
+            Body = Body;
+            //EnableSsl = false;
+            smtpClient.Send(mailMessage); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
         }
 
         /// <summary>
@@ -128,17 +120,20 @@ namespace Masuit.Tools.Models
             //写入日志
             //return;
             if (actionSendCompletedCallback == null) return;
-            string message = string.Empty;
+            string message;
             if (e.Cancelled)
             {
                 message = "异步操作取消";
             }
             else if (e.Error != null)
             {
-                message = (string.Format("UserState:{0},Message:{1}", (string)e.UserState, e.Error.ToString()));
+                message = ($"UserState:{(string)e.UserState},Message:{e.Error}");
             }
             else
+            {
                 message = (string)e.UserState;
+            }
+
             //执行回调方法
             actionSendCompletedCallback(message);
         }

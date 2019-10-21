@@ -101,7 +101,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static Type GetEnumType(Assembly assembly, string typeName)
         {
-            _enumTypeDict = _enumTypeDict ?? LoadEnumTypeDict(assembly);
+            _enumTypeDict ??= LoadEnumTypeDict(assembly);
             if (_enumTypeDict.ContainsKey(typeName))
             {
                 return _enumTypeDict[typeName];

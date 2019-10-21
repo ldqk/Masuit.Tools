@@ -4231,13 +4231,6 @@
             <returns></returns>
             <exception cref="T:System.Exception">操作失败。</exception>
         </member>
-        <member name="M:Masuit.Tools.Media.ImageUtilities.UploadImageAsync(System.IO.Stream)">
-            <summary>
-            上传图片到百度图床
-            </summary>
-            <param name="stream"></param>
-            <returns></returns>
-        </member>
         <member name="T:Masuit.Tools.Media.ThumbnailCutMode">
             <summary>
             图像裁剪模式
