@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.Strings
 {
@@ -82,18 +84,8 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public long FromString(string str)
         {
-            long result = 0;
             int j = 0;
-            foreach (var ch in new string(str.ToCharArray().Reverse().ToArray()))
-            {
-                if (Characters.Contains(ch))
-                {
-                    result += Characters.IndexOf(ch) * (long)Math.Pow(Length, j);
-                    j++;
-                }
-            }
-
-            return result;
+            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => Characters.IndexOf(ch) * (long)Math.Pow(Length, j++));
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
@@ -101,6 +93,168 @@ namespace Masuit.Tools.Strings
         public override string ToString()
         {
             return Length + "模式";
+        }
+        // 转换数字 
+        private static char ToNum(char x)
+        {
+            string strChnNames = "零一二三四五六七八九";
+            string strNumNames = "0123456789";
+            return strChnNames[strNumNames.IndexOf(x)];
+        }
+
+        // 转换万以下整数 
+        private static string ChangeInt(string x)
+        {
+            string[] strArrayLevelNames = { "", "十", "百", "千" };
+            string ret = "";
+            int i;
+            for (i = x.Length - 1; i >= 0; i--)
+            {
+                if (x[i] == '0')
+                {
+                    ret = ToNum(x[i]) + ret;
+                }
+                else
+                {
+                    ret = ToNum(x[i]) + strArrayLevelNames[x.Length - 1 - i] + ret;
+                }
+            }
+
+            while ((i = ret.IndexOf("零零", StringComparison.Ordinal)) != -1)
+            {
+                ret = ret.Remove(i, 1);
+            }
+
+            if (ret[^1] == '零' && ret.Length > 1)
+            {
+                ret = ret.Remove(ret.Length - 1, 1);
+            }
+
+            if (ret.Length >= 2 && ret.Substring(0, 2) == "一十")
+            {
+                ret = ret.Remove(0, 1);
+            }
+
+            return ret;
+        }
+
+        // 转换整数 
+        private static string ToInt(string x)
+        {
+            int len = x.Length;
+            string result;
+            string temp;
+            if (len <= 4)
+            {
+                result = ChangeInt(x);
+            }
+            else if (len <= 8)
+            {
+                result = ChangeInt(x.Substring(0, len - 4)) + "万";
+                temp = ChangeInt(x.Substring(len - 4, 4));
+                if (temp.IndexOf("千", StringComparison.Ordinal) == -1 && !string.IsNullOrEmpty(temp))
+                {
+                    result += "零" + temp;
+                }
+                else
+                {
+                    result += temp;
+                }
+            }
+            else
+            {
+                result = ChangeInt(x.Substring(0, len - 8)) + "亿";
+                temp = ChangeInt(x.Substring(len - 8, 4));
+                if (temp.IndexOf("千", StringComparison.Ordinal) == -1 && !string.IsNullOrEmpty(temp))
+                {
+                    result += "零" + temp;
+                }
+                else
+                {
+                    result += temp;
+                }
+
+                result += "万";
+                temp = ChangeInt(x.Substring(len - 4, 4));
+                if (temp.IndexOf("千", StringComparison.Ordinal) == -1 && !string.IsNullOrEmpty(temp))
+                {
+                    result += "零" + temp;
+                }
+                else
+                {
+                    result += temp;
+                }
+            }
+            int i;
+            if ((i = result.IndexOf("零万", StringComparison.Ordinal)) != -1)
+            {
+                result = result.Remove(i + 1, 1);
+            }
+
+            while ((i = result.IndexOf("零零", StringComparison.Ordinal)) != -1)
+            {
+                result = result.Remove(i, 1);
+            }
+
+            if (result[^1] == '零' && result.Length > 1)
+            {
+                result = result.Remove(result.Length - 1, 1);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 转换为中文数字格式
+        /// </summary>
+        /// <param name="num">123.45</param>
+        /// <returns></returns>
+        public static string ToChineseNumber(double num)
+        {
+            var x = num.ToString(CultureInfo.CurrentCulture);
+            if (x.Length == 0)
+            {
+                return "";
+            }
+
+            string result = "";
+            if (x[0] == '-')
+            {
+                result = "负";
+                x = x.Remove(0, 1);
+            }
+            if (x[0].ToString() == ".")
+            {
+                x = "0" + x;
+            }
+
+            if (x[^1].ToString() == ".")
+            {
+                x = x.Remove(x.Length - 1, 1);
+            }
+
+            if (x.IndexOf(".") > -1)
+            {
+                result += ToInt(x.Substring(0, x.IndexOf("."))) + "点" + x.Substring(x.IndexOf(".") + 1).Aggregate("", (current, t) => current + ToNum(t));
+            }
+            else
+            {
+                result += ToInt(x);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 数字转中文金额大写
+        /// </summary>
+        /// <param name="number">22.22</param>
+        /// <returns></returns>
+        public static string ToChineseMoney(double number)
+        {
+            string s = number.ToString("#L#E#D#C#K#E#D#C#J#E#D#C#I#E#D#C#H#E#D#C#G#E#D#C#F#E#D#C#.0B0A");
+            string d = Regex.Replace(s, @"((?<=-|^)[^1-9]*)|((?'z'0)[0A-E]*((?=[1-9])|(?'-z'(?=[F-L\.]|$))))|((?'b'[F-L])(?'z'0)[0A-L]*((?=[1-9])|(?'-z'(?=[\　　.]|$))))", "${b}${z}");
+            return Regex.Replace(d, ".", m => "负元空零壹贰叁肆伍陆柒捌玖空空空空空空空分角拾佰仟萬億兆京垓秭穰"[m.Value[0] - '-'].ToString());
         }
     }
 }

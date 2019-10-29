@@ -30,5 +30,31 @@ namespace Masuit.Tools.UnitTest
             string output = nf.ToString(expected);
             Assert.Equal(input, output);
         }
+
+        [Fact]
+        public void Can_ConvertAnyNum2Chinese()
+        {
+            // arrange
+            double num = 1234567809.321;
+
+            // act
+            var chineseNumber = NumberFormater.ToChineseNumber(num);
+
+            // assert
+            Assert.Equal("十二亿三千四百五十六万七千八百零九点三二一", chineseNumber);
+        }
+
+        [Fact]
+        public void Can_ConvertAnyNum2ChineseMoney()
+        {
+            // arrange
+            double num = 123456789.321;
+
+            // act
+            var chineseNumber = NumberFormater.ToChineseMoney(num);
+
+            // assert
+            Assert.Equal("壹億贰仟叁佰肆拾伍萬陆仟柒佰捌拾玖元叁角贰分", chineseNumber);
+        }
     }
 }

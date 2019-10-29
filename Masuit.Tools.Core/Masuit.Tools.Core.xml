@@ -6395,6 +6395,20 @@
             <summary>Returns a string that represents the current object.</summary>
             <returns>A string that represents the current object.</returns>
         </member>
+        <member name="M:Masuit.Tools.Strings.NumberFormater.ToChineseNumber(System.Double)">
+            <summary>
+            转换为中文数字格式
+            </summary>
+            <param name="num">123.45</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Strings.NumberFormater.ToChineseMoney(System.Double)">
+            <summary>
+            数字转中文金额大写
+            </summary>
+            <param name="number">22.22</param>
+            <returns></returns>
+        </member>
         <member name="T:Masuit.Tools.Strings.Template">
             <summary>
             模版引擎
