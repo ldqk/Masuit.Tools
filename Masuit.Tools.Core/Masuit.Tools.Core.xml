@@ -621,6 +621,13 @@
             <param name="name"></param>
             <returns></returns>
         </member>
+        <member name="M:Masuit.Tools.Core.Net.CallContext`1.GetOrAdd(System.String,`0)">
+            <summary>
+            获取值
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="T:Masuit.Tools.Core.Net.HttpContext2">
             <summary>
             实现类似于.NET Framework中的HttpContext静态对象，使用前需要在Startup中注入，ConfigureServices方法中：services.AddStaticHttpContext();，Configure方法中：app.UseStaticHttpContext();
@@ -1788,55 +1795,6 @@
             <param name="source"></param>
             <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.Extensions.ToJsonStringAsync(System.Object)">
-            <summary>
-            转换成json字符串
-            </summary>
-            <param name="source"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.UbbToHtml(System.String)">
-            <summary>
-            UBB代码处理函数
-            </summary>
-            <param name="ubbStr">输入UBB字符串</param>
-            <returns>输出html字符串</returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.UbbToHtmlAsync(System.String)">
-            <summary>
-            UBB代码处理函数
-            </summary>
-            <param name="ubbStr">输入UBB字符串</param>
-            <returns>输出html字符串</returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.UbbToHtml2(System.String)">
-            <summary>
-            UBB转HTML方式2
-            </summary>
-            <param name="ubbStr">UBB 代码</param>
-            <returns>HTML代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.UbbToHtml2Async(System.String)">
-            <summary>
-            UBB转HTML方式2
-            </summary>
-            <param name="ubbStr">UBB 代码</param>
-            <returns>HTML代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.HtmltoUBB(System.String)">
-            <summary>
-            Html转UBB
-            </summary>
-            <param name="chr">HTML代码</param>
-            <returns>UBB代码</returns>
-        </member>
-        <member name="M:Masuit.Tools.Extensions.HtmltoUBBAsync(System.String)">
-            <summary>
-            Html转UBB
-            </summary>
-            <param name="chr">HTML代码</param>
-            <returns>UBB代码</returns>
-        </member>
         <member name="M:Masuit.Tools.Extensions.ToInt32(System.String)">
             <summary>
             字符串转int
@@ -2122,6 +2080,14 @@
             <param name="rand"></param>
             <param name="mean">均值</param>
             <param name="stdDev">方差</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Extensions.SaveAsMemoryStream(System.IO.Stream,System.Boolean)">
+            <summary>
+            将流转换为内存流
+            </summary>
+            <param name="stream"></param>
+            <param name="dispose">保存后是否释放源流</param>
             <returns></returns>
         </member>
         <member name="T:Masuit.Tools.Files.ClassZip">

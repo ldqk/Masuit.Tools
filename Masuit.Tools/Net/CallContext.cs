@@ -1,13 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Masuit.Tools.Core.Net
+namespace Masuit.Tools.Net
 {
     /// <summary>
     /// 取线程内唯一对象
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public static class CallContext<T>
+    internal static class CallContext<T>
     {
         private static readonly ConcurrentDictionary<string, AsyncLocal<T>> State = new ConcurrentDictionary<string, AsyncLocal<T>>();
 

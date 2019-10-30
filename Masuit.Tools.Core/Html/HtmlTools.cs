@@ -1,5 +1,6 @@
 ﻿using Ganss.XSS;
 using HtmlAgilityPack;
+using Masuit.Tools.Core.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string HtmlSantinizerStandard(this string html)
         {
-            var sanitizer = new HtmlSanitizer();
+            var sanitizer = CallContext<HtmlSanitizer>.GetOrAdd("HtmlSanitizer", new HtmlSanitizer());
             sanitizer.AllowedAttributes.Remove("id");
             sanitizer.AllowedAttributes.Remove("alt");
             sanitizer.AllowedCssProperties.Remove("font-family");
@@ -32,6 +33,9 @@ namespace Masuit.Tools.Html
             sanitizer.AllowedTags.Remove("textarea");
             sanitizer.AllowedTags.Remove("select");
             sanitizer.AllowedTags.Remove("form");
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("style");
             return sanitizer.Sanitize(html);
         }
 
@@ -45,7 +49,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string HtmlSantinizerCustom(this string html, string[] labels = null, string[] attributes = null, string[] styles = null)
         {
-            var sanitizer = new HtmlSanitizer();
+            var sanitizer = CallContext<HtmlSanitizer>.GetOrAdd("HtmlSanitizer", new HtmlSanitizer());
             if (labels != null)
             {
                 foreach (string label in labels)
