@@ -601,34 +601,6 @@
             <param name="right">右条件</param>
             <returns>新表达式</returns>
         </member>
-        <member name="T:Masuit.Tools.Core.Net.CallContext`1">
-            <summary>
-            取线程内唯一对象
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Masuit.Tools.Core.Net.CallContext`1.SetData(System.String,`0)">
-            <summary>
-            设置值
-            </summary>
-            <param name="name"></param>
-            <param name="data"></param>
-        </member>
-        <member name="M:Masuit.Tools.Core.Net.CallContext`1.GetData(System.String)">
-            <summary>
-            获取值
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.Core.Net.CallContext`1.GetOrAdd(System.String,`0)">
-            <summary>
-            获取值
-            </summary>
-            <param name="name"></param>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
         <member name="T:Masuit.Tools.Core.Net.HttpContext2">
             <summary>
             实现类似于.NET Framework中的HttpContext静态对象，使用前需要在Startup中注入，ConfigureServices方法中：services.AddStaticHttpContext();，Configure方法中：app.UseStaticHttpContext();

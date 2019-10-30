@@ -1,6 +1,5 @@
 ﻿using Ganss.XSS;
 using HtmlAgilityPack;
-using Masuit.Tools.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,27 @@ namespace Masuit.Tools.Html
     /// </summary>
     public static partial class HtmlTools
     {
+        private static readonly HtmlSanitizer Sanitizer = new HtmlSanitizer();
+
+        static HtmlTools()
+        {
+            Sanitizer.AllowedAttributes.Remove("id");
+            Sanitizer.AllowedAttributes.Remove("alt");
+            Sanitizer.AllowedCssProperties.Remove("font-family");
+            Sanitizer.AllowedCssProperties.Remove("background-color");
+            Sanitizer.KeepChildNodes = true;
+            Sanitizer.AllowedTags.Remove("input");
+            Sanitizer.AllowedTags.Remove("button");
+            Sanitizer.AllowedTags.Remove("iframe");
+            Sanitizer.AllowedTags.Remove("frame");
+            Sanitizer.AllowedTags.Remove("textarea");
+            Sanitizer.AllowedTags.Remove("select");
+            Sanitizer.AllowedTags.Remove("form");
+            Sanitizer.AllowedAttributes.Add("src");
+            Sanitizer.AllowedAttributes.Add("class");
+            Sanitizer.AllowedAttributes.Add("style");
+        }
+
         /// <summary>
         /// 标准的防止html的xss净化器
         /// </summary>
@@ -20,20 +40,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string HtmlSantinizerStandard(this string html)
         {
-            var sanitizer = CallContext<HtmlSanitizer>.GetOrAdd("HtmlSanitizer", new HtmlSanitizer());
-            sanitizer.AllowedAttributes.Remove("id");
-            sanitizer.AllowedAttributes.Remove("alt");
-            sanitizer.AllowedCssProperties.Remove("font-family");
-            sanitizer.AllowedCssProperties.Remove("background-color");
-            sanitizer.KeepChildNodes = true;
-            sanitizer.AllowedTags.Remove("input");
-            sanitizer.AllowedTags.Remove("button");
-            sanitizer.AllowedTags.Remove("iframe");
-            sanitizer.AllowedTags.Remove("frame");
-            sanitizer.AllowedTags.Remove("textarea");
-            sanitizer.AllowedTags.Remove("select");
-            sanitizer.AllowedTags.Remove("form");
-            return sanitizer.Sanitize(html);
+            return Sanitizer.Sanitize(html);
         }
 
         /// <summary>
@@ -46,12 +53,11 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string HtmlSantinizerCustom(this string html, string[] labels = null, string[] attributes = null, string[] styles = null)
         {
-            var sanitizer = CallContext<HtmlSanitizer>.GetOrAdd("HtmlSanitizer", new HtmlSanitizer());
             if (labels != null)
             {
                 foreach (string label in labels)
                 {
-                    sanitizer.AllowedTags.Remove(label);
+                    Sanitizer.AllowedTags.Remove(label);
                 }
             }
 
@@ -59,7 +65,7 @@ namespace Masuit.Tools.Html
             {
                 foreach (string attr in attributes)
                 {
-                    sanitizer.AllowedAttributes.Remove(attr);
+                    Sanitizer.AllowedAttributes.Remove(attr);
                 }
             }
 
@@ -67,12 +73,12 @@ namespace Masuit.Tools.Html
             {
                 foreach (string p in styles)
                 {
-                    sanitizer.AllowedCssProperties.Remove(p);
+                    Sanitizer.AllowedCssProperties.Remove(p);
                 }
             }
 
-            sanitizer.KeepChildNodes = true;
-            return sanitizer.Sanitize(html);
+            Sanitizer.KeepChildNodes = true;
+            return Sanitizer.Sanitize(html);
         }
         /// <summary>
         /// 去除html标签后并截取字符串

@@ -174,7 +174,6 @@
     <Compile Include="Mvc\Mime\MimeMapper.cs" />
     <Compile Include="Mvc\Mime\MimeMappingItem.cs" />
     <Compile Include="Net\CacheHelper.cs" />
-    <Compile Include="Net\CallContext.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\FtpClient.cs" />
     <Compile Include="Net\MultiThreadDownloader.cs" />
