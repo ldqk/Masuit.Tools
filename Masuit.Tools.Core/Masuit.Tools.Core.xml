@@ -626,6 +626,7 @@
             获取值
             </summary>
             <param name="name"></param>
+            <param name="value"></param>
             <returns></returns>
         </member>
         <member name="T:Masuit.Tools.Core.Net.HttpContext2">
