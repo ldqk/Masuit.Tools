@@ -36,12 +36,12 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SharpCompress" Version="0.24.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.6.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.6.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.6.1" />
     <PackageReference Include="System.Management" Version="4.6.0" />
   </ItemGroup>
 
