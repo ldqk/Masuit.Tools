@@ -145,13 +145,13 @@ namespace Masuit.Tools.Reflection
 
             FieldInfo fi = value.GetType().GetField(value.ToString());
             DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            var text1 = (attributes.Length > 0) ? attributes[0].Description : value.ToString();
+            var text = attributes.Length > 0 ? attributes[0].Description : value.ToString();
             if ((args != null) && (args.Length > 0))
             {
-                return string.Format(null, text1, args);
+                return string.Format(null, text, args);
             }
 
-            return text1;
+            return text;
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Masuit.Tools.Reflection
                 return string.Empty;
             }
 
-            if ((args != null) && (args.Length > 0))
+            if (args != null && args.Length > 0)
             {
                 return string.Format(null, text1, args);
             }

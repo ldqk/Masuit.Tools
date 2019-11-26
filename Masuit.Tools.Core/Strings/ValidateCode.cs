@@ -24,8 +24,8 @@ namespace Masuit.Tools.Strings
             string ch = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890@#$%&?";
             byte[] b = new byte[4];
             new RNGCryptoServiceProvider().GetBytes(b);
-            Random r = new Random(BitConverter.ToInt32(b, 0));
-            StringBuilder sb = new StringBuilder();
+            var r = new Random(BitConverter.ToInt32(b, 0));
+            var sb = new StringBuilder();
             for (int i = 0; i < length; i++)
             {
                 sb.Append(ch[r.Next(ch.Length)]);
@@ -44,10 +44,10 @@ namespace Masuit.Tools.Strings
         /// <exception cref="Exception">The operation failed.</exception>
         public static byte[] CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 22, int lineHeight = 36)
         {
-            using Bitmap image = new Bitmap((int)Math.Ceiling(validateCode.Length * (fontSize + 2.0)), lineHeight);
-            using Graphics g = Graphics.FromImage(image);
+            using var image = new Bitmap((int)Math.Ceiling(validateCode.Length * (fontSize + 2.0)), lineHeight);
+            using var g = Graphics.FromImage(image);
             //生成随机生成器
-            Random random = new Random();
+            var random = new Random();
             //清空图片背景色
             g.Clear(Color.White);
             //画图片的干扰线
@@ -83,7 +83,7 @@ namespace Masuit.Tools.Strings
             //画图片的边框线
             g.DrawRectangle(new Pen(Color.Silver), 0, 0, image.Width - 1, image.Height - 1);
             //保存图片数据
-            using MemoryStream stream = new MemoryStream();
+            using var stream = new MemoryStream();
             image.Save(stream, ImageFormat.Jpeg);
             //输出图片流
             context.Response.Clear();
