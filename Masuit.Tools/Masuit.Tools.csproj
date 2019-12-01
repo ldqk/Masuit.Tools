@@ -100,6 +100,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Masuit.Tools.Core\Strings\ChineseString.cs">
+      <Link>Strings\ChineseString.cs</Link>
+    </Compile>
     <Compile Include="Database\DataTableBuilder.cs" />
     <Compile Include="Database\DataTableHelper.cs" />
     <Compile Include="DateTimeExt\ChineseCalendar.cs" />

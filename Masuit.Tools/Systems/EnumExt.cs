@@ -143,8 +143,7 @@ namespace Masuit.Tools.Systems
             MemberInfo[] memberInfos = type.GetMember(en.ToString()); //获取成员  
             if (memberInfos.Any())
             {
-                DescriptionAttribute[] attrs = memberInfos[0].GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[]; //获取描述特性  
-                if (attrs != null && attrs.Length > 0)
+                if (memberInfos[0].GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attrs && attrs.Length > 0)
                 {
                     return attrs[0].Description; //返回当前描述  
                 }
@@ -163,8 +162,7 @@ namespace Masuit.Tools.Systems
             MemberInfo[] memberInfos = type.GetMember(en.ToString()); //获取成员  
             if (memberInfos.Any())
             {
-                DisplayAttribute[] attrs = memberInfos[0]?.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[]; //获取描述特性  
-                if (attrs != null && attrs.Length > 0)
+                if (memberInfos[0]?.GetCustomAttributes(typeof(DisplayAttribute), false) is DisplayAttribute[] attrs && attrs.Length > 0)
                 {
                     return attrs[0].Name; //返回当前描述  
                 }
