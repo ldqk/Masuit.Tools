@@ -654,6 +654,48 @@
             <param name="key">键</param>
             <returns>对象</returns>
         </member>
+        <member name="T:Masuit.Tools.Core.ChineseString">
+            <summary>
+            中文字符工具类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.ChineseString.ToSimplified(System.String)">
+            <summary>
+            转为简体
+            </summary>
+            <param name="text">源字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Core.ChineseString.ToTraditional(System.String)">
+            <summary>
+            转为繁体
+            </summary>
+            <param name="text">源字符串</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Core.ChineseString.ConvertCore(System.String,Masuit.Tools.Core.ChineseString.EnumChinese)">
+            <summary>
+            中文转换核心代码
+            </summary>
+            <param name="text">源字符串</param>
+            <param name="format">目标转换输出格式</param>
+            <returns></returns>
+        </member>
+        <member name="F:Masuit.Tools.Core.ChineseString.Simplified">
+            <summary>
+            简体字
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Core.ChineseString.Traditional">
+            <summary>
+            繁体字
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Core.ChineseString.EnumChinese">
+            <summary>
+            中文格式枚举
+            </summary>
+        </member>
         <member name="T:Masuit.Tools.Core.Validator.ComplexPassword">
             <summary>
             强密码验证
