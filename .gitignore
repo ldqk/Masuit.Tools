@@ -241,3 +241,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /Masuit.Tools.Core/Masuit.Tools.Core.xml
+/Masuit.Tools.Core/Masuit.Tools.Core.xml
