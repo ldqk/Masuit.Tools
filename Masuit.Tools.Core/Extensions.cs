@@ -1280,9 +1280,14 @@ namespace Masuit.Tools
         public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
             if (!@this.ContainsKey(key))
+            {
                 @this.Add(new KeyValuePair<TKey, TValue>(key, addValueFactory(key)));
+            }
             else
+            {
                 @this[key] = updateValueFactory(key, @this[key]);
+            }
+
             return @this[key];
         }
 
