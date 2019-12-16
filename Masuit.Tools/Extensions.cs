@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -1109,18 +1110,191 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static MemoryStream SaveAsMemoryStream(this Stream stream, bool dispose = false)
         {
-            var ms = new MemoryStream();
-            stream.CopyTo(ms);
-            try
+            return new MemoryStream(stream.ToArray());
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static byte[] ToArray(this Stream stream)
+        {
+            byte[] bytes = new byte[stream.Length];
+            stream.Read(bytes, 0, bytes.Length);
+
+            // 设置当前流的位置为流的开始
+            stream.Seek(0, SeekOrigin.Begin);
+            return bytes;
+        }
+
+        /// <summary>
+        /// 添加多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="values"></param>
+        public static void AddRange<T>(this ICollection<T> @this, params T[] values)
+        {
+            foreach (var obj in values)
             {
-                return ms;
+                @this.Add(obj);
             }
-            finally
+        }
+
+
+        /// <summary>
+        /// 添加符合条件的多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="predicate"></param>
+        /// <param name="values"></param>
+        public static void AddRangeIf<T>(this ICollection<T> @this, Func<T, bool> predicate, params T[] values)
+        {
+            foreach (var obj in values)
             {
-                if (dispose)
+                if (predicate(obj))
                 {
-                    stream.Dispose();
+                    @this.Add(obj);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 添加不重复的元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="values"></param>
+        public static void AddRangeIfNotContains<T>(this ICollection<T> @this, params T[] values)
+        {
+            foreach (T obj in values)
+            {
+                if (!@this.Contains(obj))
+                {
+                    @this.Add(obj);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 转换成字节数组
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this short value)
+        {
+            return BitConverter.GetBytes(value);
+        }
+
+        /// <summary>
+        /// 转换成字节数组
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this int value)
+        {
+            return BitConverter.GetBytes(value);
+        }
+
+        /// <summary>
+        /// 转换成字节数组
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static byte[] GetBytes(this long value)
+        {
+            return BitConverter.GetBytes(value);
+        }
+
+        /// <summary>
+        /// 转换成字节数组
+        /// </summary>
+        /// <param name="this"></param>
+        /// <returns></returns>
+        public static byte[] ToByteArray(this string @this)
+        {
+            return Activator.CreateInstance<ASCIIEncoding>().GetBytes(@this);
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue value)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(new KeyValuePair<TKey, TValue>(key, value));
+            }
+            else
+            {
+                @this[key] = value;
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(new KeyValuePair<TKey, TValue>(key, addValue));
+            }
+            else
+            {
+                @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValueFactory">添加时的操作</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+                @this.Add(new KeyValuePair<TKey, TValue>(key, addValueFactory(key)));
+            else
+                @this[key] = updateValueFactory(key, @this[key]);
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 移除符合条件的元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="where"></param>
+        public static void RemoveWhere<T>(this ICollection<T> @this, Func<T, bool> @where)
+        {
+            foreach (var obj in @this.Where(@where).ToList())
+            {
+                @this.Remove(obj);
             }
         }
     }
