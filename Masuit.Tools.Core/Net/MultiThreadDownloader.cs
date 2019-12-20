@@ -196,7 +196,7 @@ namespace Masuit.Tools.Net
         void UpdateProgress()
         {
             int pr = (int)(TotalBytesReceived * 1d / Size * 100);
-            if (TotalProgress != pr)
+            if (Math.Abs(TotalProgress - pr) > 0.01)
             {
                 TotalProgress = pr;
                 if (TotalProgressChanged != null)
@@ -253,7 +253,14 @@ namespace Masuit.Tools.Net
                     }
                 }
 
-                File.Delete(item.FullPath);
+                try
+                {
+                    File.Delete(item.FullPath);
+                }
+                catch
+                {
+                    // ignored
+                }
             }
         }
 

@@ -253,7 +253,14 @@ namespace Masuit.Tools.Net
                     }
                 }
 
-                File.Delete(item.FullPath);
+                try
+                {
+                    File.Delete(item.FullPath);
+                }
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
