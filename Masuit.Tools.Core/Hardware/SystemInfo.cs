@@ -5,11 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management;
-using System.Net;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Masuit.Tools.Hardware
@@ -520,32 +517,6 @@ namespace Masuit.Tools.Hardware
                 {
                     "未能获取到当前计算机的IP地址，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
                 };
-            }
-        }
-
-        /// <summary>  
-        /// 获取当前使用的IP  
-        /// </summary>  
-        /// <returns></returns>  
-        public static string GetLocalUsedIP()
-        {
-            string result = RunApp("route", "print", true);
-            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
-            if (m.Success)
-            {
-                return m.Groups[2].Value;
-            }
-
-            try
-            {
-                using var c = new TcpClient();
-                c.Connect("www.baidu.com", 80);
-                var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-                return ip;
-            }
-            catch (Exception)
-            {
-                return "未能获取当前使用的IP，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
 

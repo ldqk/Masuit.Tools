@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Security;
+﻿using Masuit.Tools.Win32;
 using System;
 
 namespace Test
@@ -7,9 +7,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            RsaKey keys = RsaCrypt.GenerateRsaKeys();
-            Console.WriteLine(keys.PublicKey);
-            Console.WriteLine(keys.PrivateKey);
+            Console.WriteLine(Windows.GetLocalUsedIP());
         }
     }
 }

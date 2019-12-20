@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Management;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using static System.String;
 
@@ -18,27 +20,18 @@ namespace Masuit.Tools.Win32
         /// 获取当前使用的IP  
         /// </summary>  
         /// <returns></returns>  
-        public static string GetLocalUsedIP()
+        public static IPAddress GetLocalUsedIP()
         {
-            string result = RunApp("route", "print", true);
-            var m = Regex.Match(result, @"0.0.0.0\s+0.0.0.0\s+(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)");
-            if (m.Success)
-            {
-                return m.Groups[2].Value;
-            }
+            return NetworkInterface.GetAllNetworkInterfaces().Select(p => p.GetIPProperties()).SelectMany(p => p.UnicastAddresses).Where(p => p.DuplicateAddressDetectionState == DuplicateAddressDetectionState.Preferred && !IPAddress.IsLoopback(p.Address)).Select(x => x.Address).FirstOrDefault();
+        }
 
-            try
-            {
-                using var c = new System.Net.Sockets.TcpClient();
-                c.Connect("www.baidu.com", 80);
-                var ip = ((IPEndPoint)c.Client.LocalEndPoint).Address.ToString();
-
-                return ip;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+        /// <summary>  
+        /// 获取本机所有的ip地址
+        /// </summary>  
+        /// <returns></returns>  
+        public static List<UnicastIPAddressInformation> GetLocalIPs()
+        {
+            return NetworkInterface.GetAllNetworkInterfaces().Select(p => p.GetIPProperties()).SelectMany(p => p.UnicastAddresses).Where(p => !IPAddress.IsLoopback(p.Address)).ToList();
         }
 
         /// <summary>  
