@@ -32,7 +32,12 @@ namespace Masuit.Tools.RandomSelector
 
         public WeightedSelector(List<WeightedItem<T>> items, SelectorOptions options = null) : this(options)
         {
-            Items = items;
+            Add(items);
+        }
+
+        public WeightedSelector(IEnumerable<WeightedItem<T>> items, SelectorOptions options = null) : this(options)
+        {
+            Add(items);
         }
 
         /// <summary>
@@ -61,9 +66,9 @@ namespace Masuit.Tools.RandomSelector
         /// <param name="items"></param>
         public void Add(IEnumerable<WeightedItem<T>> items)
         {
-            foreach (var Item in items)
+            foreach (var item in items)
             {
-                Add(Item);
+                Add(item);
             }
         }
 
@@ -93,8 +98,8 @@ namespace Masuit.Tools.RandomSelector
         public T Select()
         {
             CalculateCumulativeWeights();
-            var Selector = new SingleSelector<T>(this);
-            return Selector.Select();
+            var selector = new SingleSelector<T>(this);
+            return selector.Select();
         }
 
         /// <summary>
@@ -103,8 +108,8 @@ namespace Masuit.Tools.RandomSelector
         public List<T> SelectMultiple(int count)
         {
             CalculateCumulativeWeights();
-            var Selector = new MultipleSelector<T>(this);
-            return Selector.Select(count);
+            var selector = new MultipleSelector<T>(this);
+            return selector.Select(count);
         }
 
         /// <summary>

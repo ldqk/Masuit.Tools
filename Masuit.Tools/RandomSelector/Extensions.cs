@@ -20,12 +20,12 @@ namespace Masuit.Tools.RandomSelector
             return selector.Items.OrderBy(item => item.Weight).ToList();
         }
 
-        public static T WeightedItem<T>(this List<WeightedItem<T>> list)
+        public static T WeightedItem<T>(this IEnumerable<WeightedItem<T>> list)
         {
             return new WeightedSelector<T>(list).Select();
         }
 
-        public static List<T> WeightedItem<T>(this List<WeightedItem<T>> list, int count)
+        public static List<T> WeightedItem<T>(this IEnumerable<WeightedItem<T>> list, int count)
         {
             return new WeightedSelector<T>(list).SelectMultiple(count);
         }

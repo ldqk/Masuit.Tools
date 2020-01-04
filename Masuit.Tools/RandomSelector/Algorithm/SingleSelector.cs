@@ -14,13 +14,12 @@ namespace Masuit.Tools.RandomSelector.Algorithm
 
         internal T Select()
         {
-            var Items = WeightedSelector.Items;
-            if (Items.Count == 0)
+            if (WeightedSelector.Items.Count == 0)
             {
                 throw new InvalidOperationException("没有元素可以筛选");
             }
 
-            return Select(Items).Value;
+            return Select(WeightedSelector.Items).Value;
         }
     }
 }

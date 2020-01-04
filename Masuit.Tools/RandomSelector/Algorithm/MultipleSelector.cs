@@ -16,19 +16,19 @@ namespace Masuit.Tools.RandomSelector.Algorithm
         internal List<T> Select(int count)
         {
             Validate(ref count);
-            var Items = new List<WeightedItem<T>>(WeightedSelector.Items);
-            var ResultList = new List<T>();
+            var items = new List<WeightedItem<T>>(WeightedSelector.Items);
+            var resultList = new List<T>();
 
             do
             {
-                var Item = WeightedSelector.Options.AllowDuplicates ? Select(Items) : SelectWithLinearSearch(Items);
-                ResultList.Add(Item.Value);
+                var item = WeightedSelector.Options.AllowDuplicates ? Select(items) : SelectWithLinearSearch(items);
+                resultList.Add(item.Value);
                 if (!WeightedSelector.Options.AllowDuplicates)
                 {
-                    Items.Remove(Item);
+                    items.Remove(item);
                 }
-            } while (ResultList.Count < count);
-            return ResultList;
+            } while (resultList.Count < count);
+            return resultList;
         }
 
         private void Validate(ref int count)
@@ -38,16 +38,16 @@ namespace Masuit.Tools.RandomSelector.Algorithm
                 throw new InvalidOperationException("筛选个数必须大于0");
             }
 
-            var Items = WeightedSelector.Items;
+            var items = WeightedSelector.Items;
 
-            if (Items.Count == 0)
+            if (items.Count == 0)
             {
                 throw new InvalidOperationException("没有元素可以被筛选");
             }
 
-            if (!WeightedSelector.Options.AllowDuplicates && Items.Count < count)
+            if (!WeightedSelector.Options.AllowDuplicates && items.Count < count)
             {
-                count = Items.Count;
+                count = items.Count;
             }
         }
     }

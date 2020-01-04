@@ -12,18 +12,18 @@ namespace Masuit.Tools.RandomSelector.Algorithm
         /// <returns></returns>
         public static int[] GetCumulativeWeights<T>(List<WeightedItem<T>> items)
         {
-            int TotalWeight = 0;
-            int Index = 0;
-            var ResultArray = new int[items.Count + 1];
+            int totalWeight = 0;
+            int index = 0;
+            var resultArray = new int[items.Count + 1];
 
-            foreach (var Item in items)
+            foreach (var item in items)
             {
-                TotalWeight += Item.Weight;
-                ResultArray[Index] = TotalWeight;
-                Index++;
+                totalWeight += item.Weight;
+                resultArray[index] = totalWeight;
+                index++;
             }
 
-            return ResultArray;
+            return resultArray;
         }
     }
 }
