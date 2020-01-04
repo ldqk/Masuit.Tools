@@ -5,6 +5,9 @@ using System.Threading;
 
 namespace Masuit.Tools.Systems
 {
+    /// <summary>
+    /// 纳秒级计时器
+    /// </summary>
     public class HiPerfTimer
     {
         [DllImport("Kernel32.dll")]
@@ -17,7 +20,9 @@ namespace Masuit.Tools.Systems
         private long _stopTime;
         private readonly long _freq;
 
-        // 构造函数 
+        /// <summary>
+        /// 纳秒计数器
+        /// </summary>
         public HiPerfTimer()
         {
             _startTime = 0;
@@ -30,7 +35,9 @@ namespace Masuit.Tools.Systems
             }
         }
 
-        // 开始计时器 
+        /// <summary>
+        /// 开始计时器
+        /// </summary>
         public void Start()
         {
             // 来让等待线程工作 
@@ -38,7 +45,10 @@ namespace Masuit.Tools.Systems
             QueryPerformanceCounter(out _startTime);
         }
 
-        // 开始计时器 
+        /// <summary>
+        /// 启动一个新的计时器
+        /// </summary>
+        /// <returns></returns>
         public static HiPerfTimer StartNew()
         {
             HiPerfTimer timer = new HiPerfTimer();
@@ -46,13 +56,17 @@ namespace Masuit.Tools.Systems
             return timer;
         }
 
-        // 停止计时器 
+        /// <summary>
+        /// 停止计时器
+        /// </summary>
         public void Stop()
         {
             QueryPerformanceCounter(out _stopTime);
         }
 
-        // 返回计时器经过时间(单位：秒) 
+        /// <summary>
+        /// 时器经过时间(单位：秒)
+        /// </summary>
         public double Duration => (_stopTime - _startTime) / (double)_freq;
 
         /// <summary>

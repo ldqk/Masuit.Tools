@@ -13,8 +13,6 @@ namespace Masuit.Tools.Net
     /// </summary>
     public class PartialDownloader
     {
-        #region Variables
-
         /// <summary>
         /// 这部分完成事件
         /// </summary>
@@ -30,19 +28,107 @@ namespace Masuit.Tools.Net
         /// </summary>
         public event EventHandler DownloadPartStopped;
 
-        HttpWebRequest _req;
-        HttpWebResponse _resp;
-        Stream _tempStream;
-        FileStream _file;
         private readonly AsyncOperation _aop = AsyncOperationManager.CreateOperation(null);
-        private readonly Stopwatch _stp;
         readonly int[] _lastSpeeds;
         int _counter;
-        bool _stop, _wait;
+        private bool _wait;
+        private int _to;
+        private int _totalBytesRead;
 
-        #endregion
+        /// <summary>
+        /// 下载已停止
+        /// </summary>
+        public bool Stopped { get; private set; }
 
-        #region PartialDownloader
+        /// <summary>
+        /// 下载已完成
+        /// </summary>
+        public bool Completed { get; private set; }
+
+        /// <summary>
+        /// 下载进度
+        /// </summary>
+        public int Progress { get; private set; }
+
+        /// <summary>
+        /// 下载目录
+        /// </summary>
+        public string Directory { get; }
+
+        /// <summary>
+        /// 文件名
+        /// </summary>
+        public string FileName { get; }
+
+        /// <summary>
+        /// 已读字节数
+        /// </summary>
+        public long TotalBytesRead => _totalBytesRead;
+
+        /// <summary>
+        /// 内容长度
+        /// </summary>
+        public long ContentLength { get; private set; }
+
+        /// <summary>
+        /// RangeAllowed
+        /// </summary>
+        public bool RangeAllowed { get; }
+
+        /// <summary>
+        /// url
+        /// </summary>
+        public string Url { get; }
+
+        /// <summary>
+        /// to
+        /// </summary>
+        public int To
+        {
+            get => _to;
+            set
+            {
+                _to = value;
+                ContentLength = _to - From + 1;
+            }
+        }
+
+        /// <summary>
+        /// from
+        /// </summary>
+        public int From { get; }
+
+        /// <summary>
+        /// 当前位置
+        /// </summary>
+        public int CurrentPosition => From + _totalBytesRead - 1;
+
+        /// <summary>
+        /// 剩余字节数
+        /// </summary>
+        public int RemainingBytes => (int)(ContentLength - _totalBytesRead);
+
+        /// <summary>
+        /// 完整路径
+        /// </summary>
+        public string FullPath => Path.Combine(Directory, FileName);
+
+        /// <summary>
+        /// 下载速度
+        /// </summary>
+        public int SpeedInBytes
+        {
+            get
+            {
+                if (Completed)
+                {
+                    return 0;
+                }
+
+                int totalSpeeds = _lastSpeeds.Sum();
+                return totalSpeeds / 10;
+            }
+        }
 
         /// <summary>
         /// 部分块下载
@@ -55,124 +141,100 @@ namespace Masuit.Tools.Net
         /// <param name="rangeAllowed"></param>
         public PartialDownloader(string url, string dir, string fileGuid, int from, int to, bool rangeAllowed)
         {
-            _from = from;
+            From = @from;
             _to = to;
-            _url = url;
-            _rangeAllowed = rangeAllowed;
-            _fileGuid = fileGuid;
-            _directory = dir;
+            Url = url;
+            RangeAllowed = rangeAllowed;
+            FileName = fileGuid;
+            Directory = dir;
             _lastSpeeds = new int[10];
-            _stp = new Stopwatch();
         }
-
-        #endregion
 
         void DownloadProcedure()
         {
-            _file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite);
-
-            #region Request-Response
-
-            _req = WebRequest.Create(_url) as HttpWebRequest;
-            if (_req != null)
+            using var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite);
+            var sw = new Stopwatch();
+            if (WebRequest.Create(Url) is HttpWebRequest req)
             {
-                _req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
-                _req.AllowAutoRedirect = true;
-                _req.MaximumAutomaticRedirections = 5;
-                _req.ServicePoint.ConnectionLimit += 1;
-                _req.ServicePoint.Expect100Continue = true;
-                _req.ProtocolVersion = HttpVersion.Version10;
+                req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+                req.AllowAutoRedirect = true;
+                req.MaximumAutomaticRedirections = 5;
+                req.ServicePoint.ConnectionLimit += 1;
+                req.ServicePoint.Expect100Continue = true;
+                req.ProtocolVersion = HttpVersion.Version10;
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
                 ServicePointManager.Expect100Continue = true;
-                if (_rangeAllowed)
-                    _req.AddRange(_from, _to);
-                _resp = _req.GetResponse() as HttpWebResponse;
-
-                #endregion
-
-                #region Some Stuff
-
-                if (_resp != null)
+                if (RangeAllowed)
                 {
-                    _contentLength = _resp.ContentLength;
-                    if (_contentLength <= 0 || (_rangeAllowed && _contentLength != _to - _from + 1))
+                    req.AddRange(From, _to);
+                }
+
+                if (req.GetResponse() is HttpWebResponse resp)
+                {
+                    ContentLength = resp.ContentLength;
+                    if (ContentLength <= 0 || (RangeAllowed && ContentLength != _to - From + 1))
+                    {
                         throw new Exception("Invalid response content");
-                    _tempStream = _resp.GetResponseStream();
+                    }
+
+                    using var tempStream = resp.GetResponseStream();
                     int bytesRead;
                     byte[] buffer = new byte[4096];
-                    _stp.Start();
-
-                    #endregion
-
-                    #region Procedure Loop
-
-                    while (_tempStream != null && (bytesRead = _tempStream.Read(buffer, 0, buffer.Length)) > 0)
+                    sw.Start();
+                    while ((bytesRead = tempStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        while (_wait)
+                        if (_totalBytesRead + bytesRead > ContentLength)
                         {
+                            bytesRead = (int)(ContentLength - _totalBytesRead);
                         }
 
-                        if (_totalBytesRead + bytesRead > _contentLength)
-                            bytesRead = (int)(_contentLength - _totalBytesRead);
-                        _file.Write(buffer, 0, bytesRead);
+                        file.Write(buffer, 0, bytesRead);
                         _totalBytesRead += bytesRead;
-                        _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(_stp.Elapsed.TotalSeconds));
+                        _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(sw.Elapsed.TotalSeconds));
                         _counter = (_counter >= 9) ? 0 : _counter + 1;
-                        int tempProgress = (int)(_totalBytesRead * 100 / _contentLength);
-                        if (_progress != tempProgress)
+                        int tempProgress = (int)(_totalBytesRead * 100 / ContentLength);
+                        if (Progress != tempProgress)
                         {
-                            _progress = tempProgress;
+                            Progress = tempProgress;
                             _aop.Post(state =>
                             {
                                 DownloadPartProgressChanged?.Invoke(this, EventArgs.Empty);
                             }, null);
                         }
 
-                        if (_stop || (_rangeAllowed && _totalBytesRead == _contentLength))
+                        if (Stopped || (RangeAllowed && _totalBytesRead == ContentLength))
                         {
                             break;
                         }
                     }
-
-                    #endregion
-
-                    #region Close Resources
-
-                    _file.Close();
-                    _resp.Close();
                 }
 
-                _tempStream?.Close();
-                _req.Abort();
+                req.Abort();
             }
 
-            _stp.Stop();
+            sw.Stop();
 
-            #endregion
-
-            #region Fire Events
-
-            if (!_stop && DownloadPartCompleted != null)
+            if (!Stopped && DownloadPartCompleted != null)
+            {
                 _aop.Post(state =>
                 {
-                    _completed = true;
+                    Completed = true;
                     DownloadPartCompleted(this, EventArgs.Empty);
                 }, null);
+            }
 
-            if (_stop && DownloadPartStopped != null)
+            if (Stopped && DownloadPartStopped != null)
+            {
                 _aop.Post(state => DownloadPartStopped(this, EventArgs.Empty), null);
-
-            #endregion
+            }
         }
-
-        #region Public Methods
 
         /// <summary>
         /// 启动下载
         /// </summary>
         public void Start()
         {
-            _stop = false;
+            Stopped = false;
             Thread procThread = new Thread(DownloadProcedure);
             procThread.Start();
         }
@@ -182,7 +244,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         public void Stop()
         {
-            _stop = true;
+            Stopped = true;
         }
 
         /// <summary>
@@ -200,120 +262,5 @@ namespace Masuit.Tools.Net
         {
             _wait = false;
         }
-
-        #endregion
-
-        #region Property Variables
-
-        private readonly int _from;
-        private int _to;
-        private readonly string _url;
-        private readonly bool _rangeAllowed;
-        private long _contentLength;
-        private int _totalBytesRead;
-        private readonly string _fileGuid;
-        private readonly string _directory;
-        private int _progress;
-        private bool _completed;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// 下载已停止
-        /// </summary>
-        public bool Stopped => _stop;
-
-        /// <summary>
-        /// 下载已完成
-        /// </summary>
-        public bool Completed => _completed;
-
-        /// <summary>
-        /// 下载进度
-        /// </summary>
-        public int Progress => _progress;
-
-        /// <summary>
-        /// 下载目录
-        /// </summary>
-        public string Directory => _directory;
-
-        /// <summary>
-        /// 文件名
-        /// </summary>
-        public string FileName => _fileGuid;
-
-        /// <summary>
-        /// 已读字节数
-        /// </summary>
-        public long TotalBytesRead => _totalBytesRead;
-
-        /// <summary>
-        /// 内容长度
-        /// </summary>
-        public long ContentLength => _contentLength;
-
-        /// <summary>
-        /// RangeAllowed
-        /// </summary>
-        public bool RangeAllowed => _rangeAllowed;
-
-        /// <summary>
-        /// url
-        /// </summary>
-        public string Url => _url;
-
-        /// <summary>
-        /// to
-        /// </summary>
-        public int To
-        {
-            get => _to;
-            set
-            {
-                _to = value;
-                _contentLength = _to - _from + 1;
-            }
-        }
-
-        /// <summary>
-        /// from
-        /// </summary>
-        public int From => _from;
-
-        /// <summary>
-        /// 当前位置
-        /// </summary>
-        public int CurrentPosition => _from + _totalBytesRead - 1;
-
-        /// <summary>
-        /// 剩余字节数
-        /// </summary>
-        public int RemainingBytes => (int)(_contentLength - _totalBytesRead);
-
-        /// <summary>
-        /// 完整路径
-        /// </summary>
-        public string FullPath => Path.Combine(_directory, _fileGuid);
-
-        /// <summary>
-        /// 下载速度
-        /// </summary>
-        public int SpeedInBytes
-        {
-            get
-            {
-                if (_completed)
-                    return 0;
-
-                int totalSpeeds = _lastSpeeds.Sum();
-
-                return totalSpeeds / 10;
-            }
-        }
-
-        #endregion
     }
 }

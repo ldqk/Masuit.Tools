@@ -67,7 +67,7 @@ namespace Masuit.Tools.Mapping.Extensions
         /// <typeparam name="TSource">源类型.</typeparam>
         /// <typeparam name="TDest">目标类型.</typeparam>
         /// <param name="query">分类化的序列值</param>
-        public static IQueryable<TDest> Select<TSource, TDest>(this IQueryable<TSource> query) where TSource : class where TDest : class
+        public static IQueryable<TDest> ProjectTo<TSource, TDest>(this IQueryable<TSource> query) where TSource : class where TDest : class
         {
             return GetSelect<TSource, TDest>(query, null);
         }
@@ -80,7 +80,7 @@ namespace Masuit.Tools.Mapping.Extensions
         /// <param name="query">分类化的序列值</param>
         /// <param name="mapperName">mapper别名</param>
         /// <returns></returns>
-        public static IQueryable<TDest> Select<TSource, TDest>(this IQueryable<TSource> query, string mapperName) where TSource : class where TDest : class
+        public static IQueryable<TDest> ProjectTo<TSource, TDest>(this IQueryable<TSource> query, string mapperName) where TSource : class where TDest : class
         {
             return GetSelect<TSource, TDest>(query, mapperName);
         }
@@ -93,9 +93,9 @@ namespace Masuit.Tools.Mapping.Extensions
         /// <param name="query">分类化的序列值</param>
         /// <param name="predicate">用于根据条件测试每个元素的功能。</param>
         /// <returns></returns>
-        public static IQueryable<TDest> Where<TSource, TDest>(this IQueryable<TDest> query, Expression<Func<TSource, bool>> predicate)
+        public static IQueryable<TDest> WhereTo<TSource, TDest>(this IQueryable<TDest> query, Expression<Func<TSource, bool>> predicate)
         {
-            return Queryable.Where(query, predicate.ConvertTo<TSource, TDest>());
+            return query.Where(predicate.ConvertTo<TSource, TDest>());
         }
 
         private static TQueryable CreateSortedMethodCall<TSource, TDest, TQueryable>(IQueryable<TSource> query, string methodName, string sortedPropertySourceName) where TSource : class where TDest : class where TQueryable : class, IQueryable<TSource>
@@ -103,7 +103,7 @@ namespace Masuit.Tools.Mapping.Extensions
             MapperConfiguration<TSource, TDest> mapper = ExpressionMapper.GetMapper<TSource, TDest>();
             var prop = mapper.GetLambdaDest(sortedPropertySourceName);
             var lambda = mapper.GetSortedExpression(sortedPropertySourceName);
-            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), methodName, new[]
+            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), methodName, new Type[]
             {
                 typeof(TSource),
                 prop.Type

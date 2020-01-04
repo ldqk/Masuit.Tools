@@ -41,6 +41,56 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\DateTimeExt\TimeHelper.cs" Link="DateTimeExt\TimeHelper.cs" />
     <Compile Include="..\Masuit.Tools\DateTimeExt\WeekHolidayStruct.cs" Link="DateTimeExt\WeekHolidayStruct.cs" />
     <Compile Include="..\Masuit.Tools\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\CpuInfo.cs" Link="Hardware\CpuInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\CPU_INFO.cs" Link="Hardware\CPU_INFO.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\DiskData.cs" Link="Hardware\DiskData.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\MemoryInfo.cs" Link="Hardware\MemoryInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\NetData.cs" Link="Hardware\NetData.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\RamInfo.cs" Link="Hardware\RamInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\SystemInfo.cs" Link="Hardware\SystemInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\SystemtimeInfo.cs" Link="Hardware\SystemtimeInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Hardware\Unit.cs" Link="Hardware\Unit.cs" />
+    <Compile Include="..\Masuit.Tools\Html\HtmlTools.cs" Link="Html\HtmlTools.cs" />
+    <Compile Include="..\Masuit.Tools\Linq\LinqExtension.cs" Link="Linq\LinqExtension.cs" />
+    <Compile Include="..\Masuit.Tools\Logging\LogInfo.cs" Link="Logging\LogInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Logging\LogLevel.cs" Link="Logging\LogLevel.cs" />
+    <Compile Include="..\Masuit.Tools\Logging\LogManager.cs" Link="Logging\LogManager.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Copier.cs" Link="Mapping\Copier.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\CreateConfig.cs" Link="Mapping\Core\CreateConfig.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\MapperConfiguration.cs" Link="Mapping\Core\MapperConfiguration.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\MapperConfigurationBase.cs" Link="Mapping\Core\MapperConfigurationBase.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\MapperConfigurationCollectionContainer.cs" Link="Mapping\Core\MapperConfigurationCollectionContainer.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\PropertiesNotMapped.cs" Link="Mapping\Core\PropertiesNotMapped.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Core\TypePairMapper.cs" Link="Mapping\Core\TypePairMapper.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\MapperExceptionBase.cs" Link="Mapping\Exceptions\MapperExceptionBase.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\MapperExistException.cs" Link="Mapping\Exceptions\MapperExistException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\MapperNotInitializedException.cs" Link="Mapping\Exceptions\MapperNotInitializedException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\NoActionAfterMappingException.cs" Link="Mapping\Exceptions\NoActionAfterMappingException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\NoFoundMapperException.cs" Link="Mapping\Exceptions\NoFoundMapperException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\NotSameTypePropertyException.cs" Link="Mapping\Exceptions\NotSameTypePropertyException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\PropertyNoExistException.cs" Link="Mapping\Exceptions\PropertyNoExistException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Exceptions\ReadOnlyPropertyException.cs" Link="Mapping\Exceptions\ReadOnlyPropertyException.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\ExpressionCpoier.cs" Link="Mapping\ExpressionCpoier.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\ExpressionMapper.cs" Link="Mapping\ExpressionMapper.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Extensions\ExpressionExtentions.cs" Link="Mapping\Extensions\ExpressionExtentions.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Extensions\QueryableExtentions.cs" Link="Mapping\Extensions\QueryableExtentions.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Helper\MapperHelper.cs" Link="Mapping\Helper\MapperHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Helper\TypeSystem.cs" Link="Mapping\Helper\TypeSystem.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Visitor\ChangParameterExpressionVisitor.cs" Link="Mapping\Visitor\ChangParameterExpressionVisitor.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Visitor\ConverterExpressionVisitor.cs" Link="Mapping\Visitor\ConverterExpressionVisitor.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Visitor\MapperExpressionVisitor.cs" Link="Mapping\Visitor\MapperExpressionVisitor.cs" />
+    <Compile Include="..\Masuit.Tools\Mapping\Visitor\PropertiesVisitor.cs" Link="Mapping\Visitor\PropertiesVisitor.cs" />
+    <Compile Include="..\Masuit.Tools\Media\ImageUtilities.cs" Link="Media\ImageUtilities.cs" />
+    <Compile Include="..\Masuit.Tools\Media\ThumbnailCutMode.cs" Link="Media\ThumbnailCutMode.cs" />
+    <Compile Include="..\Masuit.Tools\Models\BaiduIP.cs" Link="Models\BaiduIP.cs" />
+    <Compile Include="..\Masuit.Tools\Models\Email.cs" Link="Models\Email.cs" />
+    <Compile Include="..\Masuit.Tools\Models\IspInfo.cs" Link="Models\IspInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Models\PhysicsAddress.cs" Link="Models\PhysicsAddress.cs" />
+    <Compile Include="..\Masuit.Tools\Models\TaobaoIP.cs" Link="Models\TaobaoIP.cs" />
+    <Compile Include="..\Masuit.Tools\Net\FtpClient.cs" Link="Net\FtpClient.cs" />
+    <Compile Include="..\Masuit.Tools\Net\MultiThreadDownloader.cs" Link="Net\MultiThreadDownloader.cs" />
+    <Compile Include="..\Masuit.Tools\Net\PartialDownloader.cs" Link="Net\PartialDownloader.cs" />
+    <Compile Include="..\Masuit.Tools\Net\SocketClient.cs" Link="Net\SocketClient.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\BinarySearchOptimizer.cs" Link="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\MultipleSelector.cs" Link="RandomSelector\Algorithm\MultipleSelector.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SelectorBase.cs" Link="RandomSelector\Algorithm\SelectorBase.cs" />
@@ -49,6 +99,27 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\RandomSelector\SelectorOptions.cs" Link="RandomSelector\SelectorOptions.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\WeightedItem.cs" Link="RandomSelector\WeightedItem.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\WeightedSelector.cs" Link="RandomSelector\WeightedSelector.cs" />
+    <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Reflection\ReflectHelper.cs" Link="Reflection\ReflectHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Reflection\ReflectionUtil.cs" Link="Reflection\ReflectionUtil.cs" />
+    <Compile Include="..\Masuit.Tools\Security\Encrypt.cs" Link="Security\Encrypt.cs" />
+    <Compile Include="..\Masuit.Tools\Security\HashEncode.cs" Link="Security\HashEncode.cs" />
+    <Compile Include="..\Masuit.Tools\Security\RSACrypt.cs" Link="Security\RSACrypt.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\ConcurrentLimitedQueue.cs" Link="Systems\ConcurrentLimitedQueue.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\Disposable.cs" Link="Systems\Disposable.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\EnumExt.cs" Link="Systems\EnumExt.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\HiPerfTimer.cs" Link="Systems\HiPerfTimer.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\LimitedQueue.cs" Link="Systems\LimitedQueue.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\SnowFlake.cs" Link="Systems\SnowFlake.cs" />
+    <Compile Include="..\Masuit.Tools\Systems\StopwatchHelper.cs" Link="Systems\StopwatchHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\ComplexPassword.cs" Link="Validator\ComplexPassword.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\IsEmailAttribute.cs" Link="Validator\IsEmailAttribute.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\IsIPAddressAttribute.cs" Link="Validator\IsIPAddressAttribute.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\IsPhoneAttribute.cs" Link="Validator\IsPhoneAttribute.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\MaxValueAttribute.cs" Link="Validator\MaxValueAttribute.cs" />
+    <Compile Include="..\Masuit.Tools\Validator\MinValueAttribute.cs" Link="Validator\MinValueAttribute.cs" />
+    <Compile Include="..\Masuit.Tools\Win32\Windows.cs" Link="Win32\Windows.cs" />
+    <Compile Include="..\Masuit.Tools\Win32\WindowsCommand.cs" Link="Win32\WindowsCommand.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,7 +144,23 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
 
   <ItemGroup>
     <Folder Include="DateTimeExt\" />
+    <Folder Include="Hardware\" />
+    <Folder Include="Html\" />
+    <Folder Include="Linq\" />
+    <Folder Include="Logging\" />
+    <Folder Include="Mapping\Core\" />
+    <Folder Include="Mapping\Exceptions\" />
+    <Folder Include="Mapping\Extensions\" />
+    <Folder Include="Mapping\Helper\" />
+    <Folder Include="Mapping\Visitor\" />
+    <Folder Include="Media\" />
+    <Folder Include="Models\" />
     <Folder Include="RandomSelector\Algorithm\" />
+    <Folder Include="Reflection\" />
+    <Folder Include="Security\" />
+    <Folder Include="Systems\" />
+    <Folder Include="Validator\" />
+    <Folder Include="Win32\" />
   </ItemGroup>
 
 </Project>

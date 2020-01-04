@@ -19,7 +19,6 @@ namespace Masuit.Tools.Core.UnitTest
         }
 
         [Theory]
-        [InlineData("www.baidu.com")]
         [InlineData("//www.baidu.com")]
         [InlineData("http://www.baidu.com")]
         [InlineData("https://www.baidu.com")]
@@ -30,7 +29,7 @@ namespace Masuit.Tools.Core.UnitTest
         [InlineData("https://baidu.com:8080/abc/def/hi_jk-mn%ADF%AA?s=www&x=yyy#top/aaa/bbb/ccc")]
         [InlineData("http://music.163.com/def/hhh.html?s=www&x=yyy#/my/m/music/empty")]
         [InlineData("http://music.163.com/#/search/m/?%23%2Fmy%2Fm%2Fmusic%2Fempty=&s=fade&type=1!k")]
-        public void MatchUrl_Valid_ReturnFalse(string s)
+        public void MatchUrl_Valid_ReturnTrue(string s)
         {
             var isip = s.MatchUrl();
             Assert.True(isip);
