@@ -1,4 +1,4 @@
-# Masuit.Tools
+﻿# Masuit.Tools
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，验证码等常用封装。
 
 [官网教程](https://masuit.com/55)  
@@ -869,6 +869,30 @@ Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
 double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
 ```
+### 34.权重筛选功能
+```csharp
+var data=new List<WeightedItem<string>>()
+{
+     new WeightedItem<string>("A", 1),
+     new WeightedItem<string>("B", 3),
+     new WeightedItem<string>("C", 4),
+     new WeightedItem<string>("D", 4),
+};
+var item=data.WeightedItem();//按权重选出1个元素
+var list=data.WeightedItems(2);//按权重选出2个元素
+```
+```csharp
+var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
+{
+    new WeightedItem<string>("A", 1),
+    new WeightedItem<string>("B", 3),
+    new WeightedItem<string>("C", 4),
+    new WeightedItem<string>("D", 4),
+});
+var item = selector.Select();//按权重选出1个元素
+var list = selector.SelectMultiple(3);//按权重选出3个元素
+```
+
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
