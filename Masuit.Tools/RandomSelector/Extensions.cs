@@ -25,7 +25,7 @@ namespace Masuit.Tools.RandomSelector
             return new WeightedSelector<T>(list).Select();
         }
 
-        public static List<T> WeightedItem<T>(this IEnumerable<WeightedItem<T>> list, int count)
+        public static List<T> WeightedItems<T>(this IEnumerable<WeightedItem<T>> list, int count)
         {
             return new WeightedSelector<T>(list).SelectMultiple(count);
         }
