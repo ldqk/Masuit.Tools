@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -20,6 +21,9 @@ namespace Masuit.Tools.Strings
         /// </summary>
         public int Length => Characters?.Length ?? 0;
 
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
         public NumberFormater()
         {
             Characters = "0123456789";
@@ -49,7 +53,6 @@ namespace Masuit.Tools.Strings
             {
                 throw new ArgumentException("进制最大支持62进制");
             }
-
             Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(0, bin);
         }
 
@@ -201,9 +204,14 @@ namespace Masuit.Tools.Strings
             return result;
         }
 
+        /// <summary>
+        /// 转换为中文数字格式
+        /// </summary>
+        /// <param name="num">123.45</param>
+        /// <returns></returns>
         public static string ToChineseNumber(double num)
         {
-            var x = num.ToString();
+            var x = num.ToString(CultureInfo.CurrentCulture);
             if (x.Length == 0)
             {
                 return "";
@@ -238,9 +246,9 @@ namespace Masuit.Tools.Strings
         }
 
         /// <summary>
-        /// 数字转中文
+        /// 数字转中文金额大写
         /// </summary>
-        /// <param name="number">eg: 22</param>
+        /// <param name="number">22.22</param>
         /// <returns></returns>
         public static string ToChineseMoney(double number)
         {

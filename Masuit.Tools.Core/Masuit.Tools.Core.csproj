@@ -41,6 +41,8 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\DateTimeExt\TimeHelper.cs" Link="DateTimeExt\TimeHelper.cs" />
     <Compile Include="..\Masuit.Tools\DateTimeExt\WeekHolidayStruct.cs" Link="DateTimeExt\WeekHolidayStruct.cs" />
     <Compile Include="..\Masuit.Tools\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\Masuit.Tools\Files\INIFile.cs" Link="Files\INIFile.cs" />
+    <Compile Include="..\Masuit.Tools\Files\WinrarHelper.cs" Link="Files\WinrarHelper.cs" />
     <Compile Include="..\Masuit.Tools\Hardware\CpuInfo.cs" Link="Hardware\CpuInfo.cs" />
     <Compile Include="..\Masuit.Tools\Hardware\CPU_INFO.cs" Link="Hardware\CPU_INFO.cs" />
     <Compile Include="..\Masuit.Tools\Hardware\DiskData.cs" Link="Hardware\DiskData.cs" />
@@ -105,6 +107,9 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Security\Encrypt.cs" Link="Security\Encrypt.cs" />
     <Compile Include="..\Masuit.Tools\Security\HashEncode.cs" Link="Security\HashEncode.cs" />
     <Compile Include="..\Masuit.Tools\Security\RSACrypt.cs" Link="Security\RSACrypt.cs" />
+    <Compile Include="..\Masuit.Tools\Strings\ChineseString.cs" Link="Strings\ChineseString.cs" />
+    <Compile Include="..\Masuit.Tools\Strings\NumberFormater.cs" Link="Strings\NumberFormater.cs" />
+    <Compile Include="..\Masuit.Tools\Strings\Template.cs" Link="Strings\Template.cs" />
     <Compile Include="..\Masuit.Tools\Systems\ConcurrentLimitedQueue.cs" Link="Systems\ConcurrentLimitedQueue.cs" />
     <Compile Include="..\Masuit.Tools\Systems\Disposable.cs" Link="Systems\Disposable.cs" />
     <Compile Include="..\Masuit.Tools\Systems\EnumExt.cs" Link="Systems\EnumExt.cs" />
