@@ -505,7 +505,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
-            bool b = int.TryParse(s, out int result);
+            int.TryParse(s, out int result);
             return result;
         }
 
@@ -516,7 +516,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static long ToInt64(this string s)
         {
-            bool b = long.TryParse(s, out var result);
+            long.TryParse(s, out var result);
             return result;
         }
 
@@ -527,7 +527,7 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
-            bool b = double.TryParse(s, out var result);
+            double.TryParse(s, out var result);
             return result;
         }
 
@@ -538,7 +538,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this string s)
         {
-            var b = decimal.TryParse(s, out var result);
+            decimal.TryParse(s, out var result);
             return result;
         }
 
@@ -711,8 +711,7 @@ namespace Masuit.Tools
                 }
 
                 string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
-                DateTime time;
-                if (!DateTime.TryParse(birth, out time))
+                if (!DateTime.TryParse(birth, out _))
                 {
                     return false; //生日验证  
                 }
@@ -842,10 +841,10 @@ namespace Masuit.Tools
         /// <summary>
         /// 严格比较两个对象是否是同一对象
         /// </summary>
-        /// <param name="_this">自己</param>
+        /// <param name="this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
+        public new static bool ReferenceEquals(this object @this, object o) => object.ReferenceEquals(@this, o);
 
         /// <summary>
         /// 判断字符串是否为空
@@ -1060,18 +1059,11 @@ namespace Masuit.Tools
             {
                 case UriHostNameType.Dns:
                     var ipHostEntry = Dns.GetHostEntry(uri.DnsSafeHost);
-                    foreach (IPAddress ipAddress in ipHostEntry.AddressList)
+                    if (ipHostEntry.AddressList.Where(ipAddress => ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).Any(ipAddress => !ipAddress.IsPrivateIP()))
                     {
-                        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            if (!ipAddress.IsPrivateIP())
-                            {
-                                return true;
-                            }
-                        }
+                        return true;
                     }
                     break;
-
                 case UriHostNameType.IPv4:
                     return !IPAddress.Parse(uri.DnsSafeHost).IsPrivateIP();
             }
@@ -1143,7 +1135,6 @@ namespace Masuit.Tools
                 @this.Add(obj);
             }
         }
-
 
         /// <summary>
         /// 添加符合条件的多个元素

@@ -695,22 +695,21 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchIdentifyCard(this string s)
         {
+            const string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
             if (s.Length == 18)
             {
-                if (Int64.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || Int64.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || Int64.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
                 {
                     return false; //数字验证  
                 }
 
-                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
                 if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
                     return false; //省份验证  
                 }
 
                 string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
-                DateTime time;
-                if (!DateTime.TryParse(birth, out time))
+                if (!DateTime.TryParse(birth, out _))
                 {
                     return false; //生日验证  
                 }
@@ -724,36 +723,24 @@ namespace Masuit.Tools
                     sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
                 }
 
-                int y;
-                Math.DivRem(sum, 11, out y);
-                if (arrVarifyCode[y] != s.Substring(17, 1).ToLower())
-                {
-                    return false; //校验码验证  
-                }
-
-                return true; //符合GB11643-1999标准  
+                Math.DivRem(sum, 11, out var y);
+                return arrVarifyCode[y] == s.Substring(17, 1).ToLower();
             }
 
             if (s.Length == 15)
             {
-                if (Int64.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
+                if (long.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
                 {
                     return false; //数字验证  
                 }
 
-                string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
                 if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
                 {
                     return false; //省份验证  
                 }
 
                 string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
-                if (DateTime.TryParse(birth, out _) == false)
-                {
-                    return false; //生日验证  
-                }
-
-                return true;
+                return DateTime.TryParse(birth, out _);
             }
 
             return false;
@@ -840,10 +827,10 @@ namespace Masuit.Tools
         /// <summary>
         /// 严格比较两个对象是否是同一对象
         /// </summary>
-        /// <param name="_this">自己</param>
+        /// <param name="this">自己</param>
         /// <param name="o">需要比较的对象</param>
         /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object _this, object o) => object.ReferenceEquals(_this, o);
+        public new static bool ReferenceEquals(this object @this, object o) => object.ReferenceEquals(@this, o);
 
         /// <summary>
         /// 判断字符串是否为空
@@ -1058,18 +1045,11 @@ namespace Masuit.Tools
             {
                 case UriHostNameType.Dns:
                     var ipHostEntry = Dns.GetHostEntry(uri.DnsSafeHost);
-                    foreach (IPAddress ipAddress in ipHostEntry.AddressList)
+                    if (ipHostEntry.AddressList.Where(ipAddress => ipAddress.AddressFamily == AddressFamily.InterNetwork).Any(ipAddress => !ipAddress.IsPrivateIP()))
                     {
-                        if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            if (!ipAddress.IsPrivateIP())
-                            {
-                                return true;
-                            }
-                        }
+                        return true;
                     }
                     break;
-
                 case UriHostNameType.IPv4:
                     return !IPAddress.Parse(uri.DnsSafeHost).IsPrivateIP();
             }
@@ -1141,7 +1121,6 @@ namespace Masuit.Tools
                 @this.Add(obj);
             }
         }
-
 
         /// <summary>
         /// 添加符合条件的多个元素

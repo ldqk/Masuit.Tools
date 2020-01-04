@@ -183,6 +183,14 @@
     <Compile Include="Net\PartialDownloader.cs" />
     <Compile Include="Net\SocketClient.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
+    <Compile Include="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
+    <Compile Include="RandomSelector\Algorithm\MultipleSelector.cs" />
+    <Compile Include="RandomSelector\Algorithm\SelectorBase.cs" />
+    <Compile Include="RandomSelector\Algorithm\SingleSelector.cs" />
+    <Compile Include="RandomSelector\Extensions.cs" />
+    <Compile Include="RandomSelector\SelectorOptions.cs" />
+    <Compile Include="RandomSelector\WeightedItem.cs" />
+    <Compile Include="RandomSelector\WeightedSelector.cs" />
     <Compile Include="Reflection\ClassHelper.cs" />
     <Compile Include="Reflection\ReflectHelper.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
@@ -223,6 +231,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

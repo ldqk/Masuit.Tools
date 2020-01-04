@@ -32,6 +32,17 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\BinarySearchOptimizer.cs" Link="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\MultipleSelector.cs" Link="RandomSelector\Algorithm\MultipleSelector.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SelectorBase.cs" Link="RandomSelector\Algorithm\SelectorBase.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SingleSelector.cs" Link="RandomSelector\Algorithm\SingleSelector.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\Extensions.cs" Link="RandomSelector\Extensions.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\SelectorOptions.cs" Link="RandomSelector\SelectorOptions.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\WeightedItem.cs" Link="RandomSelector\WeightedItem.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\WeightedSelector.cs" Link="RandomSelector\WeightedSelector.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.17" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
@@ -49,6 +60,10 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <None Update="Masuit.Tools.Core.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RandomSelector\Algorithm\" />
   </ItemGroup>
 
 </Project>
