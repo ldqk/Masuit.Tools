@@ -32,6 +32,14 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Masuit.Tools\Database\DataTableBuilder.cs" Link="Database\DataTableBuilder.cs" />
+    <Compile Include="..\Masuit.Tools\Database\DataTableHelper.cs" Link="Database\DataTableHelper.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\ChineseCalendar.cs" Link="DateTimeExt\ChineseCalendar.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\DateInfoStruct.cs" Link="DateTimeExt\DateInfoStruct.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\DateTimeHelper.cs" Link="DateTimeExt\DateTimeHelper.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\DateUtil.cs" Link="DateTimeExt\DateUtil.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\TimeHelper.cs" Link="DateTimeExt\TimeHelper.cs" />
+    <Compile Include="..\Masuit.Tools\DateTimeExt\WeekHolidayStruct.cs" Link="DateTimeExt\WeekHolidayStruct.cs" />
     <Compile Include="..\Masuit.Tools\Extensions.cs" Link="Extensions.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\BinarySearchOptimizer.cs" Link="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\MultipleSelector.cs" Link="RandomSelector\Algorithm\MultipleSelector.cs" />
@@ -64,6 +72,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DateTimeExt\" />
     <Folder Include="RandomSelector\Algorithm\" />
   </ItemGroup>
 

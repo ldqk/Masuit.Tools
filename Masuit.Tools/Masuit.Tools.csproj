@@ -112,8 +112,6 @@
     <Compile Include="DateTimeExt\DateInfoStruct.cs" />
     <Compile Include="DateTimeExt\TimeHelper.cs" />
     <Compile Include="DateTimeExt\WeekHolidayStruct.cs" />
-    <Compile Include="Files\ClassZip.cs" />
-    <Compile Include="Files\SharpZip.cs" />
     <Compile Include="Files\WinrarHelper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Files\SevenZipCompressor.cs" />
