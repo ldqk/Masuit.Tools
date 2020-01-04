@@ -32,6 +32,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Masuit.Tools\Extensions.cs" Link="Extensions.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\BinarySearchOptimizer.cs" Link="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\MultipleSelector.cs" Link="RandomSelector\Algorithm\MultipleSelector.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SelectorBase.cs" Link="RandomSelector\Algorithm\SelectorBase.cs" />

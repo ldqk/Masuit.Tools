@@ -306,6 +306,22 @@ namespace Masuit.Tools
         public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
 
         /// <summary>
+        /// 复制一个新的对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static T Copy<T>(this T source) where T : new()
+        {
+            T dest = new T();
+            dest.GetType().GetProperties().ForEach(p =>
+            {
+                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
+            });
+            return dest;
+        }
+
+        /// <summary>
         /// 复制到一个现有对象
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -481,13 +497,6 @@ namespace Masuit.Tools
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         });
 
-        /// <summary>
-        /// 转换成json字符串
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static async Task<string> ToJsonStringAsync(this object source) => await Task.Run(() => JsonConvert.SerializeObject(source));
-
         #region 数字互转
 
         /// <summary>
@@ -497,7 +506,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s)
         {
-            Int32.TryParse(s, out int result);
+            int.TryParse(s, out int result);
             return result;
         }
 
@@ -508,7 +517,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static long ToInt64(this string s)
         {
-            Int64.TryParse(s, out var result);
+            long.TryParse(s, out var result);
             return result;
         }
 
@@ -519,7 +528,7 @@ namespace Masuit.Tools
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this string s)
         {
-            Double.TryParse(s, out var result);
+            double.TryParse(s, out var result);
             return result;
         }
 
@@ -530,7 +539,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this string s)
         {
-            Decimal.TryParse(s, out var result);
+            decimal.TryParse(s, out var result);
             return result;
         }
 
@@ -582,7 +591,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static long ToLong(this string str, long defaultResult)
         {
-            if (!Int64.TryParse(str, out var result))
+            if (!long.TryParse(str, out var result))
             {
                 result = defaultResult;
             }
@@ -618,8 +627,17 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="s">源字符串</param>
         /// <param name="keys">关键词列表</param>
+        /// <param name="ignoreCase">忽略大小写</param>
         /// <returns></returns>
-        public static bool Contains(this string s, IEnumerable<string> keys) => Regex.IsMatch(s.ToLower(), String.Join("|", keys).ToLower());
+        public static bool Contains(this string s, IEnumerable<string> keys, bool ignoreCase = true)
+        {
+            if (ignoreCase)
+            {
+                return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+            }
+
+            return Regex.IsMatch(s, string.Join("|", keys));
+        }
 
         #endregion
 
@@ -695,10 +713,10 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchIdentifyCard(this string s)
         {
-            const string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
+            string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
             if (s.Length == 18)
             {
-                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || Int64.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
+                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
                 {
                     return false; //数字验证  
                 }
@@ -837,7 +855,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static bool IsNullOrEmpty(this string s) => String.IsNullOrEmpty(s);
+        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
 
         /// <summary>
         /// 类型直转
@@ -1030,7 +1048,7 @@ namespace Masuit.Tools
             {
                 return IsPrivateIP(IPAddress.Parse(ip));
             }
-            throw new ArgumentException(ip + " 不是一个合法的ip地址");
+            throw new ArgumentException(ip + "不是一个合法的ip地址");
         }
 
         /// <summary>
@@ -1062,7 +1080,7 @@ namespace Masuit.Tools
         /// <param name="r"></param>
         /// <param name="seed"></param>
         /// <returns></returns>
-        public static int StrictNext(this Random r, int seed = Int32.MaxValue)
+        public static int StrictNext(this Random r, int seed = int.MaxValue)
         {
             return new Random((int)Stopwatch.GetTimestamp()).Next(seed);
         }
