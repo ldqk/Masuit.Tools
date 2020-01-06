@@ -165,9 +165,9 @@ namespace Masuit.Tools.Files
                     return null;
                 }
             }).Where(u => u != null).ToList();
-            foreach (var fileEntry in dic)
+            foreach (var (key, value) in dic)
             {
-                archive.AddEntry(Path.Combine(rootdir, fileEntry.Value), fileEntry.Key);
+                archive.AddEntry(Path.Combine(rootdir, value), key);
             }
 
             if (remoteUrls.Any())
@@ -188,9 +188,9 @@ namespace Masuit.Tools.Files
                         }
                     }).Wait();
                 });
-                foreach (var kv in streams)
+                foreach (var (key, value) in streams)
                 {
-                    archive.AddEntry(kv.Key, kv.Value);
+                    archive.AddEntry(key, value);
                 }
             }
 
@@ -204,18 +204,14 @@ namespace Masuit.Tools.Files
         /// <returns></returns>
         private Dictionary<string, string> GetFileEntryMaps(List<string> files)
         {
-            List<string> fileList = new List<string>();
-
+            var fileList = new List<string>();
             void GetFilesRecurs(string path)
             {
                 //遍历目标文件夹的所有文件
-                foreach (string fileName in Directory.GetFiles(path))
-                {
-                    fileList.Add(fileName);
-                }
+                fileList.AddRange(Directory.GetFiles(path));
 
                 //遍历目标文件夹的所有文件夹
-                foreach (string directory in Directory.GetDirectories(path))
+                foreach (var directory in Directory.GetDirectories(path))
                 {
                     GetFilesRecurs(directory);
                 }

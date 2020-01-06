@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Reflection;
 
 namespace Masuit.Tools.Database
@@ -10,25 +9,6 @@ namespace Masuit.Tools.Database
     /// </summary>
     public static class DataExt
     {
-        /// <summary>
-        /// 根据SqlDataReader映射到实体模型
-        /// </summary>
-        /// <typeparam name="T">实体模型</typeparam>
-        /// <param name="reader">SqlDataReader</param>
-        /// <returns>映射后的实体模型</returns>
-        public static T MapEntity<T>(this SqlDataReader reader) where T : class
-        {
-            T obj = Assembly.GetAssembly(typeof(T)).CreateInstance(typeof(T).FullName) as T;
-            Type type = typeof(T);
-            PropertyInfo[] properties = type.GetProperties();
-            foreach (PropertyInfo p in properties)
-            {
-                p.SetValue(obj, reader[p.Name]);
-            }
-
-            return obj;
-        }
-
         /// <summary>
         /// 根据DataRow映射到实体模型
         /// </summary>

@@ -32,6 +32,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Masuit.Tools\Database\DataExt.cs" Link="Database\DataExt.cs" />
     <Compile Include="..\Masuit.Tools\Database\DataTableBuilder.cs" Link="Database\DataTableBuilder.cs" />
     <Compile Include="..\Masuit.Tools\Database\DataTableHelper.cs" Link="Database\DataTableHelper.cs" />
     <Compile Include="..\Masuit.Tools\DateTimeExt\ChineseCalendar.cs" Link="DateTimeExt\ChineseCalendar.cs" />
