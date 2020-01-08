@@ -94,12 +94,11 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Net\MultiThreadDownloader.cs" Link="Net\MultiThreadDownloader.cs" />
     <Compile Include="..\Masuit.Tools\Net\PartialDownloader.cs" Link="Net\PartialDownloader.cs" />
     <Compile Include="..\Masuit.Tools\Net\SocketClient.cs" Link="Net\SocketClient.cs" />
-    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\BinarySearchOptimizer.cs" Link="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
-    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\MultipleSelector.cs" Link="RandomSelector\Algorithm\MultipleSelector.cs" />
-    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SelectorBase.cs" Link="RandomSelector\Algorithm\SelectorBase.cs" />
-    <Compile Include="..\Masuit.Tools\RandomSelector\Algorithm\SingleSelector.cs" Link="RandomSelector\Algorithm\SingleSelector.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\Extensions.cs" Link="RandomSelector\Extensions.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\MultipleSelector.cs" Link="RandomSelector\MultipleSelector.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\SelectorBase.cs" Link="RandomSelector\SelectorBase.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\SelectorOptions.cs" Link="RandomSelector\SelectorOptions.cs" />
+    <Compile Include="..\Masuit.Tools\RandomSelector\SingleSelector.cs" Link="RandomSelector\SingleSelector.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\WeightedItem.cs" Link="RandomSelector\WeightedItem.cs" />
     <Compile Include="..\Masuit.Tools\RandomSelector\WeightedSelector.cs" Link="RandomSelector\WeightedSelector.cs" />
     <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
@@ -161,7 +160,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Folder Include="Mapping\Visitor\" />
     <Folder Include="Media\" />
     <Folder Include="Models\" />
-    <Folder Include="RandomSelector\Algorithm\" />
+    <Folder Include="RandomSelector\" />
     <Folder Include="Reflection\" />
     <Folder Include="Security\" />
     <Folder Include="Systems\" />

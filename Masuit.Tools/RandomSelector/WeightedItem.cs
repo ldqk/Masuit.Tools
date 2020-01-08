@@ -2,7 +2,14 @@
 {
     public class WeightedItem<T>
     {
+        /// <summary>
+        /// 权重
+        /// </summary>
         public int Weight;
+
+        /// <summary>
+        /// 元素
+        /// </summary>
         public readonly T Value;
 
         /// <summary>

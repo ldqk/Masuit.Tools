@@ -16,7 +16,7 @@ namespace Masuit.Tools
     /// <summary>
     /// 扩展方法
     /// </summary>
-    public static class Extensions
+    public static partial class Extensions
     {
         #region SyncForEach
 

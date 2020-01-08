@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Masuit.Tools.RandomSelector.Algorithm
+namespace Masuit.Tools.RandomSelector
 {
     /// <summary>
     /// 多选器
@@ -21,9 +21,9 @@ namespace Masuit.Tools.RandomSelector.Algorithm
 
             do
             {
-                var item = WeightedSelector.Options.AllowDuplicates ? Select(items) : SelectWithLinearSearch(items);
+                var item = WeightedSelector.Option.AllowDuplicate ? BinarySelect(items) : LinearSelect(items);
                 resultList.Add(item.Value);
-                if (!WeightedSelector.Options.AllowDuplicates)
+                if (!WeightedSelector.Option.AllowDuplicate)
                 {
                     items.Remove(item);
                 }
@@ -45,7 +45,7 @@ namespace Masuit.Tools.RandomSelector.Algorithm
                 throw new InvalidOperationException("没有元素可以被筛选");
             }
 
-            if (!WeightedSelector.Options.AllowDuplicates && items.Count < count)
+            if (!WeightedSelector.Option.AllowDuplicate && items.Count < count)
             {
                 count = items.Count;
             }

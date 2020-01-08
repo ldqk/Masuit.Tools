@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Masuit.Tools.RandomSelector;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Masuit.Tools.RandomSelector
+namespace Masuit.Tools
 {
-    public static class Extensions
+    public static partial class Extensions
     {
         public static int TotalWeight<T>(this WeightedSelector<T> selector)
         {

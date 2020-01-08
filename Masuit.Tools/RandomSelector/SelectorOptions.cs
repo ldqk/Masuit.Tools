@@ -1,21 +1,21 @@
 ﻿namespace Masuit.Tools.RandomSelector
 {
-    public class SelectorOptions
+    public class SelectorOption
     {
         /// <summary>
         /// 多选时允许重复项
         /// </summary>
-        public bool AllowDuplicates { get; set; }
+        public bool AllowDuplicate { get; set; }
 
         /// <summary>
         /// 是否移除权重0的元素
         /// </summary>
-        public bool DropZeroWeightItems { get; set; }
+        public bool RemoveZeroWeightItems { get; set; }
 
-        public SelectorOptions()
+        public SelectorOption()
         {
-            AllowDuplicates = false;
-            DropZeroWeightItems = true;
+            AllowDuplicate = false;
+            RemoveZeroWeightItems = true;
         }
     }
 }

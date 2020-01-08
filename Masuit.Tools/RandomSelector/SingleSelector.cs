@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Masuit.Tools.RandomSelector.Algorithm
+namespace Masuit.Tools.RandomSelector
 {
     /// <summary>
     /// 单选器
@@ -19,7 +19,7 @@ namespace Masuit.Tools.RandomSelector.Algorithm
                 throw new InvalidOperationException("没有元素可以筛选");
             }
 
-            return Select(WeightedSelector.Items).Value;
+            return BinarySelect(WeightedSelector.Items).Value;
         }
     }
 }

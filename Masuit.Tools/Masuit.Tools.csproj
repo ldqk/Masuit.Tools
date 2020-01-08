@@ -178,10 +178,9 @@
     <Compile Include="Net\PartialDownloader.cs" />
     <Compile Include="Net\SocketClient.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
-    <Compile Include="RandomSelector\Algorithm\BinarySearchOptimizer.cs" />
-    <Compile Include="RandomSelector\Algorithm\MultipleSelector.cs" />
-    <Compile Include="RandomSelector\Algorithm\SelectorBase.cs" />
-    <Compile Include="RandomSelector\Algorithm\SingleSelector.cs" />
+    <Compile Include="RandomSelector\MultipleSelector.cs" />
+    <Compile Include="RandomSelector\SelectorBase.cs" />
+    <Compile Include="RandomSelector\SingleSelector.cs" />
     <Compile Include="RandomSelector\Extensions.cs" />
     <Compile Include="RandomSelector\SelectorOptions.cs" />
     <Compile Include="RandomSelector\WeightedItem.cs" />

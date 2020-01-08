@@ -1,8 +1,6 @@
-﻿using Masuit.Tools.RandomSelector.Algorithm;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Masuit.Tools.RandomSelector
 {
@@ -13,7 +11,7 @@ namespace Masuit.Tools.RandomSelector
     public class WeightedSelector<T> : IEnumerable<T>
     {
         internal readonly List<WeightedItem<T>> Items = new List<WeightedItem<T>>();
-        public readonly SelectorOptions Options;
+        public readonly SelectorOption Option;
 
         /// <summary>
         /// 累计权重集
@@ -25,17 +23,17 @@ namespace Masuit.Tools.RandomSelector
         /// </summary>
         private bool _isAddedCumulativeWeights;
 
-        public WeightedSelector(SelectorOptions options = null)
+        public WeightedSelector(SelectorOption option = null)
         {
-            Options = options ?? new SelectorOptions();
+            Option = option ?? new SelectorOption();
         }
 
-        public WeightedSelector(List<WeightedItem<T>> items, SelectorOptions options = null) : this(options)
+        public WeightedSelector(List<WeightedItem<T>> items, SelectorOption option = null) : this(option)
         {
             Add(items);
         }
 
-        public WeightedSelector(IEnumerable<WeightedItem<T>> items, SelectorOptions options = null) : this(options)
+        public WeightedSelector(IEnumerable<WeightedItem<T>> items, SelectorOption option = null) : this(option)
         {
             Add(items);
         }
@@ -48,7 +46,7 @@ namespace Masuit.Tools.RandomSelector
         {
             if (item.Weight <= 0)
             {
-                if (Options.DropZeroWeightItems)
+                if (Option.RemoveZeroWeightItems)
                 {
                     return;
                 }
@@ -123,14 +121,30 @@ namespace Masuit.Tools.RandomSelector
             }
 
             _isAddedCumulativeWeights = false;
-            CumulativeWeights = BinarySearchOptimizer.GetCumulativeWeights(Items);
+            CumulativeWeights = GetCumulativeWeights(Items);
         }
 
         /// <summary>
-        /// 元素的只读集合
+        /// 计算累计权重
         /// </summary>
-        public ReadOnlyCollection<WeightedItem<T>> ReadOnlyItems => new ReadOnlyCollection<WeightedItem<T>>(Items);
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public static int[] GetCumulativeWeights(List<WeightedItem<T>> items)
+        {
+            int totalWeight = 0;
+            int index = 0;
+            var results = new int[items.Count + 1];
 
+            foreach (var item in items)
+            {
+                totalWeight += item.Weight;
+                results[index] = totalWeight;
+                index++;
+            }
+
+            return results;
+        }
         public IEnumerator<T> GetEnumerator()
         {
             return Items.GetEnumerator() as IEnumerator<T>;
