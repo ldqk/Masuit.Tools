@@ -28,7 +28,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -48,7 +47,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Null(response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -70,7 +68,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -91,7 +88,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -112,7 +108,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -132,7 +127,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -152,7 +146,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -175,7 +168,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -195,7 +187,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -216,7 +207,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -236,7 +226,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -256,7 +245,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -276,7 +264,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -298,7 +285,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -318,7 +304,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -338,7 +323,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -359,7 +343,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -381,7 +364,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -404,7 +386,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.NotNull(response.Content.Headers.ContentRange);
             Assert.Equal("bytes 1-1/62", response.Content.Headers.ContentRange.ToString());
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -425,7 +406,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("1", responseString);
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Null(response.Headers.ETag);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -447,7 +427,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -468,7 +447,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -491,7 +469,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -514,7 +491,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.NotNull(response.Content.Headers.ContentRange);
             Assert.Equal("bytes 1-1/62", response.Content.Headers.ContentRange.ToString());
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -536,7 +512,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -560,7 +535,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.NotNull(response.Content.Headers.ContentRange);
             Assert.Equal("bytes 1-1/62", response.Content.Headers.ContentRange.ToString());
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -580,7 +554,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -601,7 +574,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.NotEqual("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -621,7 +593,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
 
         [Fact]
@@ -642,7 +613,6 @@ namespace Masuit.Tools.Core.UnitTest.AspNetCore
             Assert.Equal("bytes", response.Headers.AcceptRanges.ToString());
             Assert.Equal(EntityTag, response.Headers.ETag);
             Assert.Null(response.Content.Headers.ContentRange);
-            Assert.Equal("attachment", response.Content.Headers.ContentDisposition.DispositionType);
         }
     }
 }

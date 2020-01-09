@@ -1,14 +1,15 @@
 ﻿using Masuit.Tools.Core.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-using Microsoft.Extensions.Hosting;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
 {
@@ -37,14 +38,11 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
                 var xmlPath = AppContext.BaseDirectory + "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.xml";
                 c.IncludeXmlComments(xmlPath);
             });
-            services.AddControllers().AddControllersAsServices(); // WebAPI
-            services.AddControllersWithViews().AddControllersAsServices().AddViewComponentsAsServices().AddTagHelpersAsServices(); // MVC
-            services.AddRazorPages().AddViewComponentsAsServices().AddTagHelpersAsServices(); // RazorPage
-
             services.Configure<WebEncoderOptions>(options =>
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             }); //解决razor视图中中文被编码的问题
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddControllersAsServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

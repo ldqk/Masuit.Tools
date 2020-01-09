@@ -1,4 +1,5 @@
-﻿using Masuit.Tools.RandomSelector;
+﻿using Masuit.Tools;
+using Masuit.Tools.RandomSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;

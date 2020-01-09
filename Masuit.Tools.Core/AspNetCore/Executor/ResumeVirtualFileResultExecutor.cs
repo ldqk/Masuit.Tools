@@ -15,15 +15,6 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor
     internal class ResumeVirtualFileResultExecutor : VirtualFileResultExecutor, IActionResultExecutor<ResumeVirtualFileResult>
     {
         /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="loggerFactory"></param>
-        /// <param name="hostingEnvironment"></param>
-        public ResumeVirtualFileResultExecutor(ILoggerFactory loggerFactory, IHostingEnvironment hostingEnvironment) : base(loggerFactory, hostingEnvironment)
-        {
-        }
-
-        /// <summary>
         /// 执行FileResult
         /// </summary>
         /// <param name="context"></param>
@@ -44,6 +35,10 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor
             context.SetContentDispositionHeaderInline(result);
 
             return base.ExecuteAsync(context, result);
+        }
+
+        public ResumeVirtualFileResultExecutor(ILoggerFactory loggerFactory, IHostingEnvironment hostingEnvironment) : base(loggerFactory, hostingEnvironment)
+        {
         }
     }
 }

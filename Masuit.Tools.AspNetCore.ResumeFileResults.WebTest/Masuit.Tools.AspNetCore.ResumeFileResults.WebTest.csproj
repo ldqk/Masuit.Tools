@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\TestFile.txt" />
+    <None Include="wwwroot\TestFile.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

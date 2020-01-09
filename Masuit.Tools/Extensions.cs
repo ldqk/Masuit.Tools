@@ -774,31 +774,10 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
         /// <returns>匹配对象</returns>
-        public static Match MatchInetAddress(this string s, out bool isMatch)
+        public static IPAddress MatchInetAddress(this string s, out bool isMatch)
         {
-            Match match;
-            if (s.Contains(":"))
-            {
-                //IPv6
-                match = Regex.Match(s, @"^([\da-fA-F]{0,4}:){1,7}[\da-fA-F]{1,4}$");
-                isMatch = match.Success;
-            }
-            else
-            {
-                //IPv4
-                match = Regex.Match(s, @"^(\d+)\.(\d+)\.(\d+)\.(\d+)$");
-                isMatch = match.Success;
-                foreach (Group m in match.Groups)
-                {
-                    if (m.Value.ToInt32() < 0 || m.Value.ToInt32() > 255)
-                    {
-                        isMatch = false;
-                        break;
-                    }
-                }
-            }
-
-            return isMatch ? match : null;
+            isMatch = IPAddress.TryParse(s, out var ip);
+            return ip;
         }
 
         /// <summary>
@@ -808,7 +787,7 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchInetAddress(this string s)
         {
-            MatchInetAddress(s, out bool success);
+            MatchInetAddress(s, out var success);
             return success;
         }
 
