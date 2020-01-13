@@ -6,7 +6,7 @@
     public class CpuInfo
     {
         /// <summary>
-        /// 设备ID端口
+        /// 设备ID
         /// </summary>
         public string DeviceID { get; set; }
 
