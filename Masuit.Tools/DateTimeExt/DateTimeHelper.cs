@@ -106,7 +106,6 @@ namespace Masuit.Tools.DateTimeExt
         public static void SetLocalTime(this DateTime dt)
         {
             SystemTime st;
-
             st.year = (short)dt.Year;
             st.month = (short)dt.Month;
             st.dayOfWeek = (short)dt.DayOfWeek;
@@ -115,7 +114,6 @@ namespace Masuit.Tools.DateTimeExt
             st.minute = (short)dt.Minute;
             st.second = (short)dt.Second;
             st.milliseconds = (short)dt.Millisecond;
-
             SetLocalTime(ref st);
         }
 

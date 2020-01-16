@@ -44,18 +44,20 @@ namespace Masuit.Tools.Mvc.Mime
         /// <returns></returns>
         public IMimeMapper Extend(params MimeMappingItem[] extensions)
         {
-            if (extensions != null)
+            if (extensions == null)
             {
-                foreach (var mapping in extensions)
+                return this;
+            }
+
+            foreach (var mapping in extensions)
+            {
+                if (_items.ContainsKey(mapping.Extension))
                 {
-                    if (_items.ContainsKey(mapping.Extension))
-                    {
-                        _items[mapping.Extension] = mapping.MimeType;
-                    }
-                    else
-                    {
-                        _items.Add(mapping.Extension, mapping.MimeType);
-                    }
+                    _items[mapping.Extension] = mapping.MimeType;
+                }
+                else
+                {
+                    _items.Add(mapping.Extension, mapping.MimeType);
                 }
             }
             return this;
@@ -70,7 +72,6 @@ namespace Masuit.Tools.Mvc.Mime
         {
             fileExtension = (fileExtension ?? string.Empty).ToLower();
             fileExtension = fileExtension.Trim().StartsWith(".") ? fileExtension.Replace(".", "") : fileExtension;
-
             return _items.ContainsKey(fileExtension) ? _items[fileExtension] : DefaultMime;
         }
 
@@ -87,11 +88,7 @@ namespace Masuit.Tools.Mvc.Mime
         protected string GetExtension(string path)
         {
             var match = _pathExtensionPattern.Match(path ?? string.Empty);
-            if (match.Groups.Count > 1)
-            {
-                return match.Groups[1].Value;
-            }
-            return null;
+            return match.Groups.Count > 1 ? match.Groups[1].Value : null;
         }
     }
 }

@@ -39,8 +39,7 @@ namespace Masuit.Tools.Mvc
         /// <returns></returns>
         public static ResumeFileResult ResumeFile(this ControllerBase controller, string virtualPath, string fileDownloadName, string etag)
         {
-            string physicalPath = controller.ControllerContext.HttpContext.Request.MapPath(virtualPath);
-            return new ResumeFileResult(physicalPath, controller.ControllerContext.HttpContext.Request)
+            return new ResumeFileResult(controller.ControllerContext.HttpContext.Request.MapPath(virtualPath), controller.ControllerContext.HttpContext.Request)
             {
                 FileDownloadName = fileDownloadName
             };

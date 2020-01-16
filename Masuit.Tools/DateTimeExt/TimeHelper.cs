@@ -20,7 +20,11 @@ namespace Masuit.Tools.DateTimeExt
         public static void ReturnDateFormat(this DateTime _, int month, out string firstDay, out string lastDay)
         {
             int year = DateTime.Now.Year + month / 12;
-            if (month != 12) month %= 12;
+            if (month != 12)
+            {
+                month %= 12;
+            }
+
             switch (month)
             {
                 case 1:
@@ -165,10 +169,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <exception cref="OverflowException">The return value is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />. </exception>
         public static TimeSpan DateDiff2(this DateTime dateTime1, DateTime dateTime2)
         {
-            TimeSpan ts1 = new TimeSpan(dateTime1.Ticks);
-            TimeSpan ts2 = new TimeSpan(dateTime2.Ticks);
-            TimeSpan ts = ts1.Subtract(ts2).Duration();
-            return ts;
+            return dateTime1 - dateTime2;
         }
 
         #endregion
@@ -183,9 +184,9 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>间隔日期之间的 随机日期</returns>
         public static DateTime GetRandomTime(this DateTime time1, DateTime time2)
         {
-            Random random = new Random();
+            var random = new Random();
             DateTime minTime;
-            TimeSpan ts = new TimeSpan(time1.Ticks - time2.Ticks);
+            var ts = new TimeSpan(time1.Ticks - time2.Ticks);
             // 获取两个时间相隔的秒数
             double dTotalSecontds = ts.TotalSeconds;
             int iTotalSecontds;
@@ -206,7 +207,11 @@ namespace Masuit.Tools.DateTimeExt
             }
 
             int maxValue = iTotalSecontds;
-            if (iTotalSecontds <= int.MinValue) maxValue = int.MinValue + 1;
+            if (iTotalSecontds <= int.MinValue)
+            {
+                maxValue = int.MinValue + 1;
+            }
+
             int i = random.Next(Math.Abs(maxValue));
             return minTime.AddSeconds(i);
         }
@@ -286,15 +291,14 @@ namespace Masuit.Tools.DateTimeExt
         public static string DateDiff(this DateTime dateTime1, DateTime dateTime2)
         {
             string dateDiff;
-            TimeSpan ts = dateTime2 - dateTime1;
+            var ts = dateTime2 - dateTime1;
             if (ts.Days >= 1)
             {
                 dateDiff = dateTime1.Month + "月" + dateTime1.Day + "日";
             }
             else
             {
-                if (ts.Hours > 1) dateDiff = ts.Hours + "小时前";
-                else dateDiff = ts.Minutes + "分钟前";
+                dateDiff = ts.Hours > 1 ? ts.Hours + "小时前" : ts.Minutes + "分钟前";
             }
 
             return dateDiff;
@@ -332,9 +336,7 @@ namespace Masuit.Tools.DateTimeExt
             int iYear = iMonth * 12;
 
             //提醒时间,到了返回1,否则返回0
-            if (mindTime > iTatol && iTatol > 0) mindTime = 1;
-            else mindTime = 0;
-
+            mindTime = mindTime > iTatol && iTatol > 0 ? 1 : 0;
             if (iTatol > iYear)
             {
                 strResout += iTatol / iYear + "年";

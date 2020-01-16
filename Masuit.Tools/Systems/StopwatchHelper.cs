@@ -15,7 +15,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static double Execute(Action action)
         {
-            Stopwatch sw = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
             action();
             return sw.ElapsedMilliseconds;
         }

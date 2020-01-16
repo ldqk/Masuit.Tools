@@ -159,29 +159,31 @@ namespace Masuit.Tools.Files
                 archive.AddEntry(Path.Combine(rootdir, fileEntry.Value), fileEntry.Key);
             }
 
-            if (remoteUrls.Any())
+            if (!remoteUrls.Any())
             {
-                var streams = new ConcurrentDictionary<string, Stream>();
-                using var httpClient = new HttpClient();
-                Parallel.ForEach(remoteUrls, url =>
+                return archive;
+            }
+
+            var streams = new ConcurrentDictionary<string, Stream>();
+            using var httpClient = new HttpClient();
+            Parallel.ForEach(remoteUrls, url =>
+            {
+                httpClient.GetAsync(url).ContinueWith(async t =>
                 {
-                    httpClient.GetAsync(url).ContinueWith(async t =>
+                    if (t.IsCompleted)
                     {
-                        if (t.IsCompleted)
+                        var res = await t;
+                        if (res.IsSuccessStatusCode)
                         {
-                            var res = await t;
-                            if (res.IsSuccessStatusCode)
-                            {
-                                Stream stream = await res.Content.ReadAsStreamAsync();
-                                streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
-                            }
+                            Stream stream = await res.Content.ReadAsStreamAsync();
+                            streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
                         }
-                    }).Wait();
-                });
-                foreach (var kv in streams)
-                {
-                    archive.AddEntry(kv.Key, kv.Value);
-                }
+                    }
+                }).Wait();
+            });
+            foreach (var kv in streams)
+            {
+                archive.AddEntry(kv.Key, kv.Value);
             }
 
             return archive;

@@ -117,16 +117,7 @@ namespace Masuit.Tools.DateTimeExt
         {
             //取得传入参数的年份部分，用来判断是否是闰年
             int n = dt.Year;
-            if (IsRuYear(n))
-            {
-                //闰年多 1 天 即：2 月为 29 天
-                return 366;
-            }
-            else
-            {
-                //--非闰年少1天 即：2 月为 28 天
-                return 365;
-            }
+            return IsRuYear(n) ? 366 : 365;
         }
 
         /// <summary>本月有多少天</summary>
@@ -136,46 +127,22 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>天数</returns>
         public static int GetDaysOfMonth(this DateTime _, int iYear, int month)
         {
-            int days = 0;
-            switch (month)
+            return month switch
             {
-                case 1:
-                    days = 31;
-                    break;
-                case 2:
-                    days = IsRuYear(iYear) ? 29 : 28;
-                    break;
-                case 3:
-                    days = 31;
-                    break;
-                case 4:
-                    days = 30;
-                    break;
-                case 5:
-                    days = 31;
-                    break;
-                case 6:
-                    days = 30;
-                    break;
-                case 7:
-                case 8:
-                    days = 31;
-                    break;
-                case 9:
-                    days = 30;
-                    break;
-                case 10:
-                    days = 31;
-                    break;
-                case 11:
-                    days = 30;
-                    break;
-                case 12:
-                    days = 31;
-                    break;
-            }
-
-            return days;
+                1 => 31,
+                2 => (IsRuYear(iYear) ? 29 : 28),
+                3 => 31,
+                4 => 30,
+                5 => 31,
+                6 => 30,
+                7 => 31,
+                8 => 31,
+                9 => 30,
+                10 => 31,
+                11 => 30,
+                12 => 31,
+                _ => 0
+            };
         }
 
         /// <summary>本月有多少天</summary>
@@ -183,52 +150,23 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>天数</returns>
         public static int GetDaysOfMonth(this DateTime dt)
         {
-            int days = 0;
-            var year = dt.Year;
-            var month = dt.Month;
-
             //--利用年月信息，得到当前月的天数信息。
-            switch (month)
+            return dt.Month switch
             {
-                case 1:
-                    days = 31;
-                    break;
-                case 2:
-                    days = IsRuYear(year) ? 29 : 28;
-                    break;
-                case 3:
-                    days = 31;
-                    break;
-                case 4:
-                    days = 30;
-                    break;
-                case 5:
-                    days = 31;
-                    break;
-                case 6:
-                    days = 30;
-                    break;
-                case 7:
-                    days = 31;
-                    break;
-                case 8:
-                    days = 31;
-                    break;
-                case 9:
-                    days = 30;
-                    break;
-                case 10:
-                    days = 31;
-                    break;
-                case 11:
-                    days = 30;
-                    break;
-                case 12:
-                    days = 31;
-                    break;
-            }
-
-            return days;
+                1 => 31,
+                2 => (IsRuYear(dt.Year) ? 29 : 28),
+                3 => 31,
+                4 => 30,
+                5 => 31,
+                6 => 30,
+                7 => 31,
+                8 => 31,
+                9 => 30,
+                10 => 31,
+                11 => 30,
+                12 => 31,
+                _ => 0
+            };
         }
 
         /// <summary>返回当前日期的星期名称</summary>
@@ -236,35 +174,17 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>星期名称</returns>
         public static string GetWeekNameOfDay(this DateTime idt)
         {
-            string week = "";
-
-            var dt = idt.DayOfWeek.ToString();
-            switch (dt)
+            return idt.DayOfWeek.ToString() switch
             {
-                case "Mondy":
-                    week = "星期一";
-                    break;
-                case "Tuesday":
-                    week = "星期二";
-                    break;
-                case "Wednesday":
-                    week = "星期三";
-                    break;
-                case "Thursday":
-                    week = "星期四";
-                    break;
-                case "Friday":
-                    week = "星期五";
-                    break;
-                case "Saturday":
-                    week = "星期六";
-                    break;
-                case "Sunday":
-                    week = "星期日";
-                    break;
-            }
-
-            return week;
+                "Mondy" => "星期一",
+                "Tuesday" => "星期二",
+                "Wednesday" => "星期三",
+                "Thursday" => "星期四",
+                "Friday" => "星期五",
+                "Saturday" => "星期六",
+                "Sunday" => "星期日",
+                _ => ""
+            };
         }
 
         /// <summary>返回当前日期的星期编号</summary>
@@ -272,35 +192,17 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>星期数字编号</returns>
         public static string GetWeekNumberOfDay(this DateTime idt)
         {
-            string week = "";
-
-            var dt = idt.DayOfWeek.ToString();
-            switch (dt)
+            return idt.DayOfWeek.ToString() switch
             {
-                case "Mondy":
-                    week = "1";
-                    break;
-                case "Tuesday":
-                    week = "2";
-                    break;
-                case "Wednesday":
-                    week = "3";
-                    break;
-                case "Thursday":
-                    week = "4";
-                    break;
-                case "Friday":
-                    week = "5";
-                    break;
-                case "Saturday":
-                    week = "6";
-                    break;
-                case "Sunday":
-                    week = "7";
-                    break;
-            }
-
-            return week;
+                "Mondy" => "1",
+                "Tuesday" => "2",
+                "Wednesday" => "3",
+                "Thursday" => "4",
+                "Friday" => "5",
+                "Saturday" => "6",
+                "Sunday" => "7",
+                _ => ""
+            };
         }
 
         /// <summary>判断当前年份是否是闰年，私有函数</summary>
@@ -311,7 +213,6 @@ namespace Masuit.Tools.DateTimeExt
             //形式参数为年份
             //例如：2003
             var n = iYear;
-
             return n % 400 == 0 || n % 4 == 0 && n % 100 != 0;
         }
 

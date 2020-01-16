@@ -44,7 +44,7 @@ namespace Masuit.Tools.Win32
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            foreach (Process p in Process.GetProcesses())
+            foreach (var p in Process.GetProcesses())
             {
                 using (p)
                 {
@@ -100,7 +100,7 @@ namespace Masuit.Tools.Win32
                     Trace.WriteLine(filename + " " + arguments);
                 }
 
-                Process proc = new Process
+                using var proc = new Process
                 {
                     StartInfo =
                     {
@@ -116,10 +116,8 @@ namespace Masuit.Tools.Win32
                 using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
                 //上面标记的是原文，下面是我自己调试错误后自行修改的  
                 Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                //txt = sr.ReadToEnd()了，导致返回的数据为空，故睡眠令硬件反应  
                 if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
                 {
-                    //txt = sr.ReadToEnd()程序就在等待输入，而且又无法输入，直接掐住无法继续运行  
                     proc.Kill();
                 }
 
@@ -204,97 +202,25 @@ namespace Masuit.Tools.Win32
         /// <summary>
         /// 获取实例
         /// </summary>
-        public static WindowsServer Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = new WindowsServer();
-                return _instance;
-            }
-        }
+        public static WindowsServer Instance => _instance ??= new WindowsServer();
 
         /// <summary>
         /// 构造函数
         /// </summary>
         public WindowsServer()
         {
-            CpuId = GetCpuID();
-            CpuCount = GetCpuCount();
-            CpuMhz = GetCpuMHZ();
-            MacAddress = GetMacAddress();
+            var cpuInfo = SystemInfo.GetCpuInfo();
+            CpuId = cpuInfo[0].DeviceID;
+            CpuCount = cpuInfo.Count;
+            CpuMhz = cpuInfo.Select(c => c.CurrentClockSpeed).ToArray();
+            MacAddress = SystemInfo.GetMacAddress()[0];
             DiskId = GetDiskID();
             DiskSize = GetSizeOfDisk();
-            IpAddress = GetIPAddress();
+            IpAddress = Windows.GetLocalUsedIP().ToString();
             LoginUserName = GetUserName();
             SystemType = GetSystemType();
             TotalPhysicalMemory = GetTotalPhysicalMemory();
             ComputerName = GetComputerName();
-        }
-
-        string GetCpuID()
-        {
-            try
-            {
-                //获取CPU序列号代码 
-                string cpuInfo = " "; //cpu序列号 
-                using var mc = new ManagementClass("Win32_Processor");
-                foreach (ManagementObject mo in mc.GetInstances())
-                {
-                    using (mo)
-                    {
-                        cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
-                    }
-                }
-
-                return cpuInfo;
-            }
-            catch
-            {
-                return "unknow ";
-            }
-        }
-
-        /// <summary>
-        /// 获取CPU个数
-        /// </summary>
-        /// <returns></returns>
-        public static int GetCpuCount()
-        {
-            try
-            {
-                using var mCpu = new ManagementClass("Win32_Processor");
-                using var cpus = mCpu.GetInstances();
-                return cpus.Count;
-            }
-            catch
-            {
-                // ignored
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// 获取CPU主频
-        /// </summary>
-        /// <returns></returns>
-        public static string[] GetCpuMHZ()
-        {
-            using var mc = new ManagementClass("Win32_Processor");
-            using ManagementObjectCollection cpus = mc.GetInstances();
-            var mhz = new string[cpus.Count];
-            int c = 0;
-            using var mySearch = new ManagementObjectSearcher("select * from Win32_Processor");
-            foreach (ManagementObject mo in mySearch.Get())
-            {
-                using (mo)
-                {
-                    mhz[c] = mo.Properties["CurrentClockSpeed"].Value.ToString();
-                    c++;
-                }
-            }
-
-            return mhz;
         }
 
         /// <summary>
@@ -304,7 +230,8 @@ namespace Masuit.Tools.Win32
         public static string GetSizeOfDisk()
         {
             using var mc = new ManagementClass("Win32_DiskDrive");
-            foreach (ManagementObject m in mc.GetInstances())
+            using var moc = mc.GetInstances();
+            foreach (var m in moc)
             {
                 using (m)
                 {
@@ -313,63 +240,6 @@ namespace Masuit.Tools.Win32
             }
 
             return "-1";
-        }
-
-        string GetMacAddress()
-        {
-            try
-            {
-                //获取网卡硬件地址 
-                string mac = " ";
-                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                foreach (ManagementObject mo in mc.GetInstances())
-                {
-                    using (mo)
-                    {
-                        if ((bool)mo["IPEnabled"])
-                        {
-                            mac = mo["MacAddress"].ToString();
-                            break;
-                        }
-                    }
-                }
-
-                return mac;
-            }
-            catch
-            {
-                return "unknow ";
-            }
-        }
-
-        string GetIPAddress()
-        {
-            try
-            {
-                //获取IP地址 
-                string st = Empty;
-                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                foreach (ManagementObject mo in mc.GetInstances())
-                {
-                    using (mo)
-                    {
-                        if ((bool)mo["IPEnabled"])
-                        {
-                            //st=mo[ "IpAddress "].ToString(); 
-                            Array ar;
-                            ar = (Array)(mo.Properties["IpAddress"].Value);
-                            st = ar.GetValue(0).ToString();
-                            break;
-                        }
-                    }
-                }
-
-                return st;
-            }
-            catch
-            {
-                return "unknow ";
-            }
         }
 
         string GetDiskID()

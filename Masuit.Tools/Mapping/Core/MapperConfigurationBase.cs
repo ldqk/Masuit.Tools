@@ -57,12 +57,12 @@ namespace Masuit.Tools.Mapping.Core
         /// <summary>
         /// 对象源类型
         /// </summary>
-        public Type SourceType { get; private set; }
+        public Type SourceType { get; }
 
         /// <summary>
         /// 对象目标类型
         /// </summary>
-        public Type TargetType { get; private set; }
+        public Type TargetType { get; }
 
         /// <summary>
         /// 获取mapper映射成员
@@ -108,14 +108,7 @@ namespace Masuit.Tools.Mapping.Core
             }
 
             // 因为在这里有映射器的性能问题，而缓存委托会显着缩短处理时间，如果没有表达式编译每次编译会很慢
-            if (_delegateCallForNew == null)
-            {
-                MemberInitExpression exp = GetMemberInitExpression();
-
-                _delegateCallForNew = Expression.Lambda(exp, paramClassSource).Compile();
-            }
-
-            return _delegateCallForNew;
+            return _delegateCallForNew ??= Expression.Lambda(GetMemberInitExpression(), paramClassSource).Compile();
         }
 
         /// <summary>
@@ -143,8 +136,7 @@ namespace Masuit.Tools.Mapping.Core
         /// </summary>
         public LambdaExpression GetGenericLambdaExpression()
         {
-            MemberInitExpression exp = GetMemberInitExpression();
-            return Expression.Lambda(exp, paramClassSource);
+            return Expression.Lambda(GetMemberInitExpression(), paramClassSource);
         }
 
         /// <summary>
@@ -231,7 +223,7 @@ namespace Masuit.Tools.Mapping.Core
 
         private static CreateConfig CanCreateConfig(Type typeSource, Type typeTarget)
         {
-            CreateConfig result = new CreateConfig
+            var result = new CreateConfig
             {
                 CanCreate = typeSource == typeTarget
             };
@@ -263,8 +255,7 @@ namespace Masuit.Tools.Mapping.Core
             Type typeTarget = configExpression.Item2.Type;
 
             // 正常情况下，目标表达式是一个成员表达式树
-            PropertyInfo propTarget = GetPropertyInfo(configExpression.Item2);
-
+            var propTarget = GetPropertyInfo(configExpression.Item2);
             if (propTarget.CanWrite)
             {
                 CheckAndRemoveMemberDest(propTarget.Name);
@@ -302,10 +293,7 @@ namespace Masuit.Tools.Mapping.Core
         /// <returns></returns>
         protected MemberInitExpression GetMemberInitExpression()
         {
-            Type typeDest = GetDestinationType();
-            NewExpression newClassDest = Expression.New(typeDest);
-            MemberInitExpression exp = Expression.MemberInit(newClassDest, MemberToMapForNew);
-            return exp;
+            return Expression.MemberInit(Expression.New(GetDestinationType()), MemberToMapForNew);
         }
 
         /// <summary>
@@ -317,9 +305,7 @@ namespace Masuit.Tools.Mapping.Core
         protected void CreateMemberBinding(Expression propertyExpression, MemberInfo propertyTarget, bool checkIfNull)
         {
             // 访问表达式进行转换
-            Expression result = visitorMapper.Visit(propertyExpression, checkIfNull);
-            MemberAssignment bind = Expression.Bind(propertyTarget, result);
-            memberForNew.Add(bind);
+            memberForNew.Add(Expression.Bind(propertyTarget, visitorMapper.Visit(propertyExpression, checkIfNull)));
         }
 
         /// <summary>
@@ -351,13 +337,11 @@ namespace Masuit.Tools.Mapping.Core
             {
                 case ExpressionType.Convert:
                     Expression operand = (expressionToAnalyse as UnaryExpression).Operand;
-                    switch (operand.NodeType)
+                    return operand.NodeType switch
                     {
-                        case ExpressionType.MemberAccess:
-                            return (operand as MemberExpression).Member as PropertyInfo;
-                        default:
-                            throw new NotImplementedException("这种表达方式目前尚未支持");
-                    }
+                        ExpressionType.MemberAccess => ((operand as MemberExpression).Member as PropertyInfo),
+                        _ => throw new NotImplementedException("这种表达方式目前尚未支持")
+                    };
                 case ExpressionType.MemberAccess:
                     return (expressionToAnalyse as MemberExpression).Member as PropertyInfo;
                 default:
@@ -376,85 +360,84 @@ namespace Masuit.Tools.Mapping.Core
         /// </summary>
         public virtual void CreateMemberAssignementForExistingTarget()
         {
-            if (PropertiesMapping.Count > 0)
+            if (PropertiesMapping.Count <= 0)
             {
-                // 用于更改原始表达式的参数。
-                var paramTarget = Expression.Parameter(TargetType, paramClassSource.Name.Replace("s", "t"));
-                ChangParameterExpressionVisitor visitSource = new ChangParameterExpressionVisitor(paramClassSource);
-                ChangParameterExpressionVisitor visitTarget = new ChangParameterExpressionVisitor(paramTarget);
+                return;
+            }
 
-                List<Expression> finalAssign = new List<Expression>();
+            // 用于更改原始表达式的参数。
+            var paramTarget = Expression.Parameter(TargetType, paramClassSource.Name.Replace("s", "t"));
+            var finalAssign = new List<Expression>();
 
-                foreach (var item in PropertiesMapping)
+            foreach (var item in PropertiesMapping)
+            {
+                var propToAssign = new ChangParameterExpressionVisitor(paramTarget).Visit(item.Item2);
+                var assignExpression = new ChangParameterExpressionVisitor(paramClassSource).Visit(item.Item1);
+                var sourceType = TypeSystem.GetElementType(item.Item2.Type);
+                var targetType = TypeSystem.GetElementType(item.Item1.Type);
+                if (string.IsNullOrEmpty(item.Item4))
                 {
-                    var propToAssign = visitTarget.Visit(item.Item2);
-                    var assignExpression = visitSource.Visit(item.Item1);
-                    Type sourceType = TypeSystem.GetElementType(item.Item2.Type);
-                    Type targetType = TypeSystem.GetElementType(item.Item1.Type);
-                    if (string.IsNullOrEmpty(item.Item4))
+                    object defaultValue = MapperHelper.GetDefaultValue(item.Item2.Type);
+                    Expression defaultExpression = Expression.Constant(defaultValue, item.Item2.Type);
+                    Expression checkIfNull = Expression.NotEqual(assignExpression, defaultExpression);
+                    if (item.Item3)
                     {
-                        object defaultValue = MapperHelper.GetDefaultValue(item.Item2.Type);
-                        Expression defaultExpression = Expression.Constant(defaultValue, item.Item2.Type);
-                        Expression checkIfNull = Expression.NotEqual(assignExpression, defaultExpression);
-                        if (item.Item3)
+                        Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
+                        finalAssign.Add(setIf);
+                    }
+                    else
+                    {
+                        if (!IsListOf(propToAssign.Type))
                         {
-                            Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
-                            finalAssign.Add(setIf);
+                            finalAssign.Add(Expression.Assign(propToAssign, assignExpression));
                         }
                         else
                         {
-                            if (!IsListOf(propToAssign.Type))
+                            if (sourceType == targetType)
                             {
-                                finalAssign.Add(Expression.Assign(propToAssign, assignExpression));
-                            }
-                            else
-                            {
-                                if (sourceType == targetType)
-                                {
-                                    Expression toListExp = Expression.Call(_toListMethod.MakeGenericMethod(sourceType), assignExpression);
-                                    Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
-                                    finalAssign.Add(setIf);
-                                    finalAssign.Add(toListExp);
-                                }
-                            }
-                        }
-                    }
-                    else // 来自其他映射器。
-                    {
-                        var mapper = GetMapper(sourceType, targetType, false, item.Item4);
-                        if (mapper != null)
-                        {
-                            mapper.Initialize(_constructorFunc);
-
-                            Expression defaultExpression = Expression.Constant(MapperHelper.GetDefaultValue(item.Item2.Type), item.Item2.Type);
-                            if (!IsListOf(propToAssign.Type))
-                            {
-                                ChangParameterExpressionVisitor changeVisitor = new ChangParameterExpressionVisitor(propToAssign, assignExpression);
-
-                                Expression modifiedExpression = changeVisitor.Visit(mapper.expressionForExisting.Body);
-                                Expression checkIfNull = Expression.NotEqual(propToAssign, defaultExpression);
-                                Expression setIf = Expression.IfThen(checkIfNull, modifiedExpression);
-                                assignExpression = setIf;
-                            }
-                            else
-                            {
-                                //Expression selectExp = Expression.Call(_selectMethod.MakeGenericMethod(sourceType), Expression.Constant(mapper.GetDelegate()));
-                                Expression checkIfNull = Expression.NotEqual(propToAssign, defaultExpression);
+                                Expression toListExp = Expression.Call(_toListMethod.MakeGenericMethod(sourceType), assignExpression);
                                 Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
-                                assignExpression = setIf;
+                                finalAssign.Add(setIf);
+                                finalAssign.Add(toListExp);
                             }
-
-                            finalAssign.Add(assignExpression);
                         }
                     }
                 }
-
-                if (finalAssign.Count > 0 && _delegateCallForExisting == null)
+                else // 来自其他映射器。
                 {
-                    expressionForExisting = Expression.Lambda(Expression.Block(typeof(void), finalAssign), paramClassSource, paramTarget);
-                    // 编译
-                    _delegateCallForExisting = expressionForExisting.Compile();
+                    var mapper = GetMapper(sourceType, targetType, false, item.Item4);
+                    if (mapper == null)
+                    {
+                        continue;
+                    }
+
+                    mapper.Initialize(_constructorFunc);
+                    Expression defaultExpression = Expression.Constant(MapperHelper.GetDefaultValue(item.Item2.Type), item.Item2.Type);
+                    if (!IsListOf(propToAssign.Type))
+                    {
+                        ChangParameterExpressionVisitor changeVisitor = new ChangParameterExpressionVisitor(propToAssign, assignExpression);
+
+                        Expression modifiedExpression = changeVisitor.Visit(mapper.expressionForExisting.Body);
+                        Expression checkIfNull = Expression.NotEqual(propToAssign, defaultExpression);
+                        Expression setIf = Expression.IfThen(checkIfNull, modifiedExpression);
+                        assignExpression = setIf;
+                    }
+                    else
+                    {
+                        Expression checkIfNull = Expression.NotEqual(propToAssign, defaultExpression);
+                        Expression setIf = Expression.IfThen(checkIfNull, Expression.Assign(propToAssign, assignExpression));
+                        assignExpression = setIf;
+                    }
+
+                    finalAssign.Add(assignExpression);
                 }
+            }
+
+            if (finalAssign.Count > 0 && _delegateCallForExisting == null)
+            {
+                expressionForExisting = Expression.Lambda(Expression.Block(typeof(void), finalAssign), paramClassSource, paramTarget);
+                // 编译
+                _delegateCallForExisting = expressionForExisting.Compile();
             }
         }
 
@@ -481,41 +464,40 @@ namespace Masuit.Tools.Mapping.Core
         /// <param name="constructor"></param>
         public virtual void CreateMappingExpression(Func<Type, object> constructor)
         {
-            if (!_isInitialized)
+            if (_isInitialized)
             {
-                // 它是在处理前放置以避免递归循环。
-                _isInitialized = true;
-                _constructorFunc = constructor;
-                CreateCommonMember();
-                var propsToAnalyse = PropertiesMapping.ToList(); // 克隆列表以便于更改。
-                for (int i = 0; i < propsToAnalyse.Count; i++)
-                {
-                    var propToAnalyse = propsToAnalyse[i];
-                    CheckAndConfigureMapping(ref propToAnalyse);
-                    propsToAnalyse[i] = propToAnalyse;
-                }
-
-                PropertiesMapping = propsToAnalyse;
-                // 编译
-                GetDelegate();
+                return;
             }
+
+            // 它是在处理前放置以避免递归循环。
+            _isInitialized = true;
+            _constructorFunc = constructor;
+            CreateCommonMember();
+            var propsToAnalyse = PropertiesMapping.ToList(); // 克隆列表以便于更改。
+            for (int i = 0; i < propsToAnalyse.Count; i++)
+            {
+                var propToAnalyse = propsToAnalyse[i];
+                CheckAndConfigureMapping(ref propToAnalyse);
+                propsToAnalyse[i] = propToAnalyse;
+            }
+
+            PropertiesMapping = propsToAnalyse;
+            // 编译
+            GetDelegate();
         }
 
         internal Type GetRealType(Type typeToFind)
         {
-            if (UseServiceLocator)
-                return _constructorFunc(typeToFind).GetType();
-            return typeToFind;
+            return UseServiceLocator ? _constructorFunc(typeToFind).GetType() : typeToFind;
         }
 
         internal PropertiesNotMapped GetPropertiesNotMapped()
         {
-            PropertiesNotMapped result = new PropertiesNotMapped();
             // 克隆属性信息
-            List<PropertyInfo> sourceProperties = SourceType.GetProperties().ToList();
-            List<PropertyInfo> targetProperties = TargetType.GetProperties().ToList();
+            var sourceProperties = SourceType.GetProperties().ToList();
+            var targetProperties = TargetType.GetProperties().ToList();
 
-            PropertiesVisitor visitor = new PropertiesVisitor(TargetType);
+            var visitor = new PropertiesVisitor(TargetType);
             foreach (var members in memberForNew)
             {
                 var members1 = members;
@@ -525,10 +507,11 @@ namespace Masuit.Tools.Mapping.Core
 
             // 检查被忽略映射的成员
             sourceProperties.RemoveAll((p) => _propertiesToIgnore.Contains(p));
-            result.sourceProperties = sourceProperties;
-            result.targetProperties = targetProperties;
-
-            return result;
+            return new PropertiesNotMapped
+            {
+                sourceProperties = sourceProperties,
+                targetProperties = targetProperties
+            };
         }
 
         /// <summary>
@@ -590,21 +573,21 @@ namespace Masuit.Tools.Mapping.Core
             else
             {
                 // 尝试查找mapper
-                MapperConfigurationBase externalMapper = GetAndCheckMapper(typeSource, typeTarget, configExpression.Item4);
+                var externalMapper = GetAndCheckMapper(typeSource, typeTarget, configExpression.Item4);
                 // 如果此时未初始化映射器
                 externalMapper.CreateMappingExpression(_constructorFunc);
                 // 默认情况下，检查对象的null
                 Expression mapExpression = externalMapper.GetMemberInitExpression();
                 Expression defaultExpression = Expression.Constant(MapperHelper.GetDefaultValue(configExpression.Item1.Type), configExpression.Item1.Type);
                 // 修改成员
-                Expression expSource = visitorMapper.Visit(configExpression.Item1);
-                ChangParameterExpressionVisitor changeParamaterVisitor = new ChangParameterExpressionVisitor(expSource);
+                var expSource = visitorMapper.Visit(configExpression.Item1);
+                var changeParamaterVisitor = new ChangParameterExpressionVisitor(expSource);
                 mapExpression = changeParamaterVisitor.Visit(mapExpression);
                 // 现在可以创建正确的参数。
                 Expression checkIfNull = Expression.NotEqual(expSource, defaultExpression);
                 // 创建条件
                 var checkExpression = Expression.Condition(checkIfNull, mapExpression, Expression.Constant(MapperHelper.GetDefaultValue(mapExpression.Type), mapExpression.Type), mapExpression.Type);
-                MemberAssignment bindExpression = Expression.Bind(propTarget, checkExpression);
+                var bindExpression = Expression.Bind(propTarget, checkExpression);
                 // 找到了映射器但没有配置
                 if (string.IsNullOrEmpty(configExpression.Item4))
                 {
@@ -617,8 +600,8 @@ namespace Masuit.Tools.Mapping.Core
 
         private void CreateBindingFromList(ref Tuple<Expression, Expression, bool, string> configExpression, Type typeSource, Type typeTarget, PropertyInfo propTarget)
         {
-            Type sourceTypeList = TypeSystem.GetElementType(typeSource);
-            Type destTypeList = TypeSystem.GetElementType(typeTarget);
+            var sourceTypeList = TypeSystem.GetElementType(typeSource);
+            var destTypeList = TypeSystem.GetElementType(typeTarget);
             if (sourceTypeList == destTypeList)
             {
                 if (configExpression.Item2.NodeType == ExpressionType.MemberAccess)
@@ -632,13 +615,12 @@ namespace Masuit.Tools.Mapping.Core
                 var externalMapper = GetAndCheckMapper(sourceTypeList, destTypeList, configExpression.Item4);
                 externalMapper.CreateMappingExpression(_constructorFunc);
                 MemberAssignment expBind;
-                Expression expSource = configExpression.Item1;
-
-                ChangParameterExpressionVisitor visitor = new ChangParameterExpressionVisitor(paramClassSource);
+                var expSource = configExpression.Item1;
+                var visitor = new ChangParameterExpressionVisitor(paramClassSource);
                 expSource = visitor.Visit(expSource);
 
                 // 为了与EF / LINQ2SQL兼容。
-                LambdaExpression expMappeur = externalMapper.GetGenericLambdaExpression();
+                var expMappeur = externalMapper.GetGenericLambdaExpression();
                 // 创建对Select方法的调用，在Enumerable的Select中插入一个lambda表达式（参数是一个委托），通常情况下，这是不可能的，但（个人认为）编译器就像这样创建并且LINQ2SQL / EF是可以进行sql查询的
                 Expression select = Expression.Call(_selectMethod.MakeGenericMethod(sourceTypeList, destTypeList), new[]
                 {

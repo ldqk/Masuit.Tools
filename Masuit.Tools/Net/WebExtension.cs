@@ -44,7 +44,6 @@ namespace Masuit.Tools.Net
 
         #region 写Session
 
-        //private static readonly RedisHelper Helper = RedisHelper.GetInstance(1);
         /// <summary>
         /// 写Session
         /// </summary>
@@ -95,10 +94,8 @@ namespace Masuit.Tools.Net
 
             try
             {
-                using (RedisHelper redisHelper = RedisHelper.GetInstance(1))
-                {
-                    redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
-                }
+                using var redisHelper = RedisHelper.GetInstance(1);
+                redisHelper.SetHash("Session:" + sessionKey, key, obj, TimeSpan.FromMinutes(expire)); //存储数据到缓存服务器，这里将字符串"my value"缓存，key 是"test"
             }
             catch
             {
@@ -129,7 +126,7 @@ namespace Masuit.Tools.Net
             if (string.IsNullOrEmpty(sessionKey))
             {
                 sessionKey = Guid.NewGuid().ToString().AESEncrypt();
-                HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
+                var cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
 
@@ -189,10 +186,14 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (string.IsNullOrEmpty(sessionKey))
             {
-                return default(T);
+                return default;
             }
 
             T obj = _.Get<T>(key);
+            if (obj != null)
+            {
+                return obj;
+            }
 
             try
             {
@@ -204,11 +205,11 @@ namespace Masuit.Tools.Net
                     return redisHelper.GetHash<T>(sessionKey, key);
                 }
 
-                return default(T);
+                return default;
             }
             catch
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -242,7 +243,7 @@ namespace Masuit.Tools.Net
             try
             {
                 sessionKey = "Session:" + sessionKey;
-                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                using var redisHelper = RedisHelper.GetInstance(1);
                 if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                 {
                     redisHelper.Expire(sessionKey, TimeSpan.FromMinutes(expire));
@@ -315,7 +316,7 @@ namespace Masuit.Tools.Net
             try
             {
                 sessionKey = "Session:" + sessionKey;
-                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                using var redisHelper = RedisHelper.GetInstance(1);
                 if (redisHelper.KeyExists(sessionKey) && redisHelper.HashExists(sessionKey, key))
                 {
                     redisHelper.DeleteHash(sessionKey, key);
@@ -355,7 +356,7 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                using RedisHelper redisHelper = RedisHelper.GetInstance(1);
+                using var redisHelper = RedisHelper.GetInstance(1);
                 return redisHelper.GetServer().Keys(1, "Session:*").Count();
             }
             catch (Exception e)
@@ -432,7 +433,7 @@ namespace Masuit.Tools.Net
                 var ipAddress = JsonConvert.DeserializeObject<BaiduIP>(await res.Content.ReadAsStringAsync());
                 if (ipAddress.Status == 0)
                 {
-                    LatiLongitude point = ipAddress.AddressInfo.LatiLongitude;
+                    var point = ipAddress.AddressInfo.LatiLongitude;
                     var result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
                     var address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
                     if (address.Status == 0)

@@ -25,7 +25,7 @@ namespace Masuit.Tools.Security
         {
             var code = new UnicodeEncoding();
             byte[] message = code.GetBytes(security);
-            var arithmetic = new SHA512Managed();
+            using var arithmetic = new SHA512Managed();
             var value = arithmetic.ComputeHash(message);
             var sb = new StringBuilder();
             foreach (byte o in value)

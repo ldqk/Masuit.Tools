@@ -117,7 +117,6 @@ namespace Masuit.Tools.Mvc.ActionResults
         {
             var contentLength = ContentLength();
             response.StatusCode = SendRange() ? (int)HttpStatusCode.PartialContent : (int)HttpStatusCode.OK;
-
             response.AppendHeader(HttpHeaders.ContentLength, contentLength.ToString(CultureInfo.InvariantCulture));
             response.AppendHeader(HttpHeaders.AcceptRanges, "bytes");
             response.AppendHeader(HttpHeaders.ContentRange, $"bytes {_byteRange.Start}-{_byteRange.End}/{_file.Length}");
@@ -215,44 +214,41 @@ namespace Masuit.Tools.Mvc.ActionResults
         private ByteRange Range(string range)
         {
             var lastByte = _file.Length - 1;
-
-            if (!string.IsNullOrWhiteSpace(range))
+            var matches = _rangePattern.Matches(range);
+            if (string.IsNullOrWhiteSpace(range) || matches.Count == 0)
             {
-                var matches = _rangePattern.Matches(range);
-                if (matches.Count != 0)
-                {
-                    var start = matches[0].Groups[1].Value.ToLong(-1);
-                    var end = matches[0].Groups[2].Value.ToLong(-1);
-
-                    if (start != -1 || end != -1)
-                    {
-                        if (start == -1)
-                        {
-                            start = _file.Length - end;
-                            end = lastByte;
-                        }
-                        else if (end == -1)
-                        {
-                            end = lastByte;
-                        }
-
-                        return new ByteRange
-                        {
-                            Start = start,
-                            End = end
-                        };
-                    }
-                }
                 return new ByteRange
                 {
                     Start = -1,
                     End = -1
                 };
             }
+
+            var start = matches[0].Groups[1].Value.ToLong(-1);
+            var end = matches[0].Groups[2].Value.ToLong(-1);
+
+            if (start != -1 || end != -1)
+            {
+                if (start == -1)
+                {
+                    start = _file.Length - end;
+                    end = lastByte;
+                }
+                else if (end == -1)
+                {
+                    end = lastByte;
+                }
+
+                return new ByteRange
+                {
+                    Start = start,
+                    End = end
+                };
+            }
             return new ByteRange
             {
-                Start = 0,
-                End = lastByte
+                Start = -1,
+                End = -1
             };
         }
 

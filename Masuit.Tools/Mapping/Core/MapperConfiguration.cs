@@ -1,8 +1,8 @@
 ﻿using Masuit.Tools.Mapping.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Masuit.Tools.Mapping.Core
 {
@@ -32,8 +32,7 @@ namespace Masuit.Tools.Mapping.Core
         /// <returns></returns>
         public Expression<Func<TSource, TDest>> GetLambdaExpression()
         {
-            MemberInitExpression exp = GetMemberInitExpression();
-            return Expression.Lambda<Func<TSource, TDest>>(exp, paramClassSource);
+            return Expression.Lambda<Func<TSource, TDest>>(GetMemberInitExpression(), paramClassSource);
         }
 
         /// <summary>
@@ -142,8 +141,7 @@ namespace Masuit.Tools.Mapping.Core
         /// <exception cref="MapperExistException"></exception>
         public MapperConfiguration<TDest, TSource> ReverseMap(string name = null)
         {
-            MapperConfigurationBase map = GetMapper(typeof(TDest), typeof(TSource), false, name);
-
+            var map = GetMapper(typeof(TDest), typeof(TSource), false, name);
             if (map != null)
             {
                 throw new MapperExistException(typeof(TDest), typeof(TSource));
@@ -154,26 +152,22 @@ namespace Masuit.Tools.Mapping.Core
             CreateCommonMember();
 
             // 现有属性的映射，并且创建反向关系
-            foreach (var item in PropertiesMapping)
+            foreach (var item in PropertiesMapping.Where(item => GetPropertyInfo(item.Item1).CanWrite))
             {
-                PropertyInfo propertyDest = GetPropertyInfo(item.Item1);
-                if (propertyDest.CanWrite)
+                if (!string.IsNullOrEmpty(item.Item4))
                 {
-                    if (!string.IsNullOrEmpty(item.Item4))
+                    //找到反向关系的mapper
+                    var reverseMapper = GetMapper(item.Item2.Type, item.Item1.Type, false);
+                    if (reverseMapper != null)
                     {
-                        //找到反向关系的mapper
-                        var reverseMapper = GetMapper(item.Item2.Type, item.Item1.Type, false);
-                        if (reverseMapper != null)
-                        {
-                            map.ForMemberBase(item.Item2, item.Item1, item.Item3, reverseMapper.Name);
-                        }
+                        map.ForMemberBase(item.Item2, item.Item1, item.Item3, reverseMapper.Name);
                     }
-                    else
+                }
+                else
+                {
+                    if (item.Item1.NodeType == ExpressionType.MemberAccess)
                     {
-                        if (item.Item1.NodeType == ExpressionType.MemberAccess)
-                        {
-                            map.ForMemberBase(item.Item2, item.Item1, item.Item3, item.Item4);
-                        }
+                        map.ForMemberBase(item.Item2, item.Item1, item.Item3, item.Item4);
                     }
                 }
             }

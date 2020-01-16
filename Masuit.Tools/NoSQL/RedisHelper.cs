@@ -300,7 +300,7 @@ namespace Masuit.Tools.NoSQL
         /// <returns>是否保存成功</returns>
         public async Task<bool> SetStringAsync(List<KeyValuePair<RedisKey, RedisValue>> keyValues)
         {
-            List<KeyValuePair<RedisKey, RedisValue>> newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
+            var newkeyValues = keyValues.Select(p => new KeyValuePair<RedisKey, RedisValue>(AddSysCustomKey(p.Key), p.Value)).ToList();
             return await Do(async db => await db.StringSetAsync(newkeyValues.ToArray()));
         }
 
@@ -463,7 +463,6 @@ namespace Masuit.Tools.NoSQL
         public long DeleteHash(string key, List<RedisValue> dataKeys)
         {
             key = AddSysCustomKey(key);
-            //List<RedisValue> dataKeys1 = new List<RedisValue>() {"1","2"};
             return Do(db => db.HashDelete(key, dataKeys.ToArray()));
         }
 
@@ -1215,14 +1214,7 @@ namespace Masuit.Tools.NoSQL
 
         private List<T> ConvetList<T>(RedisValue[] values)
         {
-            List<T> result = new List<T>();
-            foreach (var item in values)
-            {
-                var model = ConvertObj<T>(item);
-                result.Add(model);
-            }
-
-            return result;
+            return values.Select(ConvertObj<T>).ToList();
         }
 
         private RedisKey[] ConvertRedisKeys(List<string> redisKeys)

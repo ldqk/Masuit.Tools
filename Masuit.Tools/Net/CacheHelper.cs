@@ -48,7 +48,11 @@ namespace Masuit.Tools.Net
         /// <exception cref="ArgumentNullException"><paramref name="cacheKey"/>"/> is <c>null</c>.</exception>
         public static void SetCache(this Cache cache, string cacheKey, object objObject, TimeSpan timeout)
         {
-            if (cacheKey == null) throw new ArgumentNullException(nameof(cacheKey));
+            if (cacheKey == null)
+            {
+                throw new ArgumentNullException(nameof(cacheKey));
+            }
+
             cache.Insert(cacheKey, objObject, null, DateTime.MaxValue, timeout, CacheItemPriority.NotRemovable, null);
         }
 

@@ -141,7 +141,7 @@ namespace Masuit.Tools.Net
         /// <param name="rangeAllowed"></param>
         public PartialDownloader(string url, string dir, string fileGuid, int from, int to, bool rangeAllowed)
         {
-            From = @from;
+            From = from;
             _to = to;
             Url = url;
             RangeAllowed = rangeAllowed;
@@ -213,7 +213,6 @@ namespace Masuit.Tools.Net
             }
 
             sw.Stop();
-
             if (!Stopped && DownloadPartCompleted != null)
             {
                 _aop.Post(state =>
@@ -235,7 +234,7 @@ namespace Masuit.Tools.Net
         public void Start()
         {
             Stopped = false;
-            Thread procThread = new Thread(DownloadProcedure);
+            var procThread = new Thread(DownloadProcedure);
             procThread.Start();
         }
 

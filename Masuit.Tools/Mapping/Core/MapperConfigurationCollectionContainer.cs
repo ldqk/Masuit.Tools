@@ -39,7 +39,10 @@ namespace Masuit.Tools.Mapping.Core
             get
             {
                 if (index > _items.Count)
+                {
                     throw new IndexOutOfRangeException();
+                }
+
                 var enumerator = GetEnumerator();
                 int i = 0;
                 while (enumerator.MoveNext())
@@ -48,6 +51,7 @@ namespace Masuit.Tools.Mapping.Core
                     {
                         return enumerator.Current;
                     }
+
                     i++;
                 }
 
@@ -63,15 +67,11 @@ namespace Masuit.Tools.Mapping.Core
         /// <param name="name">别名</param>
         internal MapperConfigurationBase Find(Type source, Type target, string name = null)
         {
-            foreach (var current in this)
+            return this.Select(current => new
             {
-                string nameMapper = string.IsNullOrEmpty(name) ? current.paramClassSource.Name : name;
-                if (current.SourceType == source && current.TargetType == target && current.Name == nameMapper)
-                {
-                    return current;
-                }
-            }
-            return null;
+                current,
+                nameMapper = string.IsNullOrEmpty(name) ? current.paramClassSource.Name : name
+            }).Where(t => t.current.SourceType == source && t.current.TargetType == target && t.current.Name == t.nameMapper).Select(t => t.current).FirstOrDefault();
         }
 
         /// <summary>
@@ -89,10 +89,9 @@ namespace Masuit.Tools.Mapping.Core
         /// <param name="index"></param>
         public void RemoveAt(int index)
         {
-            MapperConfigurationBase itemToDelete = this[index];
-            if (itemToDelete != null)
+            if (this[index] != null)
             {
-                _items.Remove(itemToDelete);
+                _items.Remove(this[index]);
             }
         }
 

@@ -15,7 +15,7 @@ namespace Masuit.Tools.Mvc.ActionResults
         [DefaultValue("<q1w2e3r4t5y6u7i8o9p0>")]
         public string MultipartBoundary { get; set; }
 
-        public string ContentType { get; private set; }
+        public string ContentType { get; }
         private readonly string _fileName;
         public DateTimeOffset? LastModified { get; set; }
         public string EntityTag { get; set; }
@@ -23,7 +23,7 @@ namespace Masuit.Tools.Mvc.ActionResults
 
         protected ResumeActionResultBase(string fileName)
         {
-            MimeMapper mimeMapper = new MimeMapper();
+            var mimeMapper = new MimeMapper();
             string contentType = mimeMapper.GetMimeFromPath(fileName);
             if (string.IsNullOrEmpty(contentType))
             {
@@ -40,12 +40,11 @@ namespace Masuit.Tools.Mvc.ActionResults
                 throw new ArgumentNullException(nameof(context));
             }
 
-            ResumeRequest resumingRequest = new ResumeRequest(context.HttpContext, FileContents.Length)
+            context.HttpContext.Response.Headers[HttpHeaders.AccessControlExposeHeaders] = HttpHeaders.ContentDisposition;
+            ExecuteResultBody(context, new ResumeRequest(context.HttpContext, FileContents.Length)
             {
                 FileName = _fileName
-            };
-            context.HttpContext.Response.Headers[HttpHeaders.AccessControlExposeHeaders] = HttpHeaders.ContentDisposition;
-            ExecuteResultBody(context, resumingRequest);
+            });
         }
 
         public virtual void ExecuteResultBody(ControllerContext context, ResumeRequest resumingRequest)

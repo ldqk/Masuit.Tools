@@ -17,7 +17,9 @@ namespace Masuit.Tools.Mapping.Visitor
             {
                 Expression returnParameter = _parameter.FirstOrDefault(x => x.Type == node.Type);
                 if (returnParameter != null)
+                {
                     return returnParameter;
+                }
             }
             return node;
         }

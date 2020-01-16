@@ -53,6 +53,7 @@ namespace Masuit.Tools.Mapping.Core
             {
                 result = Source == other.Source && Target == other.Target;
             }
+
             return result;
         }
     }

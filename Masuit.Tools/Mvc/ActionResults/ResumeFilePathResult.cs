@@ -5,7 +5,7 @@ namespace Masuit.Tools.Mvc.ActionResults
 {
     public class ResumeFilePathResult : ResumeActionResultBase
     {
-        private FileInfo MediaFile { get; set; }
+        private FileInfo MediaFile { get; }
 
         public ResumeFilePathResult(string fileName) : base(fileName)
         {

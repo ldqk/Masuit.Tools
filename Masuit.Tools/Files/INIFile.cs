@@ -52,7 +52,7 @@ namespace Masuit.Tools.Files
         public string IniReadValue(string Section, string Key)
         {
             StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.path);
+            int i = GetPrivateProfileString(Section, Key, "", temp, 255, path);
             return temp.ToString();
         }
 
@@ -65,7 +65,7 @@ namespace Masuit.Tools.Files
         public byte[] IniReadValues(string section, string key)
         {
             byte[] temp = new byte[255];
-            int i = GetPrivateProfileString(section, key, "", temp, 255, this.path);
+            int i = GetPrivateProfileString(section, key, "", temp, 255, path);
             return temp;
         }
 

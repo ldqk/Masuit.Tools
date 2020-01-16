@@ -182,11 +182,7 @@ namespace Masuit.Tools.Html
         /// <param name="str">html</param>
         public static string StrFormat(this string str)
         {
-            str = str.Replace("\r\n", "<br />");
-            str = str.Replace("\n", "<br />");
-            var str2 = str;
-
-            return str2;
+            return str.Replace("\r\n", "<br />").Replace("\n", "<br />");
         }
 
         /// <summary>
@@ -197,10 +193,7 @@ namespace Masuit.Tools.Html
         {
             if (strHtml != "")
             {
-                strHtml = strHtml.Replace(",", "&def");
-                strHtml = strHtml.Replace("'", "&dot");
-                strHtml = strHtml.Replace(";", "&dec");
-                return strHtml;
+                return strHtml.Replace(",", "&def").Replace("'", "&dot").Replace(";", "&dec");
             }
 
             return "";

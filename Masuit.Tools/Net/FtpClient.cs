@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -42,11 +43,10 @@ namespace Masuit.Tools.Net
                 throw new ArgumentException("IP地址格式不正确");
             }
 
-            FtpClient ftpClient = new FtpClient
+            return new FtpClient
             {
                 FtpServer = serverIp
             };
-            return ftpClient;
         }
 
         /// <summary>
@@ -63,13 +63,12 @@ namespace Masuit.Tools.Net
                 throw new ArgumentException("IP地址格式不正确");
             }
 
-            FtpClient ftpClient = new FtpClient
+            return new FtpClient
             {
                 FtpServer = serverIp,
                 Username = username,
                 Password = password
             };
-            return ftpClient;
         }
 
         #region 从FTP服务器下载文件，指定本地路径和本地文件名
@@ -83,7 +82,7 @@ namespace Masuit.Tools.Net
         /// <param name="updateProgress">报告进度的处理(第一个参数：总大小，第二个参数：当前进度)</param>
         public void Download(string remoteFileName, string localFileName, bool ifCredential = false, Action<int, int> updateProgress = null)
         {
-            using FileStream outputStream = new FileStream(localFileName, FileMode.Create);
+            using var outputStream = new FileStream(localFileName, FileMode.Create);
             if (FtpServer == null || FtpServer.Trim().Length == 0)
             {
                 throw new Exception("ftp下载目标服务器地址未设置！");
@@ -157,7 +156,7 @@ namespace Masuit.Tools.Net
             }
 
             ftpsize.Method = WebRequestMethods.Ftp.GetFileSize;
-            using FtpWebResponse re = (FtpWebResponse)ftpsize.GetResponse();
+            using var re = (FtpWebResponse)ftpsize.GetResponse();
             var totalBytes = re.ContentLength;
             reqFtp.Method = WebRequestMethods.Ftp.DownloadFile;
             using var response = (FtpWebResponse)reqFtp.GetResponse();
@@ -217,7 +216,7 @@ namespace Masuit.Tools.Net
         /// <param name="updateProgress">报告进度的处理(第一个参数：总大小，第二个参数：当前进度)</param>
         public void UploadFile(string relativePath, string localFullPathName, Action<int, int> updateProgress = null)
         {
-            FileInfo finfo = new FileInfo(localFullPathName);
+            var finfo = new FileInfo(localFullPathName);
             if (FtpServer == null || FtpServer.Trim().Length == 0)
             {
                 throw new Exception("ftp上传目标服务器地址未设置！");
@@ -264,7 +263,7 @@ namespace Masuit.Tools.Net
             }
 
             string newFileName;
-            FileInfo fileInf = new FileInfo(localFullPath);
+            var fileInf = new FileInfo(localFullPath);
             long allbye = fileInf.Length;
             if (fileInf.Name.IndexOf("#", StringComparison.Ordinal) == -1)
             {
@@ -285,7 +284,6 @@ namespace Masuit.Tools.Net
             long startbye = startfilesize;
             //更新进度 
             updateProgress?.Invoke((int)allbye, (int)startfilesize); //更新进度条 
-
             string uri;
             if (remoteFilepath.Length == 0)
             {
@@ -338,17 +336,7 @@ namespace Masuit.Tools.Net
         /// <returns></returns>
         private string RemoveSpaces(string str)
         {
-            string a = "";
-            foreach (char c in str)
-            {
-                var array = Encoding.ASCII.GetBytes(c.ToString());
-                int asciicode = array[0];
-                if (asciicode != 32)
-                {
-                    a += c.ToString();
-                }
-            }
-
+            string a = str.Where(c => Encoding.ASCII.GetBytes(c.ToString())[0] != 32).Aggregate("", (current, c) => current + c);
             return a.Split('.')[a.Split('.').Length - 2] + "." + a.Split('.')[a.Split('.').Length - 1];
         }
 
@@ -362,7 +350,7 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                FileInfo fi = new FileInfo(filePath);
+                var fi = new FileInfo(filePath);
                 string uri;
                 if (remoteFilepath.Length == 0)
                 {
@@ -495,11 +483,9 @@ namespace Masuit.Tools.Net
         {
             string uri = Path.Combine("ftp://" + FtpServer, filePath).Replace("\\", "/");
             var reqFtp = (FtpWebRequest)WebRequest.Create(new Uri(uri));
-
             reqFtp.Credentials = new NetworkCredential(Username, Password);
             reqFtp.KeepAlive = false;
             reqFtp.Method = WebRequestMethods.Ftp.DeleteFile;
-
             using FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse();
             using Stream datastream = response.GetResponseStream();
             using StreamReader sr = new StreamReader(datastream ?? throw new InvalidOperationException());
@@ -552,15 +538,7 @@ namespace Masuit.Tools.Net
             try
             {
                 string[] dirList = GetDirectories(remoteDirPath);
-                foreach (string str in dirList)
-                {
-                    if (str.Trim() == remoteDirPath.Trim())
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return dirList.Any(str => str.Trim() == remoteDirPath.Trim());
             }
             catch
             {
@@ -574,16 +552,7 @@ namespace Masuit.Tools.Net
         /// <param name="remoteFileName">远程文件名</param>
         public bool FileExist(string remoteFileName)
         {
-            var fileList = GetFiles("*.*");
-            foreach (string str in fileList)
-            {
-                if (str.Trim() == remoteFileName.Trim())
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return GetFiles("*.*").Any(str => str.Trim() == remoteFileName.Trim());
         }
 
         /// <summary>
@@ -593,7 +562,6 @@ namespace Masuit.Tools.Net
         /// <param name="newDir">新建文件夹</param>
         public void MakeDir(string relativePath, string newDir)
         {
-            // dirName = name of the directory to create.
             var reqFtp = (FtpWebRequest)WebRequest.Create(new Uri(Path.Combine("ftp://" + FtpServer, relativePath, newDir).Replace("\\", "/")));
             reqFtp.Method = WebRequestMethods.Ftp.MakeDirectory;
             reqFtp.UseBinary = true;
@@ -615,7 +583,7 @@ namespace Masuit.Tools.Net
             reqFtp.RenameTo = newFilename;
             reqFtp.UseBinary = true;
             reqFtp.Credentials = new NetworkCredential(Username, Password);
-            using FtpWebResponse response = (FtpWebResponse)reqFtp.GetResponse();
+            using var response = (FtpWebResponse)reqFtp.GetResponse();
             using var _ = response.GetResponseStream();
         }
 

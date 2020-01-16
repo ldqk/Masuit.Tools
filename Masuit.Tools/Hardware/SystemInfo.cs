@@ -486,39 +486,6 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        /// <summary>
-        /// 获取IP地址 
-        /// </summary>
-        /// <returns></returns>
-        public static IList<string> GetIPAddress()
-        {
-            //获取IP地址        
-            try
-            {
-                IList<string> list = new List<string>();
-                using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                using var moc = mc.GetInstances();
-                foreach (var mo in moc)
-                {
-                    if ((bool)mo["IPEnabled"])
-                    {
-                        var ar = (Array)mo.Properties["IpAddress"].Value;
-                        var st = ar.GetValue(0).ToString();
-                        list.Add(st);
-                    }
-                }
-
-                return list;
-            }
-            catch (Exception)
-            {
-                return new List<string>()
-                {
-                    "未能获取到当前计算机的IP地址，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。"
-                };
-            }
-        }
-
         /// <summary>  
         /// 运行一个控制台程序并返回其输出参数。  
         /// </summary>  

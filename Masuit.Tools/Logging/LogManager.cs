@@ -33,7 +33,7 @@ namespace Masuit.Tools.Logging
                     foreach (var logItem in LogQueue)
                     {
                         string logPath = logItem.Item1;
-                        string logMergeContent = String.Concat(logItem.Item2, Environment.NewLine, "----------------------------------------------------------------------------------------------------------------------", Environment.NewLine);
+                        string logMergeContent = string.Concat(logItem.Item2, Environment.NewLine, "----------------------------------------------------------------------------------------------------------------------", Environment.NewLine);
                         string[] logArr = temp.FirstOrDefault(d => d[0].Equals(logPath));
                         if (logArr != null)
                         {
@@ -81,7 +81,7 @@ namespace Masuit.Tools.Logging
         public static void Info(string info)
         {
             LogQueue.Enqueue(new Tuple<string, string>(GetLogPath(), $"{Now}   [{Thread.CurrentThread.ManagedThreadId}]   {nameof(info).ToUpper()}  {info}"));
-            LogInfo log = new LogInfo()
+            var log = new LogInfo()
             {
                 LogLevel = LogLevel.Info,
                 Message = info,

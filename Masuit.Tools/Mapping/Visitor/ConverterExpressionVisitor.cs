@@ -53,17 +53,11 @@ namespace Masuit.Tools.Mapping.Visitor
         {
             if (node != null)
             {
-                Expression expression;
-                switch (node.NodeType)
+                return node.NodeType switch
                 {
-                    case ExpressionType.Lambda:
-                        expression = base.Visit((node as LambdaExpression).Body);
-                        break;
-                    default:
-                        expression = base.Visit(node);
-                        break;
-                }
-                return expression;
+                    ExpressionType.Lambda => base.Visit((node as LambdaExpression).Body),
+                    _ => base.Visit(node)
+                };
             }
             return node;
         }
@@ -103,11 +97,7 @@ namespace Masuit.Tools.Mapping.Visitor
 
         private Expression AnalyseDestExpression(Expression expr, Expression expDest)
         {
-            if (expDest.NodeType == ExpressionType.MemberAccess)
-            {
-                return Expression.MakeMemberAccess(expr, (expDest as MemberExpression).Member);
-            }
-            return base.Visit(expDest);
+            return expDest.NodeType == ExpressionType.MemberAccess ? Expression.MakeMemberAccess(expr, (expDest as MemberExpression).Member) : base.Visit(expDest);
         }
     }
 }

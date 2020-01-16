@@ -76,8 +76,7 @@ namespace Masuit.Tools.Mapping.Visitor
                 Expression previousExpression = null;
                 if (_membersToCheck.Count > 1)
                 {
-                    // 在分配值之前测试所有子对象。例如：source.SubClass.SubClass2.MyProperty。是哪个会给：
-                    // source.SubClass!= null? source.SubClass.SubClass2!= null? source.SubClass.SubClass2.MyProperty:DefaultValueOfProperty:DefaultValueOfProperty
+                    // 在分配值之前测试所有子对象。例如：source.SubClass.SubClass2.MyProperty。
                     foreach (MemberExpression item in _membersToCheck)
                     {
                         if (!isFirst) // 不要测试该属性的值。
@@ -123,9 +122,9 @@ namespace Masuit.Tools.Mapping.Visitor
             }
 
             // 默认返回（更改参数），删除lambda表达式的验证。
-            if ((node.NodeType == ExpressionType.Lambda))
+            if (node.NodeType == ExpressionType.Lambda)
             {
-                LambdaExpression lambda = ((LambdaExpression)node);
+                LambdaExpression lambda = (LambdaExpression)node;
                 // 子表达式树
                 if (lambda.Body.NodeType != ExpressionType.Call)
                 {

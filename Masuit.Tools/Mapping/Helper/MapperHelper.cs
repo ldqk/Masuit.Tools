@@ -18,12 +18,9 @@ namespace Masuit.Tools.Mapping.Helper
             // 对于值类型（例如Integer），必须将对象实例化为具有其默认值。
             if (typeObject.BaseType == typeof(ValueType))
             {
-                NewExpression exp = Expression.New(typeObject);
-                LambdaExpression lambda = Expression.Lambda(exp);
-                Delegate constructor = lambda.Compile();
-                defaultValue = constructor.DynamicInvoke();
+                defaultValue = Expression.Lambda(Expression.New(typeObject)).Compile().DynamicInvoke();
             }
-            if (typeObject.IsEnum)
+            else if (typeObject.IsEnum)
             {
                 defaultValue = Enum.Parse(typeObject, Enum.GetNames(typeObject)[0]);
             }

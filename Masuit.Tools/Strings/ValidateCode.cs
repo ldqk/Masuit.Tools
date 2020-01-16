@@ -23,9 +23,10 @@ namespace Masuit.Tools.Strings
         {
             string ch = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890@#$%&?";
             byte[] b = new byte[4];
-            new RNGCryptoServiceProvider().GetBytes(b);
-            Random r = new Random(BitConverter.ToInt32(b, 0));
-            StringBuilder sb = new StringBuilder();
+            using var cpt = new RNGCryptoServiceProvider();
+            cpt.GetBytes(b);
+            var r = new Random(BitConverter.ToInt32(b, 0));
+            var sb = new StringBuilder();
             for (int i = 0; i < length; i++)
             {
                 sb.Append(ch[r.Next(ch.Length)]);
@@ -69,7 +70,7 @@ namespace Masuit.Tools.Strings
                 new Font("楷体", fontSize, FontStyle.Bold | FontStyle.Italic)
             };
             //渐变.
-            var brush = new LinearGradientBrush(new Rectangle(0, 0, image.Width, image.Height), Color.Blue, Color.DarkRed, 1.2f, true);
+            using var brush = new LinearGradientBrush(new Rectangle(0, 0, image.Width, image.Height), Color.Blue, Color.DarkRed, 1.2f, true);
             g.DrawString(validateCode, fonts[new Random().Next(fonts.Length)], brush, 3, 2);
 
             //画图片的前景干扰点

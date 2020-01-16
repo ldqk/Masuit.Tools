@@ -41,7 +41,7 @@ namespace Masuit.Tools.Systems
         {
             if (Count >= Limit)
             {
-                TryDequeue(out var _);
+                TryDequeue(out _);
             }
 
             base.Enqueue(item);

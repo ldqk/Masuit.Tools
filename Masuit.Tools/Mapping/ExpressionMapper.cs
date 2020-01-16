@@ -35,8 +35,8 @@ namespace Masuit.Tools.Mapping
                 Initialize();
             }
             TDest result = null;
-            MapperConfiguration<TSource, TDest> mapper = GetMapper<TSource, TDest>(name);
-            Func<TSource, TDest> query = mapper.GetFuncDelegate();
+            var mapper = GetMapper<TSource, TDest>(name);
+            var query = mapper.GetFuncDelegate();
             if (query != null)
             {
                 result = query(source);
@@ -90,7 +90,7 @@ namespace Masuit.Tools.Mapping
         /// <returns></returns>
         public static MapperConfiguration<TSource, TDest> CreateMap<TSource, TDest>(string name = null) where TSource : class where TDest : class
         {
-            MapperConfigurationBase map = MapperConfigurationCollectionContainer.Instance.Find(typeof(TSource), typeof(TDest), name);
+            var map = MapperConfigurationCollectionContainer.Instance.Find(typeof(TSource), typeof(TDest), name);
             if (map == null)
             {
                 string finalName = string.IsNullOrEmpty(name) ? "s" + MapperConfigurationCollectionContainer.Instance.Count.ToString() : name;
@@ -134,8 +134,7 @@ namespace Masuit.Tools.Mapping
         /// </summary>
         public static void Initialize()
         {
-            MapperConfigurationCollectionContainer configRegister = MapperConfigurationCollectionContainer.Instance;
-            foreach (var t in configRegister)
+            foreach (var t in MapperConfigurationCollectionContainer.Instance)
             {
                 t.Initialize(_constructorFunc);
             }
@@ -164,7 +163,7 @@ namespace Masuit.Tools.Mapping
 
         internal static MapperConfigurationBase GetMapper(Type tSource, Type tDest, string name = null)
         {
-            MapperConfigurationBase mapConfig = MapperConfigurationCollectionContainer.Instance.Find(tSource, tDest, name);
+            var mapConfig = MapperConfigurationCollectionContainer.Instance.Find(tSource, tDest, name);
             if (mapConfig == null)
             {
                 throw new NoFoundMapperException(tSource, tDest);

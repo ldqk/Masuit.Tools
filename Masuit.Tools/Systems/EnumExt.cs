@@ -25,8 +25,12 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static Dictionary<int, string> GetDictionary(this Type enumType)
         {
-            if (!enumType.IsEnum) throw new Exception("给定的类型不是枚举类型");
-            Dictionary<int, string> names = EnumNameValueDict.ContainsKey(enumType) ? EnumNameValueDict[enumType] : new Dictionary<int, string>();
+            if (!enumType.IsEnum)
+            {
+                throw new Exception("给定的类型不是枚举类型");
+            }
+
+            var names = EnumNameValueDict.ContainsKey(enumType) ? EnumNameValueDict[enumType] : new Dictionary<int, string>();
             if (names.Count == 0)
             {
                 names = GetDictionaryItems(enumType);
@@ -38,8 +42,8 @@ namespace Masuit.Tools.Systems
 
         private static Dictionary<int, string> GetDictionaryItems(Type enumType)
         {
-            FieldInfo[] enumItems = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
-            Dictionary<int, string> names = new Dictionary<int, string>(enumItems.Length);
+            var enumItems = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
+            var names = new Dictionary<int, string>(enumItems.Length);
             foreach (FieldInfo enumItem in enumItems)
             {
                 int intValue = (int)enumItem.GetValue(enumType);
@@ -56,8 +60,12 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static Dictionary<string, int> GetValueItems(this Type enumType)
         {
-            if (!enumType.IsEnum) throw new Exception("给定的类型不是枚举类型");
-            Dictionary<string, int> values = EnumValueNameDict.ContainsKey(enumType) ? EnumValueNameDict[enumType] : new Dictionary<string, int>();
+            if (!enumType.IsEnum)
+            {
+                throw new Exception("给定的类型不是枚举类型");
+            }
+
+            var values = EnumValueNameDict.ContainsKey(enumType) ? EnumValueNameDict[enumType] : new Dictionary<string, int>();
             if (values.Count == 0)
             {
                 values = GetValueNameItems(enumType);
@@ -69,9 +77,9 @@ namespace Masuit.Tools.Systems
 
         private static Dictionary<string, int> GetValueNameItems(Type enumType)
         {
-            FieldInfo[] enumItems = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
-            Dictionary<string, int> values = new Dictionary<string, int>(enumItems.Length);
-            foreach (FieldInfo enumItem in enumItems)
+            var enumItems = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
+            var values = new Dictionary<string, int>(enumItems.Length);
+            foreach (var enumItem in enumItems)
             {
                 values[enumItem.Name] = (int)enumItem.GetValue(enumType);
             }
@@ -88,7 +96,11 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static int GetValue(this Type enumType, string name)
         {
-            if (!enumType.IsEnum) throw new Exception("给定的类型不是枚举类型");
+            if (!enumType.IsEnum)
+            {
+                throw new Exception("给定的类型不是枚举类型");
+            }
+
             Dictionary<string, int> enumDict = GetValueNameItems(enumType);
             return enumDict.ContainsKey(name) ? enumDict[name] : enumDict.Select(d => d.Value).FirstOrDefault();
         }
@@ -102,19 +114,12 @@ namespace Masuit.Tools.Systems
         public static Type GetEnumType(Assembly assembly, string typeName)
         {
             _enumTypeDict ??= LoadEnumTypeDict(assembly);
-            if (_enumTypeDict.ContainsKey(typeName))
-            {
-                return _enumTypeDict[typeName];
-            }
-
-            return null;
+            return _enumTypeDict.ContainsKey(typeName) ? _enumTypeDict[typeName] : null;
         }
 
         private static ConcurrentDictionary<string, Type> LoadEnumTypeDict(Assembly assembly)
         {
-            Type[] typeArray = assembly.GetTypes();
-            Dictionary<string, Type> dict = typeArray.Where(o => o.IsEnum).ToDictionary(o => o.Name, o => o);
-            return new ConcurrentDictionary<string, Type>(dict);
+            return new ConcurrentDictionary<string, Type>(assembly.GetTypes().Where(o => o.IsEnum).ToDictionary(o => o.Name, o => o));
         }
 
 
@@ -124,13 +129,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static Dictionary<string, int> GetDescriptionAndValue(this Type enumType)
         {
-            Dictionary<string, int> dicResult = new Dictionary<string, int>();
-            foreach (object e in Enum.GetValues(enumType))
-            {
-                dicResult.Add(GetDescription(e as Enum), (int)e);
-            }
-
-            return dicResult;
+            return Enum.GetValues(enumType).Cast<object>().ToDictionary(e => GetDescription(e as Enum), e => (int)e);
         }
 
         /// <summary>
@@ -139,8 +138,8 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static string GetDescription(this Enum en)
         {
-            Type type = en.GetType(); //获取类型  
-            MemberInfo[] memberInfos = type.GetMember(en.ToString()); //获取成员  
+            var type = en.GetType(); //获取类型  
+            var memberInfos = type.GetMember(en.ToString()); //获取成员  
             if (memberInfos.Any())
             {
                 if (memberInfos[0].GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attrs && attrs.Length > 0)
@@ -158,11 +157,11 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>
         public static string GetDisplay(this Enum en)
         {
-            Type type = en.GetType(); //获取类型  
-            MemberInfo[] memberInfos = type.GetMember(en.ToString()); //获取成员  
+            var type = en.GetType(); //获取类型  
+            var memberInfos = type.GetMember(en.ToString()); //获取成员  
             if (memberInfos.Any())
             {
-                if (memberInfos[0]?.GetCustomAttributes(typeof(DisplayAttribute), false) is DisplayAttribute[] attrs && attrs.Length > 0)
+                if (memberInfos[0].GetCustomAttributes(typeof(DisplayAttribute), false) is DisplayAttribute[] attrs && attrs.Length > 0)
                 {
                     return attrs[0].Name; //返回当前描述  
                 }
@@ -179,8 +178,7 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>  
         public static String ToEnumString(this int value, Type enumType)
         {
-            NameValueCollection nvc = GetEnumStringFromEnumValue(enumType);
-            return nvc[value.ToString()];
+            return GetEnumStringFromEnumValue(enumType)[value.ToString()];
         }
 
         /// <summary>  
@@ -190,8 +188,8 @@ namespace Masuit.Tools.Systems
         /// <returns></returns>  
         public static NameValueCollection GetEnumStringFromEnumValue(Type enumType)
         {
-            NameValueCollection nvc = new NameValueCollection();
-            FieldInfo[] fields = enumType.GetFields();
+            var nvc = new NameValueCollection();
+            var fields = enumType.GetFields();
             foreach (FieldInfo field in fields)
             {
                 if (field.FieldType.IsEnum)

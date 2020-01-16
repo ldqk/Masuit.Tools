@@ -77,7 +77,6 @@ namespace Masuit.Tools.AspNetCore.Mime
         {
             fileExtension = (fileExtension ?? string.Empty).ToLower();
             fileExtension = fileExtension.Trim().StartsWith(".") ? fileExtension.Replace(".", "") : fileExtension;
-
             return MimeTypes.ContainsKey(fileExtension) ? MimeTypes[fileExtension] : DefaultMime;
         }
 
@@ -104,6 +103,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             {
                 return match.Groups[1].Value;
             }
+
             return null;
         }
     }

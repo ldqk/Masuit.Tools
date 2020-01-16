@@ -14,7 +14,7 @@ namespace Masuit.Tools.Net
         /// <param name="cookiename">cookiename</param>
         public static void Clear(string cookiename)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies[cookiename];
+            var cookie = HttpContext.Current.Request.Cookies[cookiename];
             if (cookie != null)
             {
                 cookie.Expires = DateTime.Now.AddYears(-3);
@@ -30,7 +30,7 @@ namespace Masuit.Tools.Net
             int n = HttpContext.Current.Response.Cookies.Count;
             for (int i = 0; i < n; i++)
             {
-                HttpCookie myCookie = HttpContext.Current.Response.Cookies[i];
+                var myCookie = HttpContext.Current.Response.Cookies[i];
                 myCookie.Expires = DateTime.Now.AddDays(-1);
                 HttpContext.Current.Response.Cookies.Add(myCookie);
             }
@@ -43,7 +43,7 @@ namespace Masuit.Tools.Net
         /// <returns>Cookie值</returns>
         public static string GetCookieValue(string cookiename)
         {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies[cookiename];
+            var cookie = HttpContext.Current.Request.Cookies[cookiename];
             string str = null;
             if (cookie != null)
             {
@@ -61,12 +61,11 @@ namespace Masuit.Tools.Net
         /// <param name="expires">过期时间 DateTime</param>
         public static void SetCookie(string cookiename, string cookievalue, DateTime expires)
         {
-            HttpCookie cookie = new HttpCookie(cookiename)
+            HttpContext.Current.Response.Cookies.Add(new HttpCookie(cookiename)
             {
                 Value = cookievalue,
                 Expires = expires
-            };
-            HttpContext.Current.Response.Cookies.Add(cookie);
+            });
         }
     }
 }

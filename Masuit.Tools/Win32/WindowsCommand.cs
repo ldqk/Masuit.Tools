@@ -24,7 +24,7 @@ namespace Masuit.Tools.Win32
             if (!string.IsNullOrEmpty(dosCommand))
             {
                 using var process = new Process();
-                ProcessStartInfo startinfo = new ProcessStartInfo(); //创建进程时使用的一组值，如下面的属性  
+                var startinfo = new ProcessStartInfo(); //创建进程时使用的一组值，如下面的属性  
                 startinfo.FileName = "cmd.exe"; //设定需要执行的命令程序  
                 //以下是隐藏cmd窗口的方法  
                 startinfo.Arguments = "/c" + dosCommand; //设定参数，要输入到命令程序的字符，其中"/c"表示执行完命令后马上退出  
@@ -33,7 +33,6 @@ namespace Masuit.Tools.Win32
                 startinfo.RedirectStandardOutput = true; //重定向输出，而不是默认的显示在dos控制台上  
                 startinfo.CreateNoWindow = true; //不创建窗口  
                 process.StartInfo = startinfo;
-
                 if (process.Start()) //开始进程  
                 {
                     if (outtime == 0)

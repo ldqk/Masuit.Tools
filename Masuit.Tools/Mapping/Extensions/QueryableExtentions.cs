@@ -1,5 +1,4 @@
-﻿using Masuit.Tools.Mapping.Core;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -100,10 +99,10 @@ namespace Masuit.Tools.Mapping.Extensions
 
         private static TQueryable CreateSortedMethodCall<TSource, TDest, TQueryable>(IQueryable<TSource> query, string methodName, string sortedPropertySourceName) where TSource : class where TDest : class where TQueryable : class, IQueryable<TSource>
         {
-            MapperConfiguration<TSource, TDest> mapper = ExpressionMapper.GetMapper<TSource, TDest>();
+            var mapper = ExpressionMapper.GetMapper<TSource, TDest>();
             var prop = mapper.GetLambdaDest(sortedPropertySourceName);
             var lambda = mapper.GetSortedExpression(sortedPropertySourceName);
-            MethodCallExpression resultExp = Expression.Call(typeof(Queryable), methodName, new Type[]
+            var resultExp = Expression.Call(typeof(Queryable), methodName, new Type[]
             {
                 typeof(TSource),
                 prop.Type

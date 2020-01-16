@@ -161,7 +161,6 @@ namespace Masuit.Tools.Net
             }
 
             OrderByRemaining(PartialDownloaderList);
-
             int rem = PartialDownloaderList[0].RemainingBytes;
             if (rem < 50 * 1024)
             {
@@ -178,10 +177,8 @@ namespace Masuit.Tools.Net
             }
 
             PartialDownloaderList[0].To = from - 1;
-
             WaitOrResumeAll(PartialDownloaderList, false);
-
-            PartialDownloader temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, true);
+            var temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, true);
             temp.DownloadPartCompleted += temp_DownloadPartCompleted;
             temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
             PartialDownloaderList.Add(temp);
@@ -216,13 +213,17 @@ namespace Masuit.Tools.Net
             int maximumPart = (int)(Size / (25 * 1024));
             maximumPart = maximumPart == 0 ? 1 : maximumPart;
             if (!_rangeAllowed)
+            {
                 NumberOfParts = 1;
+            }
             else if (NumberOfParts > maximumPart)
+            {
                 NumberOfParts = maximumPart;
+            }
 
             for (int i = 0; i < NumberOfParts; i++)
             {
-                PartialDownloader temp = CreateNewPd(i, NumberOfParts, Size);
+                var temp = CreateNewPd(i, NumberOfParts, Size);
                 temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
                 temp.DownloadPartCompleted += temp_DownloadPartCompleted;
                 PartialDownloaderList.Add(temp);
@@ -281,12 +282,16 @@ namespace Masuit.Tools.Net
         /// <param name="wait"></param>
         public static void WaitOrResumeAll(List<PartialDownloader> list, bool wait)
         {
-            foreach (PartialDownloader item in list)
+            foreach (var item in list)
             {
                 if (wait)
+                {
                     item.Wait();
+                }
                 else
+                {
                     item.ResumeAfterWait();
+                }
             }
         }
 
@@ -365,13 +370,11 @@ namespace Masuit.Tools.Net
         /// </summary>
         public void Pause()
         {
-            foreach (var t in PartialDownloaderList)
+            foreach (var t in PartialDownloaderList.Where(t => !t.Completed))
             {
-                if (!t.Completed)
-                    t.Stop();
+                t.Stop();
             }
 
-            //Setting a Thread.Sleep ensures all downloads are stopped and exit from loop.
             Thread.Sleep(200);
         }
 
@@ -396,9 +399,12 @@ namespace Masuit.Tools.Net
                 {
                     int from = PartialDownloaderList[i].CurrentPosition + 1;
                     int to = PartialDownloaderList[i].To;
-                    if (from > to) continue;
-                    PartialDownloader temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, _rangeAllowed);
+                    if (from > to)
+                    {
+                        continue;
+                    }
 
+                    var temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, _rangeAllowed);
                     temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
                     temp.DownloadPartCompleted += temp_DownloadPartCompleted;
                     PartialDownloaderList.Add(temp);

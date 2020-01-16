@@ -33,8 +33,7 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                Socket socket = listener.AcceptSocket();
-                return socket;
+                return listener.AcceptSocket();
             }
             catch (Exception)
             {
@@ -51,8 +50,7 @@ namespace Masuit.Tools.Net
         {
             try
             {
-                TcpClient client = listener.AcceptTcpClient();
-                return client.GetStream();
+                return listener.AcceptTcpClient().GetStream();
             }
             catch (Exception)
             {
@@ -161,7 +159,10 @@ namespace Masuit.Tools.Net
             {
                 var recv = socket.Receive(msg, offset, dataleft, 0);
                 if (recv == 0)
+                {
                     break;
+                }
+
                 offset += recv;
                 dataleft -= recv;
             }
@@ -211,7 +212,10 @@ namespace Masuit.Tools.Net
             {
                 //剩下的字节数是否小于缓存大小
                 if (lastdata < m_maxpacket)
+                {
                     receivedata = lastdata; //就只接收剩下的字节数
+                }
+
                 int count = socket.Receive(bytecoll, 0, receivedata, 0);
                 if (count > 0)
                 {
@@ -224,16 +228,19 @@ namespace Masuit.Tools.Net
                 {
                     mark++;
                     if (mark == 10)
+                    {
                         break;
+                    }
                 }
 
                 if (offset == length)
+                {
                     break;
+                }
             }
 
             stream.Seek(0, SeekOrigin.Begin); //必须要这个 或者stream.Position = 0;
             T t = (T)format.Deserialize(stream);
-            stream.Close();
             return t;
         }
 
@@ -346,11 +353,7 @@ namespace Masuit.Tools.Net
         {
             string str = Encoding.UTF8.GetString(length);
             str = str.TrimEnd('*');
-            ; //("*", "");
-            int _length = 0;
-            if (int.TryParse(str, out _length))
-                return _length;
-            return 0;
+            return int.TryParse(str, out var _length) ? _length : 0;
         }
 
         private static int i;
@@ -367,7 +370,10 @@ namespace Masuit.Tools.Net
         public static string GetPath(string directory, string file)
         {
             if (markPath == string.Empty)
+            {
                 markPath = Path.Combine(directory, file);
+            }
+
             string path = Path.Combine(directory, file);
             if (File.Exists(path))
             {
@@ -403,12 +409,17 @@ namespace Masuit.Tools.Net
             {
                 //如过剩下的字节数 小于 每次发送字节数
                 if (dataleft < senddata)
+                {
                     senddata = dataleft;
+                }
+
                 int count = socket.Send(msg, offset, senddata, SocketFlags.None);
                 offset += count;
                 dataleft -= count;
                 if (offset == size)
+                {
                     break;
+                }
             }
 
             return offset;

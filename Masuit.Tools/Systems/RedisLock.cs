@@ -77,7 +77,7 @@ namespace Masuit.Tools.Systems
 
         private readonly ConcurrentDictionary<string, CancellationTokenSource> _expirationRenewalMap = new ConcurrentDictionary<string, CancellationTokenSource>();
 
-        private ConnectionMultiplexer _server;
+        private readonly ConnectionMultiplexer _server;
 
         /// <summary>
         /// 默认连接127.0.0.1:6379,synctimeout=20000
@@ -187,8 +187,6 @@ namespace Masuit.Tools.Systems
 
         private void Subscriber(RedisKey resource)
         {
-            //Console.WriteLine("Thread ID:" + Thread.CurrentThread.ManagedThreadId + "　订阅广播");
-            //var aa = Thread.CurrentThread.ManagedThreadId;
             ISubscriber sub = _server.GetSubscriber();
             sub.Subscribe(GetChannelName(resource), (channel, message) =>
             {

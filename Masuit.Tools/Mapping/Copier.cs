@@ -21,53 +21,55 @@ namespace Masuit.Tools.Mapping
         /// <returns></returns>
         public static T Copy(T source)
         {
-            if (_func == null)
+            if (_func != null)
             {
-                List<MemberBinding> memberBindings = new List<MemberBinding>();
-                foreach (var item in typeof(T).GetProperties())
-                {
-                    if (DictRule.ContainsKey(item.Name))
-                    {
-                        MemberBinding memberBinding = Expression.Bind(item, DictRule[item.Name]);
-                        memberBindings.Add(memberBinding);
-                    }
-                    else
-                    {
-                        var tInProperty = typeof(T).GetProperty(item.Name);
-                        var tInField = typeof(T).GetField(item.Name);
-                        if (tInProperty != null || tInField != null)
-                        {
-                            MemberExpression property = Expression.PropertyOrField(ParameterExpression, item.Name);
-                            MemberBinding memberBinding = Expression.Bind(item, property);
-                            memberBindings.Add(memberBinding);
-                        }
-                    }
-                }
-
-                foreach (var item in typeof(T).GetFields())
-                {
-                    if (DictRule.ContainsKey(item.Name))
-                    {
-                        MemberBinding memberBinding = Expression.Bind(item, DictRule[item.Name]);
-                        memberBindings.Add(memberBinding);
-                    }
-                    else
-                    {
-                        var tInProperty = typeof(T).GetProperty(item.Name);
-                        var tInField = typeof(T).GetField(item.Name);
-                        if (tInProperty != null || tInField != null)
-                        {
-                            MemberExpression property = Expression.PropertyOrField(ParameterExpression, item.Name);
-                            MemberBinding memberBinding = Expression.Bind(item, property);
-                            memberBindings.Add(memberBinding);
-                        }
-                    }
-                }
-
-                MemberInitExpression memberInitExpression = Expression.MemberInit(Expression.New(typeof(T)), memberBindings.ToArray());
-                Expression<Func<T, T>> lambda = Expression.Lambda<Func<T, T>>(memberInitExpression, ParameterExpression);
-                _func = lambda.Compile();
+                return _func.Invoke(source);
             }
+
+            var memberBindings = new List<MemberBinding>();
+            foreach (var item in typeof(T).GetProperties())
+            {
+                if (DictRule.ContainsKey(item.Name))
+                {
+                    MemberBinding memberBinding = Expression.Bind(item, DictRule[item.Name]);
+                    memberBindings.Add(memberBinding);
+                }
+                else
+                {
+                    var tInProperty = typeof(T).GetProperty(item.Name);
+                    var tInField = typeof(T).GetField(item.Name);
+                    if (tInProperty != null || tInField != null)
+                    {
+                        MemberExpression property = Expression.PropertyOrField(ParameterExpression, item.Name);
+                        MemberBinding memberBinding = Expression.Bind(item, property);
+                        memberBindings.Add(memberBinding);
+                    }
+                }
+            }
+
+            foreach (var item in typeof(T).GetFields())
+            {
+                if (DictRule.ContainsKey(item.Name))
+                {
+                    MemberBinding memberBinding = Expression.Bind(item, DictRule[item.Name]);
+                    memberBindings.Add(memberBinding);
+                }
+                else
+                {
+                    var tInProperty = typeof(T).GetProperty(item.Name);
+                    var tInField = typeof(T).GetField(item.Name);
+                    if (tInProperty != null || tInField != null)
+                    {
+                        MemberExpression property = Expression.PropertyOrField(ParameterExpression, item.Name);
+                        MemberBinding memberBinding = Expression.Bind(item, property);
+                        memberBindings.Add(memberBinding);
+                    }
+                }
+            }
+
+            var memberInitExpression = Expression.MemberInit(Expression.New(typeof(T)), memberBindings.ToArray());
+            var lambda = Expression.Lambda<Func<T, T>>(memberInitExpression, ParameterExpression);
+            _func = lambda.Compile();
             return _func.Invoke(source);
         }
     }

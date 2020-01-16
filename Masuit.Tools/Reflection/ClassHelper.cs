@@ -12,7 +12,7 @@ namespace Masuit.Tools.Reflection
     /// </summary>  
     public static class ClassHelper
     {
-        #region 公有方法  
+        #region 公有方法
 
         /// <summary>  
         /// 根据类的类型型创建类实例。  
@@ -108,7 +108,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>返回处理过的类型的实例。</returns>  
         public static Type AddProperty(this Type classType, CustPropertyInfo cpi)
         {
-            List<CustPropertyInfo> lcpi = new List<CustPropertyInfo>
+            var lcpi = new List<CustPropertyInfo>
             {
                 cpi
             };
@@ -133,10 +133,12 @@ namespace Masuit.Tools.Reflection
             {
                 dest.SetProperty(originProperty.Name, originProperty.GetValue(obj));
             }
+
             foreach (var cpi in customs)
             {
                 dest.SetProperty(cpi.Key, cpi.Value);
             }
+
             return dest;
         }
 
@@ -148,7 +150,10 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object AddProperty(this object obj, CustPropertyInfo cpi)
         {
-            return AddProperty(obj, new List<CustPropertyInfo>() { cpi });
+            return AddProperty(obj, new List<CustPropertyInfo>()
+            {
+                cpi
+            });
         }
 
         /// <summary>
@@ -160,7 +165,10 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object AddProperty(this object obj, string propertyName, object propertyValue)
         {
-            return AddProperty(obj, new List<CustPropertyInfo>() { new CustPropertyInfo(propertyValue.GetType(), propertyName, propertyValue) });
+            return AddProperty(obj, new List<CustPropertyInfo>()
+            {
+                new CustPropertyInfo(propertyValue.GetType(), propertyName, propertyValue)
+            });
         }
 
         /// <summary>  
@@ -171,15 +179,12 @@ namespace Masuit.Tools.Reflection
         /// <returns>返回处理过的类型的实例。</returns>  
         public static Type DeleteProperty(this Type classType, string propertyName)
         {
-            List<string> ls = new List<string>
+            //合并先前的属性,以便一起在下一步进行处理。  
+            //把属性加入到Type。  
+            return AddPropertyToType(classType, SeparateProperty(classType, new List<string>
             {
                 propertyName
-            };
-
-            //合并先前的属性,以便一起在下一步进行处理。  
-            List<CustPropertyInfo> lcpi = SeparateProperty(classType, ls);
-            //把属性加入到Type。  
-            return AddPropertyToType(classType, lcpi);
+            }));
         }
 
 
@@ -191,10 +196,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>返回处理过的类型的实例。</returns>  
         public static Type DeleteProperty(this Type classType, List<string> propertyNames)
         {
-            //合并先前的属性,以便一起在下一步进行处理。  
-            List<CustPropertyInfo> lcpi = SeparateProperty(classType, propertyNames);
-            //把属性加入到Type。  
-            return AddPropertyToType(classType, lcpi);
+            return AddPropertyToType(classType, SeparateProperty(classType, propertyNames));
         }
 
         /// <summary>
@@ -205,17 +207,14 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object DeleteProperty(this object obj, List<string> propertyNames)
         {
-            PropertyInfo[] oldProperties = obj.GetType().GetProperties();
-            Type t = obj.GetType();
-            foreach (string p in propertyNames)
-            {
-                t = t.DeleteProperty(p);
-            }
+            var t = obj.GetType();
+            t = propertyNames.Aggregate(t, (current, p) => current.DeleteProperty(p));
             var newInstance = t.CreateInstance();
             foreach (var p in newInstance.GetProperties())
             {
-                newInstance.SetProperty(p.Name, oldProperties.FirstOrDefault(i => i.Name.Equals(p.Name)).GetValue(obj));
+                newInstance.SetProperty(p.Name, obj.GetType().GetProperties().FirstOrDefault(i => i.Name.Equals(p.Name)).GetValue(obj));
             }
+
             return newInstance;
         }
 
@@ -227,11 +226,15 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object DeleteProperty(this object obj, string property)
         {
-            return DeleteProperty(obj, new List<string>() { property });
+            return DeleteProperty(obj, new List<string>()
+            {
+                property
+            });
         }
+
         #endregion
 
-        #region 私有方法  
+        #region 私有方法
 
         /// <summary>  
         /// 把类型的实例t和lcpi参数里的属性进行合并。  
@@ -240,35 +243,22 @@ namespace Masuit.Tools.Reflection
         /// <param name="lcpi">里面包含属性列表的信息。</param>  
         private static void MergeProperty(Type t, List<CustPropertyInfo> lcpi)
         {
-            foreach (PropertyInfo pi in t.GetProperties())
-            {
-                CustPropertyInfo cpi = new CustPropertyInfo(pi.PropertyType, pi.Name);
-                lcpi.Add(cpi);
-            }
+            lcpi.AddRange(t.GetProperties().Select(pi => new CustPropertyInfo(pi.PropertyType, pi.Name)));
         }
 
 
         /// <summary>  
         /// 从类型的实例t的属性移除属性列表lcpi,返回的新属性列表在lcpi中。  
         /// </summary>  
-        /// <param name="t">类型的实例t。</param>  
+        /// <param name="type">类型的实例t。</param>  
         /// <param name="ls">要移除的属性列表。</param>  
-        private static List<CustPropertyInfo> SeparateProperty(Type t, List<string> ls)
+        private static List<CustPropertyInfo> SeparateProperty(Type type, List<string> ls)
         {
-            List<CustPropertyInfo> ret = new List<CustPropertyInfo>();
-            foreach (PropertyInfo pi in t.GetProperties())
+            return type.GetProperties().SelectMany(pi => ls, (pi, s) => new
             {
-                foreach (string s in ls)
-                {
-                    if (pi.Name != s)
-                    {
-                        CustPropertyInfo cpi = new CustPropertyInfo(pi.PropertyType, pi.Name);
-                        ret.Add(cpi);
-                    }
-                }
-            }
-
-            return ret;
+                pi,
+                s
+            }).Where(t => t.pi.Name != t.s).Select(t => new CustPropertyInfo(t.pi.PropertyType, t.pi.Name)).ToList();
         }
 
 
@@ -286,23 +276,18 @@ namespace Masuit.Tools.Reflection
             foreach (CustPropertyInfo cpi in lcpi)
             {
                 //定义字段。  
-                FieldBuilder customerNameBldr = myTypeBuilder.DefineField(cpi.FieldName, cpi.Type, FieldAttributes.Private);
+                var customerNameBldr = myTypeBuilder.DefineField(cpi.FieldName, cpi.Type, FieldAttributes.Private);
 
-                //customerNameBldr.SetConstant("11111111");
                 //定义属性。  
                 //最后一个参数为null,因为属性没有参数。  
                 var custNamePropBldr = myTypeBuilder.DefineProperty(cpi.PropertyName, PropertyAttributes.HasDefault, cpi.Type, null);
 
-                //custNamePropBldr.SetConstant("111111111");
                 //定义Get方法。  
                 var custNameGetPropMthdBldr = myTypeBuilder.DefineMethod(cpi.GetPropertyMethodName, getSetAttr, cpi.Type, Type.EmptyTypes);
-
                 var custNameGetIL = custNameGetPropMthdBldr.GetILGenerator();
-
                 try
                 {
                     custNameGetIL.Emit(OpCodes.Ldarg_0);
-                    //custNameGetIL.Emit(OpCodes.Ldfld, customerNameBldr);  
                     custNameGetIL.Emit(OpCodes.Ldfld, customerNameBldr);
                     custNameGetIL.Emit(OpCodes.Ret);
                 }
@@ -318,12 +303,10 @@ namespace Masuit.Tools.Reflection
                 });
 
                 var custNameSetIL = custNameSetPropMthdBldr.GetILGenerator();
-
                 custNameSetIL.Emit(OpCodes.Ldarg_0);
                 custNameSetIL.Emit(OpCodes.Ldarg_1);
                 custNameSetIL.Emit(OpCodes.Stfld, customerNameBldr);
                 custNameSetIL.Emit(OpCodes.Ret);
-                //custNamePropBldr.SetConstant("ceshi");  
                 //把创建的两个方法(Get,Set)加入到PropertyBuilder中。  
                 custNamePropBldr.SetGetMethod(custNameGetPropMthdBldr);
                 custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
@@ -366,7 +349,7 @@ namespace Masuit.Tools.Reflection
 
         #endregion
 
-        #region Class辅助类  
+        #region Class辅助类
 
         /// <summary>  
         /// 自定义的属性信息类型。  

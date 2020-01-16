@@ -26,7 +26,7 @@ namespace Masuit.Tools.Reflection
             object objRet = null;
             if (!string.IsNullOrEmpty(propertyName))
             {
-                PropertyDescriptor descriptor = TypeDescriptor.GetProperties(obj).Find(propertyName, true);
+                var descriptor = TypeDescriptor.GetProperties(obj).Find(propertyName, true);
                 if (descriptor != null)
                 {
                     objRet = descriptor.GetValue(obj);
@@ -52,14 +52,14 @@ namespace Masuit.Tools.Reflection
         /// <exception cref="InvalidProgramException">非法异常</exception>
         public static T InvokeMethodOrGetProperty<T>(this Type refType, string funName, object[] objInitial, params object[] funParams)
         {
-            MemberInfo[] mis = refType.GetMember(funName);
+            var mis = refType.GetMember(funName);
             if (mis.Length < 1)
             {
                 throw new InvalidProgramException(string.Concat("函数/方法 [", funName, "] 在指定类型(", refType.ToString(), ")中不存在！"));
             }
 
             MethodInfo targetMethod = null;
-            StringBuilder pb = new StringBuilder();
+            var pb = new StringBuilder();
             foreach (MemberInfo mi in mis)
             {
                 if (mi.MemberType != MemberTypes.Method)

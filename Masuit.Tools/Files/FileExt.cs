@@ -58,7 +58,6 @@ namespace Masuit.Tools.Files
             byte[] buffer = ms.ToArray(); // 转化为byte格式存储
             fs.Write(buffer, 0, buffer.Length);
             fs.Flush();
-            buffer = null;
         }
 
         /// <summary>
@@ -83,19 +82,13 @@ namespace Masuit.Tools.Files
         /// <returns>哈希值16进制字符串</returns>
         private static string HashFile(Stream fs, string algo)
         {
-            HashAlgorithm crypto;
-            switch (algo)
+            var hash = (algo switch
             {
-                case "sha1":
-                    crypto = new SHA1CryptoServiceProvider();
-                    break;
-                default:
-                    crypto = new MD5CryptoServiceProvider();
-                    break;
-            }
-            byte[] retVal = crypto.ComputeHash(fs);
-            StringBuilder sb = new StringBuilder();
-            foreach (var t in retVal)
+                "sha1" => (HashAlgorithm)new SHA1CryptoServiceProvider(),
+                _ => new MD5CryptoServiceProvider()
+            }).ComputeHash(fs);
+            var sb = new StringBuilder();
+            foreach (var t in hash)
             {
                 sb.Append(t.ToString("x2"));
             }
