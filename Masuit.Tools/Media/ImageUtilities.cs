@@ -34,7 +34,7 @@ namespace Masuit.Tools.Media
             }
 
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
-            using var initImage = Image.FromStream(fromFile, true);
+            var initImage = Image.FromStream(fromFile, true);
 
             //原图宽高均小于模版，不作处理，直接保存
             if ((initImage.Width <= side) && (initImage.Height <= side))
@@ -92,6 +92,7 @@ namespace Masuit.Tools.Media
                     //将截图对象赋给原图
                     initImage = (Image)pickedImage.Clone();
                     //释放截图资源
+                    initImage.Dispose();
                     pickedG.Dispose();
                     pickedImage.Dispose();
                 }

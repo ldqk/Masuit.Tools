@@ -1,14 +1,14 @@
 ﻿using Masuit.Tools.Logging;
-using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 
 namespace Masuit.Tools.Hardware
 {
@@ -487,69 +487,22 @@ namespace Masuit.Tools.Hardware
         }
 
         /// <summary>  
-        /// 运行一个控制台程序并返回其输出参数。  
+        /// 获取当前使用的IP  
         /// </summary>  
-        /// <param name="filename">程序名</param>  
-        /// <param name="arguments">输入参数</param>
-        /// <param name="recordLog">是否记录日志</param>
         /// <returns></returns>  
-        public static string RunApp(string filename, string arguments, bool recordLog)
+        public static IPAddress GetLocalUsedIP()
         {
-            try
-            {
-                if (recordLog)
-                {
-                    Trace.WriteLine(filename + " " + arguments);
-                }
-
-                using var proc = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = filename,
-                        CreateNoWindow = true,
-                        Arguments = arguments,
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false
-                    }
-                };
-                proc.Start();
-
-                using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
-                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
-                {
-                    proc.Kill();
-                }
-
-                string txt = sr.ReadToEnd();
-                if (recordLog)
-                {
-                    Trace.WriteLine(txt);
-                }
-                return txt;
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                return ex.Message;
-            }
+            return NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).SelectMany(n => n.GetIPProperties().UnicastAddresses.Select(u => u.Address)).FirstOrDefault();
         }
 
-        /// <summary>
-        /// 获取操作系统版本
-        /// </summary>
-        /// <returns></returns>
-        public static string GetOsVersion()
+        /// <summary>  
+        /// 获取本机所有的ip地址
+        /// </summary>  
+        /// <returns></returns>  
+        public static List<UnicastIPAddressInformation> GetLocalIPs()
         {
-            try
-            {
-                return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
-            }
-            catch (Exception)
-            {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
-            }
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up); //所有网卡信息
+            return interfaces.SelectMany(n => n.GetIPProperties().UnicastAddresses).ToList();
         }
 
         #region 将速度值格式化成字节单位

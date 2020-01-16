@@ -1,11 +1,9 @@
 ﻿using Masuit.Tools.Hardware;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -67,24 +65,6 @@ namespace Masuit.Tools.Win32
         }
 
         /// <summary>  
-        /// 获取当前使用的IP  
-        /// </summary>  
-        /// <returns></returns>  
-        public static IPAddress GetLocalUsedIP()
-        {
-            return NetworkInterface.GetAllNetworkInterfaces().Select(p => p.GetIPProperties()).SelectMany(p => p.UnicastAddresses).Where(p => p.DuplicateAddressDetectionState == DuplicateAddressDetectionState.Preferred && !IPAddress.IsLoopback(p.Address)).Select(x => x.Address).FirstOrDefault();
-        }
-
-        /// <summary>  
-        /// 获取本机所有的ip地址
-        /// </summary>  
-        /// <returns></returns>  
-        public static List<UnicastIPAddressInformation> GetLocalIPs()
-        {
-            return NetworkInterface.GetAllNetworkInterfaces().Select(p => p.GetIPProperties()).SelectMany(p => p.UnicastAddresses).Where(p => !IPAddress.IsLoopback(p.Address)).ToList();
-        }
-
-        /// <summary>  
         /// 运行一个控制台程序并返回其输出参数。  
         /// </summary>  
         /// <param name="filename">程序名</param>  
@@ -133,6 +113,22 @@ namespace Masuit.Tools.Win32
             {
                 Trace.WriteLine(ex);
                 return ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// 获取操作系统版本
+        /// </summary>
+        /// <returns></returns>
+        public static string GetOsVersion()
+        {
+            try
+            {
+                return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
+            }
+            catch (Exception)
+            {
+                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
             }
         }
     }
@@ -216,7 +212,7 @@ namespace Masuit.Tools.Win32
             MacAddress = SystemInfo.GetMacAddress()[0];
             DiskId = GetDiskID();
             DiskSize = GetSizeOfDisk();
-            IpAddress = Windows.GetLocalUsedIP().ToString();
+            IpAddress = SystemInfo.GetLocalUsedIP().ToString();
             LoginUserName = GetUserName();
             SystemType = GetSystemType();
             TotalPhysicalMemory = GetTotalPhysicalMemory();
