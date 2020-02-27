@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
 namespace Masuit.Tools.DateTimeExt
@@ -8,8 +8,6 @@ namespace Masuit.Tools.DateTimeExt
     /// </summary>
     public static class DateUtil
     {
-        private static readonly DateTime Start1970 = DateTime.Parse("1970-01-01 00:00:00");
-
         /// <summary>
         /// 返回相对于当前时间的相对天数
         /// </summary>
@@ -55,49 +53,49 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalSeconds(this DateTime dt) => (dt - Start1970).TotalSeconds;
+        public static double GetTotalSeconds(this DateTime dt) => new DateTimeOffset(dt).ToUnixTimeSeconds();
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的毫秒数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalMilliseconds(this DateTime dt) => (dt - Start1970).TotalMilliseconds;
+        public static double GetTotalMilliseconds(this DateTime dt) => new DateTimeOffset(dt).ToUnixTimeMilliseconds();
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的微秒时间戳
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static long GetTotalMicroseconds(this DateTime dt) => (dt - Start1970).Ticks / 10;
+        public static long GetTotalMicroseconds(this DateTime dt) => new DateTimeOffset(dt).Ticks / 10;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的纳秒时间戳
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static long GetTotalNanoseconds(this DateTime dt) => (dt - Start1970).Ticks * 100 + Stopwatch.GetTimestamp() % 100;
+        public static long GetTotalNanoseconds(this DateTime dt) => new DateTimeOffset(dt).Ticks * 100 + Stopwatch.GetTimestamp() % 100;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的分钟数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalMinutes(this DateTime dt) => (dt - Start1970).TotalMinutes;
+        public static double GetTotalMinutes(this DateTime dt) => new DateTimeOffset(dt).Offset.TotalMinutes;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的小时数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalHours(this DateTime dt) => (dt - Start1970).TotalHours;
+        public static double GetTotalHours(this DateTime dt) => new DateTimeOffset(dt).Offset.TotalHours;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01 00:00:00的天数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalDays(this DateTime dt) => (dt - Start1970).TotalDays;
+        public static double GetTotalDays(this DateTime dt) => new DateTimeOffset(dt).Offset.TotalDays;
 
         /// <summary>
         /// 返回本年有多少天
