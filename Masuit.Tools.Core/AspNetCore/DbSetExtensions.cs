@@ -97,7 +97,7 @@ namespace Masuit.Tools.Core.AspNetCore
         {
             return oldExpression.NodeType switch
             {
-                ExpressionType.MemberAccess => (Expression)Expression.MakeMemberAccess(newParameter, ((MemberExpression)oldExpression).Member),
+                ExpressionType.MemberAccess => Expression.MakeMemberAccess(newParameter, ((MemberExpression)oldExpression).Member),
                 ExpressionType.New => Expression.New(((NewExpression)oldExpression).Constructor, ((NewExpression)oldExpression).Arguments.Select(a => ReplaceParameter(a, newParameter)).ToArray()),
                 _ => throw new NotSupportedException("不支持的表达式类型：" + oldExpression.NodeType)
             };
