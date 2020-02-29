@@ -4,7 +4,6 @@ using Masuit.Tools.Core.Net;
 using Masuit.Tools.Files;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
