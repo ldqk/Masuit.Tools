@@ -159,7 +159,6 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Folder Include="Mapping\Helper\" />
     <Folder Include="Mapping\Visitor\" />
     <Folder Include="Media\" />
-    <Folder Include="Models\" />
     <Folder Include="RandomSelector\" />
     <Folder Include="Reflection\" />
     <Folder Include="Security\" />
