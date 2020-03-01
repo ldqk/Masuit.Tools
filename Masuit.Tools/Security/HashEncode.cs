@@ -1,5 +1,4 @@
-﻿using Masuit.Tools.Win32;
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 

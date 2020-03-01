@@ -2,7 +2,6 @@
 using Masuit.Tools.Mapping.Extensions;
 using Masuit.Tools.UnitTest.Mapping.ClassTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Linq;
 using System.Linq.Expressions;
 
