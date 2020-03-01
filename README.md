@@ -259,6 +259,11 @@ List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
 ### 17.多线程后台下载
 ```csharp
 var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
+mtd.Configure(req =>
+ {
+     req.Referer = "https://masuit.com";
+     req.Headers.Add("Origin", "https://baidu.com");
+});
 mtd.TotalProgressChanged+=(sender, e) =>
 {
     var downloader = sender as MultiThreadDownloader;
