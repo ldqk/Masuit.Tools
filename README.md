@@ -897,6 +897,17 @@ var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
 ```
+### 35.EF Core支持AddOrUpdate方法
+```csharp
+/// <summary>
+/// 按Id添加或更新文章实体
+/// </summary>
+public override Post SavePost(Post t)
+{
+    DataContext.Set<Post>().AddOrUpdate(t => t.Id, t);
+    return t;
+}
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
