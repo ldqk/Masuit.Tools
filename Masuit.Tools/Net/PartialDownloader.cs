@@ -150,18 +150,19 @@ namespace Masuit.Tools.Net
             _lastSpeeds = new int[10];
         }
 
-        void DownloadProcedure()
+        void DownloadProcedure(Action<HttpWebRequest> config)
         {
             using var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite);
             var sw = new Stopwatch();
             if (WebRequest.Create(Url) is HttpWebRequest req)
             {
-                req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
                 req.AllowAutoRedirect = true;
                 req.MaximumAutomaticRedirections = 5;
                 req.ServicePoint.ConnectionLimit += 1;
                 req.ServicePoint.Expect100Continue = true;
-                req.ProtocolVersion = HttpVersion.Version10;
+                req.ProtocolVersion = HttpVersion.Version11;
+                config(req);
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
                 ServicePointManager.Expect100Continue = true;
                 if (RangeAllowed)
@@ -231,10 +232,10 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 启动下载
         /// </summary>
-        public void Start()
+        public void Start(Action<HttpWebRequest> config)
         {
             Stopped = false;
-            var procThread = new Thread(DownloadProcedure);
+            var procThread = new Thread(_ => DownloadProcedure(config));
             procThread.Start();
         }
 

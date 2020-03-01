@@ -25,7 +25,8 @@ namespace Masuit.Tools.Net
 
         private string _url;
         private bool _rangeAllowed;
-
+        private readonly HttpWebRequest _request;
+        private Action<HttpWebRequest> _requestConfigure = req => req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
         #endregion
 
         #region 公共属性
@@ -61,7 +62,20 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 已接收字节数
         /// </summary>
-        public long TotalBytesReceived => PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
+        public long TotalBytesReceived
+        {
+            get
+            {
+                try
+                {
+                    return PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
+                }
+                catch (Exception e)
+                {
+                    return 0;
+                }
+            }
+        }
 
         /// <summary>
         /// 总进度
@@ -123,6 +137,7 @@ namespace Masuit.Tools.Net
             PartialDownloaderList = new List<PartialDownloader>();
             _aop = AsyncOperationManager.CreateOperation(null);
             FilePath = savePath;
+            _request = WebRequest.Create(sourceUrl) as HttpWebRequest;
         }
 
         /// <summary>
@@ -182,7 +197,7 @@ namespace Masuit.Tools.Net
             temp.DownloadPartCompleted += temp_DownloadPartCompleted;
             temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
             PartialDownloaderList.Add(temp);
-            temp.Start();
+            temp.Start(_requestConfigure);
         }
 
         void temp_DownloadPartProgressChanged(object sender, EventArgs e)
@@ -209,7 +224,7 @@ namespace Masuit.Tools.Net
 
         void CreateFirstPartitions()
         {
-            Size = GetContentLength(_url, ref _rangeAllowed, ref _url);
+            Size = GetContentLength(ref _rangeAllowed, ref _url);
             int maximumPart = (int)(Size / (25 * 1024));
             maximumPart = maximumPart == 0 ? 1 : maximumPart;
             if (!_rangeAllowed)
@@ -227,13 +242,19 @@ namespace Masuit.Tools.Net
                 temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
                 temp.DownloadPartCompleted += temp_DownloadPartCompleted;
                 PartialDownloaderList.Add(temp);
-                temp.Start();
+                temp.Start(_requestConfigure);
             }
         }
 
         void MergeParts()
         {
-            List<PartialDownloader> mergeOrderedList = SortPDsByFrom(PartialDownloaderList);
+            var mergeOrderedList = SortPDsByFrom(PartialDownloaderList);
+            var dir = new FileInfo(FilePath).DirectoryName;
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
             using var fs = new FileStream(FilePath, FileMode.Create, FileAccess.ReadWrite);
             long totalBytesWritten = 0;
             int mergeProgress = 0;
@@ -338,18 +359,27 @@ namespace Masuit.Tools.Net
         }
 
         /// <summary>
+        /// 配置请求头
+        /// </summary>
+        /// <param name="config"></param>
+        public void Configure(Action<HttpWebRequest> config)
+        {
+            _requestConfigure = config;
+        }
+
+        /// <summary>
         /// 获取内容长度
         /// </summary>
         /// <param name="url"></param>
         /// <param name="rangeAllowed"></param>
         /// <param name="redirectedUrl"></param>
         /// <returns></returns>
-        public static long GetContentLength(string url, ref bool rangeAllowed, ref string redirectedUrl)
+        public long GetContentLength(ref bool rangeAllowed, ref string redirectedUrl)
         {
-            var req = WebRequest.Create(url) as HttpWebRequest;
-            req.UserAgent = "Mozilla/4.0 (compatible; MSIE 11.0; Windows NT 6.2; .NET CLR 1.0.3705;)";
-            req.ServicePoint.ConnectionLimit = 4;
-            using var resp = req.GetResponse() as HttpWebResponse;
+            _request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
+            _request.ServicePoint.ConnectionLimit = 4;
+            _requestConfigure(_request);
+            using var resp = _request.GetResponse() as HttpWebResponse;
             redirectedUrl = resp.ResponseUri.OriginalString;
             var ctl = resp.ContentLength;
             rangeAllowed = resp.Headers.AllKeys.Select((v, i) => new
@@ -357,7 +387,7 @@ namespace Masuit.Tools.Net
                 HeaderName = v,
                 HeaderValue = resp.Headers[i]
             }).Any(k => k.HeaderName.ToLower().Contains("range") && k.HeaderValue.ToLower().Contains("byte"));
-            req.Abort();
+            _request.Abort();
             return ctl;
         }
 
@@ -409,7 +439,7 @@ namespace Masuit.Tools.Net
                     temp.DownloadPartCompleted += temp_DownloadPartCompleted;
                     PartialDownloaderList.Add(temp);
                     PartialDownloaderList[i].To = PartialDownloaderList[i].CurrentPosition;
-                    temp.Start();
+                    temp.Start(_requestConfigure);
                 }
             }
         }

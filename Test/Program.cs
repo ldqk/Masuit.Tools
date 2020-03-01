@@ -1,8 +1,5 @@
-﻿using Masuit.Tools;
-using Masuit.Tools.RandomSelector;
+﻿using Masuit.Tools.Net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Test
 {
@@ -10,22 +7,24 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            var result = new List<string>();
-            for (int i = 0; i < 1000; i++)
+            var mtd = new MultiThreadDownloader("https://git.imweb.io/ldqk0/imgbed/raw/master/2020/01/05/sdcgssa1wlxc.jpg", Environment.GetEnvironmentVariable("temp"), "Y:\\1.jpg", 8);
+            mtd.Configure(req =>
             {
-                result.Add(new List<WeightedItem<string>>()
-                {
-                    new WeightedItem<string>("A", 1),
-                    new WeightedItem<string>("B", 3),
-                    new WeightedItem<string>("C", 4),
-                    new WeightedItem<string>("D", 4),
-                }.WeightedItem());
-            }
-
-            foreach (var g in result.GroupBy(s => s).OrderByDescending(g => g.Count()))
-            {
-                Console.WriteLine(g.Key + ":" + g.Count());
-            }
+                req.Referer = "https://masuit.com";
+                req.Headers.Add("Origin", "https://baidu.com");
+            });
+            mtd.TotalProgressChanged += (sender, e) =>
+              {
+                  var downloader = sender as MultiThreadDownloader;
+                  Console.WriteLine("下载进度：" + downloader.TotalProgress + "%");
+                  Console.WriteLine("下载速度：" + downloader.TotalSpeedInBytes / 1024 / 1024 + "MBps");
+              };
+            mtd.FileMergeProgressChanged += (sender, e) =>
+              {
+                  Console.WriteLine("下载完成");
+              };
+            mtd.Start();//开始下载
+            Console.ReadKey();
         }
     }
 }
