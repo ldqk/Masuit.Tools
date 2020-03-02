@@ -152,6 +152,10 @@
     <Compile Include="Mapping\Visitor\ConverterExpressionVisitor.cs" />
     <Compile Include="Mapping\Visitor\MapperExpressionVisitor.cs" />
     <Compile Include="Mapping\Visitor\PropertiesVisitor.cs" />
+    <Compile Include="Maths\RadarChartEngine.cs" />
+    <Compile Include="Maths\Point2D.cs" />
+    <Compile Include="Maths\RadarChart.cs" />
+    <Compile Include="Maths\Vector2D.cs" />
     <Compile Include="Media\ThumbnailCutMode.cs" />
     <Compile Include="Models\BaiduIP.cs" />
     <Compile Include="Models\IspInfo.cs" />

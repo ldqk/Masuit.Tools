@@ -83,6 +83,10 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Mapping\Visitor\ConverterExpressionVisitor.cs" Link="Mapping\Visitor\ConverterExpressionVisitor.cs" />
     <Compile Include="..\Masuit.Tools\Mapping\Visitor\MapperExpressionVisitor.cs" Link="Mapping\Visitor\MapperExpressionVisitor.cs" />
     <Compile Include="..\Masuit.Tools\Mapping\Visitor\PropertiesVisitor.cs" Link="Mapping\Visitor\PropertiesVisitor.cs" />
+    <Compile Include="..\Masuit.Tools\Maths\Point2D.cs" Link="Maths\Point2D.cs" />
+    <Compile Include="..\Masuit.Tools\Maths\RadarChart.cs" Link="Maths\RadarChart.cs" />
+    <Compile Include="..\Masuit.Tools\Maths\RadarChartEngine.cs" Link="Maths\RadarChartEngine.cs" />
+    <Compile Include="..\Masuit.Tools\Maths\Vector2D.cs" Link="Maths\Vector2D.cs" />
     <Compile Include="..\Masuit.Tools\Media\ImageUtilities.cs" Link="Media\ImageUtilities.cs" />
     <Compile Include="..\Masuit.Tools\Media\ThumbnailCutMode.cs" Link="Media\ThumbnailCutMode.cs" />
     <Compile Include="..\Masuit.Tools\Models\BaiduIP.cs" Link="Models\BaiduIP.cs" />
@@ -165,6 +169,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Folder Include="Systems\" />
     <Folder Include="Validator\" />
     <Folder Include="Win32\" />
+    <Folder Include="Maths\" />
   </ItemGroup>
 
 </Project>
