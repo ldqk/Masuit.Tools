@@ -18,11 +18,10 @@ namespace Masuit.Tools.Maths
         public static double ComputeArea(this List<Point2D> points)
         {
             double area = 0;
-            var iCount = points.Count;
-
-            for (var i = 0; i < iCount; i++)
+            var count = points.Count;
+            for (var i = 0; i < count; i++)
             {
-                area = area + (points[i].X * points[(i + 1) % iCount].Y - points[(i + 1) % iCount].X * points[i].Y);
+                area = area + (points[i].X * points[(i + 1) % count].Y - points[(i + 1) % count].X * points[i].Y);
             }
 
             return Math.Abs(0.5 * area);
@@ -48,12 +47,12 @@ namespace Masuit.Tools.Maths
             }
 
             int count = first.Data.Count;
-            List<Point2D> result = new List<Point2D>();
-            List<Point2D> firstPoints = first.GetPoints();
-            List<Point2D> secondPoints = second.GetPoints();
+            var result = new List<Point2D>();
+            var firstPoints = first.GetPoints();
+            var secondPoints = second.GetPoints();
             for (int i = 0; i < count; i++)
             {
-                Point2D tmp = (first.Data[i] > second.Data[i]) ? secondPoints[i] : firstPoints[i];
+                var tmp = (first.Data[i] > second.Data[i]) ? secondPoints[i] : firstPoints[i];
                 result.Add(tmp);
             }
 
@@ -73,12 +72,11 @@ namespace Masuit.Tools.Maths
 
         private static Point2D GetIntersect(Point2D lineFirstStart, Point2D lineFirstEnd, Point2D lineSecondStart, Point2D lineSecondEnd)
         {
-            Vector2D firstVec = lineFirstEnd - lineFirstStart;
-            Vector2D secondVec = lineSecondEnd - lineSecondStart;
-            double factor = firstVec.X * secondVec.Y - firstVec.Y * secondVec.X;
-            double dis = secondVec.X * (lineFirstStart.Y - lineSecondStart.Y) - secondVec.Y * (lineFirstStart.X - lineSecondStart.X);
-            double radio = dis / factor;
-
+            var firstVec = lineFirstEnd - lineFirstStart;
+            var secondVec = lineSecondEnd - lineSecondStart;
+            var factor = firstVec.X * secondVec.Y - firstVec.Y * secondVec.X;
+            var dis = secondVec.X * (lineFirstStart.Y - lineSecondStart.Y) - secondVec.Y * (lineFirstStart.X - lineSecondStart.X);
+            var radio = dis / factor;
             return lineFirstStart + firstVec * radio;
         }
     }
