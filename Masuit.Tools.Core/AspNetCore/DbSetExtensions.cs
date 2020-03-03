@@ -61,12 +61,10 @@ namespace Masuit.Tools.Core.AspNetCore
                 if (!keyFields.Any())
                 {
                     string idName = dataType.Name + "Id";
-                    keyFields = dataType.GetProperties().Where(p =>
-                        string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(p.Name, idName, StringComparison.OrdinalIgnoreCase)).ToList();
+                    keyFields = dataType.GetProperties().Where(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || p.Name.Equals(idName, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
-                // 更新所有非主键和非集合属性
+                // 更新所有非主键属性
                 foreach (var p in typeof(T).GetProperties().Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
                 {
                     // 忽略主键
@@ -76,7 +74,7 @@ namespace Masuit.Tools.Core.AspNetCore
                     }
 
                     var existingValue = p.GetValue(entity);
-                    if (!Equals(p.GetValue(item), existingValue))
+                    if (p.GetValue(item) != existingValue)
                     {
                         p.SetValue(item, existingValue);
                     }
@@ -85,7 +83,7 @@ namespace Masuit.Tools.Core.AspNetCore
                 foreach (var idField in keyFields.Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
                 {
                     var existingValue = idField.GetValue(item);
-                    if (!Equals(idField.GetValue(entity), existingValue))
+                    if (idField.GetValue(entity) != existingValue)
                     {
                         idField.SetValue(entity, existingValue);
                     }
