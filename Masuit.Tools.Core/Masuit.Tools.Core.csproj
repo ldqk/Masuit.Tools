@@ -92,6 +92,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Models\BaiduIP.cs" Link="Models\BaiduIP.cs" />
     <Compile Include="..\Masuit.Tools\Models\Email.cs" Link="Models\Email.cs" />
     <Compile Include="..\Masuit.Tools\Models\IspInfo.cs" Link="Models\IspInfo.cs" />
+    <Compile Include="..\Masuit.Tools\Models\PagedList.cs" Link="Models\PagedList.cs" />
     <Compile Include="..\Masuit.Tools\Models\PhysicsAddress.cs" Link="Models\PhysicsAddress.cs" />
     <Compile Include="..\Masuit.Tools\Models\TaobaoIP.cs" Link="Models\TaobaoIP.cs" />
     <Compile Include="..\Masuit.Tools\Net\FtpClient.cs" Link="Net\FtpClient.cs" />

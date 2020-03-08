@@ -159,6 +159,7 @@
     <Compile Include="Media\ThumbnailCutMode.cs" />
     <Compile Include="Models\BaiduIP.cs" />
     <Compile Include="Models\IspInfo.cs" />
+    <Compile Include="Models\PagedList.cs" />
     <Compile Include="Models\PhysicsAddress.cs" />
     <Compile Include="Models\TaobaoIP.cs" />
     <Compile Include="Mvc\ActionResults\ResumeActionResultBase.cs" />
