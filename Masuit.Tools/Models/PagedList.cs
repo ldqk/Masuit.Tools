@@ -23,7 +23,7 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 总页数
         /// </summary>
-        public int TotalPages { get; }
+        public int PageCount { get; }
 
         /// <summary>
         /// 页大小
@@ -43,7 +43,7 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 是否有后一页
         /// </summary>
-        public bool HasNext => CurrentPage < TotalPages;
+        public bool HasNext => CurrentPage < PageCount;
 
         /// <summary>
         /// 分页数据
@@ -57,7 +57,7 @@ namespace Masuit.Tools.Models
             TotalCount = count;
             PageSize = size;
             CurrentPage = page;
-            TotalPages = (int)Math.Ceiling(count * 1.0 / size);
+            PageCount = (int)Math.Ceiling(count * 1.0 / size);
             Data = items;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,6 +19,22 @@ namespace Masuit.Tools.Core.AspNetCore
         /// <param name="keySelector">按哪个字段更新</param>
         /// <param name="entities"></param>
         public static void AddOrUpdate<T, TKey>(this DbSet<T> dbSet, Expression<Func<T, TKey>> keySelector, params T[] entities) where T : class
+        {
+            foreach (var entity in entities)
+            {
+                AddOrUpdate(dbSet, keySelector, entity);
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TKey">按哪个字段更新</typeparam>
+        /// <param name="dbSet"></param>
+        /// <param name="keySelector">按哪个字段更新</param>
+        /// <param name="entities"></param>
+        public static void AddOrUpdate<T, TKey>(this DbSet<T> dbSet, Expression<Func<T, TKey>> keySelector, IEnumerable<T> entities) where T : class
         {
             foreach (var entity in entities)
             {
