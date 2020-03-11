@@ -1083,10 +1083,10 @@ namespace Masuit.Tools
         /// 将流转换为内存流
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="dispose">保存后是否释放源流</param>
         /// <returns></returns>
-        public static MemoryStream SaveAsMemoryStream(this Stream stream, bool dispose = false)
+        public static MemoryStream SaveAsMemoryStream(this Stream stream)
         {
+            stream.Position = 0;
             return new MemoryStream(stream.ToArray());
         }
 
@@ -1097,6 +1097,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static byte[] ToArray(this Stream stream)
         {
+            stream.Position = 0;
             byte[] bytes = new byte[stream.Length];
             stream.Read(bytes, 0, bytes.Length);
 

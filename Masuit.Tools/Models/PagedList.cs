@@ -36,6 +36,11 @@ namespace Masuit.Tools.Models
         public int TotalCount { get; }
 
         /// <summary>
+        /// 当前页数据条数
+        /// </summary>
+        public int CurrentCount => Data.Count;
+
+        /// <summary>
         /// 是否有前一页
         /// </summary>
         public bool HasPrev => CurrentPage > 1;
