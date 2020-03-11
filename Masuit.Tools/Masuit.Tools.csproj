@@ -156,7 +156,9 @@
     <Compile Include="Maths\Point2D.cs" />
     <Compile Include="Maths\RadarChart.cs" />
     <Compile Include="Maths\Vector2D.cs" />
+    <Compile Include="Media\ImageWatermarker.cs" />
     <Compile Include="Media\ThumbnailCutMode.cs" />
+    <Compile Include="Media\WatermarkPosition.cs" />
     <Compile Include="Models\BaiduIP.cs" />
     <Compile Include="Models\IspInfo.cs" />
     <Compile Include="Models\PagedList.cs" />

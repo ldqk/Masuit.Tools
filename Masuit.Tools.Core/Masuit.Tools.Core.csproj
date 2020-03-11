@@ -88,7 +88,9 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Maths\RadarChartEngine.cs" Link="Maths\RadarChartEngine.cs" />
     <Compile Include="..\Masuit.Tools\Maths\Vector2D.cs" Link="Maths\Vector2D.cs" />
     <Compile Include="..\Masuit.Tools\Media\ImageUtilities.cs" Link="Media\ImageUtilities.cs" />
+    <Compile Include="..\Masuit.Tools\Media\ImageWatermarker.cs" Link="Media\ImageWatermarker.cs" />
     <Compile Include="..\Masuit.Tools\Media\ThumbnailCutMode.cs" Link="Media\ThumbnailCutMode.cs" />
+    <Compile Include="..\Masuit.Tools\Media\WatermarkPosition.cs" Link="Media\WatermarkPosition.cs" />
     <Compile Include="..\Masuit.Tools\Models\BaiduIP.cs" Link="Models\BaiduIP.cs" />
     <Compile Include="..\Masuit.Tools\Models\Email.cs" Link="Models\Email.cs" />
     <Compile Include="..\Masuit.Tools\Models\IspInfo.cs" Link="Models\IspInfo.cs" />
