@@ -47,7 +47,7 @@ namespace Masuit.Tools.Core.AspNetCore
         /// <param name="services"></param>
         public static void AddStaticHttpContext(this IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         /// <summary>

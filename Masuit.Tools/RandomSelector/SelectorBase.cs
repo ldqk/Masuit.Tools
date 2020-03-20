@@ -38,7 +38,7 @@ namespace Masuit.Tools.RandomSelector
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        internal WeightedItem<T> LinearSelect(IEnumerable<WeightedItem<T>> items)
+        internal WeightedItem<T> LinearSelect(List<WeightedItem<T>> items)
         {
             // 只对具有允许重复项的多选功能有用，它会随着时间从列表中删除项目。 在这些条件下没有消耗更多性能让二进制搜索起作用。
             if (!items.Any())

@@ -135,7 +135,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.22" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.298" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />

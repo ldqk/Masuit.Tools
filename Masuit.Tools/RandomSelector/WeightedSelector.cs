@@ -11,7 +11,7 @@ namespace Masuit.Tools.RandomSelector
     public class WeightedSelector<T> : IEnumerable<T>
     {
         internal readonly List<WeightedItem<T>> Items = new List<WeightedItem<T>>();
-        public readonly SelectorOption Option;
+        internal readonly SelectorOption Option;
 
         /// <summary>
         /// 累计权重集
