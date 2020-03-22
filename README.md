@@ -12,7 +12,7 @@
 ## 安装程序包
 .NET Framework ≥4.6.1
 ```shell
-PM> Install-Package Masuit.Tools
+PM> Install-Package Masuit.Tools.Net
 ```
 .NET Core 3.x
 ```shell
