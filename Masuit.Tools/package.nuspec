@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <!--*-->
-    <id>Masuit.Tools</id>
+    <id>Masuit.Tools.Net</id>
     <!--*-->
     <version>2.2.8.5</version>
     <title>Masuit.Tools</title>
