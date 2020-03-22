@@ -74,18 +74,17 @@ namespace Masuit.Tools.Core.AspNetCore
             {
                 // 获取主键字段
                 var dataType = typeof(T);
-                var keyFields = dataType.GetProperties().Where(p => p.GetCustomAttribute<KeyAttribute>() != null).ToList();
-                if (!keyFields.Any())
+                var key_ignoreFields = dataType.GetProperties().Where(p => p.GetCustomAttribute<KeyAttribute>() != null || p.GetCustomAttribute<UpdateIgnoreAttribute>() != null).ToList();
+                if (!key_ignoreFields.Any())
                 {
                     string idName = dataType.Name + "Id";
-                    keyFields = dataType.GetProperties().Where(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || p.Name.Equals(idName, StringComparison.OrdinalIgnoreCase)).ToList();
+                    key_ignoreFields = dataType.GetProperties().Where(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || p.Name.Equals(idName, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
-
                 // 更新所有非主键属性
                 foreach (var p in typeof(T).GetProperties().Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
                 {
-                    // 忽略主键
-                    if (keyFields.Any(x => x.Name == p.Name))
+                    // 忽略主键和被忽略的字段
+                    if (key_ignoreFields.Any(x => x.Name == p.Name))
                     {
                         continue;
                     }
@@ -97,7 +96,7 @@ namespace Masuit.Tools.Core.AspNetCore
                     }
                 }
 
-                foreach (var idField in keyFields.Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
+                foreach (var idField in key_ignoreFields.Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
                 {
                     var existingValue = idField.GetValue(item);
                     if (idField.GetValue(entity) != existingValue)
