@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Masuit.Tools.Core.Models
@@ -27,31 +28,37 @@ namespace Masuit.Tools.Core.Models
         /// <summary>
         /// 所有子级
         /// </summary>
+        [NotMapped]
         public ICollection<T> AllChildren => GetChildren(this);
 
         /// <summary>
         /// 所有父级
         /// </summary>
+        [NotMapped]
         public ICollection<T> AllParent => GetParents(this);
 
         /// <summary>
         /// 是否是根节点
         /// </summary>
+        [NotMapped]
         public bool IsRoot => Parent == null;
 
         /// <summary>
         /// 是否是叶子节点
         /// </summary>
+        [NotMapped]
         public bool IsLeaf => Children.Count == 0;
 
         /// <summary>
         /// 深度
         /// </summary>
+        [NotMapped]
         public int Level => IsRoot ? 0 : Parent.Level + 1;
 
         /// <summary>
         /// 节点路径（UNIX路径格式，以“/”分隔）
         /// </summary>
+        [NotMapped]
         public string Path => GetFullPath(this);
 
         private string GetFullPath(ITree<T> c) => c.Parent != null ? GetFullPath(c.Parent) + "/" + c.Name : c.Name;
@@ -67,7 +74,7 @@ namespace Masuit.Tools.Core.Models
         }
 
         /// <summary>
-        /// 递归取出所有下级
+        /// 递归取出所有上级
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
