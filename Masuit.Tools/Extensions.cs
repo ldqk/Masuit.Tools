@@ -631,12 +631,18 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool Contains(this string s, IEnumerable<string> keys, bool ignoreCase = true)
         {
+            if (!keys.Any())
+            {
+                return false;
+            }
+
             if (ignoreCase)
             {
                 return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
             }
 
             return Regex.IsMatch(s, string.Join("|", keys));
+
         }
 
         #endregion
