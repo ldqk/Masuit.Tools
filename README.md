@@ -908,6 +908,11 @@ public override Post SavePost(Post t)
     return t;
 }
 ```
+### 38.敏感信息掩码
+```csharp
+"13123456789".Mask(); // 131****5678
+"admin@masuit.com".MaskEmail(); // a****n@masuit.com
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
