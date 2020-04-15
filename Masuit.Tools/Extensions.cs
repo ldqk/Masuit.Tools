@@ -1280,10 +1280,43 @@ namespace Masuit.Tools
         /// <param name="where"></param>
         public static void RemoveWhere<T>(this ICollection<T> @this, Func<T, bool> @where)
         {
-            foreach (var obj in @this.Where(@where).ToList())
+            foreach (var obj in @this.Where(where).ToList())
             {
                 @this.Remove(obj);
             }
+        }
+
+        /// <summary>
+        /// 字符串掩码
+        /// </summary>
+        /// <param name="s">字符串</param>
+        /// <param name="mask">掩码符</param>
+        /// <returns></returns>
+        public static string Mask(this string s, char mask = '*')
+        {
+            if (string.IsNullOrWhiteSpace(s?.Trim()))
+            {
+                return s;
+            }
+            s = s.Trim();
+            string masks = new string(new[] { mask, mask, mask, mask });
+            return s.Length switch
+            {
+                _ when s.Length > 4 => Regex.Replace(s, "(\\w{3})\\w+(\\w{4})", $"$1{masks}$2"),
+                _ when s.Length >= 2 && s.Length <= 4 => Regex.Replace(s, "(\\w{1})\\w*(\\w{1})", $"$1{masks}$2"),
+                _ => s + masks
+            };
+        }
+
+        /// <summary>
+        /// 邮箱掩码
+        /// </summary>
+        /// <param name="s">邮箱</param>
+        /// <param name="mask">掩码</param>
+        /// <returns></returns>
+        public static string MaskEmail(this string s, char mask = '*')
+        {
+            return !MatchEmail(s) ? s : s.Replace(s.Substring(0, s.LastIndexOf("@")), Mask(s.Substring(0, s.LastIndexOf("@")), mask));
         }
     }
 }
