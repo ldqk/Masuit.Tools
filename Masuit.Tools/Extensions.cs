@@ -657,6 +657,12 @@ namespace Masuit.Tools
         /// <returns>匹配对象</returns>
         public static Match MatchEmail(this string s, out bool isMatch)
         {
+            if (string.IsNullOrEmpty(s))
+            {
+                isMatch = false;
+                return null;
+            }
+
             Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
             isMatch = match.Success;
             return isMatch ? match : null;
@@ -809,6 +815,11 @@ namespace Masuit.Tools
         /// <returns>匹配对象</returns>
         public static Match MatchPhoneNumber(this string s, out bool isMatch)
         {
+            if (string.IsNullOrEmpty(s))
+            {
+                isMatch = false;
+                return null;
+            }
             Match match = Regex.Match(s, @"^((1[3,5,6,8][0-9])|(14[5,7])|(17[0,1,3,6,7,8])|(19[8,9]))\d{8}$");
             isMatch = match.Success;
             return isMatch ? match : null;
@@ -1302,8 +1313,8 @@ namespace Masuit.Tools
             string masks = new string(new[] { mask, mask, mask, mask });
             return s.Length switch
             {
-                _ when s.Length > 4 => Regex.Replace(s, "(\\w{3})\\w+(\\w{4})", $"$1{masks}$2"),
-                _ when s.Length >= 2 && s.Length <= 4 => Regex.Replace(s, "(\\w{1})\\w*(\\w{1})", $"$1{masks}$2"),
+                _ when s.Length >= 7 => Regex.Replace(s, @"(\w{3})\w*(\w{4})", $"$1{masks}$2"),
+                _ when s.Length >= 2 && s.Length < 7 => Regex.Replace(s, @"(\w{1})\w*(\w{1})", $"$1{masks}$2"),
                 _ => s + masks
             };
         }
