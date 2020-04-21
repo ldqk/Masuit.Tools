@@ -631,7 +631,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool Contains(this string s, IEnumerable<string> keys, bool ignoreCase = true)
         {
-            if (!keys.Any())
+            if (!keys.Any() || string.IsNullOrEmpty(s))
             {
                 return false;
             }
@@ -867,7 +867,7 @@ namespace Masuit.Tools
             }
             catch
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -1310,10 +1310,14 @@ namespace Masuit.Tools
                 return s;
             }
             s = s.Trim();
-            string masks = new string(new[] { mask, mask, mask, mask });
+            string masks = mask.ToString().PadLeft(4, mask);
             return s.Length switch
             {
-                _ when s.Length >= 7 => Regex.Replace(s, @"(\w{3})\w*(\w{4})", $"$1{masks}$2"),
+                _ when s.Length >= 11 => Regex.Replace(s, @"(\w{3})\w*(\w{4})", $"$1{masks}$2"),
+                _ when s.Length == 10 => Regex.Replace(s, @"(\w{3})\w*(\w{3})", $"$1{masks}$2"),
+                _ when s.Length == 9 => Regex.Replace(s, @"(\w{2})\w*(\w{3})", $"$1{masks}$2"),
+                _ when s.Length == 8 => Regex.Replace(s, @"(\w{2})\w*(\w{2})", $"$1{masks}$2"),
+                _ when s.Length == 7 => Regex.Replace(s, @"(\w{1})\w*(\w{2})", $"$1{masks}$2"),
                 _ when s.Length >= 2 && s.Length < 7 => Regex.Replace(s, @"(\w{1})\w*(\w{1})", $"$1{masks}$2"),
                 _ => s + masks
             };
