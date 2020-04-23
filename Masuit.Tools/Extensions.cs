@@ -306,54 +306,6 @@ namespace Masuit.Tools
         public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
 
         /// <summary>
-        /// 复制一个新的对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static T Copy<T>(this T source) where T : new()
-        {
-            T dest = new T();
-            dest.GetType().GetProperties().ForEach(p =>
-            {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
-        }
-
-        /// <summary>
-        /// 复制到一个现有对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">源对象</param>
-        /// <param name="dest">目标对象</param>
-        /// <returns></returns>
-        public static T CopyTo<T>(this T source, T dest) where T : new()
-        {
-            dest.GetType().GetProperties().ForEach(p =>
-            {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
-        }
-
-        /// <summary>
-        /// 复制一个新的对象
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static async Task<T> CopyAsync<T>(this T source) where T : new() => await Task.Run(() =>
-        {
-            T dest = new T();
-            dest.GetType().GetProperties().ForEach(p =>
-            {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
-        });
-
-        /// <summary>
         /// 映射到目标类型的集合
         /// </summary>
         /// <param name="source">源</param>
