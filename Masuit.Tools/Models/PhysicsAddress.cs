@@ -18,7 +18,7 @@ namespace Masuit.Tools.Models
         /// 返回结果集
         /// </summary>
         [JsonProperty("result")]
-        public AddressResult AddressResult { get; set; }
+        public AddressResult AddressResult { get; set; } = new AddressResult();
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Masuit.Tools.Models
         /// 参考地址
         /// </summary>
         [JsonProperty("pois")]
-        public List<Pois> Pois { get; set; }
+        public List<Pois> Pois { get; set; } = new List<Pois>();
 
         /// <summary>
         /// 语义描述
