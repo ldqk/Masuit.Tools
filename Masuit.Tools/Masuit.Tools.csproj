@@ -78,6 +78,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
@@ -202,7 +203,9 @@
     <Compile Include="Models\Email.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\HashEncode.cs" />
+    <Compile Include="Security\RSA.cs" />
     <Compile Include="Security\RSACrypt.cs" />
+    <Compile Include="Security\RsaPem.cs" />
     <Compile Include="Strings\ChineseString.cs" />
     <Compile Include="Strings\NumberFormater.cs" />
     <Compile Include="Strings\Template.cs" />
