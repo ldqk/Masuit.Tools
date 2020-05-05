@@ -590,7 +590,7 @@ namespace Masuit.Tools
 
             if (ignoreCase)
             {
-                return Regex.IsMatch(s.ToLower(), string.Join("|", keys).ToLower());
+                return Regex.IsMatch(s, string.Join("|", keys), RegexOptions.IgnoreCase);
             }
 
             return Regex.IsMatch(s, string.Join("|", keys));

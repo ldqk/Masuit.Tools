@@ -370,7 +370,6 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 获取内容长度
         /// </summary>
-        /// <param name="url"></param>
         /// <param name="rangeAllowed"></param>
         /// <param name="redirectedUrl"></param>
         /// <returns></returns>
