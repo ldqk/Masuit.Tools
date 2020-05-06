@@ -21,12 +21,18 @@ namespace Masuit.Tools.Security
         public string PrivateKey;
     }
 
+    public enum RsaKeyType
+    {
+        XML,
+        PEM
+    }
+
     /// <summary> 
     /// RSA加密解密及RSA签名和验证
     /// </summary> 
     public static class RsaCrypt
     {
-        private static RsaKey RsaKey = GenerateRsaKeys();
+        private static RsaKey RsaKey;
         #region RSA 加密解密 
 
         #region RSA 的密钥产生 
@@ -34,13 +40,25 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 生成 RSA 公钥和私钥
         /// </summary>
-        public static RsaKey GenerateRsaKeys(int length = 1024)
+        /// <param name="type">密钥类型</param>
+        /// <param name="length">密钥长度</param>
+        /// <returns></returns>
+        public static RsaKey GenerateRsaKeys(RsaKeyType type = RsaKeyType.XML, int length = 1024)
         {
             var rsa = new RSA(length);
-            return RsaKey = new RsaKey
+            return type switch
             {
-                PrivateKey = rsa.ToPEM_PKCS1(),
-                PublicKey = rsa.ToPEM_PKCS1(true)
+                RsaKeyType.PEM => RsaKey ??= new RsaKey
+                {
+                    PrivateKey = rsa.ToPEM_PKCS1(),
+                    PublicKey = rsa.ToPEM_PKCS1(true)
+                },
+                RsaKeyType.XML => RsaKey ??= new RsaKey
+                {
+                    PrivateKey = rsa.ToXML(),
+                    PublicKey = rsa.ToXML(true)
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
         }
 

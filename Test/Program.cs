@@ -9,7 +9,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            var rsaKey = RsaCrypt.GenerateRsaKeys(512);
+            var rsaKey = RsaCrypt.GenerateRsaKeys();
             Console.WriteLine(rsaKey.PrivateKey);
             var enc = new MyClass()
             {
