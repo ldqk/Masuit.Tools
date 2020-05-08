@@ -24,7 +24,8 @@ namespace Masuit.Tools.Security
     public enum RsaKeyType
     {
         XML,
-        PEM
+        PKCS1,
+        PKCS8
     }
 
     /// <summary> 
@@ -48,10 +49,15 @@ namespace Masuit.Tools.Security
             var rsa = new RSA(length);
             return type switch
             {
-                RsaKeyType.PEM => RsaKey ??= new RsaKey
+                RsaKeyType.PKCS1 => RsaKey ??= new RsaKey
                 {
                     PrivateKey = rsa.ToPEM_PKCS1(),
                     PublicKey = rsa.ToPEM_PKCS1(true)
+                },
+                RsaKeyType.PKCS8 => RsaKey ??= new RsaKey
+                {
+                    PrivateKey = rsa.ToPEM_PKCS8(),
+                    PublicKey = rsa.ToPEM_PKCS8(true)
                 },
                 RsaKeyType.XML => RsaKey ??= new RsaKey
                 {
