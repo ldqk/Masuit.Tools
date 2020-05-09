@@ -32,10 +32,11 @@ namespace Masuit.Tools.Database
 
         public static DataTableBuilder<T> CreateBuilder(DataRow dataRecord)
         {
-            var generator = new DynamicMethod("DynamicCreateEntity", typeof(T), new[]
+            DynamicMethod methodCreateEntity = new DynamicMethod("DynamicCreateEntity", typeof(T), new[]
             {
                 typeof(DataRow)
-            }, typeof(T), true).GetILGenerator();
+            }, typeof(T), true);
+            var generator = methodCreateEntity.GetILGenerator();
             var result = generator.DeclareLocal(typeof(T));
             generator.Emit(OpCodes.Newobj, typeof(T).GetConstructor(Type.EmptyTypes));
             generator.Emit(OpCodes.Stloc, result);
@@ -65,7 +66,7 @@ namespace Masuit.Tools.Database
             generator.Emit(OpCodes.Ret);
             return new DataTableBuilder<T>
             {
-                _handler = (Load)new DynamicMethod("DynamicCreateEntity", typeof(T), new[] { typeof(DataRow) }, typeof(T), true).CreateDelegate(typeof(Load))
+                _handler = (Load)methodCreateEntity.CreateDelegate(typeof(Load))
             };
         }
     }
