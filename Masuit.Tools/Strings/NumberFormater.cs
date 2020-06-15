@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Internal;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace Masuit.Tools.Strings
 
             if (bin > 62)
             {
-                throw new ArgumentException("进制最大支持62进制");
+                throw new ArgumentException("默认进制最大支持62进制");
             }
             Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(0, bin);
         }
@@ -64,9 +65,15 @@ namespace Masuit.Tools.Strings
         public string ToString(long number)
         {
             List<string> result = new List<string>();
+            if (number < 0)
+            {
+                number = -number;
+                result.Add("0");
+            }
+
             long t = number;
 
-            while (t > 0)
+            while (t != 0)
             {
                 var mod = t % Length;
                 t = Math.Abs(t / Length);
@@ -74,7 +81,7 @@ namespace Masuit.Tools.Strings
                 result.Insert(0, character);
             }
 
-            return string.Join("", result.ToArray());
+            return result.Join("");
         }
 
         /// <summary>

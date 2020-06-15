@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -21,7 +22,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>返回创建的类实例。</returns>  
         public static object CreateInstance(this Type t)
         {
-            return Activator.CreateInstance(t);
+            return Expression.Lambda(Expression.New(t.GetConstructors()[0])).Compile().DynamicInvoke();
         }
 
 
