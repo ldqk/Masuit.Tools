@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -81,7 +80,7 @@ namespace Masuit.Tools.Strings
                 result.Insert(0, character);
             }
 
-            return result.Join("");
+            return string.Join("", result);
         }
 
         /// <summary>
