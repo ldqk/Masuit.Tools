@@ -152,80 +152,82 @@ namespace Masuit.Tools.Net
 
         void DownloadProcedure(Action<HttpWebRequest> config)
         {
-            using var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite);
-            var sw = new Stopwatch();
-            if (WebRequest.Create(Url) is HttpWebRequest req)
+            using (var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite))
             {
-                req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
-                req.AllowAutoRedirect = true;
-                req.MaximumAutomaticRedirections = 5;
-                req.ServicePoint.ConnectionLimit += 1;
-                req.ServicePoint.Expect100Continue = true;
-                req.ProtocolVersion = HttpVersion.Version11;
-                config(req);
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
-                ServicePointManager.Expect100Continue = true;
-                if (RangeAllowed)
+                var sw = new Stopwatch();
+                if (WebRequest.Create(Url) is HttpWebRequest req)
                 {
-                    req.AddRange(From, _to);
-                }
-
-                if (req.GetResponse() is HttpWebResponse resp)
-                {
-                    ContentLength = resp.ContentLength;
-                    if (ContentLength <= 0 || (RangeAllowed && ContentLength != _to - From + 1))
+                    req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
+                    req.AllowAutoRedirect = true;
+                    req.MaximumAutomaticRedirections = 5;
+                    req.ServicePoint.ConnectionLimit += 1;
+                    req.ServicePoint.Expect100Continue = true;
+                    req.ProtocolVersion = HttpVersion.Version11;
+                    config(req);
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                    ServicePointManager.Expect100Continue = true;
+                    if (RangeAllowed)
                     {
-                        throw new Exception("Invalid response content");
+                        req.AddRange(From, _to);
                     }
 
-                    using var tempStream = resp.GetResponseStream();
-                    int bytesRead;
-                    byte[] buffer = new byte[4096];
-                    sw.Start();
-                    while ((bytesRead = tempStream.Read(buffer, 0, buffer.Length)) > 0)
+                    if (req.GetResponse() is HttpWebResponse resp)
                     {
-                        if (_totalBytesRead + bytesRead > ContentLength)
+                        ContentLength = resp.ContentLength;
+                        if (ContentLength <= 0 || (RangeAllowed && ContentLength != _to - From + 1))
                         {
-                            bytesRead = (int)(ContentLength - _totalBytesRead);
+                            throw new Exception("Invalid response content");
                         }
 
-                        file.Write(buffer, 0, bytesRead);
-                        _totalBytesRead += bytesRead;
-                        _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(sw.Elapsed.TotalSeconds));
-                        _counter = (_counter >= 9) ? 0 : _counter + 1;
-                        int tempProgress = (int)(_totalBytesRead * 100 / ContentLength);
-                        if (Progress != tempProgress)
+                        using var tempStream = resp.GetResponseStream();
+                        int bytesRead;
+                        byte[] buffer = new byte[4096];
+                        sw.Start();
+                        while ((bytesRead = tempStream.Read(buffer, 0, buffer.Length)) > 0)
                         {
-                            Progress = tempProgress;
-                            _aop.Post(state =>
+                            if (_totalBytesRead + bytesRead > ContentLength)
                             {
-                                DownloadPartProgressChanged?.Invoke(this, EventArgs.Empty);
-                            }, null);
-                        }
+                                bytesRead = (int)(ContentLength - _totalBytesRead);
+                            }
 
-                        if (Stopped || (RangeAllowed && _totalBytesRead == ContentLength))
-                        {
-                            break;
+                            file.Write(buffer, 0, bytesRead);
+                            _totalBytesRead += bytesRead;
+                            _lastSpeeds[_counter] = (int)(_totalBytesRead / Math.Ceiling(sw.Elapsed.TotalSeconds));
+                            _counter = (_counter >= 9) ? 0 : _counter + 1;
+                            int tempProgress = (int)(_totalBytesRead * 100 / ContentLength);
+                            if (Progress != tempProgress)
+                            {
+                                Progress = tempProgress;
+                                _aop.Post(state =>
+                                {
+                                    DownloadPartProgressChanged?.Invoke(this, EventArgs.Empty);
+                                }, null);
+                            }
+
+                            if (Stopped || (RangeAllowed && _totalBytesRead == ContentLength))
+                            {
+                                break;
+                            }
                         }
                     }
+
+                    req.Abort();
                 }
 
-                req.Abort();
-            }
-
-            sw.Stop();
-            if (!Stopped && DownloadPartCompleted != null)
-            {
-                _aop.Post(state =>
+                sw.Stop();
+                if (!Stopped && DownloadPartCompleted != null)
                 {
-                    Completed = true;
-                    DownloadPartCompleted(this, EventArgs.Empty);
-                }, null);
-            }
+                    _aop.Post(state =>
+                    {
+                        Completed = true;
+                        DownloadPartCompleted(this, EventArgs.Empty);
+                    }, null);
+                }
 
-            if (Stopped && DownloadPartStopped != null)
-            {
-                _aop.Post(state => DownloadPartStopped(this, EventArgs.Empty), null);
+                if (Stopped && DownloadPartStopped != null)
+                {
+                    _aop.Post(state => DownloadPartStopped(this, EventArgs.Empty), null);
+                }
             }
         }
 
