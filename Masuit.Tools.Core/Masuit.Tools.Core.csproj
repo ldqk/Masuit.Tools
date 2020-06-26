@@ -18,7 +18,15 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Product>Masuit.Tools.Core</Product>
     <PackageId>Masuit.Tools.Core</PackageId>
     <LangVersion>8.0</LangVersion>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>.\Masuit.Tools.Core.xml</DocumentationFile>
