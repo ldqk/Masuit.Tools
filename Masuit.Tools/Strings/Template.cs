@@ -34,13 +34,17 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 渲染模板
         /// </summary>
+        /// <param name="check">是否检查未使用的模板变量</param>
         /// <returns></returns>
-        public string Render()
+        public string Render(bool check = false)
         {
             var mc = Regex.Matches(Content, @"\{\{.+?\}\}");
-            foreach (Match m in mc)
+            if (check)
             {
-                throw new ArgumentException($"模版变量{m.Value}未被使用");
+                foreach (Match m in mc)
+                {
+                    throw new ArgumentException($"模版变量{m.Value}未被使用");
+                }
             }
 
             return Content;

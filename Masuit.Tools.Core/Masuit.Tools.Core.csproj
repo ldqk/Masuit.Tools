@@ -21,6 +21,7 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
