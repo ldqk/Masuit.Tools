@@ -20,6 +20,16 @@ namespace Masuit.Tools.Strings
         }
 
         /// <summary>
+        /// 创建模板
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static Template Create(string content)
+        {
+            return new Template(content);
+        }
+
+        /// <summary>
         /// 设置变量
         /// </summary>
         /// <param name="key"></param>

@@ -32,6 +32,7 @@ namespace Masuit.Tools.Core.Validator
                 ErrorMessage = "邮箱长度最大允许255个字符！";
                 return false;
             }
+
             if (email.MatchEmail())
             {
                 return true;

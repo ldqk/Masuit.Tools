@@ -1,4 +1,5 @@
-﻿using Masuit.Tools.Strings;
+﻿using DnsClient;
+using Masuit.Tools.Strings;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -609,14 +610,16 @@ namespace Masuit.Tools
         /// <returns>匹配对象</returns>
         public static Match MatchEmail(this string s, out bool isMatch)
         {
-            if (string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s) || s.Length < 7)
             {
                 isMatch = false;
                 return null;
             }
 
             Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
-            isMatch = match.Success;
+            var nslookup = new LookupClient();
+            var query = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
+            isMatch = match.Success && query.Any(ip => !ip.IsPrivateIP());
             return isMatch ? match : null;
         }
 
@@ -645,8 +648,9 @@ namespace Masuit.Tools
         {
             try
             {
-                isMatch = true;
-                return new Uri(s);
+                var uri = new Uri(s);
+                isMatch = Dns.GetHostAddresses(uri.Host).Any(ip => !ip.IsPrivateIP());
+                return uri;
             }
             catch
             {
