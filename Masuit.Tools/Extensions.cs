@@ -617,9 +617,14 @@ namespace Masuit.Tools
             }
 
             Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
-            var nslookup = new LookupClient();
-            var query = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
-            isMatch = match.Success && query.Any(ip => !ip.IsPrivateIP());
+            isMatch = match.Success;
+            if (isMatch)
+            {
+                var nslookup = new LookupClient();
+                var query = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
+                isMatch = isMatch && query.Any(ip => !ip.IsPrivateIP());
+            }
+
             return isMatch ? match : null;
         }
 
