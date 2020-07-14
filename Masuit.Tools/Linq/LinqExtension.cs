@@ -35,11 +35,6 @@ namespace Masuit.Tools.Linq
 
         private static Expression<Func<T, bool>> CombineLambdas<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right, ExpressionType expressionType)
         {
-            if (IsExpressionBodyConstant(left))
-            {
-                return right;
-            }
-
             var visitor = new SubstituteParameterVisitor
             {
                 Sub =
