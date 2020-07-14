@@ -606,37 +606,25 @@ namespace Masuit.Tools
         /// 匹配Email
         /// </summary>
         /// <param name="s">源字符串</param>
-        /// <param name="isMatch">是否匹配成功，若返回true，则会得到一个Match对象，否则为null</param>
-        /// <returns>匹配对象</returns>
-        public static Match MatchEmail(this string s, out bool isMatch)
+        /// <param name="valid">是否验证有效性</param>
+        /// <returns>匹配对象；是否匹配成功，若返回true，则会得到一个Match对象，否则为null</returns>
+        public static (bool isMatch, Match match) MatchEmail(this string s, bool valid = false)
         {
             if (string.IsNullOrEmpty(s) || s.Length < 7)
             {
-                isMatch = false;
-                return null;
+                return (false, null);
             }
 
             Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
-            isMatch = match.Success;
-            if (isMatch)
+            var isMatch = match.Success;
+            if (isMatch && valid)
             {
                 var nslookup = new LookupClient();
                 var query = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
-                isMatch = isMatch && query.Any(ip => !ip.IsPrivateIP());
+                isMatch = query.Any(ip => !ip.IsPrivateIP());
             }
 
-            return isMatch ? match : null;
-        }
-
-        /// <summary>
-        /// 匹配Email
-        /// </summary>
-        /// <param name="s">源字符串</param>
-        /// <returns>是否匹配成功</returns>
-        public static bool MatchEmail(this string s)
-        {
-            MatchEmail(s, out bool success);
-            return success;
+            return (isMatch, match);
         }
 
         #endregion
@@ -1292,7 +1280,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static string MaskEmail(this string s, char mask = '*')
         {
-            return !MatchEmail(s) ? s : s.Replace(s.Substring(0, s.LastIndexOf("@")), Mask(s.Substring(0, s.LastIndexOf("@")), mask));
+            return !MatchEmail(s).isMatch ? s : s.Replace(s.Substring(0, s.LastIndexOf("@")), Mask(s.Substring(0, s.LastIndexOf("@")), mask));
         }
     }
 }

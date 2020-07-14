@@ -137,7 +137,6 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Systems\SnowFlake.cs" Link="Systems\SnowFlake.cs" />
     <Compile Include="..\Masuit.Tools\Systems\StopwatchHelper.cs" Link="Systems\StopwatchHelper.cs" />
     <Compile Include="..\Masuit.Tools\Validator\ComplexPassword.cs" Link="Validator\ComplexPassword.cs" />
-    <Compile Include="..\Masuit.Tools\Validator\IsEmailAttribute.cs" Link="Validator\IsEmailAttribute.cs" />
     <Compile Include="..\Masuit.Tools\Validator\IsIPAddressAttribute.cs" Link="Validator\IsIPAddressAttribute.cs" />
     <Compile Include="..\Masuit.Tools\Validator\IsPhoneAttribute.cs" Link="Validator\IsPhoneAttribute.cs" />
     <Compile Include="..\Masuit.Tools\Validator\MaxValueAttribute.cs" Link="Validator\MaxValueAttribute.cs" />
@@ -182,7 +181,6 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Folder Include="Reflection\" />
     <Folder Include="Security\" />
     <Folder Include="Systems\" />
-    <Folder Include="Validator\" />
     <Folder Include="Win32\" />
     <Folder Include="Maths\" />
   </ItemGroup>

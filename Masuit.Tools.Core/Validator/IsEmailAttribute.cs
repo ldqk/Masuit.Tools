@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Configuration;
+﻿using Masuit.Tools.Core.Config;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 邮箱校验
@@ -17,12 +18,12 @@ namespace Masuit.Tools.Validator
         private string DomainWhiteList { get; }
 
         /// <summary>
-        /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
+        /// 可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
         /// </summary>
         /// <param name="valid">是否检查邮箱的有效性</param>
         public IsEmailAttribute(bool valid = true)
         {
-            DomainWhiteList = ConfigurationManager.AppSettings.Get("EmailDomainWhiteList") ?? "";
+            DomainWhiteList = CoreConfig.Configuration["EmailDomainWhiteList"] ?? "";
             _valid = valid;
         }
 
@@ -52,7 +53,7 @@ namespace Masuit.Tools.Validator
                 return false;
             }
 
-            if (DomainWhiteList.Split(',').Any(item => email.EndsWith("@" + item)))
+            if (DomainWhiteList.Split(',', StringSplitOptions.RemoveEmptyEntries).Any(item => email.EndsWith("@" + item)))
             {
                 return true;
             }
