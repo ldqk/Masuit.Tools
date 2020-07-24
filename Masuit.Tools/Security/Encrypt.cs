@@ -55,12 +55,12 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary> 
-        /// 解密字符串
+        /// 加密字符串
         /// 加密密钥必须为8位
         /// </summary> 
-        /// <param name="strText">被解密的字符串</param> 
-        /// <param name="strEncrKey">密钥</param> 
-        /// <returns>解密后的数据</returns> 
+        /// <param name="strText">被加密的字符串</param> 
+        /// <param name="strEncrKey">8位长度密钥</param> 
+        /// <returns>加密后的数据</returns> 
         public static string DesEncrypt(this string strText, string strEncrKey)
         {
             if (strEncrKey.Length < 8)
