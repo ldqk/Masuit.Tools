@@ -1104,7 +1104,4 @@ public IActionResult VirtualFile(bool fileName)
 
 开源博客系统：[Masuit.MyBlogs](https://github.com/ldqk/Masuit.MyBlogs "Masuit.MyBlogs")
 ### 友情赞助
-|支付宝|微信收款码|QQ转账|
-|---|--|---|
-|![支付宝](https://git.imweb.io/ldqk/imgbed/raw/master/20190810/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20190810204128.png)|![微信](https://git.imweb.io/ldqk/imgbed/raw/master/2018/2/5ccadc6b53f28.jpg)|![QQ](https://git.imweb.io/ldqk/imgbed/raw/master/2018/2/5ccadc6c9aa5b.jpg)|
-
+![打赏支持](https://ae01.alicdn.com/kf/H9c0ef439b7ae4a5ba4151456f3c5f0a2N.jpg)
