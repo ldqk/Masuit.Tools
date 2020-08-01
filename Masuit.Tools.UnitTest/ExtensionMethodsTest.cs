@@ -17,7 +17,7 @@ namespace Masuit.Tools.UnitTest
         [TestMethod]
         public void MatchEmail()
         {
-            bool expect = "admin@sina.com.cn".MatchEmail();
+            var (expect, match) = "admin@sina.com.cn".MatchEmail();
             Assert.AreEqual(true, expect);
         }
         [TestMethod]

@@ -153,9 +153,9 @@ namespace Masuit.Tools.Security
         /// </summary>
         public RSACryptoServiceProvider GetRSA()
         {
-            var rsaParams = new CspParameters();
-            rsaParams.Flags = CspProviderFlags.UseMachineKeyStore;
-            var rsa = new RSACryptoServiceProvider(rsaParams);
+            //var rsaParams = System.Security.Cryptography.RSA.Create();
+            //rsaParams.Flags = CspProviderFlags.UseMachineKeyStore;
+            var rsa = new RSACryptoServiceProvider();
 
             var param = new RSAParameters
             {
@@ -181,7 +181,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         public static BigInteger BigX(byte[] bigb)
         {
-            if (bigb[0] > 0x7F)
+            if (bigb[0] > 127)
             {
                 byte[] c = new byte[bigb.Length + 1];
                 Array.Copy(bigb, 0, c, 1, bigb.Length);

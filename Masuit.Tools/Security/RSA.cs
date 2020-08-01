@@ -211,11 +211,11 @@ namespace Masuit.Tools.Security
         /// </summary>
         public RSA(int keySize)
         {
-            var rsaParams = new CspParameters
-            {
-                Flags = CspProviderFlags.UseMachineKeyStore
-            };
-            RSAObject = new RSACryptoServiceProvider(keySize, rsaParams);
+            //var rsaParams = new CspParameters()
+            //{
+            //    Flags = CspProviderFlags.UseMachineKeyStore
+            //};
+            RSAObject = new RSACryptoServiceProvider(keySize);
         }
 
         /// <summary>
@@ -229,11 +229,11 @@ namespace Masuit.Tools.Security
             }
             else
             {
-                var rsaParams = new CspParameters
-                {
-                    Flags = CspProviderFlags.UseMachineKeyStore
-                };
-                RSAObject = new RSACryptoServiceProvider(rsaParams);
+                //var rsaParams = new CspParameters
+                //{
+                //    Flags = CspProviderFlags.UseMachineKeyStore
+                //};
+                RSAObject = new RSACryptoServiceProvider();
 
                 RSAObject.FromXmlString(key);
             }
