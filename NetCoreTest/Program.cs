@@ -10,8 +10,12 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            var rsaKey = RsaCrypt.GenerateRsaKeys();
+            var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
+            Console.WriteLine(rsaKey.PrivateKey);
+            Console.WriteLine(rsaKey.PublicKey);
             var enc = "123456".RSAEncrypt();
+            Console.WriteLine(enc);
+            Console.Beep();
             var dec = enc.RSADecrypt();
             Console.WriteLine(dec);
             Console.ReadKey();
