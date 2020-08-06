@@ -378,7 +378,27 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object GetInstance(this Type type)
         {
-            return GetInstance<TypeToIgnore>(type, null);
+            return GetInstance<TypeToIgnore, object>(type, null);
+        }
+
+        /// <summary>
+        /// 获取默认实例
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static T GetInstance<T>(this Type type) where T : class, new()
+        {
+            return GetInstance<TypeToIgnore, T>(type, null);
+        }
+
+        /// <summary>
+        /// 获取默认实例
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns></returns>
+        public static T GetInstance<T>(string type) where T : class, new()
+        {
+            return GetInstance<TypeToIgnore, T>(Type.GetType(type), null);
         }
 
         /// <summary>
@@ -388,31 +408,33 @@ namespace Masuit.Tools.Reflection
         /// <returns></returns>
         public static object GetInstance(string type)
         {
-            return GetInstance<TypeToIgnore>(Type.GetType(type), null);
+            return GetInstance<TypeToIgnore, object>(Type.GetType(type), null);
         }
 
         /// <summary>
         /// 获取一个构造参数的实例
         /// </summary>
         /// <typeparam name="TArg">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg>(this Type type, TArg argument)
+        public static T GetInstance<TArg, T>(this Type type, TArg argument) where T : class, new()
         {
-            return GetInstance<TArg, TypeToIgnore>(type, argument, null);
+            return GetInstance<TArg, TypeToIgnore, T>(type, argument, null);
         }
 
         /// <summary>
         /// 获取一个构造参数的实例
         /// </summary>
         /// <typeparam name="TArg">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg>(string type, TArg argument)
+        public static T GetInstance<TArg, T>(string type, TArg argument) where T : class, new()
         {
-            return GetInstance<TArg, TypeToIgnore>(Type.GetType(type), argument, null);
+            return GetInstance<TArg, TypeToIgnore, T>(Type.GetType(type), argument, null);
         }
 
         /// <summary>
@@ -420,13 +442,14 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <typeparam name="TArg1">参数类型</typeparam>
         /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument1">参数值</param>
         /// <param name="argument2">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg1, TArg2>(this Type type, TArg1 argument1, TArg2 argument2)
+        public static T GetInstance<TArg1, TArg2, T>(this Type type, TArg1 argument1, TArg2 argument2) where T : class, new()
         {
-            return GetInstance<TArg1, TArg2, TypeToIgnore>(type, argument1, argument2, null);
+            return GetInstance<TArg1, TArg2, TypeToIgnore, T>(type, argument1, argument2, null);
         }
 
         /// <summary>
@@ -434,13 +457,14 @@ namespace Masuit.Tools.Reflection
         /// </summary>
         /// <typeparam name="TArg1">参数类型</typeparam>
         /// <typeparam name="TArg2">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument1">参数值</param>
         /// <param name="argument2">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg1, TArg2>(string type, TArg1 argument1, TArg2 argument2)
+        public static T GetInstance<TArg1, TArg2, T>(string type, TArg1 argument1, TArg2 argument2) where T : class, new()
         {
-            return GetInstance<TArg1, TArg2, TypeToIgnore>(Type.GetType(type), argument1, argument2, null);
+            return GetInstance<TArg1, TArg2, TypeToIgnore, T>(Type.GetType(type), argument1, argument2, null);
         }
 
         /// <summary>
@@ -449,14 +473,15 @@ namespace Masuit.Tools.Reflection
         /// <typeparam name="TArg1">参数类型</typeparam>
         /// <typeparam name="TArg2">参数类型</typeparam>
         /// <typeparam name="TArg3">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument1">参数值</param>
         /// <param name="argument2">参数值</param>
         /// <param name="argument3">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg1, TArg2, TArg3>(this Type type, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+        public static T GetInstance<TArg1, TArg2, TArg3, T>(this Type type, TArg1 argument1, TArg2 argument2, TArg3 argument3) where T : class, new()
         {
-            return InstanceCreationFactory<TArg1, TArg2, TArg3>.CreateInstanceOf(type, argument1, argument2, argument3);
+            return InstanceCreationFactory<TArg1, TArg2, TArg3, T>.CreateInstanceOf(type, argument1, argument2, argument3);
         }
 
         /// <summary>
@@ -465,29 +490,30 @@ namespace Masuit.Tools.Reflection
         /// <typeparam name="TArg1">参数类型</typeparam>
         /// <typeparam name="TArg2">参数类型</typeparam>
         /// <typeparam name="TArg3">参数类型</typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="type">实例类型</param>
         /// <param name="argument1">参数值</param>
         /// <param name="argument2">参数值</param>
         /// <param name="argument3">参数值</param>
         /// <returns></returns>
-        public static object GetInstance<TArg1, TArg2, TArg3>(string type, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+        public static T GetInstance<TArg1, TArg2, TArg3, T>(string type, TArg1 argument1, TArg2 argument2, TArg3 argument3) where T : class, new()
         {
-            return InstanceCreationFactory<TArg1, TArg2, TArg3>.CreateInstanceOf(Type.GetType(type), argument1, argument2, argument3);
+            return InstanceCreationFactory<TArg1, TArg2, TArg3, T>.CreateInstanceOf(Type.GetType(type), argument1, argument2, argument3);
         }
 
         private class TypeToIgnore
         {
         }
 
-        private static class InstanceCreationFactory<TArg1, TArg2, TArg3>
+        private static class InstanceCreationFactory<TArg1, TArg2, TArg3, TObject> where TObject : class, new()
         {
-            private static readonly Dictionary<Type, Func<TArg1, TArg2, TArg3, object>> InstanceCreationMethods = new Dictionary<Type, Func<TArg1, TArg2, TArg3, object>>();
+            private static readonly Dictionary<Type, Func<TArg1, TArg2, TArg3, TObject>> InstanceCreationMethods = new Dictionary<Type, Func<TArg1, TArg2, TArg3, TObject>>();
 
-            public static object CreateInstanceOf(Type type, TArg1 arg1, TArg2 arg2, TArg3 arg3)
+            public static TObject CreateInstanceOf(Type type, TArg1 arg1, TArg2 arg2, TArg3 arg3)
             {
                 CacheInstanceCreationMethodIfRequired(type);
 
-                return InstanceCreationMethods[type].Invoke(arg1, arg2, arg3);
+                return InstanceCreationMethods[type](arg1, arg2, arg3);
             }
 
             private static void CacheInstanceCreationMethodIfRequired(Type type)
@@ -505,7 +531,7 @@ namespace Masuit.Tools.Reflection
                 };
 
                 Type[] constructorArgumentTypes = argumentTypes.Where(t => t != typeof(TypeToIgnore)).ToArray();
-                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, new ParameterModifier[0]);
+                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, Array.Empty<ParameterModifier>());
 
                 var lamdaParameterExpressions = new[]
                 {
@@ -516,7 +542,7 @@ namespace Masuit.Tools.Reflection
 
                 var constructorParameterExpressions = lamdaParameterExpressions.Take(constructorArgumentTypes.Length).ToArray();
                 var constructorCallExpression = Expression.New(constructor, constructorParameterExpressions);
-                var constructorCallingLambda = Expression.Lambda<Func<TArg1, TArg2, TArg3, object>>(constructorCallExpression, lamdaParameterExpressions).Compile();
+                var constructorCallingLambda = Expression.Lambda<Func<TArg1, TArg2, TArg3, TObject>>(constructorCallExpression, lamdaParameterExpressions).Compile();
                 InstanceCreationMethods[type] = constructorCallingLambda;
             }
         }

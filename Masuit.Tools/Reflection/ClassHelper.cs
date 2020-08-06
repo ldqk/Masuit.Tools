@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -15,16 +14,6 @@ namespace Masuit.Tools.Reflection
     {
         #region 公有方法
 
-        /// <summary>  
-        /// 根据类的类型型创建类实例。  
-        /// </summary>  
-        /// <param name="t">将要创建的类型。</param>  
-        /// <returns>返回创建的类实例。</returns>  
-        public static object CreateInstance(this Type t)
-        {
-            return Expression.Lambda(Expression.New(t.GetConstructors()[0])).Compile().DynamicInvoke();
-        }
-
 
         /// <summary>  
         /// 根据类的名称,属性列表创建型实例。  
@@ -34,7 +23,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>返回创建的类实例</returns>  
         public static object CreateInstance(string className, List<CustPropertyInfo> lcpi)
         {
-            return Activator.CreateInstance(AddProperty(BuildType(className), lcpi));
+            return AddProperty(BuildType(className), lcpi).GetInstance();
         }
 
 
@@ -129,7 +118,7 @@ namespace Masuit.Tools.Reflection
         {
             Type originType = obj.GetType();
             var customs = lcpi.ToDictionary(i => i.PropertyName, i => i.PropertyValue);
-            var dest = AddProperty(originType, lcpi).CreateInstance();
+            var dest = AddProperty(originType, lcpi).GetInstance();
             foreach (var originProperty in originType.GetProperties())
             {
                 dest.SetProperty(originProperty.Name, originProperty.GetValue(obj));
@@ -210,7 +199,7 @@ namespace Masuit.Tools.Reflection
         {
             var t = obj.GetType();
             t = propertyNames.Aggregate(t, (current, p) => current.DeleteProperty(p));
-            var newInstance = t.CreateInstance();
+            var newInstance = t.GetInstance();
             foreach (var p in newInstance.GetProperties())
             {
                 newInstance.SetProperty(p.Name, obj.GetType().GetProperties().FirstOrDefault(i => i.Name.Equals(p.Name)).GetValue(obj));
