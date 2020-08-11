@@ -75,6 +75,7 @@ string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/user
 Windows.ClearMemorySilent();
 ```
 ### 6.任意进制转换
+可用于生成短id，短hash等操作，纯数学运算。
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
@@ -84,7 +85,16 @@ Console.WriteLine("12345678的36进制是：" + s36); // 7clzi
 Console.WriteLine("36进制的7clzi是：" + num); // 12345678
 ```
 ```csharp
+//扩展方法形式调用
 var bin=12345678.ToBinary(36);//7clzi
+var num="7clzi".FromBinary(36);//12345678
+```
+```csharp
+//超大数字的进制转换
+var num = "E6186159D38CD50E0463A55E596336BD".FromBinaryBig(16);
+Console.WriteLine(num); // 十进制：305849028665645097422198928560410015421
+Console.WriteLine(num.ToBinary(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
+Console.WriteLine(num.ToBinary(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
 ```
 ### 7.纳秒级性能计时器
 ```csharp
