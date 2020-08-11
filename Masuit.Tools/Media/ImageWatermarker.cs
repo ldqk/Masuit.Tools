@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 
@@ -39,7 +40,7 @@ namespace Masuit.Tools.Media
         public MemoryStream AddWatermark(string watermarkText, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10, int fontSize = 20, Font font = null, bool textAntiAlias = true)
         {
             using var img = Image.FromStream(_stream);
-            if (SkipWatermarkForSmallImages && img.Height * img.Width < SmallImagePixelsThreshold)
+            if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold)))
             {
                 return _stream.SaveAsMemoryStream();
             }

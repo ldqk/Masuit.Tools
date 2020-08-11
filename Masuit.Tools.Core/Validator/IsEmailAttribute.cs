@@ -41,7 +41,7 @@ namespace Masuit.Tools.Core.Validator
             }
 
             var email = value as string;
-            if (email.Length < 7)
+            if (email.Length <= 10)
             {
                 ErrorMessage = "您输入的邮箱格式不正确！";
                 return false;

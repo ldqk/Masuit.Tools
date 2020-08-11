@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -872,6 +873,42 @@ namespace Masuit.Tools
         /// <param name="bin">进制</param>
         /// <returns></returns>
         public static string ToBinary(this long num, int bin)
+        {
+            var nf = new NumberFormater(bin);
+            return nf.ToString(num);
+        }
+
+        /// <summary>
+        /// 任意进制转十进制
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="bin">进制</param>
+        /// <returns></returns>
+        public static long FromBinary(this string str, int bin)
+        {
+            var nf = new NumberFormater(bin);
+            return nf.FromString(str);
+        }
+
+        /// <summary>
+        /// 任意进制转大数十进制
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="bin">进制</param>
+        /// <returns></returns>
+        public static BigInteger FromBinaryBig(this string str, int bin)
+        {
+            var nf = new NumberFormater(bin);
+            return nf.FromStringBig(str);
+        }
+
+        /// <summary>
+        /// 十进制转任意进制
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="bin">进制</param>
+        /// <returns></returns>
+        public static string ToBinary(this BigInteger num, int bin)
         {
             var nf = new NumberFormater(bin);
             return nf.ToString(num);

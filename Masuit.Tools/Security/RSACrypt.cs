@@ -13,12 +13,12 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 公钥
         /// </summary>
-        public string PublicKey;
+        public string PublicKey { get; protected internal set; }
 
         /// <summary>
         /// 私钥
         /// </summary>
-        public string PrivateKey;
+        public string PrivateKey { get; protected internal set; }
     }
 
     public enum RsaKeyType
