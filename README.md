@@ -320,6 +320,9 @@ string s = enc.DesDecrypt("abcdefgh"); //DES密钥解密为明文
 RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();// 生成RSA密钥对
 string encrypt = "123456".RSAEncrypt(rsaKey.PublicKey);// 公钥加密
 string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
+
+string s = "123".Crc32();// 生成crc32摘要
+string s = "123".Crc64();// 生成crc64摘要
 ```
 ### 20.实体校验
 ```csharp
