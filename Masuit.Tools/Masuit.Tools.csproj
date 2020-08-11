@@ -205,6 +205,8 @@
     <Compile Include="Reflection\ClassHelper.cs" />
     <Compile Include="Reflection\ReflectHelper.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
+    <Compile Include="Security\Crc32.cs" />
+    <Compile Include="Security\Crc64.cs" />
     <Compile Include="Security\Encrypt.cs" />
     <Compile Include="Files\FileExt.cs" />
     <Compile Include="Hardware\SystemInfo.cs" />

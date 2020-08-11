@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>2.2.9.4</Version>
+    <Version>2.2.9.5</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
     <Description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，html处理，验证码、NoSql等常用封装。
@@ -121,6 +121,8 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
     <Compile Include="..\Masuit.Tools\Reflection\ReflectHelper.cs" Link="Reflection\ReflectHelper.cs" />
     <Compile Include="..\Masuit.Tools\Reflection\ReflectionUtil.cs" Link="Reflection\ReflectionUtil.cs" />
+    <Compile Include="..\Masuit.Tools\Security\Crc32.cs" Link="Security\Crc32.cs" />
+    <Compile Include="..\Masuit.Tools\Security\Crc64.cs" Link="Security\Crc64.cs" />
     <Compile Include="..\Masuit.Tools\Security\Encrypt.cs" Link="Security\Encrypt.cs" />
     <Compile Include="..\Masuit.Tools\Security\HashEncode.cs" Link="Security\HashEncode.cs" />
     <Compile Include="..\Masuit.Tools\Security\RSA.cs" Link="Security\RSA.cs" />
@@ -179,7 +181,6 @@ github：https://github.com/ldqk/Masuit.Tools</Description>
     <Folder Include="Media\" />
     <Folder Include="RandomSelector\" />
     <Folder Include="Reflection\" />
-    <Folder Include="Security\" />
     <Folder Include="Systems\" />
     <Folder Include="Win32\" />
     <Folder Include="Maths\" />
