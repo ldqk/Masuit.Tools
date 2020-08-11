@@ -75,6 +75,7 @@ string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/user
 Windows.ClearMemorySilent();
 ```
 ### 6.任意进制转换
+可用于生成短id，短hash等操作，纯数学运算。
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
