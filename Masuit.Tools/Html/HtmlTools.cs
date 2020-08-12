@@ -1,5 +1,6 @@
 ﻿using Ganss.XSS;
 using HtmlAgilityPack;
+using Masuit.Tools.RandomSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -171,9 +172,20 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string MatchRandomImgSrc(this string html)
         {
-            int count = MatchImgSrcs(html).Count();
+            var srcs = MatchImgSrcs(html).ToList();
             var rnd = new Random();
-            return MatchImgSrcs(html).ElementAtOrDefault(rnd.Next(count));
+            return srcs.Count > 0 ? srcs[rnd.Next(srcs.Count)] : default;
+        }
+
+        /// <summary>
+        /// 按顺序优先获取html代码中的img标签的src属性
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static string MatchSeqRandomImgSrc(this string html)
+        {
+            var srcs = MatchImgSrcs(html).ToList();
+            return srcs.Count > 0 ? srcs.Select((s, i) => new WeightedItem<string>(s, srcs.Count - i)).WeightedItem() : default;
         }
 
         /// <summary>
