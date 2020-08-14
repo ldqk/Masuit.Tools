@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Masuit.Tools;
 
 namespace System
 {
@@ -20,8 +21,8 @@ namespace System
         /// <returns></returns>
         public static TInput Do<TInput>(
             this TInput input,
-            [NotNull] Func<TInput, bool> isExecute,
-            [NotNull] Action<TInput> doFunc
+             Func<TInput, bool> isExecute,
+             Action<TInput> doFunc
             )
         {
             isExecute.CheckNullWithException(nameof(isExecute));
@@ -44,8 +45,8 @@ namespace System
         /// <returns></returns>
         public static async Task<TInput> DoAsync<TInput>(
             this TInput input,
-            [NotNull] Func<TInput, bool> isExecute,
-            [NotNull] Func<TInput, Task> doAsyncFunc)
+             Func<TInput, bool> isExecute,
+             Func<TInput, Task> doAsyncFunc)
         {
             isExecute.CheckNullWithException(nameof(isExecute));
             doAsyncFunc.CheckNullWithException(nameof(doAsyncFunc));
@@ -70,8 +71,8 @@ namespace System
         /// <returns></returns>
         public static TInput Do<TInput>(
             this TInput input,
-            [NotNull] bool isExecute,
-            [NotNull] Action<TInput> doFunc
+             bool isExecute,
+             Action<TInput> doFunc
             )
         {
             return FpObjectDoExtensions.Do(input, t => isExecute, doFunc);
@@ -89,8 +90,8 @@ namespace System
         /// <returns></returns>
         public static Task<TInput> DoAsync<TInput>(
             this TInput input,
-            [NotNull] bool isExecute,
-            [NotNull] Func<TInput, Task> doAsyncFunc
+             bool isExecute,
+             Func<TInput, Task> doAsyncFunc
             )
         {
             return FpObjectDoExtensions.DoAsync(input, t => isExecute, doAsyncFunc);

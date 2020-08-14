@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Masuit.Tools;
 
 namespace System
 {
@@ -18,8 +19,8 @@ namespace System
         /// <returns></returns>
         public static TInput Pipe<TInput>(
             this TInput input,
-            [NotNull] Func<TInput, bool> isExecute,
-            [NotNull] Func<TInput, TInput> func
+             Func<TInput, bool> isExecute,
+             Func<TInput, TInput> func
             )
         {
             isExecute.CheckNullWithException(nameof(isExecute));
@@ -49,7 +50,7 @@ namespace System
         /// <returns></returns>
         public static TOutput Pipe<TInput, TOutput>(
             this TInput input,
-            [NotNull] Func<TInput, TOutput> func
+             Func<TInput, TOutput> func
             )
         {
             func.CheckNullWithException(nameof(func));

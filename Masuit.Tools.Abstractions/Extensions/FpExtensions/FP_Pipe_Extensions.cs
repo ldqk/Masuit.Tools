@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Masuit.Tools;
 
 namespace System
 {
@@ -22,8 +23,8 @@ namespace System
         /// <param name="actions"></param>
         /// <returns></returns>
         public static Action<TInput> Pipe<TInput>(
-            [NotNull] this Action<TInput> sourceFunc,
-            [NotNull] params Action<TInput>[] actions)
+             this Action<TInput> sourceFunc,
+             params Action<TInput>[] actions)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             actions.CheckNullWithException(nameof(actions));
@@ -31,7 +32,7 @@ namespace System
             return t =>
             {
                 sourceFunc(t);
-                actions.For(item => item(t));
+                actions.ForEach(item => item(t));
             };
         }
 
@@ -46,8 +47,8 @@ namespace System
         /// <param name="actions"></param>
         /// <returns></returns>
         public static Action<TInput> Pipe<TInput, TResult>(
-            [NotNull] this Func<TInput, TResult> sourceFunc,
-            [NotNull] params Action<TResult>[] actions)
+             this Func<TInput, TResult> sourceFunc,
+             params Action<TResult>[] actions)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             actions.CheckNullWithException(nameof(actions));
@@ -55,7 +56,7 @@ namespace System
             return t =>
             {
                 TResult tempResult = sourceFunc(t);
-                actions.For(item => item(tempResult));
+                actions.ForEach(item => item(tempResult));
             };
         }
 
@@ -77,8 +78,8 @@ namespace System
         /// <param name="func"></param>
         /// <returns></returns>
         public static Func<TInput, TResult> Pipe<TInput, TCenter, TResult>(
-          [NotNull] this Func<TInput, TCenter> sourceFunc,
-          [NotNull] Func<TCenter, TResult> func)
+           this Func<TInput, TCenter> sourceFunc,
+           Func<TCenter, TResult> func)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             func.CheckNullWithException(nameof(func));

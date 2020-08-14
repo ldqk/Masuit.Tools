@@ -29,7 +29,8 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="objs"></param>
         /// <param name="action">回调方法</param>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TInput"></typeparam>
+        /// <typeparam name="TOutput"></typeparam>
         /// <returns></returns>
         public static IEnumerable<TOutput> ForEach<TInput, TOutput>(this IEnumerable<TInput> objs, Func<TInput, TOutput> action)
         {

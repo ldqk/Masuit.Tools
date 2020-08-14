@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Masuit.Tools;
 
 namespace System
 {
@@ -19,8 +20,8 @@ namespace System
         /// <returns></returns>
         public static Task<TInput> PipeAsync<TInput>(
             this Task<TInput> input,
-            [NotNull] Func<TInput, bool> isExecute,
-            [NotNull] Func<TInput, TInput> func
+             Func<TInput, bool> isExecute,
+             Func<TInput, TInput> func
             )
         {
             isExecute.CheckNullWithException(nameof(isExecute));
@@ -53,7 +54,7 @@ namespace System
         /// <returns></returns>
         public static Task<TOutput> PipeAsync<TInput, TOutput>(
             this Task<TInput> input,
-            [NotNull] Func<TInput, TOutput> func)
+             Func<TInput, TOutput> func)
         {
             return input.ContinueWith(t => func(t.Result), TaskContinuationOptions.OnlyOnRanToCompletion);
         }

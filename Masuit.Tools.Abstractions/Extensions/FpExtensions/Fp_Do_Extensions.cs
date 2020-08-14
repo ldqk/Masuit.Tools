@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Masuit.Tools;
 
 namespace System
 {
@@ -18,8 +19,8 @@ namespace System
         /// <param name="action"></param>
         /// <returns></returns>
         public static Action<TInput> Do<TInput>(
-            [NotNull] this Action<TInput> sourceFunc,
-            [NotNull] Action<TInput> action)
+             this Action<TInput> sourceFunc,
+             Action<TInput> action)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             action.CheckNullWithException(nameof(action));
@@ -37,12 +38,12 @@ namespace System
         /// <param name="actions"></param>
         /// <returns></returns>
         public static Action<TInput> Do<TInput>(
-            [NotNull] this Action<TInput> sourceFunc,
-            [NotNull] params Action<TInput>[] actions)
+             this Action<TInput> sourceFunc,
+             params Action<TInput>[] actions)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             actions.CheckNullWithException(nameof(actions));
-            actions.For(t => sourceFunc += t);
+            actions.ForEach(t => sourceFunc += t);
             return sourceFunc;
         }
 
@@ -61,8 +62,8 @@ namespace System
         /// <param name="action"></param>
         /// <returns></returns>
         public static Func<TInput, TResult> Do<TInput, TResult>(
-            [NotNull] this Func<TInput, TResult> sourceFunc,
-            [NotNull] Action<TResult> action)
+             this Func<TInput, TResult> sourceFunc,
+             Action<TResult> action)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             action.CheckNullWithException(nameof(action));
@@ -86,8 +87,8 @@ namespace System
         /// <param name="actions"></param>
         /// <returns></returns>
         public static Func<TInput, TResult> Do<TInput, TResult>(
-            [NotNull] this Func<TInput, TResult> sourceFunc,
-            [NotNull] params Action<TResult>[] actions)
+             this Func<TInput, TResult> sourceFunc,
+             params Action<TResult>[] actions)
         {
             sourceFunc.CheckNullWithException(nameof(sourceFunc));
             actions.CheckNullWithException(nameof(actions));
@@ -95,7 +96,7 @@ namespace System
             return t =>
             {
                 TResult result = sourceFunc(t);
-                actions.For(item => item(result));
+                actions.ForEach(item => item(result));
                 return result;
             };
         }
