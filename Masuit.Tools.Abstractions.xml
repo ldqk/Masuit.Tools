@@ -4,6 +4,22 @@
         <name>Masuit.Tools.Abstractions</name>
     </assembly>
     <members>
+        <member name="T:Masuit.Tools.Core.Config.ConfigHelper">
+            <summary>
+            .net core的配置导入
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
+            <summary>
+            配置对象
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
+            </summary>
+            <param name="config"></param>
+        </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
             中文字符工具类
@@ -1361,25 +1377,7 @@
             <param name="stdDev">方差</param>
             <returns></returns>
         </member>
-        <member name="M:Masuit.Tools.ShortExtensions.GetBytes(System.Int16)">
-            <summary>
-            转换成字节数组
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.StreamExtensions.SaveAsMemoryStream(System.IO.Stream)">
-            <summary>
-            将流转换为内存流
-            </summary>
-            <param name="stream"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.StreamExtensions.ToArray(System.IO.Stream)">
-             <summary>
-            
-             </summary>
-             <param name="stream"></param>
+    <param name="stream"></param>
              <returns></returns>
         </member>
         <member name="M:Masuit.Tools.StringExtensions.ToDateTime(System.String)">
@@ -1645,6 +1643,23 @@
         </member>
         <member name="M:Masuit.Tools.ValueTypeConvertExtensions.ToDouble(System.Decimal)">
             <summary>
+            字符串转double
+            </summary>
+            <param name="s">源字符串</param>
+            <returns>double类型的数据</returns>
+        </member>
+        <member name="M:Masuit.Tools.ValueTypeConvertExtensions.ToInt32(System.Double)">
+            <summary>
+            将double转换成int
+            </summary>
+            <param name="num">double类型</param>
+            <returns>int类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.ValueTypeConvertExtensions.ToInt32(System.Decimal)">
+            <summary>
+            将double转换成int
+            </summary>
+            <param name="num"       <summary>
             字符串转double
             </summary>
             <param name="s">源字符串</param>
@@ -1939,29 +1954,7 @@
         <member name="P:Masuit.Tools.Logging.LogInfo.LogLevel">
             <summary>
             日志级别
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Logging.LogInfo.Source">
-            <summary>
-            异常源
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Logging.LogInfo.Message">
-            <summary>
-            异常信息
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Logging.LogInfo.Exception">
-            <summary>
-            异常对象
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Logging.LogInfo.ExceptionType">
-            <summary>
-            日志类型
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Logging.LogInfo.RequestUrl">
+            <suit.Tools.Logging.LogInfo.RequestUrl">
             <summary>
             请求路径
             </summary>
@@ -2055,6 +2048,21 @@
             <summary>
             写入error级别日志
             </summary>
+            <param name="error">异常对象</param>
+        </member>
+        <member name="M:Masuit.Tools.Logging.LogManager.Error(System.Type,System.Exception)">
+            <summary>
+            写入error级别日志
+            </summary>
+            <param name="source">异常源的类型</param>
+            <param name="error">异常对象</param>
+        </member>
+        <member name="M:Masuit.Tools.Logging.LogManager.Error(System.Type,System.String)">
+            <summary>
+            写入error级别日志
+            </summary>
+            <param name="source">异常源的类型</param>
+            <param name="error">异常信息<    </summary>
             <param name="error">异常对象</param>
         </member>
         <member name="M:Masuit.Tools.Logging.LogManager.Error(System.Type,System.Exception)">
@@ -5481,7 +5489,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>

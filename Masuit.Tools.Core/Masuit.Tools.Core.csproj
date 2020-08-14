@@ -19,6 +19,13 @@
     <PackageId>Masuit.Tools.Core</PackageId>
     <LangVersion>8.0</LangVersion>
     <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
+    <RepositoryType>Github</RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>2.2.9.5</Version>
+    <FileVersion>2.2.9.5</FileVersion>
+    <Company>masuit.com</Company>
+    <AssemblyVersion>2.2.9.5</AssemblyVersion>
+    <Authors>懒得勤快X</Authors>
   </PropertyGroup>
 
   <ItemGroup>

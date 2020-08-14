@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Masuit.Tools.AspNetCore.ResumeFileResults.WebTest</name>
+    </assembly>
+    <members>
+        <member name="T:Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.Controllers.TestController">
+            <summary>
+            测试控制器
+            </summary>
+        </member>
+    </members>
+</doc>

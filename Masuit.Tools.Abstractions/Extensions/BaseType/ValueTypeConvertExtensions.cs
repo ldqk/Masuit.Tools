@@ -1,70 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Masuit.Tools
 {
-#pragma warning disable IDE0060 // 删除未使用的参数
-
     public static class ValueTypeConvertExtensions
-    {  /// <summary>
-       /// 字符串转int
-       /// </summary>
-       /// <param name="s">源字符串</param>
-       /// <param name="defaultValue">失败时返回的值</param>
-       /// <returns>int类型的数字</returns>
-        public static int ToInt32(this string s, int defaultValue = default)
-
+    {
+        /// <summary>
+        /// 字符串转int
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
+        /// <returns>int类型的数字</returns>
+        public static int ToInt32(this string s, int defaultValue = 0)
         {
-            int.TryParse(s, out defaultValue);
-            return defaultValue;
+            return int.TryParse(s, out int result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转long
         /// </summary>
         /// <param name="s">源字符串</param>
-        /// <param name="defaultValue">失败时返回的值</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static long ToInt64(this string s, long defaultValue = default)
+        public static long ToInt64(this string s, int defaultValue = 0)
         {
-            return s.ToLong(defaultValue);
-        }
-
-        /// <summary>
-        /// 字符串转long类型
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="defaultResult">转换失败的默认值</param>
-        /// <returns></returns>
-        public static long ToLong(this string s, long defaultValue = default)
-        {
-            long.TryParse(s, out defaultValue);
-            return defaultValue;
+            return long.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转double
         /// </summary>
         /// <param name="s">源字符串</param>
-        /// <param name="defaultValue">失败时返回的值</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>double类型的数据</returns>
-        public static double ToDouble(this string s, double defaultValue = default)
+        public static double ToDouble(this string s, int defaultValue = 0)
         {
-            double.TryParse(s, out defaultValue);
-            return defaultValue;
+            return double.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转decimal
         /// </summary>
         /// <param name="s">源字符串</param>
-        /// <param name="defaultValue">失败时返回的值</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static decimal ToDecimal(this string s, decimal defaultValue = default)
+        public static decimal ToDecimal(this string s, int defaultValue = 0)
         {
-            decimal.TryParse(s, out defaultValue);
-            return defaultValue;
+            return decimal.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -108,6 +89,17 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 字符串转long类型
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="defaultResult">转换失败的默认值</param>
+        /// <returns></returns>
+        public static long ToLong(this string str, long defaultResult = 0)
+        {
+            return long.TryParse(str, out var result) ? result : defaultResult;
+        }
+
+        /// <summary>
         /// 将int转换成double
         /// </summary>
         /// <param name="num">int类型</param>
@@ -124,9 +116,7 @@ namespace Masuit.Tools
         /// <returns>int类型</returns>
         public static decimal ToDecimal(this int num)
         {
-            return (decimal)(num * 1.0);
+            return new decimal(num);
         }
     }
-
-#pragma warning restore IDE0060 // 删除未使用的参数
 }
