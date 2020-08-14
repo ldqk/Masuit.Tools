@@ -254,193 +254,6 @@ namespace Masuit.Tools
 
         #endregion
 
-        #region Map
-
-        /// <summary>
-        /// 映射到目标类型(浅克隆)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static TDestination MapTo<TDestination>(this object source) where TDestination : new()
-        {
-            TDestination dest = new TDestination();
-            dest.GetType().GetProperties().ForEach(p =>
-            {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
-        }
-
-        /// <summary>
-        /// 映射到目标类型(浅克隆)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static async Task<TDestination> MapToAsync<TDestination>(this object source) where TDestination : new()
-        {
-            return await Task.Run(() =>
-            {
-                TDestination dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p =>
-                {
-                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-                });
-                return dest;
-            });
-        }
-
-        /// <summary>
-        /// 映射到目标类型(深克隆)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static TDestination Map<TDestination>(this object source) where TDestination : new() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
-
-        /// <summary>
-        /// 映射到目标类型(深克隆)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static async Task<TDestination> MapAsync<TDestination>(this object source) where TDestination : new() => await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static IEnumerable<TDestination> ToList<TDestination>(this object[] source) where TDestination : new()
-        {
-            foreach (var o in source)
-            {
-                var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p =>
-                {
-                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                });
-                yield return dest;
-            }
-        }
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this object[] source) where TDestination : new()
-        {
-            return await Task.Run(() =>
-            {
-                IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
-                {
-                    var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p =>
-                    {
-                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                    });
-                    list.Add(dest);
-                }
-
-                return list;
-            });
-        }
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static IEnumerable<TDestination> ToList<TDestination>(this IList<dynamic> source) where TDestination : new()
-        {
-            foreach (var o in source)
-            {
-                var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p =>
-                {
-                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                });
-                yield return dest;
-            }
-        }
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IList<dynamic> source) where TDestination : new()
-        {
-            return await Task.Run(() =>
-            {
-                IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
-                {
-                    var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p =>
-                    {
-                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                    });
-                    list.Add(dest);
-                }
-
-                return list;
-            });
-        }
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static IEnumerable<TDestination> ToList<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
-        {
-            foreach (var o in source)
-            {
-                var dest = new TDestination();
-                dest.GetType().GetProperties().ForEach(p =>
-                {
-                    p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                });
-                yield return dest;
-            }
-        }
-
-        /// <summary>
-        /// 映射到目标类型的集合
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型集合</returns>
-        public static async Task<IEnumerable<TDestination>> ToListAsync<TDestination>(this IEnumerable<dynamic> source) where TDestination : new()
-        {
-            return await Task.Run(() =>
-            {
-                IList<TDestination> list = new List<TDestination>();
-                foreach (var o in source)
-                {
-                    var dest = new TDestination();
-                    dest.GetType().GetProperties().ForEach(p =>
-                    {
-                        p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(o));
-                    });
-                    list.Add(dest);
-                }
-
-                return list;
-            });
-        }
-
-        #endregion
-
         /// <summary>
         /// 转换成json字符串
         /// </summary>
@@ -457,44 +270,44 @@ namespace Masuit.Tools
         /// 字符串转int
         /// </summary>
         /// <param name="s">源字符串</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static int ToInt32(this string s)
+        public static int ToInt32(this string s, int defaultValue = 0)
         {
-            int.TryParse(s, out int result);
-            return result;
+            return int.TryParse(s, out int result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转long
         /// </summary>
         /// <param name="s">源字符串</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static long ToInt64(this string s)
+        public static long ToInt64(this string s, int defaultValue = 0)
         {
-            long.TryParse(s, out var result);
-            return result;
+            return long.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转double
         /// </summary>
         /// <param name="s">源字符串</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>double类型的数据</returns>
-        public static double ToDouble(this string s)
+        public static double ToDouble(this string s, int defaultValue = 0)
         {
-            double.TryParse(s, out var result);
-            return result;
+            return double.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
         /// 字符串转decimal
         /// </summary>
         /// <param name="s">源字符串</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static decimal ToDecimal(this string s)
+        public static decimal ToDecimal(this string s, int defaultValue = 0)
         {
-            decimal.TryParse(s, out var result);
-            return result;
+            return decimal.TryParse(s, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -543,13 +356,9 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="defaultResult">转换失败的默认值</param>
         /// <returns></returns>
-        public static long ToLong(this string str, long defaultResult)
+        public static long ToLong(this string str, long defaultResult = 0)
         {
-            if (!long.TryParse(str, out var result))
-            {
-                result = defaultResult;
-            }
-            return result;
+            return long.TryParse(str, out var result) ? result : defaultResult;
         }
 
         /// <summary>
@@ -569,7 +378,7 @@ namespace Masuit.Tools
         /// <returns>int类型</returns>
         public static decimal ToDecimal(this int num)
         {
-            return (decimal)(num * 1.0);
+            return new decimal(num);
         }
 
         #endregion
@@ -590,13 +399,7 @@ namespace Masuit.Tools
                 return false;
             }
 
-            if (ignoreCase)
-            {
-                return Regex.IsMatch(s, string.Join("|", keys), RegexOptions.IgnoreCase);
-            }
-
-            return Regex.IsMatch(s, string.Join("|", keys));
-
+            return ignoreCase ? Regex.IsMatch(s, string.Join("|", keys), RegexOptions.IgnoreCase) : Regex.IsMatch(s, string.Join("|", keys));
         }
 
         #endregion
@@ -807,9 +610,10 @@ namespace Masuit.Tools
         /// 类型直转
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T To<T>(this IConvertible value)
+        public static T To<T>(this IConvertible value, T defaultValue = default)
         {
             try
             {
@@ -817,7 +621,7 @@ namespace Masuit.Tools
             }
             catch
             {
-                return default;
+                return defaultValue;
             }
         }
 
