@@ -16,13 +16,13 @@ namespace Masuit.Tools.Win32
     /// </summary>
     public static class Windows
     {
-        /// <summary>  
+        /// <summary>
         /// 跨平台调用C++的方法
         /// </summary>
         /// <param name="hwProc">程序句柄</param>
         /// <returns></returns>
         [DllImport("psapi.dll")]
-        static extern int EmptyWorkingSet(IntPtr hwProc);
+        private static extern int EmptyWorkingSet(IntPtr hwProc);
 
         /// <summary>
         /// 清理系统内存，返回优化内存后的内存占用率
@@ -64,13 +64,13 @@ namespace Masuit.Tools.Win32
             }
         }
 
-        /// <summary>  
-        /// 运行一个控制台程序并返回其输出参数。  
-        /// </summary>  
-        /// <param name="filename">程序名</param>  
+        /// <summary>
+        /// 运行一个控制台程序并返回其输出参数。
+        /// </summary>
+        /// <param name="filename">程序名</param>
         /// <param name="arguments">输入参数</param>
         /// <param name="recordLog">是否在控制台输出日志</param>
-        /// <returns></returns>  
+        /// <returns></returns>
         public static string RunApp(string filename, string arguments, bool recordLog)
         {
             try
@@ -94,9 +94,9 @@ namespace Masuit.Tools.Win32
                 proc.Start();
 
                 using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
-                //上面标记的是原文，下面是我自己调试错误后自行修改的  
-                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行  
-                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行  
+                //上面标记的是原文，下面是我自己调试错误后自行修改的
+                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行
+                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行
                 {
                     proc.Kill();
                 }
@@ -191,7 +191,7 @@ namespace Masuit.Tools.Win32
         /// <summary>
         /// 物理内存，单位MB
         /// </summary>
-        public string TotalPhysicalMemory; //总共的内存  单位：M 
+        public string TotalPhysicalMemory; //总共的内存  单位：M
 
         private static WindowsServer _instance;
 
@@ -238,11 +238,11 @@ namespace Masuit.Tools.Win32
             return "-1";
         }
 
-        string GetDiskID()
+        private string GetDiskID()
         {
             try
             {
-                //获取硬盘ID 
+                //获取硬盘ID
                 string hdid = Empty;
                 using var mc = new ManagementClass("Win32_DiskDrive");
                 foreach (ManagementObject mo in mc.GetInstances())
@@ -261,11 +261,11 @@ namespace Masuit.Tools.Win32
             }
         }
 
-        ///    <summary>  
-        ///   操作系统的登录用户名 
-        ///    </summary>  
-        ///    <returns>  </returns>  
-        string GetUserName()
+        ///    <summary>
+        ///   操作系统的登录用户名
+        ///    </summary>
+        ///    <returns>  </returns>
+        private string GetUserName()
         {
             try
             {
@@ -287,7 +287,7 @@ namespace Masuit.Tools.Win32
             }
         }
 
-        string GetSystemType()
+        private string GetSystemType()
         {
             try
             {
@@ -310,7 +310,7 @@ namespace Masuit.Tools.Win32
             }
         }
 
-        string GetTotalPhysicalMemory()
+        private string GetTotalPhysicalMemory()
         {
             try
             {
@@ -332,7 +332,7 @@ namespace Masuit.Tools.Win32
             }
         }
 
-        string GetComputerName()
+        private string GetComputerName()
         {
             try
             {

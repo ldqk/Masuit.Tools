@@ -7,13 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.UnitTest", "Masuit.Tools.UnitTest\Masuit.Tools.UnitTest.csproj", "{174474CB-0C9A-4C99-B461-1A2158F00A98}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core.UnitTest", "Masuit.Tools.Core.UnitTest\Masuit.Tools.Core.UnitTest.csproj", "{82383331-259E-4FB8-BA90-47C0E1AFB4FA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试", "测试", "{E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{91954D82-A5FC-417B-8FD9-D9C165C8F16C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}"
 EndProject
@@ -23,7 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.ExpressionMapp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient", "Masuit.Tools.NoSQL.MongoDBClient\Masuit.Tools.NoSQL.MongoDBClient.csproj", "{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Abstractions", "Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj", "{74E7C0A2-499D-408F-A2E4-08878700C2DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Abstractions", "Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj", "{74E7C0A2-499D-408F-A2E4-08878700C2DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core.Test", "Test\Masuit.Tools.Core.Test\Masuit.Tools.Core.Test.csproj", "{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Abstractions.Test", "Test\Masuit.Tools.Abstractions.Test\Masuit.Tools.Abstractions.Test.csproj", "{61430D45-3808-49B5-BDF3-4536DA399DD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Test", "Test\Masuit.Tools.Test\Masuit.Tools.Test.csproj", "{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,18 +39,6 @@ Global
 		{149E6872-CE95-493B-B136-535E64C65A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{174474CB-0C9A-4C99-B461-1A2158F00A98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82383331-259E-4FB8-BA90-47C0E1AFB4FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91954D82-A5FC-417B-8FD9-D9C165C8F16C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,15 +59,28 @@ Global
 		{74E7C0A2-499D-408F-A2E4-08878700C2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74E7C0A2-499D-408F-A2E4-08878700C2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74E7C0A2-499D-408F-A2E4-08878700C2DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61430D45-3808-49B5-BDF3-4536DA399DD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61430D45-3808-49B5-BDF3-4536DA399DD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61430D45-3808-49B5-BDF3-4536DA399DD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61430D45-3808-49B5-BDF3-4536DA399DD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{174474CB-0C9A-4C99-B461-1A2158F00A98} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
-		{82383331-259E-4FB8-BA90-47C0E1AFB4FA} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{49E16577-01CD-4104-B73E-449B2960D956} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{1D51DC49-6626-41AF-B1B5-085C83307FF2} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
+		{B8BFA5B2-20BF-4D9C-A9F3-5E33EC6A0B20} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
+		{61430D45-3808-49B5-BDF3-4536DA399DD4} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
+		{92F3DA7E-669A-4A6D-AC8B-018CABCBEFB9} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B57FDA8F-95CF-478B-A0A8-7FF0F01CCFAB}

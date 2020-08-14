@@ -36,7 +36,7 @@ namespace Masuit.Tools.Reflection
             return objRet;
         }
 
-        #endregion
+        #endregion 成员读写
 
         #region 方法调用
 
@@ -71,7 +71,7 @@ namespace Masuit.Tools.Reflection
                         targetMethod = ((PropertyInfo)mi).GetGetMethod();
                         break;
 
-                        #endregion
+                        #endregion 调用属性方法Get
                     }
 
                     throw new InvalidProgramException(string.Concat("[", funName, "] 不是有效的函数/属性方法！"));
@@ -109,7 +109,7 @@ namespace Masuit.Tools.Reflection
                                 paramFlag = false;
                             }
 
-                            #endregion
+                            #endregion 检查类型是否兼容
 
                             //break;
                         }
@@ -117,7 +117,7 @@ namespace Masuit.Tools.Reflection
                         ++paramIdx;
                     }
 
-                    #endregion
+                    #endregion 检查数据类型 设置validParamsType是否有效
 
                     bool validParamsType;
                     if (paramFlag)
@@ -136,7 +136,7 @@ namespace Masuit.Tools.Reflection
                     }
                 }
 
-                #endregion
+                #endregion 检查函数参数和数据类型 绑定正确的函数到目标调用
             }
 
             if (targetMethod != null)
@@ -155,7 +155,7 @@ namespace Masuit.Tools.Reflection
                     objReturn = refType.InvokeMember(funName, BindingFlags.InvokeMethod, Type.DefaultBinder, null, funParams);
                 }
 
-                #endregion
+                #endregion 兼顾效率和兼容重载函数调用
 
                 return (T)objReturn;
             }
@@ -176,7 +176,7 @@ namespace Masuit.Tools.Reflection
             return InvokeMethodOrGetProperty<T>(refType, funName, null, funParams);
         }
 
-        #endregion
+        #endregion 方法调用
 
         #region 资源获取
 
@@ -228,6 +228,6 @@ namespace Masuit.Tools.Reflection
             return (bytes != null) ? Encoding.GetEncoding(charset).GetString(bytes) : "";
         }
 
-        #endregion
+        #endregion 资源获取
     }
 }
