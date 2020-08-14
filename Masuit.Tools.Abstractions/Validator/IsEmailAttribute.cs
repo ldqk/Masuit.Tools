@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Configuration;
+﻿using Masuit.Tools.Core.Config;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Masuit.Tools.Core.Config;
 
-namespace Masuit.Tools.Validator
+namespace Masuit.Tools.Core.Validator
 {
     /// <summary>
     /// 邮箱校验

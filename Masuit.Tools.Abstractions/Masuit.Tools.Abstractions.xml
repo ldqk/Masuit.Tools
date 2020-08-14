@@ -9,10 +9,16 @@
             .net core的配置导入
             </summary>
         </member>
-        <member name="F:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
+        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
             <summary>
             配置对象
             </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
+            </summary>
+            <param name="config"></param>
         </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
@@ -64,6 +70,29 @@
         <member name="M:Masuit.Tools.Core.Validator.ComplexPassword.IsValid(System.Object)">
             <summary>
             校验密码强度
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.Core.Validator.IsEmailAttribute">
+            <summary>
+            邮箱校验
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Core.Validator.IsEmailAttribute.DomainWhiteList">
+            <summary>
+            域白名单
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.Validator.IsEmailAttribute.#ctor(System.Boolean)">
+            <summary>
+            可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
+            </summary>
+            <param name="valid">是否检查邮箱的有效性</param>
+        </member>
+        <member name="M:Masuit.Tools.Core.Validator.IsEmailAttribute.IsValid(System.Object)">
+            <summary>
+            邮箱校验
             </summary>
             <param name="value"></param>
             <returns></returns>
@@ -5726,29 +5755,6 @@
             执行方法
             </summary>
             <param name="action"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Masuit.Tools.Validator.IsEmailAttribute">
-            <summary>
-            邮箱校验
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Validator.IsEmailAttribute.DomainWhiteList">
-            <summary>
-            域白名单
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Validator.IsEmailAttribute.#ctor(System.Boolean)">
-            <summary>
-            可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
-            </summary>
-            <param name="valid">是否检查邮箱的有效性</param>
-        </member>
-        <member name="M:Masuit.Tools.Validator.IsEmailAttribute.IsValid(System.Object)">
-            <summary>
-            邮箱校验
-            </summary>
-            <param name="value"></param>
             <returns></returns>
         </member>
     </members>
