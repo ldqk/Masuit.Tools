@@ -54,7 +54,7 @@ namespace Masuit.Tools.Core.Net
             string ak = ConfigHelper.GetConfigOrDefault("BaiduAK");
             if (string.IsNullOrEmpty(ak))
             {
-                throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中下添加BaiduAK配置节(注意大小写)");
+                throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中下添加BaiduAK配置节(注意大小写)；或手动在程序入口处调用IConfiguration的AddToMasuitTools方法");
             }
 
             using var client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };

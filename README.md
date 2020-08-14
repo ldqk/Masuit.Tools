@@ -27,7 +27,7 @@ PM> Install-Package Masuit.Tools.Core
 ## 特色功能示例代码
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
 ```csharp
-bool isEmail="3444764617@qq.com".MatchEmail();
+bool isEmail="3444764617@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
 bool isInetAddress = "114.114.114.114".MatchInetAddress();
 bool isUrl = "http://masuit.com".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
@@ -333,7 +333,7 @@ string s = "123".Crc64();// 生成crc64摘要
 ```csharp
 public class MyClass
 {
-    [IsEmail]
+    [IsEmail] //可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
     public string Email { get; set; }
 
     [IsPhone]
