@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.Res
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.ExpressionMapperBenchmark", "Test\Masuit.Tools.ExpressionMapperBenchmark\Masuit.Tools.ExpressionMapperBenchmark.csproj", "{B5657BBC-E50E-4CAD-B78B-6E2CCB139F98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Test", "Masuit.Tools.Test\Masuit.Tools.Test.csproj", "{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Test", "Test\Masuit.Tools.Test\Masuit.Tools.Test.csproj", "{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
