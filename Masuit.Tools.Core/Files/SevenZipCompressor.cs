@@ -24,7 +24,7 @@ namespace Masuit.Tools.Files
         private readonly HttpClient _httpClient;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="httpClientFactory"></param>
         public SevenZipCompressor(IHttpClientFactory httpClientFactory)
@@ -217,17 +217,20 @@ namespace Masuit.Tools.Files
                 }
             }
 
-            files.Where(s => !s.StartsWith("http")).ForEach(s =>
-            {
-                if (Directory.Exists(s))
+            files
+                .Where(s => !s.StartsWith("http"))
+                .ForEach(s =>
                 {
-                    GetFilesRecurs(s);
-                }
-                else
-                {
-                    fileList.Add(s);
-                }
-            });
+                    if (Directory.Exists(s))
+                    {
+                        GetFilesRecurs(s);
+                    }
+                    else
+                    {
+                        fileList.Add(s);
+                    }
+                });
+
             if (!fileList.Any())
             {
                 return new Dictionary<string, string>();

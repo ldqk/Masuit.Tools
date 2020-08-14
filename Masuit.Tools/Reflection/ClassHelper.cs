@@ -6,52 +6,49 @@ using System.Reflection.Emit;
 
 namespace Masuit.Tools.Reflection
 {
-    /// <summary>  
-    /// 类帮助器,可以动态对类,类成员进行控制(添加,删除),目前只支持属性控制。  
-    /// 注意,属性以外的其它成员会被清空,功能还有待完善,使其不影响其它成员。  
-    /// </summary>  
+    /// <summary>
+    /// 类帮助器,可以动态对类,类成员进行控制(添加,删除),目前只支持属性控制。
+    /// 注意,属性以外的其它成员会被清空,功能还有待完善,使其不影响其它成员。
+    /// </summary>
     public static class ClassHelper
     {
         #region 公有方法
 
-
-        /// <summary>  
-        /// 根据类的名称,属性列表创建型实例。  
-        /// </summary>  
-        /// <param name="className">将要创建的类的名称。</param>  
-        /// <param name="lcpi">将要创建的类的属性列表。</param>  
-        /// <returns>返回创建的类实例</returns>  
+        /// <summary>
+        /// 根据类的名称,属性列表创建型实例。
+        /// </summary>
+        /// <param name="className">将要创建的类的名称。</param>
+        /// <param name="lcpi">将要创建的类的属性列表。</param>
+        /// <returns>返回创建的类实例</returns>
         public static object CreateInstance(string className, List<CustPropertyInfo> lcpi)
         {
             return AddProperty(BuildType(className), lcpi).GetInstance();
         }
 
-
-        /// <summary>  
-        /// 根据属性列表创建类的实例,默认类名为DefaultClass,由于生成的类不是强类型,所以类名可以忽略。  
-        /// </summary>  
-        /// <param name="lcpi">将要创建的类的属性列表</param>  
-        /// <returns>返回创建的类的实例。</returns>  
+        /// <summary>
+        /// 根据属性列表创建类的实例,默认类名为DefaultClass,由于生成的类不是强类型,所以类名可以忽略。
+        /// </summary>
+        /// <param name="lcpi">将要创建的类的属性列表</param>
+        /// <returns>返回创建的类的实例。</returns>
         public static object CreateInstance(List<CustPropertyInfo> lcpi)
         {
             return CreateInstance("DefaultClass", lcpi);
         }
 
-        /// <summary>  
-        /// 创建一个没有成员的类型的实例,类名为"DefaultClass"。  
-        /// </summary>  
-        /// <returns>返回创建的类型的实例。</returns>  
+        /// <summary>
+        /// 创建一个没有成员的类型的实例,类名为"DefaultClass"。
+        /// </summary>
+        /// <returns>返回创建的类型的实例。</returns>
         public static Type BuildType()
         {
             return BuildType("DefaultClass");
         }
 
-
-        /// <summary>  
-        /// 根据类名创建一个没有成员的类型的实例。  
-        /// </summary>  
-        /// <param name="className">将要创建的类型的实例的类名。</param>  
-        /// <returns>返回创建的类型的实例。</returns>  
+        /// <summary>
+        /// 根据类名创建一个没有成员的类型的实例。
+        /// </summary>
+        /// <param name="className">将要创建的类型的实例的类名。</param>
+        /// <returns>返回创建的类型的实例。</returns>
         public static Type BuildType(string className)
         {
             AssemblyName myAsmName = new AssemblyName
@@ -59,52 +56,51 @@ namespace Masuit.Tools.Reflection
                 Name = "MyDynamicAssembly"
             };
 
-            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。  
+            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。
             AssemblyBuilder myAsmBuilder = AssemblyBuilder.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndCollect);
 
-            //创建一个单模程序块。  
+            //创建一个单模程序块。
             ModuleBuilder myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name);
-            //创建TypeBuilder。  
+            //创建TypeBuilder。
             TypeBuilder myTypeBuilder = myModBuilder.DefineType(className, TypeAttributes.Public);
 
-            //创建类型。  
+            //创建类型。
             Type retval = myTypeBuilder.CreateType();
 
-            //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。  
-            //myAsmBuilder.Save(myAsmName.Name + ".dll");  
+            //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。
+            //myAsmBuilder.Save(myAsmName.Name + ".dll");
             return retval;
         }
 
-        /// <summary>  
-        /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。  
-        /// </summary>  
-        /// <param name="classType">指定类型的实例。</param>  
-        /// <param name="lcpi">表示属性的一个列表。</param>  
-        /// <returns>返回处理过的类型的实例。</returns>  
+        /// <summary>
+        /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。
+        /// </summary>
+        /// <param name="classType">指定类型的实例。</param>
+        /// <param name="lcpi">表示属性的一个列表。</param>
+        /// <returns>返回处理过的类型的实例。</returns>
         public static Type AddProperty(this Type classType, List<CustPropertyInfo> lcpi)
         {
-            //合并先前的属性,以便一起在下一步进行处理。  
+            //合并先前的属性,以便一起在下一步进行处理。
             MergeProperty(classType, lcpi);
-            //把属性加入到Type。  
+            //把属性加入到Type。
             return AddPropertyToType(classType, lcpi);
         }
 
-
-        /// <summary>  
-        /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。  
-        /// </summary>  
-        /// <param name="classType">指定类型的实例。</param>  
-        /// <param name="cpi">表示一个属性。</param>  
-        /// <returns>返回处理过的类型的实例。</returns>  
+        /// <summary>
+        /// 添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。
+        /// </summary>
+        /// <param name="classType">指定类型的实例。</param>
+        /// <param name="cpi">表示一个属性。</param>
+        /// <returns>返回处理过的类型的实例。</returns>
         public static Type AddProperty(this Type classType, CustPropertyInfo cpi)
         {
             var lcpi = new List<CustPropertyInfo>
             {
                 cpi
             };
-            //合并先前的属性,以便一起在下一步进行处理。  
+            //合并先前的属性,以便一起在下一步进行处理。
             MergeProperty(classType, lcpi);
-            //把属性加入到Type。  
+            //把属性加入到Type。
             return AddPropertyToType(classType, lcpi);
         }
 
@@ -161,29 +157,28 @@ namespace Masuit.Tools.Reflection
             });
         }
 
-        /// <summary>  
-        /// 从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。  
-        /// </summary>  
-        /// <param name="classType">指定类型的实例。</param>  
-        /// <param name="propertyName">要移除的属性。</param>  
-        /// <returns>返回处理过的类型的实例。</returns>  
+        /// <summary>
+        /// 从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。
+        /// </summary>
+        /// <param name="classType">指定类型的实例。</param>
+        /// <param name="propertyName">要移除的属性。</param>
+        /// <returns>返回处理过的类型的实例。</returns>
         public static Type DeleteProperty(this Type classType, string propertyName)
         {
-            //合并先前的属性,以便一起在下一步进行处理。  
-            //把属性加入到Type。  
+            //合并先前的属性,以便一起在下一步进行处理。
+            //把属性加入到Type。
             return AddPropertyToType(classType, SeparateProperty(classType, new List<string>
             {
                 propertyName
             }));
         }
 
-
-        /// <summary>  
-        /// 从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。  
-        /// </summary>  
-        /// <param name="classType">指定类型的实例。</param>  
-        /// <param name="propertyNames">要移除的属性列表。</param>  
-        /// <returns>返回处理过的类型的实例。</returns>  
+        /// <summary>
+        /// 从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。
+        /// </summary>
+        /// <param name="classType">指定类型的实例。</param>
+        /// <param name="propertyNames">要移除的属性列表。</param>
+        /// <returns>返回处理过的类型的实例。</returns>
         public static Type DeleteProperty(this Type classType, List<string> propertyNames)
         {
             return AddPropertyToType(classType, SeparateProperty(classType, propertyNames));
@@ -222,26 +217,25 @@ namespace Masuit.Tools.Reflection
             });
         }
 
-        #endregion
+        #endregion 公有方法
 
         #region 私有方法
 
-        /// <summary>  
-        /// 把类型的实例t和lcpi参数里的属性进行合并。  
-        /// </summary>  
-        /// <param name="t">实例t</param>  
-        /// <param name="lcpi">里面包含属性列表的信息。</param>  
+        /// <summary>
+        /// 把类型的实例t和lcpi参数里的属性进行合并。
+        /// </summary>
+        /// <param name="t">实例t</param>
+        /// <param name="lcpi">里面包含属性列表的信息。</param>
         private static void MergeProperty(Type t, List<CustPropertyInfo> lcpi)
         {
             lcpi.AddRange(t.GetProperties().Select(pi => new CustPropertyInfo(pi.PropertyType, pi.Name)));
         }
 
-
-        /// <summary>  
-        /// 从类型的实例t的属性移除属性列表lcpi,返回的新属性列表在lcpi中。  
-        /// </summary>  
-        /// <param name="type">类型的实例t。</param>  
-        /// <param name="ls">要移除的属性列表。</param>  
+        /// <summary>
+        /// 从类型的实例t的属性移除属性列表lcpi,返回的新属性列表在lcpi中。
+        /// </summary>
+        /// <param name="type">类型的实例t。</param>
+        /// <param name="ls">要移除的属性列表。</param>
         private static List<CustPropertyInfo> SeparateProperty(Type type, List<string> ls)
         {
             return type.GetProperties().SelectMany(pi => ls, (pi, s) => new
@@ -251,28 +245,27 @@ namespace Masuit.Tools.Reflection
             }).Where(t => t.pi.Name != t.s).Select(t => new CustPropertyInfo(t.pi.PropertyType, t.pi.Name)).ToList();
         }
 
-
-        /// <summary>  
-        /// 把lcpi参数里的属性加入到myTypeBuilder中。注意:该操作会将其它成员清除掉,其功能有待完善。  
-        /// </summary>  
-        /// <param name="myTypeBuilder">类型构造器的实例。</param>  
-        /// <param name="lcpi">里面包含属性列表的信息。</param>  
+        /// <summary>
+        /// 把lcpi参数里的属性加入到myTypeBuilder中。注意:该操作会将其它成员清除掉,其功能有待完善。
+        /// </summary>
+        /// <param name="myTypeBuilder">类型构造器的实例。</param>
+        /// <param name="lcpi">里面包含属性列表的信息。</param>
         private static void AddPropertyToTypeBuilder(TypeBuilder myTypeBuilder, List<CustPropertyInfo> lcpi)
         {
-            // 属性Set和Get方法要一个专门的属性。这里设置为Public。  
+            // 属性Set和Get方法要一个专门的属性。这里设置为Public。
             var getSetAttr = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
-            // 添加属性到myTypeBuilder。  
+            // 添加属性到myTypeBuilder。
             foreach (CustPropertyInfo cpi in lcpi)
             {
-                //定义字段。  
+                //定义字段。
                 var customerNameBldr = myTypeBuilder.DefineField(cpi.FieldName, cpi.Type, FieldAttributes.Private);
 
-                //定义属性。  
-                //最后一个参数为null,因为属性没有参数。  
+                //定义属性。
+                //最后一个参数为null,因为属性没有参数。
                 var custNamePropBldr = myTypeBuilder.DefineProperty(cpi.PropertyName, PropertyAttributes.HasDefault, cpi.Type, null);
 
-                //定义Get方法。  
+                //定义Get方法。
                 var custNameGetPropMthdBldr = myTypeBuilder.DefineMethod(cpi.GetPropertyMethodName, getSetAttr, cpi.Type, Type.EmptyTypes);
                 var custNameGetIL = custNameGetPropMthdBldr.GetILGenerator();
                 try
@@ -286,7 +279,7 @@ namespace Masuit.Tools.Reflection
                     // ignored
                 }
 
-                //定义Set方法。  
+                //定义Set方法。
                 var custNameSetPropMthdBldr = myTypeBuilder.DefineMethod(cpi.SetPropertyMethodName, getSetAttr, null, new[]
                 {
                     cpi.Type
@@ -297,19 +290,18 @@ namespace Masuit.Tools.Reflection
                 custNameSetIL.Emit(OpCodes.Ldarg_1);
                 custNameSetIL.Emit(OpCodes.Stfld, customerNameBldr);
                 custNameSetIL.Emit(OpCodes.Ret);
-                //把创建的两个方法(Get,Set)加入到PropertyBuilder中。  
+                //把创建的两个方法(Get,Set)加入到PropertyBuilder中。
                 custNamePropBldr.SetGetMethod(custNameGetPropMthdBldr);
                 custNamePropBldr.SetSetMethod(custNameSetPropMthdBldr);
             }
         }
 
-
-        /// <summary>  
-        /// 把属性加入到类型的实例。  
-        /// </summary>  
-        /// <param name="classType">类型的实例。</param>  
-        /// <param name="lcpi">要加入的属性列表。</param>  
-        /// <returns>返回处理过的类型的实例。</returns>  
+        /// <summary>
+        /// 把属性加入到类型的实例。
+        /// </summary>
+        /// <param name="classType">类型的实例。</param>
+        /// <param name="lcpi">要加入的属性列表。</param>
+        /// <returns>返回处理过的类型的实例。</returns>
         public static Type AddPropertyToType(this Type classType, List<CustPropertyInfo> lcpi)
         {
             AssemblyName myAsmName = new AssemblyName
@@ -317,47 +309,47 @@ namespace Masuit.Tools.Reflection
                 Name = "MyDynamicAssembly"
             };
 
-            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。  
+            //创建一个程序集,设置为AssemblyBuilderAccess.RunAndCollect。
             AssemblyBuilder myAsmBuilder = AssemblyBuilder.DefineDynamicAssembly(myAsmName, AssemblyBuilderAccess.RunAndCollect);
 
-            //创建一个单模程序块。  
+            //创建一个单模程序块。
             ModuleBuilder myModBuilder = myAsmBuilder.DefineDynamicModule(myAsmName.Name);
-            //创建TypeBuilder。  
+            //创建TypeBuilder。
             // ReSharper disable once AssignNullToNotNullAttribute
             TypeBuilder myTypeBuilder = myModBuilder.DefineType(classType.FullName, TypeAttributes.Public);
 
-            //把lcpi中定义的属性加入到TypeBuilder。将清空其它的成员。其功能有待扩展,使其不影响其它成员。  
+            //把lcpi中定义的属性加入到TypeBuilder。将清空其它的成员。其功能有待扩展,使其不影响其它成员。
             AddPropertyToTypeBuilder(myTypeBuilder, lcpi);
 
-            //创建类型。  
+            //创建类型。
             Type retval = myTypeBuilder.CreateType();
 
-            //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。  
-            //myAsmBuilder.Save(myAsmName.Name + ".dll");  
+            //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。
+            //myAsmBuilder.Save(myAsmName.Name + ".dll");
             return retval;
         }
 
-        #endregion
+        #endregion 私有方法
 
         #region Class辅助类
 
-        /// <summary>  
-        /// 自定义的属性信息类型。  
-        /// </summary>  
+        /// <summary>
+        /// 自定义的属性信息类型。
+        /// </summary>
         public class CustPropertyInfo
         {
-            /// <summary>  
-            /// 空构造。  
-            /// </summary>  
+            /// <summary>
+            /// 空构造。
+            /// </summary>
             public CustPropertyInfo()
             {
             }
 
-            /// <summary>  
-            /// 根据属性类型名称,属性名称构造实例。  
-            /// </summary>  
-            /// <param name="type">属性类型名称。</param>  
-            /// <param name="propertyName">属性名称。</param>  
+            /// <summary>
+            /// 根据属性类型名称,属性名称构造实例。
+            /// </summary>
+            /// <param name="type">属性类型名称。</param>
+            /// <param name="propertyName">属性名称。</param>
             public CustPropertyInfo(Type type, string propertyName)
             {
                 Type = type;
@@ -375,14 +367,14 @@ namespace Masuit.Tools.Reflection
                 PropertyValue = propertyValue;
             }
 
-            /// <summary>  
-            /// 获取或设置属性类型名称。  
-            /// </summary>  
+            /// <summary>
+            /// 获取或设置属性类型名称。
+            /// </summary>
             public Type Type { get; set; }
 
-            /// <summary>  
-            /// 获取或设置属性名称。  
-            /// </summary>  
+            /// <summary>
+            /// 获取或设置属性名称。
+            /// </summary>
             public string PropertyName { get; set; }
 
             /// <summary>
@@ -390,9 +382,9 @@ namespace Masuit.Tools.Reflection
             /// </summary>
             public object PropertyValue { get; set; }
 
-            /// <summary>  
-            /// 获取属性字段名称。  
-            /// </summary>  
+            /// <summary>
+            /// 获取属性字段名称。
+            /// </summary>
             public string FieldName
             {
                 get
@@ -406,18 +398,17 @@ namespace Masuit.Tools.Reflection
                 }
             }
 
-            /// <summary>  
-            /// 获取属性在IL中的Set方法名。  
-            /// </summary>  
+            /// <summary>
+            /// 获取属性在IL中的Set方法名。
+            /// </summary>
             public string SetPropertyMethodName => "set_" + PropertyName;
 
-
-            /// <summary>  
-            ///  获取属性在IL中的Get方法名。  
-            /// </summary>  
+            /// <summary>
+            ///  获取属性在IL中的Get方法名。
+            /// </summary>
             public string GetPropertyMethodName => "get_" + PropertyName;
         }
 
-        #endregion
+        #endregion Class辅助类
     }
 }

@@ -110,7 +110,7 @@ namespace Masuit.Tools.Reflection
             return propertyInfos;
         }
 
-        #endregion
+        #endregion 属性字段设置
 
         #region 获取Description
 
@@ -191,7 +191,7 @@ namespace Masuit.Tools.Reflection
             return text1;
         }
 
-        #endregion
+        #endregion 获取Description
 
         #region 获取Attribute信息
 
@@ -303,7 +303,7 @@ namespace Masuit.Tools.Reflection
             return null;
         }
 
-        #endregion
+        #endregion 获取Attribute信息
 
         #region 资源获取
 
@@ -367,7 +367,7 @@ namespace Masuit.Tools.Reflection
             return (bytes != null) ? Encoding.GetEncoding(charset).GetString(bytes) : "";
         }
 
-        #endregion
+        #endregion 资源获取
 
         #region 创建实例
 
@@ -546,6 +546,7 @@ namespace Masuit.Tools.Reflection
                 InstanceCreationMethods[type] = constructorCallingLambda;
             }
         }
-        #endregion
+
+        #endregion 创建实例
     }
 }
