@@ -31,11 +31,13 @@ namespace Masuit.Tools.Core.Net
                 if (address.Status == 0)
                 {
                     string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
-                    List<string> pois = address.AddressResult.Pois.Select(p => $"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米").ToList();
+                    var pois = address.AddressResult.Pois.Select(p => $"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米").ToList();
                     return new Tuple<string, List<string>>(detail, pois);
                 }
+
                 return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
             }
+
             return new Tuple<string, List<string>>($"{ip}不是一个合法的IP地址", new List<string>());
         }
 

@@ -1,5 +1,4 @@
 ﻿#if NET461
-
 using System.Configuration;
 
 namespace Masuit.Tools.Core.Config
@@ -15,8 +14,8 @@ namespace Masuit.Tools.Core.Config
 
 #else
 
-using System;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Masuit.Tools.Core.Config
 {
@@ -28,22 +27,21 @@ namespace Masuit.Tools.Core.Config
         /// <summary>
         /// 配置对象
         /// </summary>
-        public static IConfiguration Configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", true, true)
-            .Build();
+        public static IConfiguration Configuration { get; private set; } = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory).AddJsonFile("appsettings.json", true, true).Build();
 
         public static string GetConfigOrDefault(string key, string defaultValue = "")
         {
-            string config = ConfigHelper.Configuration[key];
-            if (config.IsNullOrEmpty())
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return config;
-            }
+            string config = Configuration[key];
+            return config.IsNullOrEmpty() ? defaultValue : config;
+        }
+
+        /// <summary>
+        /// 将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
+        /// </summary>
+        /// <param name="config"></param>
+        public static void AddToMasuitTools(this IConfiguration config)
+        {
+            Configuration = config;
         }
     }
 }
