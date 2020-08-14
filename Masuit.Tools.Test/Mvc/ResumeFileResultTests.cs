@@ -1,6 +1,6 @@
 ﻿using Masuit.Tools.Mvc;
 using Masuit.Tools.Mvc.ActionResults;
-using Masuit.Tools.UnitTest.Mvc.Mocks;
+using Masuit.Tools.Test.Mvc.Mocks;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -493,7 +493,7 @@ namespace Masuit.Tools.Test.Mvc
             {
                 responseStream.Seek(0, SeekOrigin.Begin);
                 fileStream.Seek(from, SeekOrigin.Begin);
-                for (var byteIndex = from; byteIndex < to; byteIndex++)
+                for (var byteIndex = from ; byteIndex < to ; byteIndex++)
                 {
                     var responseByte = responseStream.ReadByte();
                     var fileByte = fileStream.ReadByte();
