@@ -333,7 +333,7 @@ string s = "123".Crc64();// 生成crc64摘要
 ```csharp
 public class MyClass
 {
-    [IsEmail]
+    [IsEmail] //可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
     public string Email { get; set; }
 
     [IsPhone]
