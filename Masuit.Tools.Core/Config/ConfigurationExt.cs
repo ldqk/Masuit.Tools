@@ -10,7 +10,7 @@ namespace Masuit.Tools.Core.Config
         /// <param name="config"></param>
         public static void AddToMasuitTools(this IConfiguration config)
         {
-            CoreConfig.Configuration = config;
+            ConfigHelper.Configuration = config;
         }
     }
 }
