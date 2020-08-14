@@ -18,8 +18,9 @@
     <PackageReference Include="AutoMapper" Version="10.0.0" />
   </ItemGroup>
 
+
   <ItemGroup>
-    <ProjectReference Include="..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />
+    <ProjectReference Include="..\..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />
   </ItemGroup>
 
 </Project>
