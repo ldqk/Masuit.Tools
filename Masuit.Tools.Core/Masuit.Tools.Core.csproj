@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Compile Remove="DateTimeExt\**" />
+    <Compile Remove="Hardware\**" />
     <Compile Remove="Html\**" />
     <Compile Remove="Linq\**" />
     <Compile Remove="Logging\**" />
@@ -38,7 +39,9 @@
     <Compile Remove="Media\**" />
     <Compile Remove="RandomSelector\**" />
     <Compile Remove="Systems\**" />
+    <Compile Remove="Win32\**" />
     <EmbeddedResource Remove="DateTimeExt\**" />
+    <EmbeddedResource Remove="Hardware\**" />
     <EmbeddedResource Remove="Html\**" />
     <EmbeddedResource Remove="Linq\**" />
     <EmbeddedResource Remove="Logging\**" />
@@ -47,7 +50,9 @@
     <EmbeddedResource Remove="Media\**" />
     <EmbeddedResource Remove="RandomSelector\**" />
     <EmbeddedResource Remove="Systems\**" />
+    <EmbeddedResource Remove="Win32\**" />
     <None Remove="DateTimeExt\**" />
+    <None Remove="Hardware\**" />
     <None Remove="Html\**" />
     <None Remove="Linq\**" />
     <None Remove="Logging\**" />
@@ -56,10 +61,16 @@
     <None Remove="Media\**" />
     <None Remove="RandomSelector\**" />
     <None Remove="Systems\**" />
+    <None Remove="Win32\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DnsClient" Version="1.3.2" />
+    <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Reflection\ReflectHelper.cs" Link="Reflection\ReflectHelper.cs" />
+    <Compile Include="..\Masuit.Tools\Reflection\ReflectionUtil.cs" Link="Reflection\ReflectionUtil.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
@@ -75,34 +86,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Masuit.Tools\Hardware\CpuInfo.cs" Link="Hardware\CpuInfo.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\CPU_INFO.cs" Link="Hardware\CPU_INFO.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\DiskData.cs" Link="Hardware\DiskData.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\MemoryInfo.cs" Link="Hardware\MemoryInfo.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\NetData.cs" Link="Hardware\NetData.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\RamInfo.cs" Link="Hardware\RamInfo.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\SystemInfo.cs" Link="Hardware\SystemInfo.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\SystemtimeInfo.cs" Link="Hardware\SystemtimeInfo.cs" />
-    <Compile Include="..\Masuit.Tools\Hardware\Unit.cs" Link="Hardware\Unit.cs" />
-    <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
-    <Compile Include="..\Masuit.Tools\Reflection\ReflectHelper.cs" Link="Reflection\ReflectHelper.cs" />
-    <Compile Include="..\Masuit.Tools\Reflection\ReflectionUtil.cs" Link="Reflection\ReflectionUtil.cs" />
-    <Compile Include="..\Masuit.Tools\Win32\Windows.cs" Link="Win32\Windows.cs" />
-    <Compile Include="..\Masuit.Tools\Win32\WindowsCommand.cs" Link="Win32\WindowsCommand.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
-    <PackageReference Include="HtmlSanitizer" Version="5.0.343" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="SharpCompress" Version="0.26.0" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -112,12 +102,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Hardware\" />
-    <Folder Include="Reflection\" />
-    <Folder Include="Win32\" />
+    <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
+    <Folder Include="Reflection\" />
   </ItemGroup>
 </Project>

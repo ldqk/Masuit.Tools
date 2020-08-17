@@ -71,7 +71,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Numerics" />
@@ -102,15 +101,6 @@
   <ItemGroup>
     <Compile Include="Files\SevenZipCompressor.cs" />
     <Compile Include="Files\ExtensionAttach.cs" />
-    <Compile Include="Hardware\CpuInfo.cs" />
-    <Compile Include="Hardware\CPU_INFO.cs" />
-    <Compile Include="Hardware\DiskData.cs" />
-    <Compile Include="Hardware\MemoryInfo.cs" />
-    <Compile Include="Hardware\NetData.cs" />
-    <Compile Include="Hardware\RamInfo.cs" />
-    <Compile Include="Hardware\SystemInfo.cs" />
-    <Compile Include="Hardware\SystemtimeInfo.cs" />
-    <Compile Include="Hardware\Unit.cs" />
     <Compile Include="Mvc\ActionResults\ResumeActionResultBase.cs" />
     <Compile Include="Mvc\ActionResults\ResumeFileContentResult.cs" />
     <Compile Include="Mvc\ActionResults\ResumeFilePathResult.cs" />
@@ -136,15 +126,10 @@
     <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
-    <Compile Include="Win32\Windows.cs" />
-    <Compile Include="Win32\WindowsCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="package.nuspec" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj">

@@ -1082,15 +1082,6 @@
             <param name="action">回调方法</param>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:Masuit.Tools.IEnumerableExtensions.ForEach``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
-            <summary>
-            遍历IEnumerable并返回一个新的IEnumerable
-            </summary>
-            <param name="objs"></param>
-            <param name="action">回调方法</param>
-            <typeparam name="T"></typeparam>
-            <returns></returns>
-        </member>
         <member name="M:Masuit.Tools.IEnumerableExtensions.ForEachAsync``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             遍历IEnumerable
@@ -1816,6 +1807,359 @@
             </summary>
             <param name="zipname">要解压的文件名</param>
             <param name="zippath">要解压的文件路径</param>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.CpuInfo">
+            <summary>
+            CPU模型
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.DeviceID">
+            <summary>
+            设备ID
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.Type">
+            <summary>
+            CPU型号 
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.Manufacturer">
+            <summary>
+            CPU厂商
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.MaxClockSpeed">
+            <summary>
+            CPU最大睿频
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.CurrentClockSpeed">
+            <summary>
+            CPU的时钟频率
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.NumberOfCores">
+            <summary>
+            CPU核心数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.NumberOfLogicalProcessors">
+            <summary>
+            逻辑处理器核心数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.CpuLoad">
+            <summary>
+            CPU使用率
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.DataWidth">
+            <summary>
+            CPU位宽
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.CpuInfo.Temperature">
+            <summary>
+            核心温度
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo">
+            <summary>
+            硬件信息，部分功能需要C++支持
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemInfo.CPU_INFO">
+            <summary>
+            定义CPU的信息结构
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.#cctor">
+            <summary>
+            静态构造函数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.ProcessorCount">
+            <summary>
+            获取CPU核心数 
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.CpuLoad">
+            <summary>
+            获取CPU占用率 %
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.MemoryAvailable">
+            <summary>
+            获取可用内存
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.SystemInfo.PhysicalMemory">
+            <summary>
+            获取物理内存
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.FindAllApps(System.Int32)">
+            <summary>
+            查找所有应用程序标题 
+            </summary>
+            <param name="handle">应用程序标题范型</param>
+            <returns>所有应用程序集合</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCpuCount">
+            <summary>
+            获取CPU的数量
+            </summary>
+            <returns>CPU的数量</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCpuInfo">
+            <summary>
+            获取CPU信息
+            </summary>
+            <returns>CPU信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetRamInfo">
+            <summary>
+            获取内存信息
+            </summary>
+            <returns>内存信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetCPUTemperature">
+            <summary>
+            获取CPU温度
+            </summary>
+            <returns>CPU温度</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetProcessorData">
+            <summary>
+            WMI接口获取CPU使用率
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetMemoryVData">
+            <summary>
+            获取虚拟内存使用率详情
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetUsageVirtualMemory">
+            <summary>
+            获取虚拟内存使用率
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetUsedVirtualMemory">
+            <summary>
+            获取虚拟内存已用大小
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetTotalVirtualMemory">
+            <summary>
+            获取虚拟内存总大小
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetMemoryPData">
+            <summary>
+            获取物理内存使用率详情描述
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetTotalPhysicalMemory">
+            <summary>
+            获取物理内存总数，单位B
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetFreePhysicalMemory">
+            <summary>
+            获取空闲的物理内存数，单位B
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetUsedPhysicalMemory">
+            <summary>
+            获取已经使用了的物理内存数，单位B
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetDiskData(Masuit.Tools.Hardware.DiskData)">
+            <summary>
+            获取硬盘的读写速率
+            </summary>
+            <param name="dd">读或写</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetNetData(Masuit.Tools.Hardware.NetData)">
+            <summary>
+            获取网络的传输速率
+            </summary>
+            <param name="nd">上传或下载</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetMacAddress">
+            <summary>
+            获取网卡硬件地址
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetLocalUsedIP">
+            <summary>  
+            获取当前使用的IP  
+            </summary>  
+            <returns></returns>  
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.GetLocalIPs">
+            <summary>  
+            获取本机所有的ip地址
+            </summary>  
+            <returns></returns>  
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.FormatBytes(System.Double)">
+            <summary>
+            将速度值格式化成字节单位
+            </summary>
+            <param name="bytes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.BootTime">
+            <summary>
+            获取计算机开机时间
+            </summary>
+            <returns>datetime</returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.QueryComputerSystem(System.String)">
+            <summary>
+            查询计算机系统信息
+            </summary>
+            <param name="type">类型名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.QueryEnvironment(System.String)">
+            <summary>
+            获取环境变量
+            </summary>
+            <param name="type">环境变量名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.DiskFree">
+            <summary>
+            获取磁盘可用空间
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.DiskTotalSpace">
+            <summary>
+            获取磁盘总空间
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.DiskUsedSpace">
+            <summary>
+            获取磁盘已用空间
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Hardware.SystemInfo.DiskUsage">
+            <summary>
+            获取磁盘使用率
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.DiskData">
+            <summary>
+            磁盘数据
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.DiskData.ReadAndWrite">
+            <summary>
+            读写
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.DiskData.Read">
+            <summary>
+            读
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.DiskData.Write">
+            <summary>
+            写
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.MemoryInfo">
+            <summary>
+            定义内存的信息结构
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.NetData">
+            <summary>
+            网络数据
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.NetData.ReceivedAndSent">
+            <summary>
+            收发
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.NetData.Received">
+            <summary>
+            收
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Hardware.NetData.Sent">
+            <summary>
+            发
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.RamInfo">
+            <summary>
+            内存条模型
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.MemoryAvailable">
+            <summary>
+            可用物理内存
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.PhysicalMemory">
+            <summary>
+            物理总内存
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.TotalPageFile">
+            <summary>
+            分页内存总数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.AvailablePageFile">
+            <summary>
+            分页内存可用
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.TotalVirtual">
+            <summary>
+            虚拟内存总数
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.AvailableVirtual">
+            <summary>
+            虚拟内存可用
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Hardware.RamInfo.MemoryUsage">
+            <summary>
+            内存使用率
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.SystemtimeInfo">
+            <summary>
+            定义系统时间的信息结构
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Hardware.Unit">
+            <summary>
+            字节单位枚举
+            </summary>
         </member>
         <member name="T:Masuit.Tools.Html.HtmlTools">
             <summary>
@@ -5758,6 +6102,142 @@
             </summary>
             <param name="action"></param>
             <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.Win32.Windows">
+            <summary>
+            Windows系统的系列方法
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Win32.Windows.EmptyWorkingSet(System.IntPtr)">
+            <summary>
+            跨平台调用C++的方法
+            </summary>
+            <param name="hwProc">程序句柄</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Win32.Windows.ClearMemory">
+            <summary>
+            清理系统内存，返回优化内存后的内存占用率
+            </summary>
+            <returns>优化内存后的内存占用率</returns>
+        </member>
+        <member name="M:Masuit.Tools.Win32.Windows.ClearMemorySilent">
+            <summary>
+            静默清理系统内存
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Win32.Windows.RunApp(System.String,System.String,System.Boolean)">
+            <summary>
+            运行一个控制台程序并返回其输出参数。
+            </summary>
+            <param name="filename">程序名</param>
+            <param name="arguments">输入参数</param>
+            <param name="recordLog">是否在控制台输出日志</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Win32.Windows.GetOsVersion">
+            <summary>
+            获取操作系统版本
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.Win32.WindowsServer">
+            <summary>
+            服务器信息
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.CpuId">
+            <summary>
+            CPUID
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.CpuCount">
+            <summary>
+            CPU插槽数
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.CpuMhz">
+            <summary>
+            CPU主频
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.MacAddress">
+            <summary>
+            mac地址
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.DiskId">
+            <summary>
+            硬盘ID
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.DiskSize">
+            <summary>
+            硬盘大小
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.IpAddress">
+            <summary>
+            IP地址
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.LoginUserName">
+            <summary>
+            系统当前登录用户
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.ComputerName">
+            <summary>
+            计算机名
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.SystemType">
+            <summary>
+            操作系统架构
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.Win32.WindowsServer.TotalPhysicalMemory">
+            <summary>
+            物理内存，单位MB
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Win32.WindowsServer.Instance">
+            <summary>
+            获取实例
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Win32.WindowsServer.#ctor">
+            <summary>
+            构造函数
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Win32.WindowsServer.GetSizeOfDisk">
+            <summary>
+            获取磁盘大小
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Win32.WindowsServer.GetUserName">
+               <summary>
+              操作系统的登录用户名
+               </summary>
+               <returns>  </returns>
+        </member>
+        <member name="T:Masuit.Tools.Win32.WindowsCommand">
+            <summary>
+            命令提示符
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Win32.WindowsCommand.Execute(System.String,System.Int32)">
+            <summary>
+            执行一个控制台程序，并获取在控制台返回的数据
+            </summary>
+            <param name="dosCommand">dos/cmd命令</param>
+            <param name="outtime">等待执行时间毫秒值，默认不等待</param>
+            <returns>控制台输出信息</returns>
+            <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
+            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
+            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>
     </members>
 </doc>
