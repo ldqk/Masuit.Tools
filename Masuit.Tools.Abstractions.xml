@@ -6225,3 +6225,9 @@
         </member>
     </members>
 </doc>
+iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
+            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
+            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
+        </member>
+    </members>
+</doc>
