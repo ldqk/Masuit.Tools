@@ -7,6 +7,23 @@
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
+    <Version>2.2.9.6</Version>
+    <Authors>懒得勤快</Authors>
+    <Description>Masuit.Tools基础公共库</Description>
+    <Copyright>懒得勤快，长空X</Copyright>
+    <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+    <PackageTags>Masuit.Tools</PackageTags>
+    <PackageReleaseNotes>Masuit.Tools基础公共库</PackageReleaseNotes>
+    <Product>Masuit.Tools.Abstractions</Product>
+    <PackageId>Masuit.Tools.Abstractions</PackageId>
+    <RepositoryType>Github</RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <FileVersion>2.2.9.6</FileVersion>
+    <Company>masuit.com</Company>
+    <AssemblyVersion>2.2.9.6</AssemblyVersion>
+    <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>

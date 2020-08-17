@@ -4,22 +4,6 @@
         <name>Masuit.Tools.Abstractions</name>
     </assembly>
     <members>
-        <member name="T:Masuit.Tools.Core.Config.ConfigHelper">
-            <summary>
-            .net core的配置导入
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
-            <summary>
-            配置对象
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
-            <summary>
-            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
-            </summary>
-            <param name="config"></param>
-        </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
             中文字符工具类
@@ -5843,7 +5827,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
@@ -6236,6 +6220,12 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
+            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
+            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
+        </member>
+    </members>
+</doc>
+iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>
