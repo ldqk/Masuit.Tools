@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,21 +20,6 @@ namespace Masuit.Tools
             foreach (var o in objs)
             {
                 action(o);
-            }
-        }
-
-        /// <summary>
-        /// 遍历IEnumerable并返回一个新的IEnumerable
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IEnumerable<TOutput> ForEach<TInput, TOutput>(this IEnumerable<TInput> objs, Func<TInput, TOutput> action)
-        {
-            foreach (var o in objs)
-            {
-                yield return action(o);
             }
         }
 
@@ -80,9 +64,7 @@ namespace Masuit.Tools
         {
             selector.CheckNullWithException(nameof(selector));
 
-            return source == null
-                ? defaultValueFunc()
-                : converter(source.Select(selector));
+            return source == null ? defaultValueFunc() : converter(source.Select(selector));
         }
 
         /// <summary>
@@ -99,11 +81,7 @@ namespace Masuit.Tools
             Func<TSource, TResult> selector,
             List<TResult>? defaultValue = null)
         {
-            return IEnumerableBaseTo(
-                source: source,
-                selector: selector,
-                converter: Enumerable.ToList,
-                defaultValueFunc: () => defaultValue ?? new List<TResult>());
+            return IEnumerableBaseTo(source, selector, Enumerable.ToList, () => defaultValue ?? new List<TResult>());
         }
 
         /// <summary>
@@ -120,13 +98,7 @@ namespace Masuit.Tools
             Func<TSource, TResult> selector,
             List<TResult>? defaultValue = null)
         {
-            return Task.Run(() =>
-            {
-                return IEnumerableExtensions.ToList<TSource, TResult>(
-                    source: source,
-                    selector: selector,
-                    defaultValue: defaultValue);
-            });
+            return Task.Run(() => ToList(source, selector, defaultValue));
         }
 
         #endregion To方法
@@ -141,7 +113,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            HashSet<TKey> hash = new HashSet<TKey>();
+            var hash = new HashSet<TKey>();
             return source.Where(p => hash.Add(keySelector(p)));
         }
 
@@ -208,6 +180,50 @@ namespace Masuit.Tools
             foreach (var obj in @this.Where(where).ToList())
             {
                 @this.Remove(obj);
+            }
+        }
+
+        /// <summary>
+        /// 在元素之后添加元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="value">值</param>
+        public static void InsertAfter<T>(this IList<T> list, Func<T, bool> condition, T value)
+        {
+            foreach (var item in list.Select((o, i) => new { Value = o, Index = i }).Where(p => condition(p.Value)).OrderByDescending(p => p.Index))
+            {
+                if (item.Index + 1 == list.Count)
+                {
+                    list.Add(value);
+                }
+                else
+                {
+                    list.Insert(item.Index + 1, value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 在元素之后添加元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="index">索引位置</param>
+        /// <param name="value">值</param>
+        public static void InsertAfter<T>(this IList<T> list, int index, T value)
+        {
+            foreach (var item in list.Select((o, i) => new { Value = o, Index = i }).Where(p => p.Index == index).OrderByDescending(p => p.Index))
+            {
+                if (item.Index + 1 == list.Count)
+                {
+                    list.Add(value);
+                }
+                else
+                {
+                    list.Insert(item.Index + 1, value);
+                }
             }
         }
     }
