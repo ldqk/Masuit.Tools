@@ -1058,6 +1058,13 @@
             <param name="updateValueFactory">更新时的操作</param>
             <returns></returns>
         </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.ForEach``2(System.Collections.Generic.IDictionary{``0,``1},System.Action{``0,``1})">
+            <summary>
+            遍历IEnumerable
+            </summary>
+            <param name="dic"></param>
+            <param name="action">回调方法</param>
+        </member>
         <member name="M:Masuit.Tools.IEnumerableExtensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
             遍历IEnumerable
@@ -1074,7 +1081,7 @@
             <param name="action">回调方法</param>
             <typeparam name="T"></typeparam>
         </member>
-        <member name="M:Masuit.Tools.IEnumerableExtensions.IEnumerableBaseTo``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{System.Collections.Generic.IEnumerable{``1},``2},System.Func{``2})">
+        <member name="M:Masuit.Tools.IEnumerableExtensions.EnumerableBaseTo``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{System.Collections.Generic.IEnumerable{``1},``2},System.Func{``2})">
             <summary>
             【内部方法】集合接口转具体实现
             </summary>
@@ -6220,12 +6227,6 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
-            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
-            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
-        </member>
-    </members>
-</doc>
-iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>

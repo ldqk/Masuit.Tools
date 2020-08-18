@@ -14,10 +14,7 @@ namespace Masuit.Tools
         /// <param name="key">键</param>
         /// <param name="value">值</param>
         /// <returns></returns>
-        public static TValue AddOrUpdate<TKey, TValue>(
-            this IDictionary<TKey, TValue> @this,
-            TKey key,
-            TValue value)
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue value)
         {
             if (!@this.ContainsKey(key))
             {
@@ -41,11 +38,7 @@ namespace Masuit.Tools
         /// <param name="addValue">添加时的值</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
-        public static TValue AddOrUpdate<TKey, TValue>(
-            this IDictionary<TKey, TValue> @this,
-            TKey key,
-            TValue addValue,
-            Func<TKey, TValue, TValue> updateValueFactory)
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
         {
             if (!@this.ContainsKey(key))
             {
@@ -69,11 +62,7 @@ namespace Masuit.Tools
         /// <param name="addValueFactory">添加时的操作</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
-        public static TValue AddOrUpdate<TKey, TValue>(
-            this IDictionary<TKey, TValue> @this,
-            TKey key,
-            Func<TKey, TValue> addValueFactory,
-            Func<TKey, TValue, TValue> updateValueFactory)
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
             if (!@this.ContainsKey(key))
             {
@@ -85,6 +74,19 @@ namespace Masuit.Tools
             }
 
             return @this[key];
+        }
+
+        /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="dic"></param>
+        /// <param name="action">回调方法</param>
+        public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> dic, Action<TKey, TValue> action)
+        {
+            foreach (var item in dic)
+            {
+                action(item.Key, item.Value);
+            }
         }
     }
 }
