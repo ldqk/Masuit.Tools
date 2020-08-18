@@ -4,6 +4,22 @@
         <name>Masuit.Tools.Abstractions</name>
     </assembly>
     <members>
+        <member name="T:Masuit.Tools.Core.Config.ConfigHelper">
+            <summary>
+            .net core的配置导入
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
+            <summary>
+            配置对象
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
+            </summary>
+            <param name="config"></param>
+        </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
             中文字符工具类
@@ -5834,7 +5850,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
