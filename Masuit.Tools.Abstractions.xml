@@ -4,6 +4,22 @@
         <name>Masuit.Tools.Abstractions</name>
     </assembly>
     <members>
+        <member name="T:Masuit.Tools.Core.Config.ConfigHelper">
+            <summary>
+            .net core的配置导入
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
+            <summary>
+            配置对象
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
+            </summary>
+            <param name="config"></param>
+        </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
             中文字符工具类
@@ -5065,6 +5081,525 @@
             <param name="items"></param>
             <returns></returns>
         </member>
+        <member name="T:Masuit.Tools.Reflection.ClassHelper">
+            <summary>
+            类帮助器,可以动态对类,类成员进行控制(添加,删除),目前只支持属性控制。
+            注意,属性以外的其它成员会被清空,功能还有待完善,使其不影响其它成员。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.CreateInstance(System.String,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            根据类的名称,属性列表创建型实例。
+            </summary>
+            <param name="className">将要创建的类的名称。</param>
+            <param name="lcpi">将要创建的类的属性列表。</param>
+            <returns>返回创建的类实例</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.CreateInstance(System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            根据属性列表创建类的实例,默认类名为DefaultClass,由于生成的类不是强类型,所以类名可以忽略。
+            </summary>
+            <param name="lcpi">将要创建的类的属性列表</param>
+            <returns>返回创建的类的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.BuildType">
+            <summary>
+            创建一个没有成员的类型的实例,类名为"DefaultClass"。
+            </summary>
+            <returns>返回创建的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.BuildType(System.String)">
+            <summary>
+            根据类名创建一个没有成员的类型的实例。
+            </summary>
+            <param name="className">将要创建的类型的实例的类名。</param>
+            <returns>返回创建的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Type,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。
+            </summary>
+            <param name="classType">指定类型的实例。</param>
+            <param name="lcpi">表示属性的一个列表。</param>
+            <returns>返回处理过的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Type,Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo)">
+            <summary>
+            添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。
+            </summary>
+            <param name="classType">指定类型的实例。</param>
+            <param name="cpi">表示一个属性。</param>
+            <returns>返回处理过的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Object,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            给对象实例添加新属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="lcpi">自定义属性对象集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Object,Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo)">
+            <summary>
+            给对象实例添加新属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="cpi">自定义属性对象</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Object,System.String,System.Object)">
+            <summary>
+            给对象实例添加新属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="propertyName">属性名</param>
+            <param name="propertyValue">属性值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Type,System.String)">
+            <summary>
+            从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。
+            </summary>
+            <param name="classType">指定类型的实例。</param>
+            <param name="propertyName">要移除的属性。</param>
+            <returns>返回处理过的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Type,System.Collections.Generic.List{System.String})">
+            <summary>
+            从类型的实例中移除属性,注意:该操作会将其它成员清除掉,其功能有待完善。
+            </summary>
+            <param name="classType">指定类型的实例。</param>
+            <param name="propertyNames">要移除的属性列表。</param>
+            <returns>返回处理过的类型的实例。</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Object,System.Collections.Generic.List{System.String})">
+            <summary>
+            删除对象的属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="propertyNames">属性名集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Object,System.String)">
+            <summary>
+            删除对象的属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="property">属性名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.MergeProperty(System.Type,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            把类型的实例t和lcpi参数里的属性进行合并。
+            </summary>
+            <param name="t">实例t</param>
+            <param name="lcpi">里面包含属性列表的信息。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.SeparateProperty(System.Type,System.Collections.Generic.List{System.String})">
+            <summary>
+            从类型的实例t的属性移除属性列表lcpi,返回的新属性列表在lcpi中。
+            </summary>
+            <param name="type">类型的实例t。</param>
+            <param name="ls">要移除的属性列表。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddPropertyToTypeBuilder(System.Reflection.Emit.TypeBuilder,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            把lcpi参数里的属性加入到myTypeBuilder中。注意:该操作会将其它成员清除掉,其功能有待完善。
+            </summary>
+            <param name="myTypeBuilder">类型构造器的实例。</param>
+            <param name="lcpi">里面包含属性列表的信息。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddPropertyToType(System.Type,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            <summary>
+            把属性加入到类型的实例。
+            </summary>
+            <param name="classType">类型的实例。</param>
+            <param name="lcpi">要加入的属性列表。</param>
+            <returns>返回处理过的类型的实例。</returns>
+        </member>
+        <member name="T:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo">
+            <summary>
+            自定义的属性信息类型。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.#ctor">
+            <summary>
+            空构造。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.#ctor(System.Type,System.String)">
+            <summary>
+            根据属性类型名称,属性名称构造实例。
+            </summary>
+            <param name="type">属性类型名称。</param>
+            <param name="propertyName">属性名称。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.#ctor(System.Type,System.String,System.Object)">
+            <summary>
+            根据属性类型名称,属性名称构造实例，并设置属性值。
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <param name="propertyValue"></param>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.Type">
+            <summary>
+            获取或设置属性类型名称。
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.PropertyName">
+            <summary>
+            获取或设置属性名称。
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.PropertyValue">
+            <summary>
+            属性值
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.FieldName">
+            <summary>
+            获取属性字段名称。
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.SetPropertyMethodName">
+            <summary>
+            获取属性在IL中的Set方法名。
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo.GetPropertyMethodName">
+            <summary>
+             获取属性在IL中的Get方法名。
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Reflection.ReflectHelper">
+            <summary>
+            反射辅助类
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetInstanceValue(System.Object,System.String)">
+            <summary>
+            获取实体相关属性的值
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="propertyName">属性名</param>
+            <returns>属性值</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.InvokeMethodOrGetProperty``1(System.Type,System.String,System.Object[],System.Object[])">
+            <summary>
+            直接调用内部对象的方法/函数或获取属性(支持重载调用)
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="refType">目标数据类型</param>
+            <param name="funName">函数名称，区分大小写。</param>
+            <param name="objInitial">如果调用属性，则为相关对象的初始化数据，否则为Null。</param>
+            <param name="funParams">函数参数信息</param>
+            <returns>运行结果</returns>
+            <exception cref="T:System.InvalidProgramException">非法异常</exception>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.InvokeFunction``1(System.Type,System.String,System.Object[])">
+            <summary>
+            调用相关实体类型的函数方法
+            </summary>
+            <typeparam name="T">泛型T</typeparam>
+            <param name="refType">实体类型</param>
+            <param name="funName">函数名称</param>
+            <param name="funParams">函数参数列表</param>
+            <returns>调用该函数之后的结果</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.LoadBitmap(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集资源的位图资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+            <param name="imageName">资源项名称</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetStringRes(System.Type,System.String,System.String)">
+            <summary>
+             获取程序集资源的文本资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resName">资源项名称</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectHelper.GetManifestString(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集嵌入资源的文本形式
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="charset">字符集编码</param>
+            <param name="resName">嵌入资源相对路径</param>
+            <returns>如没找到该资源则返回空字符</returns>
+        </member>
+        <member name="T:Masuit.Tools.Reflection.ReflectionUtil">
+            <summary>
+            反射操作辅助类，如获取或设置字段、属性的值等反射信息。
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.InvokeMethod``1(System.Object,System.String,System.Object[])">
+            <summary>
+            执行方法
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="methodName">方法名，区分大小写</param>
+            <param name="args">方法参数</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.SetField(System.Object,System.String,System.Object)">
+            <summary>
+            设置字段
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">字段名</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetField``1(System.Object,System.String)">
+            <summary>
+            获取字段
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">字段名</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetFields(System.Object)">
+            <summary>
+            获取所有的字段信息
+            </summary>
+            <param name="obj">反射对象</param>
+            <returns>字段信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.SetProperty(System.Object,System.String,System.Object)">
+            <summary>
+            设置属性
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">属性名</param>
+            <param name="value">值</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetProperty``1(System.Object,System.String)">
+            <summary>
+            获取属性
+            </summary>
+            <param name="obj">反射对象</param>
+            <param name="name">属性名</param>
+            <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+            <returns>T类型</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetProperties(System.Object)">
+            <summary>
+            获取所有的属性信息
+            </summary>
+            <param name="obj">反射对象</param>
+            <returns>属性信息</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Enum)">
+            <summary>
+            获取枚举成员的Description信息
+            </summary>
+            <param name="value">枚举值</param>
+            <returns>返回枚举的Description或ToString</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Enum,System.Object[])">
+            <summary>
+            获取枚举值的Description信息
+            </summary>
+            <param name ="value">枚举值</param>
+            <param name ="args">要格式化的对象</param>
+            <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo)">
+            <summary>
+            根据成员信息获取Description信息
+            </summary>
+            <param name="member">成员信息</param>
+            <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo,System.Object[])">
+            <summary>
+            根据成员信息获取Description信息
+            </summary>
+            <param name="member">成员信息</param>
+            <param name="args">格式化占位对象</param>
+            <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.Assembly)">
+            <summary>
+            获取对象的Attributes
+            </summary>
+            <param name="attributeType">Type类型</param>
+            <param name="assembly">程序集信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.MemberInfo)">
+            <summary>
+            获取对象的Attributes
+            </summary>
+            <param name="attributeType">Type类型</param>
+            <param name="type">成员信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.MemberInfo,System.Boolean)">
+            <summary>
+            获取对象的Attributes
+            </summary>
+            <param name="attributeType">Type类型</param>
+            <param name="type">成员信息</param>
+            <param name="searchParent">是否在父类中去查找</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttributes(System.Type,System.Reflection.MemberInfo)">
+            <summary>
+            获取对象的Attributes
+            </summary>
+            <param name="attributeType">Type类型</param>
+            <param name="type">成员信息</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttributes(System.Type,System.Reflection.MemberInfo,System.Boolean)">
+            <summary>
+            获取对象的Attributes
+            </summary>
+            <param name="attributeType">Type类型</param>
+            <param name="type">成员信息</param>
+            <param name="searchParent">是否在父类中去查找</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetImageResource(System.Reflection.Assembly,System.String)">
+            <summary>
+            根据资源名称获取图片资源流
+            </summary>
+            <param name="_"></param>
+            <param name="resourceName">资源的名称</param>
+            <returns>数据流</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.LoadBitmap(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集资源的位图资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+            <param name="imageName">资源项名称</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetStringRes(System.Type,System.String,System.String)">
+            <summary>
+             获取程序集资源的文本资源
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="resName">资源项名称</param>
+            <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetManifestString(System.Type,System.String,System.String)">
+            <summary>
+            获取程序集嵌入资源的文本形式
+            </summary>
+            <param name="assemblyType">程序集中的某一对象类型</param>
+            <param name="charset">字符集编码</param>
+            <param name="resName">嵌入资源相对路径</param>
+            <returns>如没找到该资源则返回空字符</returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance(System.Type)">
+            <summary>
+            获取默认实例
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``1(System.Type)">
+            <summary>
+            获取默认实例
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``1(System.String)">
+            <summary>
+            获取默认实例
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance(System.String)">
+            <summary>
+            获取默认实例
+            </summary>
+            <param name="type">类型</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``2(System.Type,``0)">
+            <summary>
+            获取一个构造参数的实例
+            </summary>
+            <typeparam name="TArg">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``2(System.String,``0)">
+            <summary>
+            获取一个构造参数的实例
+            </summary>
+            <typeparam name="TArg">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``3(System.Type,``0,``1)">
+            <summary>
+            获取2个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``3(System.String,``0,``1)">
+            <summary>
+            获取2个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``4(System.Type,``0,``1,``2)">
+            <summary>
+            获取3个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="TArg3">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <param name="argument3">参数值</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetInstance``4(System.String,``0,``1,``2)">
+            <summary>
+            获取3个构造参数的实例
+            </summary>
+            <typeparam name="TArg1">参数类型</typeparam>
+            <typeparam name="TArg2">参数类型</typeparam>
+            <typeparam name="TArg3">参数类型</typeparam>
+            <typeparam name="T"></typeparam>
+            <param name="type">实例类型</param>
+            <param name="argument1">参数值</param>
+            <param name="argument2">参数值</param>
+            <param name="argument3">参数值</param>
+            <returns></returns>
+        </member>
         <member name="T:Masuit.Tools.Security.Crc32">
             <summary>
             实现一个32位CRC哈希算法(兼容Zip)
@@ -6040,7 +6575,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
@@ -6433,12 +6968,6 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
-            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
-            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
-        </member>
-    </members>
-</doc>
-iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>

@@ -66,12 +66,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Masuit.Tools\Reflection\ClassHelper.cs" Link="Reflection\ClassHelper.cs" />
-    <Compile Include="..\Masuit.Tools\Reflection\ReflectHelper.cs" Link="Reflection\ReflectHelper.cs" />
-    <Compile Include="..\Masuit.Tools\Reflection\ReflectionUtil.cs" Link="Reflection\ReflectionUtil.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
@@ -102,9 +96,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Reflection\" />
   </ItemGroup>
 </Project>

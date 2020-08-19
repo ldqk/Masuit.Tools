@@ -69,9 +69,6 @@
     <Compile Include="NoSQL\RedisConnectionManager.cs" />
     <Compile Include="NoSQL\RedisHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\ClassHelper.cs" />
-    <Compile Include="Reflection\ReflectHelper.cs" />
-    <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
   </ItemGroup>
@@ -139,6 +136,7 @@
       <Name>Masuit.Tools.Abstractions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

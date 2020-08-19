@@ -65,7 +65,7 @@ namespace Masuit.Tools.Reflection
             TypeBuilder myTypeBuilder = myModBuilder.DefineType(className, TypeAttributes.Public);
 
             //创建类型。
-            Type retval = myTypeBuilder.CreateType();
+            Type retval = myTypeBuilder.CreateTypeInfo();
 
             //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。
             //myAsmBuilder.Save(myAsmName.Name + ".dll");
@@ -322,7 +322,7 @@ namespace Masuit.Tools.Reflection
             AddPropertyToTypeBuilder(myTypeBuilder, lcpi);
 
             //创建类型。
-            Type retval = myTypeBuilder.CreateType();
+            Type retval = myTypeBuilder.CreateTypeInfo();
 
             //保存程序集,以便可以被Ildasm.exe解析,或被测试程序引用。
             //myAsmBuilder.Save(myAsmName.Name + ".dll");
