@@ -4,22 +4,6 @@
         <name>Masuit.Tools.Abstractions</name>
     </assembly>
     <members>
-        <member name="T:Masuit.Tools.Core.Config.ConfigHelper">
-            <summary>
-            .net core的配置导入
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Core.Config.ConfigHelper.Configuration">
-            <summary>
-            配置对象
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Core.Config.ConfigHelper.AddToMasuitTools(Microsoft.Extensions.Configuration.IConfiguration)">
-            <summary>
-            将配置添加到Masuit.Tools，若未调用，将自动加载默认的appsettings.json
-            </summary>
-            <param name="config"></param>
-        </member>
         <member name="T:Masuit.Tools.Core.ChineseString">
             <summary>
             中文字符工具类
@@ -1050,6 +1034,26 @@
             <param name="value">值</param>
             <returns></returns>
         </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdate``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            添加或更新键值对
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="this"></param>
+            <param name="that">另一个字典集</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdateTo``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            添加或更新键值对
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="this"></param>
+            <param name="that">另一个字典集</param>
+            <returns></returns>
+        </member>
         <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdate``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1,System.Func{``0,``1,``1})">
             <summary>
             添加或更新键值对
@@ -1059,6 +1063,28 @@
             <param name="this"></param>
             <param name="key">键</param>
             <param name="addValue">添加时的值</param>
+            <param name="updateValueFactory">更新时的操作</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdate``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1},System.Func{``0,``1,``1})">
+            <summary>
+            添加或更新键值对
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="this"></param>
+            <param name="that">另一个字典集</param>
+            <param name="updateValueFactory">更新时的操作</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdateTo``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1},System.Func{``0,``1,``1})">
+            <summary>
+            添加或更新键值对
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="this"></param>
+            <param name="that">另一个字典集</param>
             <param name="updateValueFactory">更新时的操作</param>
             <returns></returns>
         </member>
@@ -1080,6 +1106,48 @@
             </summary>
             <param name="dic"></param>
             <param name="action">回调方法</param>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.ToDictionarySafety``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2})">
+            <summary>
+            安全的转换成字典集
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TElement"></typeparam>
+            <param name="source"></param>
+            <param name="keySelector">键选择器</param>
+            <param name="elementSelector">值选择器</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.ToConcurrentDictionary``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2})">
+            <summary>
+            安全的转换成字典集
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TElement"></typeparam>
+            <param name="source"></param>
+            <param name="keySelector">键选择器</param>
+            <param name="elementSelector">值选择器</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AsConcurrentDictionary``2(System.Collections.Generic.Dictionary{``0,``1})">
+            <summary>
+            转换成并发字典集合
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.IDictionaryExtensions.AsDictionary``2(System.Collections.Concurrent.ConcurrentDictionary{``0,``1})">
+            <summary>
+            转换成普通字典集合
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dic"></param>
+            <returns></returns>
         </member>
         <member name="M:Masuit.Tools.IEnumerableExtensions.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
             <summary>
@@ -3740,6 +3808,128 @@
             裁剪
             </summary>
         </member>
+        <member name="T:Masuit.Tools.AspNetCore.Mime.ContentType">
+            <summary>
+            默认MIME映射器，可以根据文件扩展名获取标准内容类型。
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.AspNetCore.Mime.ContentType.DefaultMime">
+            <summary>
+            默认Mime  - 如果没有找到任何其他映射则作为默认的Mime-Type
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.AspNetCore.Mime.IMimeMapper">
+            <summary>
+            Mime
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.IMimeMapper.Extend(Masuit.Tools.AspNetCore.Mime.MimeMappingItem[])">
+            <summary>
+            扩展Mime
+            </summary>
+            <param name="extensions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.IMimeMapper.GetMimeFromExtension(System.String)">
+            <summary>
+            根据扩展名获取mime type
+            </summary>
+            <param name="fileExtension"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.IMimeMapper.GetMimeFromPath(System.String)">
+            <summary>
+            根据路径获取Mime Type
+            </summary>
+            <param name="filePath"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.AspNetCore.Mime.MimeMapper">
+            <summary>
+            默认MIME映射器，可以根据文件扩展名获取标准内容类型。
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.AspNetCore.Mime.MimeMapper.DefaultMime">
+            <summary>
+            默认Mime  - 如果没有找到任何其他映射则作为默认的Mime-Type
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.AspNetCore.Mime.MimeMapper._pathExtensionPattern">
+            <summary>
+            在文件路径中搜索文件扩展名的默认正则表达式
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.AspNetCore.Mime.MimeMapper.MimeTypes">
+            <summary>
+            Mime类型与扩展名的映射字典(Content types)
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.AspNetCore.Mime.MimeMapper.ExtTypes">
+            <summary>
+            mime类型与扩展名的映射关系
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.#ctor(Masuit.Tools.AspNetCore.Mime.MimeMappingItem[])">
+            <summary>
+            
+            </summary>
+            <param name="extensions"></param>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.Extend(Masuit.Tools.AspNetCore.Mime.MimeMappingItem[])">
+            <summary>
+            扩展mime映射规则的标准列表。扩展的具有更高的优先级 - 如果扩展具有与标准项相同的扩展名，则会覆盖默认的mime
+            </summary>
+            <param name="extensions"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.GetMimeFromExtension(System.String)">
+            <summary>
+            返回特定文件扩展名的Content-Type，如果未找到任何对应关系，则返回默认值
+            </summary>
+            <param name="fileExtension"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.GetExtensionFromMime(System.String)">
+            <summary>
+            返回特定文件扩展名的Content-Type，如果未找到任何对应关系，则返回默认值
+            </summary>
+            <param name="mime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.GetMimeFromPath(System.String)">
+            <summary>
+            根据路径获取MimeType
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.AspNetCore.Mime.MimeMapper.GetExtension(System.String)">
+            <summary>
+            获取扩展名
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Masuit.Tools.AspNetCore.Mime.MimeMappingItem">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.AspNetCore.Mime.MimeMappingItem.Extension">
+            <summary>
+            扩展名
+            </summary>
+        </member>
+        <member name="P:Masuit.Tools.AspNetCore.Mime.MimeMappingItem.MimeType">
+            <summary>
+            MimeType
+            </summary>
+        </member>
         <member name="T:Masuit.Tools.Models.AddressComponent">
             <summary>
             地理信息成分
@@ -5850,7 +6040,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
@@ -6243,6 +6433,12 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
+            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
+            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
+        </member>
+    </members>
+</doc>
+iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>

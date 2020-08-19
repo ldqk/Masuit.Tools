@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.AspNetCore.Mime
@@ -20,14 +19,24 @@ namespace Masuit.Tools.AspNetCore.Mime
         private readonly Regex _pathExtensionPattern = new Regex("\\.(\\w*)$");
 
         /// <summary>
-        /// Mime类型的默认字典(Content types)
+        /// Mime类型与扩展名的映射字典(Content types)
         /// </summary>
-        public static Dictionary<string, string> MimeTypes { get; }
+        public static Dictionary<string, string> MimeTypes { get; } = new Dictionary<string, string>();
+
+        /// <summary>
+        /// mime类型与扩展名的映射关系
+        /// </summary>
+        public static Dictionary<string, string> ExtTypes { get; } = new Dictionary<string, string>();
 
         static MimeMapper()
         {
-            MimeTypes = DefaultMimeItems.Items.ToDictionary(item => "." + item.Extension, item => item.MimeType);
+            foreach (var item in DefaultMimeItems.Items)
+            {
+                MimeTypes.AddOrUpdate("." + item.Extension, item.MimeType);
+                ExtTypes.AddOrUpdate(item.MimeType, "." + item.Extension);
+            }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,14 +64,8 @@ namespace Masuit.Tools.AspNetCore.Mime
             {
                 foreach (var mapping in extensions)
                 {
-                    if (MimeTypes.ContainsKey(mapping.Extension))
-                    {
-                        MimeTypes[mapping.Extension] = mapping.MimeType;
-                    }
-                    else
-                    {
-                        MimeTypes.Add(mapping.Extension, mapping.MimeType);
-                    }
+                    MimeTypes.AddOrUpdate(mapping.Extension, mapping.MimeType);
+                    ExtTypes.AddOrUpdate(mapping.MimeType, mapping.Extension);
                 }
             }
             return this;
@@ -78,6 +81,18 @@ namespace Masuit.Tools.AspNetCore.Mime
             fileExtension = (fileExtension ?? string.Empty).ToLower();
             fileExtension = fileExtension.Trim().StartsWith(".") ? fileExtension.Replace(".", "") : fileExtension;
             return MimeTypes.ContainsKey(fileExtension) ? MimeTypes[fileExtension] : DefaultMime;
+        }
+
+        /// <summary>
+        /// 返回特定文件扩展名的Content-Type，如果未找到任何对应关系，则返回默认值
+        /// </summary>
+        /// <param name="mime"></param>
+        /// <returns></returns>
+        public string GetExtensionFromMime(string mime)
+        {
+            mime = (mime ?? string.Empty).ToLower();
+            mime = mime.Trim().StartsWith(".") ? mime.Replace(".", "") : mime;
+            return ExtTypes.ContainsKey(mime) ? ExtTypes[mime] : "";
         }
 
         /// <summary>
