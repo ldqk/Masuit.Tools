@@ -860,20 +860,7 @@
             </summary>
             <param name="_"></param>
             <param name="month">月份</param>
-            <param name="firstDay">第一天</param>
-            <param name="lastDay">最后一天</param>
-        </member>
-        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatDate(System.DateTime,System.Char)">
-            <summary>
-            将时间格式化成 年月日 的形式,如果时间为null，返回当前系统时间
-            </summary>
-            <param name="dt">年月日分隔符</param>
-            <param name="separator">分隔符</param>
-            <returns>xxxx年xx月xx日</returns>
-        </member>
-        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatTime(System.DateTime,System.Char)">
-            <summary>
-            将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
+            <p        将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
             </summary>
             <param name="dt">当前日期时间对象</param>
             <param name="separator">分隔符</param>
@@ -1852,6 +1839,21 @@
             <param name="Key">关键字</param>
             <param name="Value">值</param>
         </member>
+        <member name="M:Masuit.Tools.Files.INIFile.IniReadValue(System.String,ber>
+        <member name="M:Masuit.Tools.Files.INIFile.#ctor(System.String)">
+            <summary>
+            传入INI文件路径构造对象
+            </summary>
+            <param name="INIPath">INI文件路径</param>
+        </member>
+        <member name="M:Masuit.Tools.Files.INIFile.IniWriteValue(System.String,System.String,System.String)">
+            <summary>
+            写INI文件
+            </summary>
+            <param name="Section">分组节点</param>
+            <param name="Key">关键字</param>
+            <param name="Value">值</param>
+        </member>
         <member name="M:Masuit.Tools.Files.INIFile.IniReadValue(System.String,System.String)">
             <summary>
             读取INI文件
@@ -2775,19 +2777,7 @@
             </summary>
             <param name="typeOfSource">源类型</param>
             <param name="typeOfTarget">目标类型</param>
-            <param name="throwExceptionOnNoFound">如果没找到是否需要抛出异常</param>
-            <param name="name">mapper别名</param>
-            <returns></returns>
-            <exception cref="T:Masuit.Tools.Mapping.Exceptions.NoFoundMapperException"></exception>
-        </member>
-        <member name="M:Masuit.Tools.Mapping.Core.MapperConfigurationBase.CreateCommonMember">
-            <summary>
-            创建公共成员
-            </summary>
-        </member>
-        <member name="M:Masuit.Tools.Mapping.Core.MapperConfigurationBase.CheckAndConfigureMapping(System.Tuple{System.Linq.Expressions.Expression,System.Linq.Expressions.Expression,System.Boolean,System.String}@)">
-            <summary>
-            检查并配置mapper
+            <param name="throwExceptionOnNoFound">如果没找到是�查并配置mapper
             </summary>
             <param name="configExpression">配置表达式树</param>
             <exception cref="T:Masuit.Tools.Mapping.Exceptions.NotSameTypePropertyException">
@@ -3316,6 +3306,21 @@
             <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Mapping.ExpressionMapper.GetPropertiesNotMapped``2(System.String)">
+            <summary>
+            获取未映射的属性
+            </summary>
+        </member>
+        <member name="T:Masuit.Tools.Mapping.Extensions.ExpressionExtentions">
+             <summary>
+            表达式树扩展
+             </summary>
+        </member>
+        <member name="M:Masuit.Tools.Mapping.Extensions.ExpressionExtentions.ConvertTo``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Type)">
+            <summary>
+            转换
+            </summary>
+            <typeparam name="TFrom">源类型</typeparam>
+            <par"M:Masuit.Tools.Mapping.ExpressionMapper.GetPropertiesNotMapped``2(System.String)">
             <summary>
             获取未映射的属性
             </summary>
@@ -4252,29 +4257,7 @@
         </member>
         <member name="P:Masuit.Tools.Models.PhysicsAddress.Status">
             <summary>
-            返回状态，0正常，1出错
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Models.PhysicsAddress.AddressResult">
-            <summary>
-            返回结果集
-            </summary>
-        </member>
-        <member name="T:Masuit.Tools.Models.Pois">
-            <summary>
-            参考位置
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Models.Pois.AddressDetail">
-            <summary>
-            地理位置详细
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Models.Pois.Direction">
-            <summary>
-            方位
-            </summary>
-        </member>
+            返回状态，0正
         <member name="P:Masuit.Tools.Models.Pois.Distance">
             <summary>
             距离
@@ -4453,6 +4436,22 @@
             <summary>
             获取当前目录下所有的文件夹列表(仅文件夹)
             </summary>
+            <returnt.FtpClient.GetFilesDetails(System.String)">
+            <summary>
+            获取当前目录下明细(包含文件和文件夹)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.FtpClient.GetFiles(System.String,System.String)">
+            <summary>
+            获取当前目录下文件列表(仅文件)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Net.FtpClient.GetDirectories(System.String)">
+            <summary>
+            获取当前目录下所有的文件夹列表(仅文件夹)
+            </summary>
             <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Net.FtpClient.Delete(System.String)">
@@ -4541,26 +4540,7 @@
             第几部分
             </summary>
         </member>
-        <member name="P:Masuit.Tools.Net.MultiThreadDownloader.TotalBytesReceived">
-            <summary>
-            已接收字节数
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Net.MultiThreadDownloader.TotalProgress">
-            <summary>
-            总进度
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Net.MultiThreadDownloader.Size">
-            <summary>
-            文件大小
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.Net.MultiThreadDownloader.TotalSpeedInBytes">
-            <summary>
-            下载速度
-            </summary>
-        </member>
+  er>
         <member name="P:Masuit.Tools.Net.MultiThreadDownloader.PartialDownloaderList">
             <summary>
             下载块
@@ -5037,6 +5017,23 @@
             <summary>
             添加元素
             </summary>
+            mary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:Masuit.Tools.RandomSelector.WeightedSelector`1.CumulativeWeights">
+            <summary>
+            累计权重集
+            </summary>
+        </member>
+        <member name="F:Masuit.Tools.RandomSelector.WeightedSelector`1._isAddedCumulativeWeights">
+            <summary>
+            是否是已经添加过的权重值
+            </summary>
+        </member>
+        <member name="M:Masuit.Tools.RandomSelector.WeightedSelector`1.Add(Masuit.Tools.RandomSelector.WeightedItem{`0})">
+            <summary>
+            添加元素
+            </summary>
             <param name="item"></param>
         </member>
         <member name="M:Masuit.Tools.RandomSelector.WeightedSelector`1.Add(System.Collections.Generic.IEnumerable{Masuit.Tools.RandomSelector.WeightedItem{`0}})">
@@ -5104,18 +5101,7 @@
         </member>
         <member name="M:Masuit.Tools.Reflection.ClassHelper.BuildType">
             <summary>
-            创建一个没有成员的类型的实例,类名为"DefaultClass"。
-            </summary>
-            <returns>返回创建的类型的实例。</returns>
-        </member>
-        <member name="M:Masuit.Tools.Reflection.ClassHelper.BuildType(System.String)">
-            <summary>
-            根据类名创建一个没有成员的类型的实例。
-            </summary>
-            <param name="className">将要创建的类型的实例的类名。</param>
-            <returns>返回创建的类型的实例。</returns>
-        </member>
-        <member name="M:Masuit.Tools.Reflection.ClassHelper.AddProperty(System.Type,System.Collections.Generic.List{Masuit.Tools.Reflection.ClassHelper.CustPropertyInfo})">
+            创建一个没有成员的类�ropertyInfo})">
             <summary>
             添加属性到类型的实例,注意:该操作会将其它成员清除掉,其功能有待完善。
             </summary>
@@ -5174,6 +5160,21 @@
         </member>
         <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Object,System.Collections.Generic.List{System.String})">
             <summary>
+            删除对象的属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="propertyNames">属性名集合</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.DeleteProperty(System.Object,System.String)">
+            <summary>
+            删除对象的属性并返回新对象实例
+            </summary>
+            <param name="obj"></param>
+            <param name="property">属性名</param>
+            <returns></returns>
+        </member>
+        <member name="M:Masuit.Tools.Reflection.ClassHelper.MergePropert  <summary>
             删除对象的属性并返回新对象实例
             </summary>
             <param name="obj"></param>
@@ -5412,19 +5413,7 @@
         </member>
         <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo)">
             <summary>
-            根据成员信息获取Description信息
-            </summary>
-            <param name="member">成员信息</param>
-            <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
-        </member>
-        <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetDescription(System.Reflection.MemberInfo,System.Object[])">
-            <summary>
-            根据成员信息获取Description信息
-            </summary>
-            <param name="member">成员信息</param>
-            <param name="args">格式化占位对象</param>
-            <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
-        </member>
+            根据成员信息ember>
         <member name="M:Masuit.Tools.Reflection.ReflectionUtil.GetAttribute(System.Type,System.Reflection.Assembly)">
             <summary>
             获取对象的Attributes
@@ -6575,7 +6564,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
@@ -6968,6 +6957,12 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
+            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
+            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
+        </member>
+    </members>
+</doc>
+iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>

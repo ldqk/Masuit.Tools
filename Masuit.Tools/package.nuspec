@@ -4,7 +4,7 @@
     <!--*-->
     <id>Masuit.Tools.Net</id>
     <!--*-->
-    <version>2.3.0</version>
+    <version>2.3.1.1</version>
     <title>Masuit.Tools</title>
     <!--*-->
     <authors>masuit.com</authors>
@@ -22,7 +22,7 @@
     <copyright>Copyright ©  懒得勤快</copyright>
     <tags>Tools</tags>
     <dependencies>
-      <dependency id="Masuit.Tools.Abstractions" version="2.3.0.1" />
+      <dependency id="Masuit.Tools.Abstractions" version="2.3.1" />
     </dependencies>
   </metadata>
 </package>

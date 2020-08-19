@@ -7,7 +7,7 @@
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <Version>2.3.0.1</Version>
+    <Version>2.3.1</Version>
     <Authors>懒得勤快</Authors>
     <Description>Masuit.Tools基础公共库</Description>
     <Copyright>懒得勤快，长空X</Copyright>
@@ -20,9 +20,9 @@
     <RepositoryType>Github</RepositoryType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <FileVersion>2.3.0.0</FileVersion>
+    <FileVersion>2.3.1.0</FileVersion>
     <Company>masuit.com</Company>
-    <AssemblyVersion>2.3.0.0</AssemblyVersion>
+    <AssemblyVersion>2.3.1.0</AssemblyVersion>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
