@@ -932,6 +932,32 @@ public override Post SavePost(Post t)
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
+### 39.集合扩展
+```csharp
+var list = new List<string>()
+{
+    "1","3","3","3"
+};
+list.InsertAfter(0, "2"); // 在第一个元素之后插入
+list.InsertAfter(s => s == "1", "2"); // 在元素"1"后插入
+var dic = list.ToDictionarySafety(s => s); // 安全的转换成字典类型，当键重复时只添加一个键
+var dic = list.ToConcurrentDictionary(s => s); // 转换成并发字典类型，当键重复时只添加一个键
+var dic = list.ToDictionarySafety(s => s, s => s.GetHashCode()); // 安全的转换成字典类型，当键重复时只添加一个键
+dic.AddOrUpdate("4", 4); // 添加或更新键值对
+dic.AddOrUpdate(new Dictionary<string, int>()
+{
+    ["5"] = 5,["55"]=555
+}); // 批量添加或更新键值对
+dic.AddOrUpdate("5", 6, (s, i) => 66); // 如果是添加，则值为6，若更新则值为66
+dic.AddOrUpdate("5", 6, 666); // 如果是添加，则值为6，若更新则值为666
+dic.AsConcurrentDictionary(); // 普通字典转换成并发字典集合
+```
+### 40.Mime类型
+```csharp
+var mimeMapper = new MimeMapper();
+var mime = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
+var ext = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 

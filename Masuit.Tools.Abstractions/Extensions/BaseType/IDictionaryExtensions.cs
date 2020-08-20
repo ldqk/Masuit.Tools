@@ -91,6 +91,30 @@ namespace Masuit.Tools
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValue">更新时的值</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue, TValue updateValue)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(new KeyValuePair<TKey, TValue>(key, addValue));
+            }
+            else
+            {
+                @this[key] = updateValue;
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
         /// <param name="that">另一个字典集</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
@@ -161,6 +185,25 @@ namespace Masuit.Tools
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <returns></returns>
+        public static Dictionary<TKey, TSource> ToDictionarySafety<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            var dic = new Dictionary<TKey, TSource>();
+            foreach (var item in source)
+            {
+                AddOrUpdate(dic, keySelector(item), item);
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TElement"></typeparam>
         /// <param name="source"></param>
         /// <param name="keySelector">键选择器</param>
@@ -172,6 +215,26 @@ namespace Masuit.Tools
             foreach (var item in source)
             {
                 AddOrUpdate(dic, keySelector(item), elementSelector(item));
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <returns></returns>
+        public static ConcurrentDictionary<TKey, TSource> ToConcurrentDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            var dic = new ConcurrentDictionary<TKey, TSource>();
+            foreach (var item in source)
+            {
+                AddOrUpdate(dic, keySelector(item), item);
             }
 
             return dic;

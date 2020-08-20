@@ -1,6 +1,4 @@
-﻿using Masuit.Tools;
-using Masuit.Tools.AspNetCore.Mime;
-using Masuit.Tools.Security;
+﻿using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -12,9 +10,6 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            MimeMapper.ExtTypes.AddOrUpdate(MimeMapper.MimeTypes);
-            var type = MimeMapper.ExtTypes.AsConcurrentDictionary()[".jpg"];
-            Console.WriteLine(type);
             var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
             Console.WriteLine(rsaKey.PrivateKey);
             Console.WriteLine(rsaKey.PublicKey);

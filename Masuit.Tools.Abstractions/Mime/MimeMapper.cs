@@ -79,19 +79,17 @@ namespace Masuit.Tools.AspNetCore.Mime
         public string GetMimeFromExtension(string fileExtension)
         {
             fileExtension = (fileExtension ?? string.Empty).ToLower();
-            fileExtension = fileExtension.Trim().StartsWith(".") ? fileExtension.Replace(".", "") : fileExtension;
             return MimeTypes.ContainsKey(fileExtension) ? MimeTypes[fileExtension] : DefaultMime;
         }
 
         /// <summary>
-        /// 返回特定文件扩展名的Content-Type，如果未找到任何对应关系，则返回默认值
+        /// 返回特定Content-Type的文件扩展名，如果未找到任何对应关系，则返回空值
         /// </summary>
         /// <param name="mime"></param>
         /// <returns></returns>
         public string GetExtensionFromMime(string mime)
         {
             mime = (mime ?? string.Empty).ToLower();
-            mime = mime.Trim().StartsWith(".") ? mime.Replace(".", "") : mime;
             return ExtTypes.ContainsKey(mime) ? ExtTypes[mime] : "";
         }
 
