@@ -1,17 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Numerics;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using DnsClient;
-using Masuit.Tools.Strings;
-using Newtonsoft.Json;
 
 namespace Masuit.Tools
 {
@@ -165,9 +155,9 @@ namespace Masuit.Tools
         /// <summary>
         /// 转换成json字符串
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="obj"></param>
         /// <returns></returns>
-        public static string ToJsonExt<T>(this T obj, JsonSerializerSettings? setting = null)
+        public static string ToJsonString(this object obj, JsonSerializerSettings setting = null)
         {
             if (obj == null) return string.Empty;
 
@@ -175,10 +165,8 @@ namespace Masuit.Tools
             {
                 return JsonConvert.SerializeObject(obj);
             }
-            else
-            {
-                return JsonConvert.SerializeObject(obj, setting);
-            }
+
+            return JsonConvert.SerializeObject(obj, setting);
         }
 
         /// <summary>

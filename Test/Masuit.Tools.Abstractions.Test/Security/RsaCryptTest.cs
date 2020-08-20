@@ -23,7 +23,7 @@ namespace Masuit.Tools.Abstractions.Test.Security
                 SdTime = DateTime.Parse("2020-08-14"),
                 Name = "asdf"
             }
-            .ToJsonExt()
+            .ToJsonString()
             .RSAEncrypt()
             .RSADecrypt();
 

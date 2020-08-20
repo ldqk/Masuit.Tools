@@ -363,6 +363,7 @@ public class MyClass
 ```csharp
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
 var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
+var str="html".RemoveHtmlTag(); // 去除html标签
 ...
 ```
 ### 22.DateTime扩展
@@ -948,6 +949,9 @@ var list = new List<string>()
 {
     "1","3","3","3"
 };
+list.AddRangeIf(s => s.Length > 1, "1", "11"); // 将被添加元素中的长度大于1的元素添加到list
+list.AddRangeIfNotContains("1", "11"); // 将被添加元素中不包含的元素添加到list
+list.RemoveWhere(s => s.Length<1); // 将集合中长度小于1的元素移除
 list.InsertAfter(0, "2"); // 在第一个元素之后插入
 list.InsertAfter(s => s == "1", "2"); // 在元素"1"后插入
 var dic = list.ToDictionarySafety(s => s); // 安全的转换成字典类型，当键重复时只添加一个键
@@ -971,6 +975,30 @@ table.ToList<T>(); // datatable转List
 var mimeMapper = new MimeMapper();
 var mime = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var ext = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
+```
+### 41.日期时间扩展
+```csharp
+DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
+DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00:00的毫秒数
+DateTime.Now.GetTotalMicroseconds(); // 获取该时间相对于1970-01-01 00:00:00的微秒数
+DateTime.Now.GetTotalNanoseconds(); // 获取该时间相对于1970-01-01 00:00:00的纳秒数
+...
+```
+### 42.流转换
+```csharp
+stream.SaveAsMemoryStream(); // 任意流转换成内存流
+stream.ToArray(); // 任意流转换成二进制数组
+```
+### 43.数值转换
+```csharp
+1.2345678901.Digits8(); // 将小数截断为8位
+1.23.To<int>(); // 小数转int
+1.23.To<T>(); // 小数转T基本类型
+```
+### 44.简繁转换
+```csharp
+var str="个体".ToTraditional(); // 转繁体
+var str="個體".ToSimplified(); // 转简体
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult

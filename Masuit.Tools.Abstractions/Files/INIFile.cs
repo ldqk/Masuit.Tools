@@ -17,10 +17,10 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 传入INI文件路径构造对象
         /// </summary>
-        /// <param name="INIPath">INI文件路径</param>
-        public INIFile(string INIPath)
+        /// <param name="iniPath">INI文件路径</param>
+        public INIFile(string iniPath)
         {
-            path = INIPath;
+            path = iniPath;
         }
 
         [DllImport("kernel32")]
@@ -35,24 +35,24 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 写INI文件
         /// </summary>
-        /// <param name="Section">分组节点</param>
-        /// <param name="Key">关键字</param>
-        /// <param name="Value">值</param>
-        public void IniWriteValue(string Section, string Key, string Value)
+        /// <param name="section">分组节点</param>
+        /// <param name="key">关键字</param>
+        /// <param name="value">值</param>
+        public void IniWriteValue(string section, string key, string value)
         {
-            WritePrivateProfileString(Section, Key, Value, this.path);
+            WritePrivateProfileString(section, key, value, path);
         }
 
         /// <summary>
         /// 读取INI文件
         /// </summary>
-        /// <param name="Section">分组节点</param>
-        /// <param name="Key">关键字</param>
+        /// <param name="section">分组节点</param>
+        /// <param name="key">关键字</param>
         /// <returns>值</returns>
-        public string IniReadValue(string Section, string Key)
+        public string IniReadValue(string section, string key)
         {
             StringBuilder temp = new StringBuilder(255);
-            int i = GetPrivateProfileString(Section, Key, "", temp, 255, path);
+            int i = GetPrivateProfileString(section, key, "", temp, 255, path);
             return temp.ToString();
         }
 
@@ -80,10 +80,10 @@ namespace Masuit.Tools.Files
         /// <summary>
         /// 删除ini文件下指定段落下的所有键
         /// </summary>
-        /// <param name="Section">分组节点</param>
-        public void ClearSection(string Section)
+        /// <param name="section">分组节点</param>
+        public void ClearSection(string section)
         {
-            IniWriteValue(Section, null, null);
+            IniWriteValue(section, null, null);
         }
     }
 }

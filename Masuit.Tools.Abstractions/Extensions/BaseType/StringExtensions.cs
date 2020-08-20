@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DnsClient;
+using Masuit.Tools.Strings;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,8 +9,6 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using DnsClient;
-using Masuit.Tools.Strings;
 
 namespace Masuit.Tools
 {
@@ -65,7 +65,7 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="bin">进制</param>
         /// <returns></returns>
-        public static long ToBinary(this string str, int bin)
+        public static long FromBinary(this string str, int bin)
         {
             var nf = new NumberFormater(bin);
             return nf.FromString(str);
@@ -77,7 +77,7 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="bin">进制</param>
         /// <returns></returns>
-        public static BigInteger ToBinaryBig(this string str, int bin)
+        public static BigInteger FromBinaryBig(this string str, int bin)
         {
             var nf = new NumberFormater(bin);
             return nf.FromStringBig(str);
@@ -270,7 +270,7 @@ namespace Masuit.Tools
                 string[] wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
                 char[] ai = s.Remove(17).ToCharArray();
                 int sum = 0;
-                for (int i = 0 ; i < 17 ; i++)
+                for (int i = 0; i < 17; i++)
                 {
                     sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
                 }

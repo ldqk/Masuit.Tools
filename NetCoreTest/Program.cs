@@ -1,7 +1,9 @@
-﻿using Masuit.Tools.Security;
+﻿using Masuit.Tools;
+using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace NetCoreTest
@@ -10,6 +12,8 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            var list = new List<string>();
+            list.AddRangeIfNotContains("1", "11"); // 将被添加元素中的长度大于1的元素添加到list
             var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
             Console.WriteLine(rsaKey.PrivateKey);
             Console.WriteLine(rsaKey.PublicKey);
