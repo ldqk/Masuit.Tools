@@ -20,9 +20,19 @@ SDK：.Net Core 3.1.0及以上版本
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
-.NET Core 3.x
+.NET Core 2.x/3.x
 ```shell
 PM> Install-Package Masuit.Tools.Core
+```
+## 为工具库注册配置
+工具库需要用到外部配置节：  
+1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名，若未配置，则不启用邮箱校验白名单
+2. BaiduAK，获取IP/地理位置相关百度云APIKey，若未配置，则无法调用GetIPLocation以及GetPhysicalAddress相关方法
+```csharp
+public Startup(IConfiguration configuration)
+{
+    configuration.AddToMasuitTools(); // 若未调用，则默认自动尝试加载appsettings.json
+}
 ```
 ## 特色功能示例代码
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
@@ -951,6 +961,10 @@ dic.AddOrUpdate(new Dictionary<string, int>()
 dic.AddOrUpdate("5", 6, (s, i) => 66); // 如果是添加，则值为6，若更新则值为66
 dic.AddOrUpdate("5", 6, 666); // 如果是添加，则值为6，若更新则值为666
 dic.AsConcurrentDictionary(); // 普通字典转换成并发字典集合
+var table=list.ToDataTable(); // 转换成DataTable类型
+table.AddIdentityColumn(); //给DataTable增加一个自增列
+table.HasRows(); // 检查DataTable 是否有数据行
+table.ToList<T>(); // datatable转List
 ```
 ### 40.Mime类型
 ```csharp
