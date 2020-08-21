@@ -860,7 +860,20 @@
             </summary>
             <param name="_"></param>
             <param name="month">月份</param>
-            <p        将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
+            <param name="firstDay">第一天</param>
+            <param name="lastDay">最后一天</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatDate(System.DateTime,System.Char)">
+            <summary>
+            将时间格式化成 年月日 的形式,如果时间为null，返回当前系统时间
+            </summary>
+            <param name="dt">年月日分隔符</param>
+            <param name="separator">分隔符</param>
+            <returns>xxxx年xx月xx日</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatTime(System.DateTime,System.Char)">
+            <summary>
+            将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
             </summary>
             <param name="dt">当前日期时间对象</param>
             <param name="separator">分隔符</param>
@@ -1042,21 +1055,6 @@
             添加或更新键值对
             </summary>
             <typeparam name="TKey"></typeparam>
-            <typeparam summary>
-            添加或更新键值对
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="this"></param>
-            <param name="key">键</param>
-            <param name="value">值</param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.IDictionaryExtensions.AddOrUpdate``2(System.Collections.Generic.IDictionary{``0,``1},System.Collections.Generic.IDictionary{``0,``1})">
-            <summary>
-            添加或更新键值对
-            </summary>
-            <typeparam name="TKey"></typeparam>
             <typeparam name="TValue"></typeparam>
             <param name="this"></param>
             <param name="that">另一个字典集</param>
@@ -1205,7 +1203,18 @@
             遍历IEnumerable
             </summary>
             <param name="objs"></param>
-            <param 2},System.Func{``2})">
+            <param name="action">回调方法</param>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Masuit.Tools.IEnumerableExtensions.ForEachAsync``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            遍历IEnumerable
+            </summary>
+            <param name="objs"></param>
+            <param name="action">回调方法</param>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:Masuit.Tools.IEnumerableExtensions.EnumerableBaseTo``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{System.Collections.Generic.IEnumerable{``1},``2},System.Func{``2})">
             <summary>
             【内部方法】集合接口转具体实现
             </summary>
@@ -1268,22 +1277,6 @@
             <param name="values"></param>
         </member>
         <member name="M:Masuit.Tools.IEnumerableExtensions.AddRangeIfNotContains``1(System.Collections.Generic.ICollection{``0},``0[])">
-            <summary>
-            添加不重复的元素
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="this"></param>
-            <param name="values"></param>
-        </member>
-        <member name="M:Masuit.Tools.IEnumerableExtensions.RemoveWhere``1(System.Collections.Generic.ICollection{``0},System.Func{``0,System.Boolean})">
-            <summary>
-            移除符合条件的元素
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="this"></param>
-            <param name="where"></param>
-        </member>
-        <member name="M:Masuit.Tools.IEnumerab`0},``0[])">
             <summary>
             添加不重复的元素
             </summary>
@@ -2772,7 +2765,20 @@
         </member>
         <member name="M:Masuit.Tools.Mapping.Core.MapperConfigurationBase.CheckAndConfigureMapping(System.Tuple{System.Linq.Expressions.Expression,System.Linq.Expressions.Expression,System.Boolean,System.String}@)">
             <summary>
-            检查并MapperConfigurationBase.GetMemberInitExpression">
+            检查并配置mapper
+            </summary>
+            <param name="configExpression">配置表达式树</param>
+            <exception cref="T:Masuit.Tools.Mapping.Exceptions.NotSameTypePropertyException">
+            </exception>
+            <exception cref="T:Masuit.Tools.Mapping.Exceptions.ReadOnlyPropertyException"></exception>
+        </member>
+        <member name="M:Masuit.Tools.Mapping.Core.MapperConfigurationBase.CheckAndRemoveMemberDest(System.String)">
+            <summary>
+            检查并移除目标成员
+            </summary>
+            <param name="properyName">属性名</param>
+        </member>
+        <member name="M:Masuit.Tools.Mapping.Core.MapperConfigurationBase.GetMemberInitExpression">
             <summary>
             获取成员初始化表达式。
             </summary>
@@ -6547,7 +6553,7 @@
             <param name="length">指定验证码的长度</param>
             <returns>验证码字符串</returns>
         </member>
-        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(System.Web.HttpContext,System.String,System.Int32,System.Int32)">
+        <member name="M:Masuit.Tools.Strings.ValidateCode.CreateValidateGraphic(Microsoft.AspNetCore.Http.HttpContext,System.String,System.Int32,System.Int32)">
             <summary>
             创建验证码的图片
             </summary>
@@ -6940,12 +6946,6 @@
             <param name="outtime">等待执行时间毫秒值，默认不等待</param>
             <returns>控制台输出信息</returns>
             <exception cref="T:System.SystemException">尚未设置进程 <see cref="P:System.Diagnostics.Process.Id" />，而且不存在可从其确定 <see cref="P:System.Diagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
-            <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
-            <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
-        </member>
-    </members>
-</doc>
-iagnostics.Process.Id" /> 属性的 <see cref="P:System.Diagnostics.Process.Handle" />。- 或 -没有与此 <see cref="T:System.Diagnostics.Process" /> 对象关联的进程。- 或 -您正尝试为远程计算机上运行的进程调用 <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" />。此方法仅对本地计算机上运行的进程可用。</exception>
             <exception cref="T:System.ComponentModel.Win32Exception">未能访问该等待设置。</exception>
             <exception cref="T:System.Exception">命令参数无效，必须传入一个控制台能被cmd.exe可执行程序; 如：ping 127.0.0.1</exception>
         </member>

@@ -22,7 +22,7 @@
     <copyright>Copyright ©  懒得勤快</copyright>
     <tags>Tools</tags>
     <dependencies>
-      <dependency id="Masuit.Tools.Abstractions" version="2.3.1" />
+      <dependency id="Masuit.Tools.Abstractions" version="2.3.1.1" />
     </dependencies>
   </metadata>
 </package>
