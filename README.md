@@ -7,7 +7,8 @@
 项目开发模式：日常代码积累+网络搜集  
 ## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！  
 <img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">   
-
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/ldqk/Masuit.Tools.svg)](https://starchart.cc/ldqk/Masuit.Tools)
 ## 请注意：
 一旦使用本开源项目以及引用了本项目或包含本项目代码的公司因为违反劳动法（包括但不限定非法裁员、超时用工、雇佣童工等）在任何法律诉讼中败诉的，项目作者有权利追讨本项目的使用费，或者直接不允许使用任何包含本项目的源代码！任何性质的`外包公司`或`996公司`需要使用本类库，请联系作者进行商业授权！其他企业或个人可随意使用不受限。
 
