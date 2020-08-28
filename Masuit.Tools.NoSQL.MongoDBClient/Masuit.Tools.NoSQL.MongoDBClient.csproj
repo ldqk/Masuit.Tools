@@ -38,9 +38,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.11.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.11.0" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.11.0" />
+    <PackageReference Include="MongoDB.Bson" Version="2.11.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.11.1" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.11.1" />
   </ItemGroup>
 
 </Project>

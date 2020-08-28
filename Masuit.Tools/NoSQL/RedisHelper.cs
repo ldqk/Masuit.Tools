@@ -1192,7 +1192,7 @@ namespace Masuit.Tools.NoSQL
 
         private string AddSysCustomKey(string oldKey)
         {
-            var prefixKey = CustomKey ?? String.Empty;
+            var prefixKey = CustomKey ?? string.Empty;
             return prefixKey + oldKey;
         }
 
