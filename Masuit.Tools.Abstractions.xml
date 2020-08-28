@@ -197,23 +197,7 @@
             <summary>
             给DataTable增加一个自增列
             如果DataTable 存在 identityid 字段  则 直接返回DataTable 不做任何处理
-            </summary>
-            <param name="dt">DataTable</param>
-            <returns>返回Datatable 增加字段 identityid </returns>
-        </member>
-        <member name="M:Masuit.Tools.Database.DataTableHelper.HasRows(System.Data.DataTable)">
-            <summary>
-            检查DataTable 是否有数据行
-            </summary>
-            <param name="dt">DataTable</param>
-            <returns>是否有数据行</returns>
-        </member>
-        <member name="M:Masuit.Tools.Database.DataTableHelper.ToList``1(System.Data.DataTable)">
-            <summary>
-            datatable转List
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="dt"></param>
+            </summa   <param name="dt"></param>
             <returns></returns>
         </member>
         <member name="M:Masuit.Tools.Database.DataTableHelper.ToDataTable``1(System.Collections.Generic.IEnumerable{``0},System.String)">
@@ -393,6 +377,21 @@
             <param name="day"></param>
             <param name="leapMonth"></param>
         </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.ConvertNumToChineseNum(System.       获得当前时间的时辰
+            </summary>
+            <param name="dt"></param>
+            <returns></returns>
+            
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.CheckChineseDateLimit(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            检查农历日期是否合理
+            </summary>
+            <param name="year"></param>
+            <param name="month"></param>
+            <param name="day"></param>
+            <param name="leapMonth"></param>
+        </member>
         <member name="M:Masuit.Tools.DateTimeExt.ChineseCalendar.ConvertNumToChineseNum(System.Char)">
             <summary>
             将0-9转成汉字形式
@@ -481,27 +480,7 @@
             当前是否公历闰年
             </summary>
         </member>
-        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.ChineseConstellation">
-            <summary>
-            28星宿计算
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.ChineseHour">
-            <summary>
-            时辰
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.Today">
-            <summary>
-            农历今天
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.IsChineseLeapMonth">
-            <summary>
-            是否闰月
-            </summary>
-        </member>
-        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.IsChineseLeapYear">
+        <member name="P:Masuit.Tools.DateTimeExt.ChineseCalendar.Chinesear.IsChineseLeapYear">
             <summary>
             当年是否有闰月
             </summary>
@@ -873,6 +852,19 @@
         </member>
         <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatTime(System.DateTime,System.Char)">
             <summary>
+    aram name="firstDay">第一天</param>
+            <param name="lastDay">最后一天</param>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatDate(System.DateTime,System.Char)">
+            <summary>
+            将时间格式化成 年月日 的形式,如果时间为null，返回当前系统时间
+            </summary>
+            <param name="dt">年月日分隔符</param>
+            <param name="separator">分隔符</param>
+            <returns>xxxx年xx月xx日</returns>
+        </member>
+        <member name="M:Masuit.Tools.DateTimeExt.TimeHelper.GetFormatTime(System.DateTime,System.Char)">
+            <summary>
             将时间格式化成 时分秒 的形式,如果时间为null，返回当前系统时间
             </summary>
             <param name="dt">当前日期时间对象</param>
@@ -1120,22 +1112,7 @@
             <summary>
             添加或更新键值对
             </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="this"></param>
-            <param name="key">键</param>
-            <param name="addValueFactory">添加时的操作</param>
-            <param name="updateValueFactory">更新时的操作</param>
-            <returns></returns>
-        </member>
-        <member name="M:Masuit.Tools.IDictionaryExtensions.ForEach``2(System.Collections.Generic.IDictionary{``0,``1},System.Action{``0,``1})">
-            <summary>
-            遍历IEnumerable
-            </summary>
-            <param name="dic"></param>
-            <param name="action">回调方法</param>
-        </member>
-        <member name="M:Masuit.Tools.IDictionaryExtensions.ToDictionarySafety``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <typeparam name="TKey"></typepamber name="M:Masuit.Tools.IDictionaryExtensions.ToDictionarySafety``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
             <summary>
             安全的转换成字典集
             </summary>
@@ -1277,6 +1254,22 @@
             <param name="values"></param>
         </member>
         <member name="M:Masuit.Tools.IEnumerableExtensions.AddRangeIfNotContains``1(System.Collections.Generic.ICollection{``0},``0[])">
+            <summary>
+            添加不重复的元素
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:Masuit.Tools.IEnumerableExtensions.RemoveWhere``1(System.Collections.Generic.ICollection{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            移除符合条件的元素
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="this"></param>
+            <param name="where"></param>
+        </member>
+        <member name="M:Masuit.Tools.IEnumerab`0},``0[])">
             <summary>
             添加不重复的元素
             </summary>
