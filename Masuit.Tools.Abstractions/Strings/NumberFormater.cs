@@ -20,14 +20,14 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 进制长度
         /// </summary>
-        public int Length => this.Characters?.Length ?? 0;
+        public int Length => Characters?.Length ?? 0;
 
         /// <summary>
         /// 数制格式化器
         /// </summary>
         public NumberFormater()
         {
-            this.Characters = "0123456789";
+            Characters = "0123456789";
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Masuit.Tools.Strings
         /// <param name="characters">进制转换</param>
         public NumberFormater(string characters)
         {
-            this.Characters = characters;
+            Characters = characters;
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Masuit.Tools.Strings
                 throw new ArgumentException("默认进制最大支持64进制");
             }
 
-            this.Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, bin);
+            Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, bin);
         }
 
         /// <summary>
@@ -76,9 +76,9 @@ namespace Masuit.Tools.Strings
 
             while (t != 0)
             {
-                var mod = t % this.Length;
-                t = Math.Abs(t / this.Length);
-                var character = this.Characters[Convert.ToInt32(mod)].ToString();
+                var mod = t % Length;
+                t = Math.Abs(t / Length);
+                var character = Characters[Convert.ToInt32(mod)].ToString();
                 result.Insert(0, character);
             }
 
@@ -103,9 +103,9 @@ namespace Masuit.Tools.Strings
 
             while (t != 0)
             {
-                var mod = t % this.Length;
-                t = BigInteger.Abs(BigInteger.Divide(t, this.Length));
-                var character = this.Characters[(int)mod].ToString();
+                var mod = t % Length;
+                t = BigInteger.Abs(BigInteger.Divide(t, Length));
+                var character = Characters[(int)mod].ToString();
                 result.Insert(0, character);
             }
 
@@ -120,7 +120,7 @@ namespace Masuit.Tools.Strings
         public long FromString(string str)
         {
             int j = 0;
-            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => this.Characters.Contains(ch)).Sum(ch => this.Characters.IndexOf(ch) * (long)Math.Pow(this.Length, j++));
+            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => Characters.IndexOf(ch) * (long)Math.Pow(Length, j++));
         }
 
         /// <summary>
@@ -131,15 +131,15 @@ namespace Masuit.Tools.Strings
         public BigInteger FromStringBig(string str)
         {
             int j = 0;
-            var chars = new string(str.ToCharArray().Reverse().ToArray()).Where(ch => this.Characters.Contains(ch));
-            return chars.Aggregate(BigInteger.Zero, (current, c) => current + this.Characters.IndexOf(c) * BigInteger.Pow(this.Length, j++));
+            var chars = new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch));
+            return chars.Aggregate(BigInteger.Zero, (current, c) => current + Characters.IndexOf(c) * BigInteger.Pow(Length, j++));
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return this.Length + "模式";
+            return Length + "进制模式，进制符：" + Characters;
         }
 
         // 转换数字
@@ -156,7 +156,7 @@ namespace Masuit.Tools.Strings
             string[] strArrayLevelNames = { "", "十", "百", "千" };
             string ret = "";
             int i;
-            for (i = x.Length - 1 ; i >= 0 ; i--)
+            for (i = x.Length - 1; i >= 0; i--)
             {
                 if (x[i] == '0')
                 {
