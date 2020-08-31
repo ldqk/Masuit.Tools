@@ -41,56 +41,6 @@ namespace Masuit.Tools
 
         #endregion AsyncForEach
 
-        #region To方法
-
-        /// <summary>
-        /// 【内部方法】集合接口转具体实现
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TArray"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="selector"></param>
-        /// <param name="converter"></param>
-        /// <param name="defaultValueFunc">当<paramref name="source"/>为<see cref="null"/>时，会调用此委托生成默认值</param>
-        /// <returns></returns>
-        private static TArray EnumerableBaseTo<TSource, TResult, TArray>(IEnumerable<TSource> source, Func<TSource, TResult> selector, Func<IEnumerable<TResult>, TArray> converter, Func<TArray> defaultValueFunc)
-        {
-            selector.CheckNullWithException(nameof(selector));
-
-            return source == null ? defaultValueFunc() : converter(source.Select(selector));
-        }
-
-        /// <summary>
-        /// Select+ToList的组合版本
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="selector"></param>
-        /// <param name="defaultValue">当<paramref name="source"/>为<see cref="null"/>时，返回的值.默认值为:0长度的<see cref="List{T}"/></param>
-        /// <returns></returns>
-        public static List<TResult> ToList<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, List<TResult>? defaultValue = null)
-        {
-            return EnumerableBaseTo(source, selector, Enumerable.ToList, () => defaultValue ?? new List<TResult>());
-        }
-
-        /// <summary>
-        /// Select+ToList的组合版本(异步)
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="selector"></param>
-        /// <param name="defaultValue">当<paramref name="source"/>为<see cref="null"/>时，返回的值.默认值为:0长度的<see cref="List{T}"/></param>
-        /// <returns></returns>
-        public static Task<List<TResult>> ToListAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, List<TResult>? defaultValue = null)
-        {
-            return Task.Run(() => ToList(source, selector, defaultValue));
-        }
-
-        #endregion To方法
-
         /// <summary>
         /// 按字段去重
         /// </summary>
@@ -210,6 +160,21 @@ namespace Masuit.Tools
                     list.Insert(item.Index + 1, value);
                 }
             }
+        }
+
+        /// <summary>
+        /// 转HashSet
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static HashSet<TResult> ToHashSet<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector)
+        {
+            var set = new HashSet<TResult>();
+            set.UnionWith(source.Select(selector));
+            return set;
         }
     }
 }
