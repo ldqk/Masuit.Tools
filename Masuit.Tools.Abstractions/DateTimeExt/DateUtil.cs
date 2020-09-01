@@ -224,5 +224,51 @@ namespace Masuit.Tools.DateTimeExt
             DateTime.TryParse(strDate, out var result);
             return result.CompareTo(DateTime.Parse("1800-1-1")) > 0;
         }
+
+        /// <summary>
+        /// 判断时间是否在区间内
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="start">开始</param>
+        /// <param name="end">结束</param>
+        /// <param name="mode">模式</param>
+        /// <returns></returns>
+        public static bool In(this DateTime @this, DateTime start, DateTime end, RangeMode mode = RangeMode.Close)
+        {
+            return mode switch
+            {
+                RangeMode.Open => start < @this && end > @this,
+                RangeMode.Close => start <= @this && end >= @this,
+                RangeMode.OpenClose => start < @this && end >= @this,
+                RangeMode.CloseOpen => start <= @this && end > @this,
+                _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+            };
+        }
+    }
+
+    /// <summary>
+    /// 区间模式
+    /// </summary>
+    public enum RangeMode
+    {
+        /// <summary>
+        /// 开区间
+        /// </summary>
+        Open,
+
+        /// <summary>
+        /// 闭区间
+        /// </summary>
+        Close,
+
+        /// <summary>
+        /// 左开右闭区间
+        /// </summary>
+        OpenClose,
+
+        /// <summary>
+        /// 左闭右开区间
+        /// </summary>
+        CloseOpen
     }
 }
