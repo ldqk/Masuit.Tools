@@ -39,6 +39,16 @@ public Startup(IConfiguration configuration)
 }
 ```
 ## 特色功能示例代码
+<details>
+<summary> 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号 </summary>
+```csharp
+bool isEmail="3444764617@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
+bool isInetAddress = "114.114.114.114".MatchInetAddress();
+bool isUrl = "http://masuit.com".MatchUrl();
+bool isPhoneNumber = "15205201520".MatchPhoneNumber();
+bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
+```
+</details> 
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
 ```csharp
 bool isEmail="3444764617@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
