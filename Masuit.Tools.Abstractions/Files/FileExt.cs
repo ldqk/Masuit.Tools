@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,16 +95,6 @@ namespace Masuit.Tools.Files
                 sb.Append(t.ToString("x2"));
             }
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// 获取目录下所有文件(夹)的全路径集合
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
-        public static List<string> ListDirectory(this string dir)
-        {
-            return Directory.GetFiles(dir).Union(Directory.GetDirectories(dir).SelectMany(ListDirectory)).ToList();
         }
     }
 }
