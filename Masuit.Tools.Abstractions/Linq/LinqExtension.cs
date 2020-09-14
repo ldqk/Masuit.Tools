@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Masuit.Tools.Linq
@@ -52,14 +53,86 @@ namespace Masuit.Tools.Linq
             return left.Body.NodeType == ExpressionType.Constant;
         }
 
-        internal class SubstituteParameterVisitor : ExpressionVisitor
-        {
-            public Dictionary<Expression, Expression> Sub = new Dictionary<Expression, Expression>();
+        /// <summary>
+        /// 取最大值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult MaxOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault();
 
-            protected override Expression VisitParameter(ParameterExpression node)
-            {
-                return Sub.TryGetValue(node, out var newValue) ? newValue : node;
-            }
+        /// <summary>
+        /// 取最大值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TSource MaxOrDefault<TSource>(this IQueryable<TSource> source) => source.OrderByDescending(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最大值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最大值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source) => source.OrderByDescending(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult MinOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).OrderBy(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TSource MinOrDefault<TSource>(this IQueryable<TSource> source) => source.OrderBy(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).OrderBy(_ => _).FirstOrDefault();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source) => source.OrderBy(_ => _).FirstOrDefault();
+    }
+
+    internal class SubstituteParameterVisitor : ExpressionVisitor
+    {
+        public Dictionary<Expression, Expression> Sub = new Dictionary<Expression, Expression>();
+
+        protected override Expression VisitParameter(ParameterExpression node)
+        {
+            return Sub.TryGetValue(node, out var newValue) ? newValue : node;
         }
     }
 }
