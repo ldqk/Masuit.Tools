@@ -283,7 +283,7 @@ var list = new List<MyClass>()
 var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
 ```
 
-### 件压缩解压
+### 文件压缩解压
 
 #### .NET Framework
 
@@ -1058,7 +1058,7 @@ public override Post SavePost(Post t)
 }
 ```
 
-## 敏感信息掩码
+### 敏感信息掩码
 
 ```csharp
 "13123456789".Mask(); // 131****5678
@@ -1143,19 +1143,19 @@ var str="个体".ToTraditional(); // 转繁体
 var str="個體".ToSimplified(); // 转简体
 ```
 
-## ASP.NET MVC 和 ASP.NET Core 的支持断点续传和多线程下载的 `ResumeFileResult`
+### ASP.NET MVC 和 ASP.NET Core 的支持断点续传和多线程下载的 `ResumeFileResult`
 
 允许你在 ASP.NET Core 中通过 MVC/WebAPI 应用程序传输文件数据时使用断点续传以及多线程下载。
 
 它允许提供 `ETag` 标题以及 `Last-Modified` 标题。 它还支持以下前置条件标题：`If-Match`、`If-None-Match`、`If-Modified-Since`、`If-Unmodified-Since`、`If-Range`。
 
-### 支持 ASP.NET Core 2.0+
+#### 支持 ASP.NET Core 2.0+
 
 从 .NET Core 2.0 开始，ASP.NET Core 内部支持断点续传。 因此只是对 `FileResult` 做了一些扩展。 只留下了 `Content-Disposition: inline` 的一部分。所有代码都依赖于基础 .NET 类。
 
-### 如何使用
+#### 如何使用
 
-.NET Framework
+##### .NET Framework
 
 在你的控制器中，你可以像在 `FileResult` 一样的方式使用它。
 
@@ -1184,7 +1184,7 @@ public ActionResult ResumePhysicalFile()
 }
 ```
 
-Asp.Net Core
+##### ASP.NET Core
 
 要使用 `ResumeFileResults`，必须在 `Startup.cs` 的 `ConfigureServices` 方法调用中配置服务：
 
@@ -1199,7 +1199,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-然后在你的控制器中，你可以像在 `FileResult` 一样的方式使用它。
+然后在你的控制器中，你可以像在 `FileResult` 一样的方式使用它：
 
 ```csharp
 using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
@@ -1315,7 +1315,7 @@ public IActionResult VirtualFile(bool fileName, bool etag)
 }
 ```
 
-以上示例将为您的数据提供 `Content-Disposition: attachment`。 当没有提供 fileName 时，数据将作为 `Content-Disposition: inline` 提供。另外，它可以提供 `ETag` 和 `LastModified` 标题。
+以上示例将为您的数据提供 `Content-Disposition: attachment`。 当没有提供 `fileName` 时，数据将作为 `Content-Disposition: inline` 提供。另外，它可以提供 `ETag` 和 `LastModified` 标题。
 
 ```csharp
 [HttpGet("virtual/{fileName}")]
