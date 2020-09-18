@@ -1,45 +1,65 @@
+<p align="center">⭐⭐⭐喜欢这个项目的话就 Star、Fork、Follow 素质三连关♂注一下吧⭐⭐⭐</p>
+
 # Masuit.Tools
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)   
-包含一些常用的操作类，大都是静态类，加密解密，反射操作，动态编译，权重随机筛选算法，简繁转换，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，实体映射、集合扩展等常用封装。  
-[官网教程](https://masuit.com/55)  
 
-⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐  
-项目开发模式：日常代码积累+网络搜集  
-## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！  
-<img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">     
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)  
 
-## Stargazers over time  
-<img src="https://starchart.cc/ldqk/Masuit.Tools.svg">    
+Masuit.Tools 包含一些常用的操作类的封装——大多是静态类：加密解密、反射操作、动态编译、权重随机筛选算法、简繁转换、分布式短 Id、表达式树、Linq 扩展、文件压缩、多线程下载和 FTP 客户端、硬件信息、字符串扩展方法、日期时间扩展操作、中国农历、大文件拷贝、图像裁剪、验证码、断点续传、实体映射、集合扩展等等。
 
-## 请注意：
-一旦使用本开源项目以及引用了本项目或包含本项目代码的公司因为违反劳动法（包括但不限定非法裁员、超时用工、雇佣童工等）在任何法律诉讼中败诉的，项目作者有权利追讨本项目的使用费，或者直接不允许使用任何包含本项目的源代码！任何性质的`外包公司`或`996公司`需要使用本类库，请联系作者进行商业授权！其他企业或个人可随意使用不受限。
+[官网教程](https://masuit.com/55)
 
-## 建议开发环境
-操作系统：Windows 10 1903及以上版本  
-开发工具：VisualStudio2019 v16.5及以上版本  
-SDK：.Net Core 3.1.0及以上版本
+项目开发模式：*日常代码积累* + *网络搜集*
+
+## 本项目已得到 [JetBrains](https://www.jetbrains.com/shop/eform/opensource) 的支持
+
+<img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">
+
+## Stargazers over time
+
+![Stargazers over time](https://starchart.cc/ldqk/Masuit.Tools.svg)
+
+## 注意
+
+一旦使用本开源项目以及引用了本项目或包含本项目代码的公司因为违反劳动法（包括但不限定非法裁员、超时用工、雇佣童工等）在任何法律诉讼中败诉的，项目作者有权利追讨本项目的使用费，或者直接不允许使用任何包含本项目的源代码！任何性质的 **外包公司** 或 **996 公司** 需要使用本类库，请联系作者进行商业授权！其他企业或个人可随意使用不受限。
+
+## 开发环境
+
+操作系统：Windows 10 1903 及以上版本  
+开发工具：VisualStudio2019 v16.5 及以上版本  
+SDK: .Net Core 3.1.0 及以上版本
 
 ## 安装程序包
-.NET Framework ≥4.6.1
+
+.NET Framework ≥ 4.6.1
+
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
+
 .NET Core 2.x/3.x
+
 ```shell
 PM> Install-Package Masuit.Tools.Core
 ```
+
 ## 为工具库注册配置
-工具库需要用到外部配置节：  
-1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名，若未配置，则不启用邮箱校验白名单
-2. BaiduAK，获取IP/地理位置相关百度云APIKey，若未配置，则无法调用GetIPLocation以及GetPhysicalAddress相关方法
+
+工具库需要用到外部配置节
+
+1. EmailDomainWhiteList: 邮箱校验需要用到的白名单域名，若未配置，则不启用邮箱校验白名单
+2. BaiduAK: 获取IP/地理位置相关百度云 APIKey，若未配置，则无法调用 `GetIPLocation` 以及 `GetPhysicalAddress` 相关方法
+
 ```csharp
 public Startup(IConfiguration configuration)
 {
     configuration.AddToMasuitTools(); // 若未调用，则默认自动尝试加载appsettings.json
 }
 ```
+
 ## 特色功能示例代码
-### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号
+
+### 检验字符串是否是 Email、手机号、URL、IP 地址、身份证号
+
 ```csharp
 bool isEmail="3444764617@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList配置邮箱域名白名单，逗号分隔
 bool isInetAddress = "114.114.114.114".MatchInetAddress();
@@ -47,7 +67,9 @@ bool isUrl = "http://masuit.com".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 ```
-### 2.硬件监测(仅支持Windows)
+
+### 硬件监测(仅支持Windows)
+
 ```csharp
 float load = SystemInfo.CpuLoad;// 获取CPU占用率
 long physicalMemory = SystemInfo.PhysicalMemory;// 获取物理内存总数
@@ -64,7 +86,9 @@ IList<string> macAddress = SystemInfo.GetMacAddress();// 获取本机所有网�
 string osVersion = SystemInfo.GetOsVersion();// 获取操作系统版本
 RamInfo ramInfo = SystemInfo.GetRamInfo();// 获取内存信息
 ```
-### 3.大文件操作
+
+### 大文件操作
+
 ```csharp
 FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
 {
@@ -73,7 +97,9 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
         string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
 }
 ```
-### 4.html的防XSS处理：
+
+### HTML 的防 XSS 处理
+
 ```csharp
 string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         <!--[if IE 7]>
@@ -89,12 +115,17 @@ string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         </div>";
 string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
 ```
-### 5.整理操作系统的内存：
+
+### 整理操作系统的内存
+
 ```csharp
 Windows.ClearMemorySilent();
 ```
-### 6.任意进制转换
-可用于生成短id，短hash等操作，纯数学运算。
+
+### 任意进制转换
+
+可用于生成短 ID、短 HASH 等操作以及纯数学运算。
+
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
@@ -103,11 +134,13 @@ long num = nf.FromString("7clzi");
 Console.WriteLine("12345678的36进制是：" + s36); // 7clzi
 Console.WriteLine("36进制的7clzi是：" + num); // 12345678
 ```
+
 ```csharp
 //扩展方法形式调用
 var bin=12345678.ToBinary(36);//7clzi
 var num="7clzi".FromBinary(36);//12345678
 ```
+
 ```csharp
 //超大数字的进制转换
 var num = "E6186159D38CD50E0463A55E596336BD".FromBinaryBig(16);
@@ -115,7 +148,9 @@ Console.WriteLine(num); // 十进制：305849028665645097422198928560410015421
 Console.WriteLine(num.ToBinary(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
 Console.WriteLine(num.ToBinary(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
 ```
-### 7.纳秒级性能计时器
+
+### 纳秒级性能计时器
+
 ```csharp
 HiPerfTimer timer = HiPerfTimer.StartNew();
 for (int i = 0; i < 100000; i++)
@@ -125,6 +160,7 @@ for (int i = 0; i < 100000; i++)
 timer.Stop();
 Console.WriteLine("执行for循环100000次耗时"+timer.Duration+"s");
 ```
+
 ```csharp
 double time = HiPerfTimer.Execute(() =>
 {
@@ -135,10 +171,13 @@ double time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine("执行for循环100000次耗时"+time+"s");
 ```
-### 8.单机产生唯一有序的短id
+
+### 单机产生唯一有序的短 ID
+
 ```csharp
 var token=Stopwatch.GetTimestamp().ToBinary(36);
 ```
+
 ```csharp
 var set = new HashSet<string>();
 double time = HiPerfTimer.Execute(() =>
@@ -151,12 +190,15 @@ double time = HiPerfTimer.Execute(() =>
 Console.WriteLine(set.Count==1000000);//True
 Console.WriteLine("产生100w个id耗时"+time+"s");//1.6639039s
 ```
-### 9.产生分布式唯一有序短id
+
+### 产生分布式唯一有序短 ID
+
 ```csharp
 var sf = SnowFlake.GetInstance();
 string token = sf.GetUniqueId();// rcofqodori0w
 string shortId = sf.GetUniqueShortId(8);// qodw9728
 ```
+
 ```csharp
 var set = new HashSet<string>();
 double time = HiPerfTimer.Execute(() =>
@@ -169,7 +211,9 @@ double time = HiPerfTimer.Execute(() =>
 Console.WriteLine(set.Count == 1000000); //True
 Console.WriteLine("产生100w个id耗时" + time + "s"); //2.6891495s
 ```
-### 10.农历转换
+
+### 农历转换
+
 ```csharp
 ChineseCalendar.CustomHolidays.Add(DateTime.Parse("2018-12-31"),"元旦节");//自定义节假日
 ChineseCalendar today = new ChineseCalendar(DateTime.Parse("2018-12-31"));
@@ -179,35 +223,44 @@ Console.WriteLine(today.GanZhiDateString);// 干支：戊戌年甲子月丁酉�
 Console.WriteLine(today.DateHoliday);// 获取按公历计算的节假日
 ...
 ```
-### 11.Linq表达式树扩展
+
+### Linq 表达式树扩展
+
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
 Func<string, bool> func = where1.And(where2).Compile();
 bool b=func("abcd12345678");//true
 ```
+
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
 Func<string, bool> func = where1.Or(where2).Compile();
 bool b=func("abc");// true
 ```
-### 12.模版引擎
+
+### 模版引擎
+
 ```csharp
 var tmp = new Template("{{name}}，你好！");
 tmp.Set("name", "万金油");
 string s = tmp.Render();//万金油，你好！
 ```
+
 ```csharp
 var tmp = new Template("{{one}},{{two}},{{three}}");
 string s = tmp.Set("one", "1").Set("two", "2").Set("three", "3").Render();// 1,2,3
 ```
+
 ```csharp
 var tmp = new Template("{{name}}，{{greet}}！");
 tmp.Set("name", "万金油");
 string s = tmp.Render();// throw 模版变量{{greet}}未被使用
 ```
-### 13.List转Datatable
+
+### List 转 Datatable
+
 ```csharp
 var list = new List<MyClass>()
 {
@@ -229,8 +282,11 @@ var list = new List<MyClass>()
 };
 var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
 ```
-### 14.文件压缩解压
-.NET Framework
+
+### 件压缩解压
+
+#### .NET Framework
+
 ```csharp
 MemoryStream ms = SevenZipCompressor.ZipStream(new List<string>()
 {
@@ -238,6 +294,7 @@ MemoryStream ms = SevenZipCompressor.ZipStream(new List<string>()
     "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
 });//压缩成内存流
 ```
+
 ```csharp
 SevenZipCompressor.Zip(new List<string>()
 {
@@ -248,13 +305,17 @@ SevenZipCompressor.UnRar(@"D:\Download\test.rar", @"D:\Download\");//解压rar
 SevenZipCompressor.Decompress(@"D:\Download\test.tar", @"D:\Download\");//自动识别解压压缩包
 SevenZipCompressor.Decompress(@"D:\Download\test.7z", @"D:\Download\");
 ```
-ASP.NET Core
+
+#### ASP.NET Core
 
 Startup.cs
+
 ```csharp
 services.AddSevenZipCompressor();
 ```
-构造函数注入ISevenZipCompressor
+
+构造函数注入 `ISevenZipCompressor`
+
 ```csharp
 private readonly ISevenZipCompressor _sevenZipCompressor;
 public Test(ISevenZipCompressor sevenZipCompressor)
@@ -262,8 +323,11 @@ public Test(ISevenZipCompressor sevenZipCompressor)
     _sevenZipCompressor = sevenZipCompressor;
 }
 ```
-使用方式同.NET Framework版本
-### 15.日志组件
+
+使用方式同 .NET Framework 版本。
+
+### 日志组件
+
 ```csharp
 LogManager.LogDirectory=AppDomain.CurrentDomain.BaseDirectory+"/logs";
 LogManager.Event+=info =>
@@ -273,7 +337,9 @@ LogManager.Event+=info =>
 LogManager.Info("记录一次消息");
 LogManager.Error(new Exception("异常消息"));
 ```
-### 16.FTP客户端
+
+### FTP 客户端
+
 ```csharp
 FtpClient ftpClient = FtpClient.GetAnonymousClient("192.168.2.2");//创建一个匿名访问的客户端
 //FtpClient ftpClient = FtpClient.GetClient("192.168.2.3","admin","123456");// 创建一个带用户名密码的客户端
@@ -286,7 +352,9 @@ ftpClient.UploadFile("/test/22.txt","D:\\test\\22.txt",(sum, progress) =>
 List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
 ...
 ```
-### 17.多线程后台下载
+
+### 多线程后台下载
+
 ```csharp
 var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
 mtd.Configure(req =>
@@ -308,7 +376,9 @@ mtd.Start();//开始下载
 //mtd.Pause(); // 暂停下载
 //mtd.Resume(); // 继续下载
 ```
-### 18.Socket客户端操作类
+
+### Socket 客户端操作类
+
 ```csharp
 var tcpClient = new TcpClient(AddressFamily.InterNetwork);
 Socket socket = tcpClient.ConnectSocket(IPAddress.Any,5000);
@@ -317,7 +387,9 @@ socket.SendFile("D:\\test\\1.txt",false,i =>
     Console.WriteLine("已发送"+i+"%");
 });
 ```
-### 19.加密解密
+
+### 加密解密
+
 ```csharp
 var enc="123456".MDString();// MD5加密
 var enc="123456".MDString("abc");// MD5加盐加密
@@ -343,7 +415,9 @@ string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
 string s = "123".Crc32();// 生成crc32摘要
 string s = "123".Crc64();// 生成crc64摘要
 ```
-### 20.实体校验
+
+### 实体校验
+
 ```csharp
 public class MyClass
 {
@@ -363,14 +437,18 @@ public class MyClass
     public string Password { get; set; }
 }
 ```
-### 21.HTML操作
+
+### HTML 操作
+
 ```csharp
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
 var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
 var str="html".RemoveHtmlTag(); // 去除html标签
 ...
 ```
-### 22.DateTime扩展
+
+### DateTime 扩展
+
 ```csharp
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
 double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
@@ -379,7 +457,9 @@ double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
 double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 ...
 ```
-### 23.IP地址和URL
+
+### IP 地址和 URL
+
 ```csharp
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
 bool isPrivateIp = "172.16.23.25".IsPrivateIP();// 判断是否是私有地址
@@ -390,7 +470,9 @@ string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
 PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
 ```
-### 24.元素去重
+
+### 元素去重
+
 ```csharp
 var list = new List<MyClass>()
 {
@@ -410,11 +492,15 @@ var list = new List<MyClass>()
 List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
-### 25.对象实体映射
-在使用前需要像automapper那样，对mapper进行初始化操作
+
+### 对象实体映射
+
+在使用前需要像 AutoMapper 那样，对 `mapper` 进行初始化操作
+
 ```csharp
 using Masuit.Tools.Mapping;
 ```
+
 ```csharp
 ExpressionMapper.CreateMap<ClassA, ClassADto>();// 默认关系映射
 ExpressionMapper.CreateMap<ClassB, ClassBDto>().ForMember(s => s.ClassC.PropertyName, d => d.CustomName, true);// 自定义关系映射
@@ -423,7 +509,9 @@ ExpressionMapper.ConstructServicesUsing((x) => DependencyResolver.Current.GetSer
 //ExpressionMapper.ConstructServicesUsing((x) => ServiceLocator.Current.GetInstance(x));// 使用依赖注入容器进行构造映射
 ExpressionMapper.CreateMap<Product, IProduct>().ConstructUsingServiceLocator().ReverseMap();// 链式自定义关系映射和反向映射
 ```
-测试class：
+
+测试类：
+
 ```csharp
 public class TestClassA
 {
@@ -463,7 +551,9 @@ public class TestClassD
     public TestClassC Obj { get; set; }
 }
 ```
+
 构造一个结构相对复杂的对象：
+
 ```csharp
 var a = new TestClassA()
 {
@@ -606,9 +696,11 @@ var a = new TestClassA()
 };
 var b = a.Map<TestClassA, TestClassB>();
 ```
-性能测试：i7-4700H+12GB DDR3
+
+性能测试：i7-4700H + 12GB DDR3
+
 ```csharp
-#region 配置automapper
+#region 配置 AutoMapper
 
 Mapper.Initialize(e =>
 {
@@ -618,7 +710,7 @@ Mapper.Initialize(e =>
 
 #endregion
 
-#region 配置ExpressionMapper
+#region 配置 ExpressionMapper
 
 ExpressionMapper.CreateMap<TestClassA, TestClassB>().ReverseMap();
 ExpressionMapper.CreateMap<TestClassC, TestClassD>().ReverseMap();
@@ -799,19 +891,22 @@ time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine($"AutoMapper映射1000000次耗时：{time}s");// 4.1858825s
 ```
-### 26.枚举扩展
+
+### 枚举扩展
+
 ```csharp
 public enum MyEnum
 {
     [Display(Name = "读")]
     [Description("读")]
     Read,
-    
+
     [Display(Name = "写")]
     [Description("写")]
     Write
 }
 ```
+
 ```csharp
 Dictionary<int, string> dic1 = typeof(MyEnum).GetDictionary();// 获取枚举值和字符串表示的字典映射
 var dic2 = typeof(MyEnum).GetDescriptionAndValue();// 获取字符串表示和枚举值的字典映射
@@ -820,12 +915,16 @@ string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
-### 27.定长队列实现
+
+### 定长队列实现
+
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
 ```
-### 28.反射操作
+
+### 反射操作
+
 ```csharp
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
@@ -841,13 +940,18 @@ var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
 object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
 Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
-### 29.获取线程内唯一对象
+
+### 获取线程内唯一对象
+
 ```csharp
 CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
 CallContext<T>.GetData("db");//获取线程内唯一对象
 ```
-### 30.asp.net core 获取静态的HttpContext对象
+
+### ASP.NET Core 获取静态的 `HttpContext` 对象
+
 Startup.cs
+
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
@@ -870,7 +974,9 @@ public async Task<IActionResult> Index()
     HttpContext context = HttpContext2.Current;
 }
 ```
-### 31.邮件发送
+
+### 邮件发送
+
 ```csharp
 new Email()
 {
@@ -887,7 +993,9 @@ new Email()
     Console.WriteLine(s);// 发送成功后的回调
 });// 异步发送邮件
 ```
-### 32.图像的简单处理
+
+### 图像的简单处理
+
 ```csharp
 ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
 
@@ -902,13 +1010,17 @@ Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁�
 bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
 bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
 ```
-### 33.随机数
+
+### 随机数
+
 ```csharp
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
 double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
 ```
-### 34.权重筛选功能
+
+### 权重筛选功能
+
 ```csharp
 var data=new List<WeightedItem<string>>()
 {
@@ -920,6 +1032,7 @@ var data=new List<WeightedItem<string>>()
 var item=data.WeightedItem();//按权重选出1个元素
 var list=data.WeightedItems(2);//按权重选出2个元素
 ```
+
 ```csharp
 var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 {
@@ -931,7 +1044,9 @@ var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
 ```
-### 35.EF Core支持AddOrUpdate方法
+
+### EF Core 支持 `AddOrUpdate` 方法
+
 ```csharp
 /// <summary>
 /// 按Id添加或更新文章实体
@@ -942,12 +1057,16 @@ public override Post SavePost(Post t)
     return t;
 }
 ```
-### 38.敏感信息掩码
+
+## 敏感信息掩码
+
 ```csharp
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
-### 39.集合扩展
+
+### 集合扩展
+
 ```csharp
 var list = new List<string>()
 {
@@ -975,13 +1094,17 @@ table.HasRows(); // 检查DataTable 是否有数据行
 table.ToList<T>(); // datatable转List
 var set = list.ToHashSet(s=>s.Name);// 转HashSet
 ```
-### 40.Mime类型
+
+### `Mime` 类型
+
 ```csharp
 var mimeMapper = new MimeMapper();
 var mime = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var ext = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ```
-### 41.日期时间扩展
+
+### 日期时间扩展
+
 ```csharp
 DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
 DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00:00的毫秒数
@@ -997,34 +1120,45 @@ var (intersected,range2) = range.Intersect(DateTime.Parse("2020-8-4"), DateTime.
 range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断是否包含某个时间段，true
 ...
 ```
-### 42.流转换
+
+### 转换
+
 ```csharp
 stream.SaveAsMemoryStream(); // 任意流转换成内存流
 stream.ToArray(); // 任意流转换成二进制数组
 ```
-### 43.数值转换
+
+### 数值转换
+
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
 1.23.To<int>(); // 小数转int
 1.23.To<T>(); // 小数转T基本类型
 ```
-### 44.简繁转换
+
+### 简繁转换
+
 ```csharp
 var str="个体".ToTraditional(); // 转繁体
 var str="個體".ToSimplified(); // 转简体
 ```
 
-# Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
+## ASP.NET MVC 和 ASP.NET Core 的支持断点续传和多线程下载的 `ResumeFileResult`
 
-允许你在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载。
+允许你在 ASP.NET Core 中通过 MVC/WebAPI 应用程序传输文件数据时使用断点续传以及多线程下载。
 
-它允许提供`ETag`标题以及`Last-Modified`标题。 它还支持以下前置条件标题：`If-Match`，`If-None-Match`，`If-Modified-Since`，`If-Unmodified-Since`，`If-Range`。
-## 支持 ASP.NET Core 2.0+
-从.NET Core2.0开始，ASP.NET Core内部支持断点续传。 因此只是对FileResult做了一些扩展。 只留下了“Content-Disposition” Inline的一部分。 所有代码都依赖于基础.NET类。
+它允许提供 `ETag` 标题以及 `Last-Modified` 标题。 它还支持以下前置条件标题：`If-Match`、`If-None-Match`、`If-Modified-Since`、`If-Unmodified-Since`、`If-Range`。
 
-## 如何使用 
-### .NET Framework
-在你的控制器中，你可以像在`FileResult`一样的方式使用它。
+### 支持 ASP.NET Core 2.0+
+
+从 .NET Core 2.0 开始，ASP.NET Core 内部支持断点续传。 因此只是对 `FileResult` 做了一些扩展。 只留下了 `Content-Disposition: inline` 的一部分。所有代码都依赖于基础 .NET 类。
+
+### 如何使用
+
+.NET Framework
+
+在你的控制器中，你可以像在 `FileResult` 一样的方式使用它。
+
 ```csharp
 using Masuit.Tools.Mvc;
 using Masuit.Tools.Mvc.ResumeFileResult;
@@ -1050,8 +1184,9 @@ public ActionResult ResumePhysicalFile()
 }
 ```
 
-### Asp.Net Core
-要使用ResumeFileResults，必须在`Startup.cs`的`ConfigureServices`方法调用中配置服务：
+Asp.Net Core
+
+要使用 `ResumeFileResults`，必须在 `Startup.cs` 的 `ConfigureServices` 方法调用中配置服务：
 
 ```csharp
 using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
@@ -1064,7 +1199,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-然后在你的控制器中，你可以像在`FileResult`一样的方式使用它。
+然后在你的控制器中，你可以像在 `FileResult` 一样的方式使用它。
 
 ```csharp
 using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
@@ -1077,10 +1212,6 @@ private readonly IHostingEnvironment _hostingEnvironment;
 
 private readonly DateTimeOffset _lastModified = new DateTimeOffset(2016, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="hostingEnvironment"></param>
 public TestController(IHostingEnvironment hostingEnvironment)
 {
     _hostingEnvironment = hostingEnvironment;
@@ -1184,8 +1315,7 @@ public IActionResult VirtualFile(bool fileName, bool etag)
 }
 ```
 
-以上示例将为您的数据提供“Content-Disposition：attachment”。 当没有提供fileName时，数据将作为“Content-Disposition：inline”提供。
-另外，它可以提供`ETag`和`LastModified`标题。
+以上示例将为您的数据提供 `Content-Disposition: attachment`。 当没有提供 fileName 时，数据将作为 `Content-Disposition: inline` 提供。另外，它可以提供 `ETag` 和 `LastModified` 标题。
 
 ```csharp
 [HttpGet("virtual/{fileName}")]
@@ -1199,9 +1329,12 @@ public IActionResult VirtualFile(bool fileName)
     return result;
 }
 ```
-### 推荐项目
-基于EntityFrameworkCore和Lucene.NET实现的全文检索搜索引擎：[Masuit.LuceneEFCore.SearchEngine](https://github.com/ldqk/Masuit.LuceneEFCore.SearchEngine "Masuit.LuceneEFCore.SearchEngine")
 
-开源博客系统：[Masuit.MyBlogs](https://github.com/ldqk/Masuit.MyBlogs "Masuit.MyBlogs")
+### 推荐项目
+
+- 基于 Entity Framework Core 和 Lucene.NET 实现的全文检索搜索引擎：[Masuit.LuceneEFCore.SearchEngine](https://github.com/ldqk/Masuit.LuceneEFCore.SearchEngine)
+- 开源博客系统：[Masuit.MyBlogs](https://github.com/ldqk/Masuit.MyBlogs "Masuit.MyBlogs")
+
 ### 友情赞助
+
 ![打赏支持](https://ae01.alicdn.com/kf/H9c0ef439b7ae4a5ba4151456f3c5f0a2N.jpg)
