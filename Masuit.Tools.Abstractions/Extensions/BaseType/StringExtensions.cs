@@ -1,4 +1,5 @@
 using DnsClient;
+using Masuit.Tools.DateTimeExt;
 using Masuit.Tools.Strings;
 using System;
 using System.Collections.Generic;
@@ -248,17 +249,14 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchIdentifyCard(this string s)
         {
-            string ID = s;
-            switch (ID.Length)
+            return s.Length switch
             {
-                case 18:
-                    return CheckChinaID18(ID);
-                case 15:
-                    return CheckChinaID15(ID);
-                default:
-                    return false;
-            }
+                18 => CheckChinaID18(s),
+                15 => CheckChinaID15(s),
+                _ => false
+            };
         }
+
         private static readonly string[] ChinaIDProvinceCodes = {
              "11", "12", "13", "14", "15",
              "21", "22", "23",
@@ -270,6 +268,7 @@ namespace Masuit.Tools
              "81", "82",
              "91"
         };
+
         private static bool CheckChinaID18(string ID)
         {
             ID = ID.ToUpper();
@@ -283,8 +282,7 @@ namespace Masuit.Tools
                 return false;
             }
             CultureInfo zhCN = new CultureInfo("zh-CN", true);
-            DateTime birthday;
-            if (!DateTime.TryParseExact(ID.Substring(6, 8), "yyyyMMdd", zhCN, DateTimeStyles.None, out birthday))
+            if (!DateTime.TryParseExact(ID.Substring(6, 8), "yyyyMMdd", zhCN, DateTimeStyles.None, out var birthday))
             {
                 return false;
             }
@@ -300,16 +298,11 @@ namespace Masuit.Tools
             {
                 sum += (ID[i] - '0') * factors[i];
             }
-            int n = (12 - (sum % 11)) % 11;
-            if (n < 10)
-            {
-                return (ID[17] - '0') == n;
-            }
-            else
-            {
-                return ID[17].Equals('X');
-            }
+
+            int n = (12 - sum % 11) % 11;
+            return n < 10 ? ID[17] - '0' == n : ID[17].Equals('X');
         }
+
         private static bool CheckChinaID15(string ID)
         {
             Match m = Regex.Match(ID, @"\d{15}", RegexOptions.IgnoreCase);
@@ -322,19 +315,14 @@ namespace Masuit.Tools
                 return false;
             }
             CultureInfo zhCN = new CultureInfo("zh-CN", true);
-            DateTime birthday;
-            if (!DateTime.TryParseExact("19" + ID.Substring(6, 6), "yyyyMMdd", zhCN, DateTimeStyles.None, out birthday))
+            if (!DateTime.TryParseExact("19" + ID.Substring(6, 6), "yyyyMMdd", zhCN, DateTimeStyles.None, out var birthday))
             {
                 return false;
             }
-            DateTime dateStart = new DateTime(1800, 1, 1);
-            DateTime dateEnd = new DateTime(2000, 1, 1);
-            if (birthday < dateStart || dateEnd < birthday)
-            {
-                return false;
-            }
-            return true;
+
+            return birthday.In(new DateTime(1800, 1, 1), new DateTime(2000, 1, 1));
         }
+
         #endregion 权威校验身份证号码
 
         #region IP地址
