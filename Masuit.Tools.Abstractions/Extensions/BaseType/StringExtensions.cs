@@ -357,7 +357,8 @@ namespace Masuit.Tools
             {
                 return IPAddress.Parse(ip).IsPrivateIP();
             }
-            throw new ArgumentException(ip + "不是一个合法的ip地址");
+
+            return false;
         }
 
         /// <summary>
