@@ -1,8 +1,9 @@
-﻿using DnsClient;
+using DnsClient;
 using Masuit.Tools.Strings;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -247,57 +248,93 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchIdentifyCard(this string s)
         {
-            string address = "11x22x35x44x53x12x23x36x45x54x13x31x37x46x61x14x32x41x50x62x15x33x42x51x63x21x34x43x52x64x65x71x81x82x91";
-            if (s.Length == 18)
+            string ID = s;
+            switch (ID.Length)
             {
-                if (long.TryParse(s.Remove(17), out var n) == false || n < Math.Pow(10, 16) || long.TryParse(s.Replace('x', '0').Replace('X', '0'), out n) == false)
-                {
-                    return false; //数字验证
-                }
-
-                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
-                {
-                    return false; //省份验证
-                }
-
-                string birth = s.Substring(6, 8).Insert(6, "-").Insert(4, "-");
-                if (!DateTime.TryParse(birth, out _))
-                {
-                    return false; //生日验证
-                }
-
-                string[] arrVarifyCode = ("1,0,x,9,8,7,6,5,4,3,2").Split(',');
-                string[] wi = ("7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2").Split(',');
-                char[] ai = s.Remove(17).ToCharArray();
-                int sum = 0;
-                for (int i = 0; i < 17; i++)
-                {
-                    sum += wi[i].ToInt32() * ai[i].ToString().ToInt32();
-                }
-
-                Math.DivRem(sum, 11, out var y);
-                return arrVarifyCode[y] == s.Substring(17, 1).ToLower();
+                case 18:
+                    return CheckChinaID18(ID);
+                case 15:
+                    return CheckChinaID15(ID);
+                default:
+                    return false;
             }
-
-            if (s.Length == 15)
-            {
-                if (long.TryParse(s, out var n) == false || n < Math.Pow(10, 14))
-                {
-                    return false; //数字验证
-                }
-
-                if (address.IndexOf(s.Remove(2), StringComparison.Ordinal) == -1)
-                {
-                    return false; //省份验证
-                }
-
-                string birth = s.Substring(6, 6).Insert(4, "-").Insert(2, "-");
-                return DateTime.TryParse(birth, out _);
-            }
-
-            return false;
         }
-
+        private static readonly string[] ChinaIDProvinceCodes = {
+             "11", "12", "13", "14", "15",
+             "21", "22", "23",
+             "31", "32", "33", "34", "35", "36", "37",
+             "41", "42", "43", "44", "45", "46",
+             "50", "51", "52", "53", "54",
+             "61", "62", "63", "64", "65",
+             "71",
+             "81", "82",
+             "91"
+        };
+        private static bool CheckChinaID18(string ID)
+        {
+            ID = ID.ToUpper();
+            Match m = Regex.Match(ID, @"\d{17}[\dX]", RegexOptions.IgnoreCase);
+            if (!m.Success)
+            {
+                return false;
+            }
+            if (!ChinaIDProvinceCodes.Contains(ID.Substring(0, 2)))
+            {
+                return false;
+            }
+            CultureInfo zhCN = new CultureInfo("zh-CN", true);
+            DateTime birthday;
+            if (!DateTime.TryParseExact(ID.Substring(6, 8), "yyyyMMdd", zhCN, DateTimeStyles.None, out birthday))
+            {
+                return false;
+            }
+            DateTime dateStart = new DateTime(1800, 1, 1);
+            DateTime dateEnd = DateTime.Today;
+            if (birthday < dateStart || dateEnd < birthday)
+            {
+                return false;
+            }
+            int[] factors = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+            int sum = 0;
+            for (int i = 0; i < 17; i++)
+            {
+                sum += (ID[i] - '0') * factors[i];
+            }
+            int n = (12 - (sum % 11)) % 11;
+            if (n < 10)
+            {
+                return (ID[17] - '0') == n;
+            }
+            else
+            {
+                return ID[17].Equals('X');
+            }
+        }
+        private static bool CheckChinaID15(string ID)
+        {
+            Match m = Regex.Match(ID, @"\d{15}", RegexOptions.IgnoreCase);
+            if (!m.Success)
+            {
+                return false;
+            }
+            if (!ChinaIDProvinceCodes.Contains(ID.Substring(0, 2)))
+            {
+                return false;
+            }
+            CultureInfo zhCN = new CultureInfo("zh-CN", true);
+            DateTime birthday;
+            if (!DateTime.TryParseExact("19" + ID.Substring(6, 6), "yyyyMMdd", zhCN, DateTimeStyles.None, out birthday))
+            {
+                return false;
+            }
+            DateTime dateStart = new DateTime(1800, 1, 1);
+            DateTime dateEnd = new DateTime(2000, 1, 1);
+            if (birthday < dateStart || dateEnd < birthday)
+            {
+                return false;
+            }
+            return true;
+        }
         #endregion 权威校验身份证号码
 
         #region IP地址
@@ -470,5 +507,108 @@ namespace Masuit.Tools
         }
 
         #endregion Crc32
+
+        #region 权威校验中国专利申请号/专利号
+        /// <summary>
+        /// 中国专利申请号（授权以后就是专利号）由两种组成
+        /// 2003年9月30号以前的9位（不带校验位是8号），校验位之前可能还会有一个点，例如：00262311, 002623110 或 00262311.0
+        /// 2003年10月1号以后的13位（不带校验位是12号），校验位之前可能还会有一个点，例如：200410018477, 2004100184779 或200410018477.9
+        /// http://www.sipo.gov.cn/docs/pub/old/wxfw/zlwxxxggfw/hlwzljsxt/hlwzljsxtsyzn/201507/P020150713610193194682.pdf
+        /// 上面的文档中均不包括校验算法，但是下面的校验算法没有问题
+        /// </summary>
+        /// <param name="patnum">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchCNPatentNumber(this string patnum)
+        {
+            Regex patnumWithCheckbitPattern = new Regex(@"^
+(?<!\d)
+(?<patentnum>
+    (?<basenum>
+        (?<year>(?<old>8[5-9]|9[0-9]|0[0-3])|(?<new>[2-9]\d{3}))
+        (?<sn>
+            (?<patenttype>[12389])
+            (?(old)\d{5}|(?(new)\d{7}))
+        )
+    )
+    (?:
+    \.?
+    (?<checkbit>[0-9X])
+    )?
+)
+(?!\d)
+$", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            Match m = patnumWithCheckbitPattern.Match(patnum);
+            if (!m.Success)
+            {
+                return false;
+            }
+            bool isPatnumTrue = true;
+            patnum = patnum.ToUpper().Replace(".", "");
+            if (patnum.Length == 9 || patnum.Length == 8)
+            {
+                byte[] factors8 = new byte[8] { 2, 3, 4, 5, 6, 7, 8, 9 };
+                int year = Convert.ToUInt16(patnum.Substring(0, 2));
+                year += (year >= 85) ? (ushort)1900u : (ushort)2000u;
+                if (year >= 1985 || year <= 2003)
+                {
+                    int sum = 0;
+                    for (byte i = 0; i < 8; i++)
+                    {
+                        sum += factors8[i] * (patnum[i] - '0');
+                    }
+                    char checkbit = "0123456789X"[sum % 11];
+                    if (patnum.Length == 9)
+                    {
+                        if (checkbit != patnum[8])
+                        {
+                            isPatnumTrue = false;
+                        }
+                    }
+                    else
+                    {
+                        patnum += checkbit;
+                    }
+                }
+                else
+                {
+                    isPatnumTrue = false;
+                }
+            }
+            else if (patnum.Length == 13 || patnum.Length == 12)
+            {
+                byte[] factors12 = new byte[12] { 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5 };
+                int year = Convert.ToUInt16(patnum.Substring(0, 4));
+                if (year >= 2003 && year <= DateTime.Now.Year)
+                {
+                    int sum = 0;
+                    for (byte i = 0; i < 12; i++)
+                    {
+                        sum += factors12[i] * (patnum[i] - '0');
+                    }
+                    char checkbit = "0123456789X"[sum % 11];
+                    if (patnum.Length == 13)
+                    {
+                        if (checkbit != patnum[12])
+                        {
+                            isPatnumTrue = false;
+                        }
+                    }
+                    else
+                    {
+                        patnum += checkbit;
+                    }
+                }
+                else
+                {
+                    isPatnumTrue = false;
+                }
+            }
+            else
+            {
+                isPatnumTrue = false;
+            }
+            return isPatnumTrue;
+        }
     }
+    #endregion
 }
