@@ -46,6 +46,7 @@ bool isInetAddress = "114.114.114.114".MatchInetAddress();
 bool isUrl = "http://masuit.com".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
+bool isCNPatentNumber = "200410018477.9".MatchCNPatentNumber(); // 校验中国专利申请号或专利号，是否带校验位，校验位前是否带“.”，都可以校验，待校验的号码前不要带CN、ZL字样的前缀
 ```
 ### 2.硬件监测(仅支持Windows)
 ```csharp
