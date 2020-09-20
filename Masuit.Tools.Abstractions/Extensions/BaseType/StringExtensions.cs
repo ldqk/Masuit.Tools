@@ -282,13 +282,11 @@ namespace Masuit.Tools
                 return false;
             }
             CultureInfo zhCN = new CultureInfo("zh-CN", true);
-            if (!DateTime.TryParseExact(ID.Substring(6, 8), "yyyyMMdd", zhCN, DateTimeStyles.None, out var birthday))
+            if (!DateTime.TryParseExact(ID.Substring(6, 8), "yyyyMMdd", zhCN, DateTimeStyles.None, out DateTime birthday))
             {
                 return false;
             }
-            DateTime dateStart = new DateTime(1800, 1, 1);
-            DateTime dateEnd = DateTime.Today;
-            if (birthday < dateStart || dateEnd < birthday)
+            if (!birthday.In(new DateTime(1800, 1, 1), DateTime.Today))
             {
                 return false;
             }
@@ -298,7 +296,6 @@ namespace Masuit.Tools
             {
                 sum += (ID[i] - '0') * factors[i];
             }
-
             int n = (12 - sum % 11) % 11;
             return n < 10 ? ID[17] - '0' == n : ID[17].Equals('X');
         }
@@ -315,11 +312,10 @@ namespace Masuit.Tools
                 return false;
             }
             CultureInfo zhCN = new CultureInfo("zh-CN", true);
-            if (!DateTime.TryParseExact("19" + ID.Substring(6, 6), "yyyyMMdd", zhCN, DateTimeStyles.None, out var birthday))
+            if (!DateTime.TryParseExact("19" + ID.Substring(6, 6), "yyyyMMdd", zhCN, DateTimeStyles.None, out DateTime birthday))
             {
                 return false;
             }
-
             return birthday.In(new DateTime(1800, 1, 1), new DateTime(2000, 1, 1));
         }
 
