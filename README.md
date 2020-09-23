@@ -1187,7 +1187,7 @@ public IActionResult VirtualFile(bool fileName, bool etag)
 ```
 
 以上示例将为您的数据提供“Content-Disposition：attachment”。 当没有提供fileName时，数据将作为“Content-Disposition：inline”提供。
-另外，它可以提供`ETag`和`LastModified`标题。
+另外，它可以提供`ETag`和`LastModified`标头。
 
 ```csharp
 [HttpGet("virtual/{fileName}")]
