@@ -24,22 +24,18 @@ namespace Masuit.Tools.Core.Net
         /// <returns></returns>
         public static async Task<Tuple<string, List<string>>> GetIPAddressInfo(this string ip)
         {
-            ip.MatchInetAddress(out var isIpAddress);
-            if (isIpAddress)
+            var address = await GetPhysicsAddressInfo(ip);
+            if (address?.Status == 0)
             {
-                var address = await GetPhysicsAddressInfo(ip);
-                if (address.Status == 0)
-                {
-                    string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
-                    var pois = address.AddressResult.Pois.Select(p => $"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米").ToList();
-                    return new Tuple<string, List<string>>(detail, pois);
-                }
-
-                return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
+                string detail = $"{address.AddressResult.FormattedAddress} {address.AddressResult.AddressComponent.Direction}{address.AddressResult.AddressComponent.Distance ?? "0"}米";
+                var pois = address.AddressResult.Pois.Select(p => $"{p.AddressDetail}{p.Name} {p.Direction}{p.Distance ?? "0"}米").ToList();
+                return new Tuple<string, List<string>>(detail, pois);
             }
 
-            return new Tuple<string, List<string>>($"{ip}不是一个合法的IP地址", new List<string>());
+            return new Tuple<string, List<string>>("IP地址不正确", new List<string>());
         }
+
+        private static readonly HttpClient HttpClient = new HttpClient();
 
         /// <summary>
         /// 根据IP地址获取详细地理信息对象
@@ -53,15 +49,9 @@ namespace Masuit.Tools.Core.Net
                 return null;
             }
 
-            string ak = ConfigHelper.GetConfigOrDefault("BaiduAK");
-            if (string.IsNullOrEmpty(ak))
-            {
-                throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中下添加BaiduAK配置节(注意大小写)；或手动在程序入口处调用IConfiguration的AddToMasuitTools方法");
-            }
-
-            using var client = new HttpClient() { BaseAddress = new Uri("http://api.map.baidu.com") };
-            client.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
-            var task = client.GetAsync($"/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
+            var ak = ConfigHelper.GetConfigOrDefault("BaiduAK", null) ?? throw new Exception("未配置BaiduAK，请先在您的应用程序appsettings.json中下添加BaiduAK配置节(注意大小写)；或手动在程序入口处调用IConfiguration的AddToMasuitTools方法");
+            HttpClient.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
+            var task = HttpClient.GetAsync($"http://api.map.baidu.com/location/ip?ak={ak}&ip={ip}&coor=bd09ll").ContinueWith(async t =>
             {
                 if (t.IsFaulted || t.IsCanceled)
                 {
@@ -77,7 +67,7 @@ namespace Masuit.Tools.Core.Net
                 if (ipAddress.Status == 0)
                 {
                     var point = ipAddress.AddressInfo.LatiLongitude;
-                    var result = client.GetStringAsync($"/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
+                    var result = HttpClient.GetStringAsync($"http://api.map.baidu.com/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}").Result;
                     var address = JsonConvert.DeserializeObject<PhysicsAddress>(result);
                     if (address.Status == 0)
                     {
@@ -86,20 +76,19 @@ namespace Masuit.Tools.Core.Net
                 }
                 else
                 {
-                    using var client2 = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") };
-                    return await await client2.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async tt =>
+                    return await HttpClient.GetAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}").ContinueWith(tt =>
                     {
                         if (tt.IsFaulted || tt.IsCanceled)
                         {
                             return null;
                         }
-                        var result = await tt;
+                        var result = tt.Result;
                         if (!result.IsSuccessStatusCode)
                         {
                             return null;
                         }
 
-                        var taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(await result.Content.ReadAsStringAsync());
+                        var taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(result.Content.ReadAsStringAsync().Result);
                         if (taobaoIp.Code == 0)
                         {
                             return new PhysicsAddress()
@@ -136,8 +125,7 @@ namespace Masuit.Tools.Core.Net
                 return $"{ip}不是一个合法的IP";
             }
 
-            using var client = new HttpClient { BaseAddress = new Uri("http://ip.taobao.com") };
-            var task = client.GetAsync($"/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
+            var task = HttpClient.GetAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}").ContinueWith(async t =>
             {
                 if (t.IsFaulted)
                 {

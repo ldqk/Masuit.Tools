@@ -9,7 +9,7 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 发件人用户名
         /// </summary>
-        public string Username { get; set; }
+        public EmailAddress Username { get; set; }
         /// <summary>
         /// 发件人邮箱密码
         /// </summary>
@@ -39,31 +39,30 @@ namespace Masuit.Tools.Models
         /// 是否启用SSL，默认已启用
         /// </summary>
         public bool EnableSsl { get; set; } = true;
+
         /// <summary>
         /// 邮件消息对象
         /// </summary>
-        MailMessage GetClient
+        private MailMessage GetClient()
         {
-            get
+            if (string.IsNullOrEmpty(Tos)) return null;
+            var mailMessage = new MailMessage();
+            //多个接收者                
+            foreach (var str in Tos.Split(','))
             {
-                if (string.IsNullOrEmpty(Tos)) return null;
-                MailMessage mailMessage = new MailMessage();
-                //多个接收者                
-                foreach (string _str in Tos.Split(','))
-                {
-                    mailMessage.To.Add(_str);
-                }
-                mailMessage.From = new MailAddress(Username, Username);
-                mailMessage.Subject = Subject;
-                mailMessage.Body = Body;
-                mailMessage.IsBodyHtml = true;
-                mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
-                mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
-                mailMessage.Priority = MailPriority.High;
-                return mailMessage;
+                mailMessage.To.Add(str);
             }
+            mailMessage.From = new MailAddress(Username, Username);
+            mailMessage.Subject = Subject;
+            mailMessage.Body = Body;
+            mailMessage.IsBodyHtml = true;
+            mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
+            mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
+            mailMessage.Priority = MailPriority.High;
+            return mailMessage;
         }
-        SmtpClient GetSmtpClient => new SmtpClient
+
+        private SmtpClient SmtpClient => new SmtpClient
         {
             UseDefaultCredentials = false,
             EnableSsl = EnableSsl,
@@ -74,7 +73,7 @@ namespace Masuit.Tools.Models
         };
 
         //回调方法
-        Action<string> actionSendCompletedCallback = null;
+        Action<string> _actionSendCompletedCallback;
 
         /// <summary>
         /// 使用异步发送邮件
@@ -83,14 +82,14 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public void SendAsync(Action<string> completedCallback)
         {
-            using var smtpClient = GetSmtpClient;
-            using var mailMessage = GetClient;
+            using var smtpClient = SmtpClient;
+            using var mailMessage = GetClient();
             if (smtpClient == null || mailMessage == null) return;
             Subject = Subject;
             Body = Body;
             //EnableSsl = false;
             //发送邮件回调方法
-            actionSendCompletedCallback = completedCallback;
+            _actionSendCompletedCallback = completedCallback;
             smtpClient.SendCompleted += SendCompletedCallback;
             smtpClient.SendAsync(mailMessage, "true"); //异步发送邮件,如果回调方法中参数不为"true"则表示发送失败
         }
@@ -100,8 +99,8 @@ namespace Masuit.Tools.Models
         /// </summary>
         public void Send()
         {
-            using SmtpClient smtpClient = GetSmtpClient;
-            using MailMessage mailMessage = GetClient;
+            using var smtpClient = SmtpClient;
+            using var mailMessage = GetClient();
             if (smtpClient == null || mailMessage == null) return;
             Subject = Subject;
             Body = Body;
@@ -119,7 +118,7 @@ namespace Masuit.Tools.Models
             //同一组件下不需要回调方法,直接在此写入日志即可
             //写入日志
             //return;
-            if (actionSendCompletedCallback == null) return;
+            if (_actionSendCompletedCallback == null) return;
             string message;
             if (e.Cancelled)
             {
@@ -127,7 +126,7 @@ namespace Masuit.Tools.Models
             }
             else if (e.Error != null)
             {
-                message = ($"UserState:{(string)e.UserState},Message:{e.Error}");
+                message = $"UserState:{(string)e.UserState},Message:{e.Error}";
             }
             else
             {
@@ -135,7 +134,7 @@ namespace Masuit.Tools.Models
             }
 
             //执行回调方法
-            actionSendCompletedCallback(message);
+            _actionSendCompletedCallback(message);
         }
     }
 #pragma warning restore 1591
