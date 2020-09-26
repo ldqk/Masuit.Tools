@@ -28,11 +28,7 @@ namespace Masuit.Tools.Media
         {
             //创建目录
             string dir = Path.GetDirectoryName(fileSaveUrl);
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
+            Directory.CreateDirectory(dir);
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
             var initImage = Image.FromStream(fromFile, true);
 
@@ -272,11 +268,7 @@ namespace Masuit.Tools.Media
         {
             //创建目录
             string dir = Path.GetDirectoryName(savePath);
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
+            Directory.CreateDirectory(dir);
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
             using Image initImage = Image.FromStream(fromFile, true);
 

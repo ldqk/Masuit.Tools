@@ -394,12 +394,8 @@ namespace Masuit.Tools.Logging
         private static string GetLogPath()
         {
             string newFilePath;
-            String logDir = string.IsNullOrEmpty(LogDirectory) ? Path.Combine(Environment.CurrentDirectory, "logs") : LogDirectory;
-            if (!Directory.Exists(logDir))
-            {
-                Directory.CreateDirectory(logDir);
-            }
-
+            var logDir = string.IsNullOrEmpty(LogDirectory) ? Path.Combine(Environment.CurrentDirectory, "logs") : LogDirectory;
+            Directory.CreateDirectory(logDir);
             string extension = ".log";
             string fileNameNotExt = Now.ToString("yyyyMMdd");
             string fileNamePattern = string.Concat(fileNameNotExt, "(*)", extension);
@@ -411,10 +407,10 @@ namespace Masuit.Tools.Logging
                 string lastFilePath = filePaths.Where(d => d.Length == fileMaxLen).OrderByDescending(d => d).FirstOrDefault();
                 if (new FileInfo(lastFilePath).Length > 1 * 1024 * 1024)
                 {
-                    string no = new Regex(@"(?is)(?<=\()(.*)(?=\))").Match(Path.GetFileName(lastFilePath)).Value;
-                    bool parse = int.TryParse(no, out int tempno);
-                    string formatno = $"({(parse ? (tempno + 1) : tempno)})";
-                    string newFileName = String.Concat(fileNameNotExt, formatno, extension);
+                    var no = new Regex(@"(?is)(?<=\()(.*)(?=\))").Match(Path.GetFileName(lastFilePath)).Value;
+                    var parse = int.TryParse(no, out int tempno);
+                    var formatno = $"({(parse ? (tempno + 1) : tempno)})";
+                    var newFileName = String.Concat(fileNameNotExt, formatno, extension);
                     newFilePath = Path.Combine(logDir, newFileName);
                 }
                 else
@@ -424,7 +420,7 @@ namespace Masuit.Tools.Logging
             }
             else
             {
-                string newFileName = string.Concat(fileNameNotExt, $"({0})", extension);
+                var newFileName = string.Concat(fileNameNotExt, $"({0})", extension);
                 newFilePath = Path.Combine(logDir, newFileName);
             }
 

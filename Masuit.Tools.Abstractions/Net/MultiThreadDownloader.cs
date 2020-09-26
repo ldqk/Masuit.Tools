@@ -250,11 +250,7 @@ namespace Masuit.Tools.Net
         {
             var mergeOrderedList = SortPDsByFrom(PartialDownloaderList);
             var dir = new FileInfo(FilePath).DirectoryName;
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
+            Directory.CreateDirectory(dir);
             using var fs = new FileStream(FilePath, FileMode.Create, FileAccess.ReadWrite);
             long totalBytesWritten = 0;
             int mergeProgress = 0;
