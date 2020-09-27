@@ -529,11 +529,11 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="sFile">原图片地址</param>
         /// <param name="dFile">压缩后保存图片地址</param>
-        /// <param name="flag">压缩质量（数字越小压缩率越高）1-100</param>
+        /// <param name="quality">压缩质量（数字越小压缩率越高）1-100</param>
         /// <param name="size">压缩后图片的最大大小</param>
         /// <param name="sfsc">是否是第一次调用</param>
         /// <returns></returns>
-        public static bool CompressImage(string sFile, string dFile, int flag = 90, int size = 1024, bool sfsc = true)
+        public static bool CompressImage(string sFile, string dFile, byte quality = 90, int size = 1024, bool sfsc = true)
         {
             //如果是第一次调用，原始图像的大小小于要压缩的大小，则直接复制文件，并且返回true
             var firstFileInfo = new FileInfo(sFile);
@@ -578,10 +578,8 @@ namespace Masuit.Tools.Media
             g.DrawImage(iSource, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, iSource.Width, iSource.Height, GraphicsUnit.Pixel);
 
             //以下代码为保存图片时，设置压缩质量
-            using EncoderParameters ep = new EncoderParameters();
-            long[] qy = new long[1];
-            qy[0] = flag;//设置压缩的比例1-100
-            using EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
+            using var ep = new EncoderParameters();
+            using var eParam = new EncoderParameter(Encoder.Quality, new long[] { quality });
             ep.Param[0] = eParam;
             try
             {
@@ -591,10 +589,10 @@ namespace Masuit.Tools.Media
                 {
                     bmp.Save(dFile, jpegIcIinfo, ep);//dFile是压缩后的新路径
                     FileInfo fi = new FileInfo(dFile);
-                    if (fi.Length > 1024 * size)
+                    if (fi.Length > 1024 * size && quality > 10)
                     {
-                        flag = flag - 10;
-                        CompressImage(sFile, dFile, flag, size, false);
+                        quality -= 10;
+                        CompressImage(sFile, dFile, quality, size, false);
                     }
                 }
                 else
@@ -614,11 +612,11 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="src">原图片文件流</param>
         /// <param name="dest">压缩后图片文件流</param>
-        /// <param name="flag">压缩质量（数字越小压缩率越高）1-100</param>
+        /// <param name="quality">压缩质量（数字越小压缩率越高）1-100</param>
         /// <param name="size">压缩后图片的最大大小</param>
         /// <param name="sfsc">是否是第一次调用</param>
         /// <returns></returns>
-        public static bool CompressImage(Stream src, Stream dest, int flag = 90, int size = 1024, bool sfsc = true)
+        public static bool CompressImage(Stream src, Stream dest, byte quality = 90, int size = 1024, bool sfsc = true)
         {
             //如果是第一次调用，原始图像的大小小于要压缩的大小，则直接复制文件，并且返回true
             if (sfsc && src.Length < size * 1024)
@@ -663,9 +661,7 @@ namespace Masuit.Tools.Media
 
             //以下代码为保存图片时，设置压缩质量
             using var ep = new EncoderParameters();
-            long[] qy = new long[1];
-            qy[0] = flag;//设置压缩的比例1-100
-            using EncoderParameter eParam = new EncoderParameter(Encoder.Quality, qy);
+            using var eParam = new EncoderParameter(Encoder.Quality, new long[] { quality });
             ep.Param[0] = eParam;
             try
             {
@@ -674,10 +670,10 @@ namespace Masuit.Tools.Media
                 if (jpegIcIinfo != null)
                 {
                     bmp.Save(dest, jpegIcIinfo, ep);//dFile是压缩后的新路径
-                    if (dest.Length > 1024 * size)
+                    if (dest.Length > 1024 * size && quality > 10)
                     {
-                        flag = flag - 10;
-                        CompressImage(src, dest, flag, size, false);
+                        quality -= 10;
+                        CompressImage(src, dest, quality, size, false);
                     }
                 }
                 else

@@ -152,7 +152,7 @@ namespace Masuit.Tools.Net
 
         void DownloadProcedure(Action<HttpWebRequest> config)
         {
-            using (var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite))
+            using (var file = new FileStream(FullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.Delete))
             {
                 var sw = new Stopwatch();
                 if (WebRequest.Create(Url) is HttpWebRequest req)
