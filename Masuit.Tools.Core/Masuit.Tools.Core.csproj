@@ -20,52 +20,410 @@
     <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
     <RepositoryType>Github</RepositoryType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.3.1.9</Version>
-    <FileVersion>2.3.1.9</FileVersion>
+    <Version>2.3.1.10</Version>
+    <FileVersion>2.3.1.10</FileVersion>
     <Company>masuit.com</Company>
-    <AssemblyVersion>2.3.1.9</AssemblyVersion>
+    <AssemblyVersion>2.3.1.10</AssemblyVersion>
     <Authors>懒得勤快X</Authors>
     <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DateTimeExt\**" />
-    <Compile Remove="Hardware\**" />
-    <Compile Remove="Html\**" />
-    <Compile Remove="Linq\**" />
-    <Compile Remove="Logging\**" />
-    <Compile Remove="Mapping\**" />
-    <Compile Remove="Maths\**" />
-    <Compile Remove="Media\**" />
-    <Compile Remove="RandomSelector\**" />
-    <Compile Remove="Systems\**" />
-    <Compile Remove="Win32\**" />
-    <EmbeddedResource Remove="DateTimeExt\**" />
-    <EmbeddedResource Remove="Hardware\**" />
-    <EmbeddedResource Remove="Html\**" />
-    <EmbeddedResource Remove="Linq\**" />
-    <EmbeddedResource Remove="Logging\**" />
-    <EmbeddedResource Remove="Mapping\**" />
-    <EmbeddedResource Remove="Maths\**" />
-    <EmbeddedResource Remove="Media\**" />
-    <EmbeddedResource Remove="RandomSelector\**" />
-    <EmbeddedResource Remove="Systems\**" />
-    <EmbeddedResource Remove="Win32\**" />
-    <None Remove="DateTimeExt\**" />
-    <None Remove="Hardware\**" />
-    <None Remove="Html\**" />
-    <None Remove="Linq\**" />
-    <None Remove="Logging\**" />
-    <None Remove="Mapping\**" />
-    <None Remove="Maths\**" />
-    <None Remove="Media\**" />
-    <None Remove="RandomSelector\**" />
-    <None Remove="Systems\**" />
-    <None Remove="Win32\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <Compile Include="..\Masuit.Tools.Abstractions\Config\CoreConfig.cs" Link="Config\CoreConfig.cs" />
+    <Compile Include="..\Masuit.Tools.Abstractions\Database\DataExt.cs">
+      <Link>Database\DataExt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Database\DataTableBuilder.cs">
+      <Link>Database\DataTableBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Database\DataTableHelper.cs">
+      <Link>Database\DataTableHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\ChineseCalendar.cs">
+      <Link>DateTimeExt\ChineseCalendar.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\DateInfoStruct.cs">
+      <Link>DateTimeExt\DateInfoStruct.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\DateTimeHelper.cs">
+      <Link>DateTimeExt\DateTimeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\DateUtil.cs">
+      <Link>DateTimeExt\DateUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\TimeHelper.cs">
+      <Link>DateTimeExt\TimeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\WeekHolidayStruct.cs">
+      <Link>DateTimeExt\WeekHolidayStruct.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\BigIntegerExtensions.cs">
+      <Link>Extensions\BaseType\BigIntegerExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DoubleExtensions.cs">
+      <Link>Extensions\BaseType\DoubleExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IConvertibleExtensions.cs">
+      <Link>Extensions\BaseType\IConvertibleExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IDictionaryExtensions.cs">
+      <Link>Extensions\BaseType\IDictionaryExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IEnumerableExtensions.cs">
+      <Link>Extensions\BaseType\IEnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IntExtensions.cs">
+      <Link>Extensions\BaseType\IntExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IPAddressExtensions.cs">
+      <Link>Extensions\BaseType\IPAddressExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\LongExtensions.cs">
+      <Link>Extensions\BaseType\LongExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ObjectExtensions.cs">
+      <Link>Extensions\BaseType\ObjectExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\RandomExtensions.cs">
+      <Link>Extensions\BaseType\RandomExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ShortExtensions.cs">
+      <Link>Extensions\BaseType\ShortExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\StreamExtensions.cs">
+      <Link>Extensions\BaseType\StreamExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\StringExtensions.cs">
+      <Link>Extensions\BaseType\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ValueTypeConvertExtensions.cs">
+      <Link>Extensions\BaseType\ValueTypeConvertExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileExt.cs">
+      <Link>Files\FileExt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\INIFile.cs">
+      <Link>Files\INIFile.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\WinrarHelper.cs">
+      <Link>Files\WinrarHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CpuInfo.cs">
+      <Link>Hardware\CpuInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CPU_INFO.cs">
+      <Link>Hardware\CPU_INFO.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskData.cs">
+      <Link>Hardware\DiskData.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\MemoryInfo.cs">
+      <Link>Hardware\MemoryInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\NetData.cs">
+      <Link>Hardware\NetData.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\RamInfo.cs">
+      <Link>Hardware\RamInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemInfo.cs">
+      <Link>Hardware\SystemInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemtimeInfo.cs">
+      <Link>Hardware\SystemtimeInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\Unit.cs">
+      <Link>Hardware\Unit.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Html\HtmlTools.cs">
+      <Link>Html\HtmlTools.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Linq\LinqExtension.cs">
+      <Link>Linq\LinqExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Logging\LogInfo.cs">
+      <Link>Logging\LogInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Logging\LogLevel.cs">
+      <Link>Logging\LogLevel.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Logging\LogManager.cs">
+      <Link>Logging\LogManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Copier.cs">
+      <Link>Mapping\Copier.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\CreateConfig.cs">
+      <Link>Mapping\Core\CreateConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\MapperConfiguration.cs">
+      <Link>Mapping\Core\MapperConfiguration.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\MapperConfigurationBase.cs">
+      <Link>Mapping\Core\MapperConfigurationBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\MapperConfigurationCollectionContainer.cs">
+      <Link>Mapping\Core\MapperConfigurationCollectionContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\PropertiesNotMapped.cs">
+      <Link>Mapping\Core\PropertiesNotMapped.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Core\TypePairMapper.cs">
+      <Link>Mapping\Core\TypePairMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\MapperExceptionBase.cs">
+      <Link>Mapping\Exceptions\MapperExceptionBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\MapperExistException.cs">
+      <Link>Mapping\Exceptions\MapperExistException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\MapperNotInitializedException.cs">
+      <Link>Mapping\Exceptions\MapperNotInitializedException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\NoActionAfterMappingException.cs">
+      <Link>Mapping\Exceptions\NoActionAfterMappingException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\NoFoundMapperException.cs">
+      <Link>Mapping\Exceptions\NoFoundMapperException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\NotSameTypePropertyException.cs">
+      <Link>Mapping\Exceptions\NotSameTypePropertyException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\PropertyNoExistException.cs">
+      <Link>Mapping\Exceptions\PropertyNoExistException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Exceptions\ReadOnlyPropertyException.cs">
+      <Link>Mapping\Exceptions\ReadOnlyPropertyException.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\ExpressionCpoier.cs">
+      <Link>Mapping\ExpressionCpoier.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\ExpressionMapper.cs">
+      <Link>Mapping\ExpressionMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Extensions\ExpressionExtentions.cs">
+      <Link>Mapping\Extensions\ExpressionExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Extensions\QueryableExtentions.cs">
+      <Link>Mapping\Extensions\QueryableExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Helper\MapperHelper.cs">
+      <Link>Mapping\Helper\MapperHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Helper\TypeSystem.cs">
+      <Link>Mapping\Helper\TypeSystem.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Visitor\ChangParameterExpressionVisitor.cs">
+      <Link>Mapping\Visitor\ChangParameterExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Visitor\ConverterExpressionVisitor.cs">
+      <Link>Mapping\Visitor\ConverterExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Visitor\MapperExpressionVisitor.cs">
+      <Link>Mapping\Visitor\MapperExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mapping\Visitor\PropertiesVisitor.cs">
+      <Link>Mapping\Visitor\PropertiesVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Maths\Point2D.cs">
+      <Link>Maths\Point2D.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Maths\RadarChart.cs">
+      <Link>Maths\RadarChart.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Maths\RadarChartEngine.cs">
+      <Link>Maths\RadarChartEngine.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Maths\Vector2D.cs">
+      <Link>Maths\Vector2D.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageUtilities.cs">
+      <Link>Media\ImageUtilities.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageWatermarker.cs">
+      <Link>Media\ImageWatermarker.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\ThumbnailCutMode.cs">
+      <Link>Media\ThumbnailCutMode.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\WatermarkPosition.cs">
+      <Link>Media\WatermarkPosition.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mime\ContentType.cs">
+      <Link>Mime\ContentType.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mime\DefaultMimeItems.cs">
+      <Link>Mime\DefaultMimeItems.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mime\IMimeMapper.cs">
+      <Link>Mime\IMimeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mime\MimeMapper.cs">
+      <Link>Mime\MimeMapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Mime\MimeMappingItem.cs">
+      <Link>Mime\MimeMappingItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\AddressComponent.cs">
+      <Link>Models\AddressComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\AddressResult.cs">
+      <Link>Models\AddressResult.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\BaiduIP.cs">
+      <Link>Models\BaiduIP.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\DateTimeRange.cs">
+      <Link>Models\DateTimeRange.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Email.cs">
+      <Link>Models\Email.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\EmailAddress.cs">
+      <Link>Models\EmailAddress.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\IspInfo.cs">
+      <Link>Models\IspInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Location.cs">
+      <Link>Models\Location.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\PagedList.cs">
+      <Link>Models\PagedList.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\PhysicsAddress.cs">
+      <Link>Models\PhysicsAddress.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Pois.cs">
+      <Link>Models\Pois.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs">
+      <Link>Models\TaobaoIP.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\FtpClient.cs">
+      <Link>Net\FtpClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\MultiThreadDownloader.cs">
+      <Link>Net\MultiThreadDownloader.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\PartialDownloader.cs">
+      <Link>Net\PartialDownloader.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\SocketClient.cs">
+      <Link>Net\SocketClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\Extensions.cs">
+      <Link>RandomSelector\Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\MultipleSelector.cs">
+      <Link>RandomSelector\MultipleSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\SelectorBase.cs">
+      <Link>RandomSelector\SelectorBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\SelectorOptions.cs">
+      <Link>RandomSelector\SelectorOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\SingleSelector.cs">
+      <Link>RandomSelector\SingleSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\WeightedItem.cs">
+      <Link>RandomSelector\WeightedItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\WeightedSelector.cs">
+      <Link>RandomSelector\WeightedSelector.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ClassHelper.cs">
+      <Link>Reflection\ClassHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ReflectHelper.cs">
+      <Link>Reflection\ReflectHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ReflectionUtil.cs">
+      <Link>Reflection\ReflectionUtil.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\Crc32.cs">
+      <Link>Security\Crc32.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\Crc64.cs">
+      <Link>Security\Crc64.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\Encrypt.cs">
+      <Link>Security\Encrypt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\HashEncode.cs">
+      <Link>Security\HashEncode.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\RSA.cs">
+      <Link>Security\RSA.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\RSACrypt.cs">
+      <Link>Security\RSACrypt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaKey.cs">
+      <Link>Security\RsaKey.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaKeyType.cs">
+      <Link>Security\RsaKeyType.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaPem.cs">
+      <Link>Security\RsaPem.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\ChineseString.cs">
+      <Link>Strings\ChineseString.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
+      <Link>Strings\NumberFormater.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
+      <Link>Strings\Template.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\ValidateCode.cs" Link="Strings\ValidateCode.cs" />
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\ConcurrentLimitedQueue.cs">
+      <Link>Systems\ConcurrentLimitedQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\Disposable.cs">
+      <Link>Systems\Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\EnumExt.cs">
+      <Link>Systems\EnumExt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\HiPerfTimer.cs">
+      <Link>Systems\HiPerfTimer.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\LimitedQueue.cs">
+      <Link>Systems\LimitedQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlake.cs">
+      <Link>Systems\SnowFlake.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\StopwatchHelper.cs">
+      <Link>Systems\StopwatchHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\ComplexPassword.cs">
+      <Link>Validator\ComplexPassword.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\IsEmailAttribute.cs">
+      <Link>Validator\IsEmailAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\IsIPAddressAttribute.cs">
+      <Link>Validator\IsIPAddressAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\IsPhoneAttribute.cs">
+      <Link>Validator\IsPhoneAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\MaxValueAttribute.cs">
+      <Link>Validator\MaxValueAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\MinValueAttribute.cs">
+      <Link>Validator\MinValueAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Win32\Windows.cs">
+      <Link>Win32\Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Win32\WindowsCommand.cs">
+      <Link>Win32\WindowsCommand.cs</Link>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -80,11 +438,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DnsClient" Version="1.3.2" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.343" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.8" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Management" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.26.0" />
+    <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -94,6 +465,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
+    <Folder Include="Config\" />
   </ItemGroup>
 </Project>

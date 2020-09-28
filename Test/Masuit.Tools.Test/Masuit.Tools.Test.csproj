@@ -132,10 +132,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj">
-      <Project>{74e7c0a2-499d-408f-a2e4-08878700c2de}</Project>
-      <Name>Masuit.Tools.Abstractions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Masuit.Tools\Masuit.Tools.csproj">
       <Project>{275d5a0d-c49c-497e-a4b5-f40285c2495f}</Project>
       <Name>Masuit.Tools</Name>
