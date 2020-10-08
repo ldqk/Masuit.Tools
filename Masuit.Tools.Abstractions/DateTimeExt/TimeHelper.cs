@@ -305,69 +305,55 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         /// <summary>
-        /// 时间差
+        /// 计算2个时间差
         /// </summary>
         /// <param name="beginTime">开始时间</param>
         /// <param name="endTime">结束时间</param>
         /// <returns>时间差</returns>
         public static string GetDiffTime(this DateTime beginTime, DateTime endTime)
         {
-            int i = 0;
-            return GetDiffTime(beginTime, endTime, ref i);
-        }
-
-        /// <summary>
-        /// 计算2个时间差
-        /// </summary>
-        /// <param name="beginTime">开始时间</param>
-        /// <param name="endTime">结束时间</param>
-        /// <param name="mindTime">中间的时间</param>
-        /// <returns>时间差</returns>
-        public static string GetDiffTime(this DateTime beginTime, DateTime endTime, ref int mindTime)
-        {
             string strResout = string.Empty;
             //获得2时间的时间间隔秒计算
             TimeSpan span = endTime.Subtract(beginTime);
-            int iTatol = Convert.ToInt32(span.TotalSeconds);
-            int iMinutes = 1 * 60;
-            int iHours = iMinutes * 60;
-            int iDay = iHours * 24;
-            int iMonth = iDay * 30;
-            int iYear = iMonth * 12;
+            int sec = Convert.ToInt32(span.TotalSeconds);
+            int minutes = 1 * 60;
+            int hours = minutes * 60;
+            int day = hours * 24;
+            int month = day * 30;
+            int year = month * 12;
 
             //提醒时间,到了返回1,否则返回0
-            mindTime = mindTime > iTatol && iTatol > 0 ? 1 : 0;
-            if (iTatol > iYear)
+            if (sec > year)
             {
-                strResout += iTatol / iYear + "年";
-                iTatol %= iYear; //剩余
+                strResout += sec / year + "年";
+                sec %= year; //剩余
             }
 
-            if (iTatol > iMonth)
+            if (sec > month)
             {
-                strResout += iTatol / iMonth + "月";
-                iTatol %= iMonth;
+                strResout += sec / month + "月";
+                sec %= month;
             }
 
-            if (iTatol > iDay)
+            if (sec > day)
             {
-                strResout += iTatol / iDay + "天";
-                iTatol %= iDay;
+                strResout += sec / day + "天";
+                sec %= day;
             }
 
-            if (iTatol > iHours)
+            if (sec > hours)
             {
-                strResout += iTatol / iHours + "小时";
-                iTatol %= iHours;
+                strResout += sec / hours + "小时";
+                sec %= hours;
             }
 
-            if (iTatol > iMinutes)
+            if (sec > minutes)
             {
-                strResout += iTatol / iMinutes + "分";
-                iTatol %= iMinutes;
+                strResout += sec / minutes + "分";
+                sec %= minutes;
             }
 
-            strResout += iTatol + "秒";
+            strResout += sec + "秒";
             return strResout;
         }
 

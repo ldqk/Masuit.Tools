@@ -13,6 +13,7 @@ namespace Masuit.Tools
         public static bool IsPrivateIP(this IPAddress ip)
         {
             if (IPAddress.IsLoopback(ip)) return true;
+            ip = ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4() : ip;
             byte[] bytes = ip.GetAddressBytes();
             return ip.AddressFamily switch
             {

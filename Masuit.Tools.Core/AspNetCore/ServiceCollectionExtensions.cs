@@ -36,8 +36,7 @@ namespace Masuit.Tools.Core.AspNetCore
         /// <returns></returns>
         public static IServiceCollection AddSevenZipCompressor(this IServiceCollection services)
         {
-            services.AddHttpClient();
-            services.TryAddTransient<ISevenZipCompressor, SevenZipCompressor>();
+            services.AddHttpClient<ISevenZipCompressor, SevenZipCompressor>();
             return services;
         }
 

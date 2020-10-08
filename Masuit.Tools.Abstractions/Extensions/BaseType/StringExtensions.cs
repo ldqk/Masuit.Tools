@@ -154,12 +154,12 @@ namespace Masuit.Tools
             string masks = mask.ToString().PadLeft(4, mask);
             return s.Length switch
             {
-                _ when s.Length >= 11 => Regex.Replace(s, @"(.{3}).*(.{4})", $"$1{masks}$2"),
-                _ when s.Length == 10 => Regex.Replace(s, @"(.{3}).*(.{3})", $"$1{masks}$2"),
-                _ when s.Length == 9 => Regex.Replace(s, @"(.{2}).*(.{3})", $"$1{masks}$2"),
-                _ when s.Length == 8 => Regex.Replace(s, @"(.{2}).*(.{2})", $"$1{masks}$2"),
-                _ when s.Length == 7 => Regex.Replace(s, @"(.{1}).*(.{2})", $"$1{masks}$2"),
-                _ when s.Length >= 2 && s.Length < 7 => Regex.Replace(s, @"(.{1}).*(.{1})", $"$1{masks}$2"),
+                _ when s.Length >= 11 => Regex.Replace(s, "(.{3}).*(.{4})", $"$1{masks}$2"),
+                _ when s.Length == 10 => Regex.Replace(s, "(.{3}).*(.{3})", $"$1{masks}$2"),
+                _ when s.Length == 9 => Regex.Replace(s, "(.{2}).*(.{3})", $"$1{masks}$2"),
+                _ when s.Length == 8 => Regex.Replace(s, "(.{2}).*(.{2})", $"$1{masks}$2"),
+                _ when s.Length == 7 => Regex.Replace(s, "(.{1}).*(.{2})", $"$1{masks}$2"),
+                _ when s.Length >= 2 && s.Length < 7 => Regex.Replace(s, "(.{1}).*(.{1})", $"$1{masks}$2"),
                 _ => s + masks
             };
         }

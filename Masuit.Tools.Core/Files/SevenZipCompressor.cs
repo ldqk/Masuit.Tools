@@ -26,10 +26,10 @@ namespace Masuit.Tools.Files
         /// <summary>
         ///
         /// </summary>
-        /// <param name="httpClientFactory"></param>
-        public SevenZipCompressor(IHttpClientFactory httpClientFactory)
+        /// <param name="httpClient"></param>
+        public SevenZipCompressor(HttpClient httpClient)
         {
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpClient;
         }
 
         /// <summary>
