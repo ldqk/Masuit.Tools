@@ -426,6 +426,9 @@ ExpressionMapper.ConstructServicesUsing((x) => DependencyResolver.Current.GetSer
 ExpressionMapper.CreateMap<Product, IProduct>().ConstructUsingServiceLocator().ReverseMap();// 链式自定义关系映射和反向映射
 ```
 测试class：
+<details>
+    <summary>点击查看代码</summary>
+    
 ```csharp
 public class TestClassA
 {
@@ -465,7 +468,12 @@ public class TestClassD
     public TestClassC Obj { get; set; }
 }
 ```
+</details>
+
 构造一个结构相对复杂的对象：
+<details>
+    <summary>点击查看代码</summary>
+    
 ```csharp
 var a = new TestClassA()
 {
@@ -607,8 +615,13 @@ var a = new TestClassA()
     }
 };
 var b = a.Map<TestClassA, TestClassB>();
+</details>
+
 ```
 性能测试：i7-4700H+12GB DDR3
+<details>
+    <summary>点击查看代码</summary>
+
 ```csharp
 #region 配置automapper
 
@@ -801,6 +814,8 @@ time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine($"AutoMapper映射1000000次耗时：{time}s");// 4.1858825s
 ```
+</details>
+
 ### 26.枚举扩展
 ```csharp
 public enum MyEnum
@@ -1067,6 +1082,8 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 然后在你的控制器中，你可以像在`FileResult`一样的方式使用它。
+<details>
+    <summary>点击查看代码</summary>
 
 ```csharp
 using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
@@ -1201,6 +1218,7 @@ public IActionResult VirtualFile(bool fileName)
     return result;
 }
 ```
+</details>
 ### 推荐项目
 基于EntityFrameworkCore和Lucene.NET实现的全文检索搜索引擎：[Masuit.LuceneEFCore.SearchEngine](https://github.com/ldqk/Masuit.LuceneEFCore.SearchEngine "Masuit.LuceneEFCore.SearchEngine")
 
