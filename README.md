@@ -615,9 +615,9 @@ var a = new TestClassA()
     }
 };
 var b = a.Map<TestClassA, TestClassB>();
+```
 </details>
 
-```
 性能测试：i7-4700H+12GB DDR3
 <details>
     <summary>点击查看代码</summary>
