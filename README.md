@@ -412,411 +412,8 @@ var list = new List<MyClass>()
 List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
-### 25.对象实体映射
-在使用前需要像automapper那样，对mapper进行初始化操作
-```csharp
-using Masuit.Tools.Mapping;
-```
-```csharp
-ExpressionMapper.CreateMap<ClassA, ClassADto>();// 默认关系映射
-ExpressionMapper.CreateMap<ClassB, ClassBDto>().ForMember(s => s.ClassC.PropertyName, d => d.CustomName, true);// 自定义关系映射
 
-ExpressionMapper.ConstructServicesUsing((x) => DependencyResolver.Current.GetService(x));// 使用依赖注入容器进行构造映射
-//ExpressionMapper.ConstructServicesUsing((x) => ServiceLocator.Current.GetInstance(x));// 使用依赖注入容器进行构造映射
-ExpressionMapper.CreateMap<Product, IProduct>().ConstructUsingServiceLocator().ReverseMap();// 链式自定义关系映射和反向映射
-```
-测试class：
-<details>
-    <summary>点击查看代码</summary>
-    
-```csharp
-public class TestClassA
-{
-    public string MyProperty { get; set; }
-    public int Int { get; set; }
-    public double Double { get; set; }
-    public DateTime DateTime { get; set; }
-    public TestClassC TestClassC { get; set; }
-    public List<TestClassC> List { get; set; }
-}
-
-public class TestClassB
-{
-    public string MyProperty { get; set; }
-    public int Int { get; set; }
-    public double Double { get; set; }
-    public DateTime DateTime { get; set; }
-    public TestClassC TestClassC { get; set; }
-    public List<TestClassD> List { get; set; }
-}
-
-public class TestClassC
-{
-    public string MyProperty { get; set; }
-    public int Int { get; set; }
-    public double Double { get; set; }
-    public DateTime DateTime { get; set; }
-    public TestClassD Obj { get; set; }
-}
-
-public class TestClassD
-{
-    public string MyProperty { get; set; }
-    public int Int { get; set; }
-    public double Double { get; set; }
-    public DateTime DateTime { get; set; }
-    public TestClassC Obj { get; set; }
-}
-```
-</details>
-
-构造一个结构相对复杂的对象：
-<details>
-    <summary>点击查看代码</summary>
-    
-```csharp
-var a = new TestClassA()
-{
-    MyProperty = "ssssssssssssssssssssss",
-    DateTime = DateTime.Now,
-    Double = 123.33,
-    Int = 100,
-    TestClassC = new TestClassC()
-    {
-        MyProperty = "ccccccccccccccccccccccccccc",
-        DateTime = DateTime.Now,
-        Double = 2345.555,
-        Int = 10100,
-        Obj = new TestClassD()
-        {
-            MyProperty = "ddddddddddddddddddddddddd",
-            Obj = new TestClassC()
-            {
-                MyProperty = "cccccc",
-                DateTime = DateTime.Now,
-                Double = 23458894.555,
-                Int = 10100000,
-                Obj = new TestClassD()
-            }
-        }
-    },
-    List = new List<TestClassC>()
-    {
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-    }
-};
-var b = a.Map<TestClassA, TestClassB>();
-```
-</details>
-
-性能测试：i7-4700H+12GB DDR3
-<details>
-    <summary>点击查看代码</summary>
-
-```csharp
-#region 配置automapper
-
-Mapper.Initialize(e =>
-{
-    e.CreateMap<TestClassA, TestClassB>().ReverseMap();
-    e.CreateMap<TestClassC, TestClassD>().ReverseMap();
-});
-
-#endregion
-
-#region 配置ExpressionMapper
-
-ExpressionMapper.CreateMap<TestClassA, TestClassB>().ReverseMap();
-ExpressionMapper.CreateMap<TestClassC, TestClassD>().ReverseMap();
-
-#endregion
-
-#region 造一个大对象
-
-var a = new TestClassA()
-{
-    MyProperty = "ssssssssssssssssssssss",
-    DateTime = DateTime.Now,
-    Double = 123.33,
-    Int = 100,
-    TestClassC = new TestClassC()
-    {
-        MyProperty = "ccccccccccccccccccccccccccc",
-        DateTime = DateTime.Now,
-        Double = 2345.555,
-        Int = 10100,
-        Obj = new TestClassD()
-        {
-            MyProperty = "ddddddddddddddddddddddddd",
-            Obj = new TestClassC()
-            {
-                MyProperty = "cccccc",
-                DateTime = DateTime.Now,
-                Double = 23458894.555,
-                Int = 10100000,
-                Obj = new TestClassD()
-            }
-        }
-    },
-    List = new List<TestClassC>()
-    {
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-        new TestClassC()
-        {
-            MyProperty = "cccccc",
-            DateTime = DateTime.Now,
-            Double = 2345.555,
-            Int = 10100,
-            Obj = new TestClassD()
-            {
-                MyProperty = "ddddddddddddddddddddddddddddddddddd",
-                DateTime = DateTime.Now,
-                Double = 2345.555,
-                Int = 10100,
-                Obj = new TestClassC()
-                {
-                    MyProperty = "cccccccccccccccccccccccccccccc",
-                    DateTime = DateTime.Now,
-                    Double = 2345.555,
-                    Int = 10100,
-                    Obj = new TestClassD()
-                }
-            }
-        },
-    }
-};
-
-#endregion
-
-var time = HiPerfTimer.Execute(() =>
-{
-    a.Map<TestClassA, TestClassB>();
-    a.Map<TestClassA, TestClassB>();
-});// 因为第一次需要编译表达式树，所以测试两次
-Console.WriteLine($"ExpressionMapper映射2次耗时：{time}s");// 0.0270508s
-time = HiPerfTimer.Execute(() =>
-{
-    for (int i = 0; i < 1000000; i++)
-    {
-        var b = a.Map<TestClassA, TestClassB>();
-    }
-});
-Console.WriteLine($"ExpressionMapper映射1000000次耗时：{time}s");// 1.206569s
-
-time = HiPerfTimer.Execute(() =>
-{
-    Mapper.Map<TestClassB>(a);
-    Mapper.Map<TestClassB>(a);
-});// 映射2次为了和ExpressionMapper保持相同情况
-Console.WriteLine($"AutoMapper映射2次耗时：{time}s");// 0.0281503s
-time = HiPerfTimer.Execute(() =>
-{
-    for (int i = 0; i < 1000000; i++)
-    {
-        var b = Mapper.Map<TestClassB>(a);
-    }
-});
-Console.WriteLine($"AutoMapper映射1000000次耗时：{time}s");// 4.1858825s
-```
-</details>
-
-### 26.枚举扩展
+### 25.枚举扩展
 ```csharp
 public enum MyEnum
 {
@@ -837,12 +434,12 @@ string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
-### 27.定长队列实现
+### 26.定长队列实现
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
 ```
-### 28.反射操作
+### 27.反射操作
 ```csharp
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
@@ -858,12 +455,12 @@ var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
 object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
 Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
-### 29.获取线程内唯一对象
+### 28.获取线程内唯一对象
 ```csharp
 CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
 CallContext<T>.GetData("db");//获取线程内唯一对象
 ```
-### 30.asp.net core 获取静态的HttpContext对象
+### 29.asp.net core 获取静态的HttpContext对象
 Startup.cs
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -887,7 +484,7 @@ public async Task<IActionResult> Index()
     HttpContext context = HttpContext2.Current;
 }
 ```
-### 31.邮件发送
+### 30.邮件发送
 ```csharp
 new Email()
 {
@@ -904,7 +501,7 @@ new Email()
     Console.WriteLine(s);// 发送成功后的回调
 });// 异步发送邮件
 ```
-### 32.图像的简单处理
+### 31.图像的简单处理
 ```csharp
 ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
 
@@ -919,13 +516,13 @@ Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁�
 bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
 bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
 ```
-### 33.随机数
+### 32.随机数
 ```csharp
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
 double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
 ```
-### 34.权重筛选功能
+### 33.权重筛选功能
 ```csharp
 var data=new List<WeightedItem<string>>()
 {
@@ -948,7 +545,7 @@ var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
 ```
-### 35.EF Core支持AddOrUpdate方法
+### 34.EF Core支持AddOrUpdate方法
 ```csharp
 /// <summary>
 /// 按Id添加或更新文章实体
@@ -959,12 +556,12 @@ public override Post SavePost(Post t)
     return t;
 }
 ```
-### 38.敏感信息掩码
+### 35.敏感信息掩码
 ```csharp
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
-### 39.集合扩展
+### 36.集合扩展
 ```csharp
 var list = new List<string>()
 {
@@ -992,13 +589,13 @@ table.HasRows(); // 检查DataTable 是否有数据行
 table.ToList<T>(); // datatable转List
 var set = list.ToHashSet(s=>s.Name);// 转HashSet
 ```
-### 40.Mime类型
+### 37.Mime类型
 ```csharp
 var mimeMapper = new MimeMapper();
 var mime = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var ext = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ```
-### 41.日期时间扩展
+### 38.日期时间扩展
 ```csharp
 DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
 DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00:00的毫秒数
@@ -1014,18 +611,18 @@ var (intersected,range2) = range.Intersect(DateTime.Parse("2020-8-4"), DateTime.
 range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断是否包含某个时间段，true
 ...
 ```
-### 42.流转换
+### 39.流转换
 ```csharp
 stream.SaveAsMemoryStream(); // 任意流转换成内存流
 stream.ToArray(); // 任意流转换成二进制数组
 ```
-### 43.数值转换
+### 40.数值转换
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
 1.23.To<int>(); // 小数转int
 1.23.To<T>(); // 小数转T基本类型
 ```
-### 44.简繁转换
+### 41.简繁转换
 ```csharp
 var str="个体".ToTraditional(); // 转繁体
 var str="個體".ToSimplified(); // 转简体
