@@ -36,6 +36,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "isp", MimeType = "application/x-internet-signup"},
             new MimeMappingItem{Extension = "iii", MimeType = "application/x-iphone"},
             new MimeMappingItem{Extension = "js", MimeType = "application/x-javascript"},
+            new MimeMappingItem{Extension = "json", MimeType = "application/json"},
             new MimeMappingItem{Extension = "mdb", MimeType = "application/x-msaccess"},
             new MimeMappingItem{Extension = "crd", MimeType = "application/x-mscardfile"},
             new MimeMappingItem{Extension = "clp", MimeType = "application/x-msclip"},

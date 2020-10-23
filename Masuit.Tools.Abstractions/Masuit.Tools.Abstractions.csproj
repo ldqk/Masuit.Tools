@@ -27,6 +27,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mapping\**" />
+    <EmbeddedResource Remove="Mapping\**" />
+    <None Remove="Mapping\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Reflection\ClassHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.3.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.343" />

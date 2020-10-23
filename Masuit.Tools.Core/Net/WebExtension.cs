@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -170,7 +171,11 @@ namespace Masuit.Tools.Core.Net
             string value = session.GetString(key);
             if (string.IsNullOrEmpty(value))
             {
-                return default;
+                return typeof(T).Namespace switch
+                {
+                    "System.Collections.Generic" => (T)(Expression.Lambda(Expression.New(typeof(T))).Compile().DynamicInvoke()),
+                    _ => default
+                };
             }
             return JsonConvert.DeserializeObject<T>(value);
         }
