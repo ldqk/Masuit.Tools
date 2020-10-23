@@ -444,16 +444,6 @@ ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);//
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
 myClass.SetProperty("Email","1@1.cn");//给对象设置值
-
-//动态增删对象的属性
-MyClass myClass = new MyClass();
-var mc = myClass.AddProperty(new List<ClassHelper.CustPropertyInfo>()
-{
-    new ClassHelper.CustPropertyInfo(typeof(string), "Name", "张三"),
-    new ClassHelper.CustPropertyInfo(typeof(double), "Number", 123456.0),
-});//添加属性
-object newObj = mc.DeleteProperty(new List<string>() { "Email", "Age", "IP", "PhoneNumber" });// 删除属性
-Console.WriteLine(newObj.ToJsonString());// {"Password":null,"Name":"张三","Number":123456.0}
 ```
 ### 28.获取线程内唯一对象
 ```csharp
