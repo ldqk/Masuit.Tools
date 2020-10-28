@@ -164,8 +164,6 @@ namespace Masuit.Tools.Net
                     req.ServicePoint.Expect100Continue = true;
                     req.ProtocolVersion = HttpVersion.Version11;
                     config(req);
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
-                    ServicePointManager.Expect100Continue = true;
                     if (RangeAllowed)
                     {
                         req.AddRange(From, _to);

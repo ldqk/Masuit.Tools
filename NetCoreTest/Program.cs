@@ -1,5 +1,4 @@
-﻿using Masuit.Tools;
-using Masuit.Tools.Security;
+﻿using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -11,7 +10,6 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("100.125.124.105".IsPrivateIP());
             var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
             Console.WriteLine(rsaKey.PrivateKey);
             Console.WriteLine(rsaKey.PublicKey);
