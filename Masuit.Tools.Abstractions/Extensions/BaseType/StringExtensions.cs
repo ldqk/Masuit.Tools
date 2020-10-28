@@ -159,8 +159,8 @@ namespace Masuit.Tools
                 _ when s.Length == 9 => Regex.Replace(s, "(.{2}).*(.{3})", $"$1{masks}$2"),
                 _ when s.Length == 8 => Regex.Replace(s, "(.{2}).*(.{2})", $"$1{masks}$2"),
                 _ when s.Length == 7 => Regex.Replace(s, "(.{1}).*(.{2})", $"$1{masks}$2"),
-                _ when s.Length >= 2 && s.Length < 7 => Regex.Replace(s, "(.{1}).*(.{1})", $"$1{masks}$2"),
-                _ => s + masks
+                _ when s.Length == 6 => Regex.Replace(s, "(.{1}).*(.{1})", $"$1{masks}$2"),
+                _ => Regex.Replace(s, "(.{1}).*", $"$1{masks}")
             };
         }
 
