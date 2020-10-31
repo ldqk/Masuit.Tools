@@ -30,11 +30,28 @@ namespace Masuit.Tools.Reflection
         /// <param name="args">方法参数</param>
         /// <typeparam name="T">约束返回的T必须是引用类型</typeparam>
         /// <returns>T类型</returns>
-        public static T InvokeMethod<T>(this object obj, string methodName, object[] args) where T : class
+        public static T InvokeMethod<T>(this object obj, string methodName, object[] args)
         {
-            Type type = obj.GetType();
-            var objReturn = type.InvokeMember(methodName, bf | BindingFlags.InvokeMethod, null, obj, args) as T;
-            return objReturn;
+            var type = obj.GetType();
+            var parameter = Expression.Parameter(type, "e");
+            var callExpression = Expression.Call(parameter, type.GetMethod(methodName, args.Select(o => o.GetType()).ToArray()), args.Select(Expression.Constant));
+            return (T)Expression.Lambda(callExpression, parameter).Compile().DynamicInvoke(obj);
+        }
+
+        /// <summary>
+        /// 执行方法
+        /// </summary>
+        /// <param name="obj">反射对象</param>
+        /// <param name="methodName">方法名，区分大小写</param>
+        /// <param name="args">方法参数</param>
+        /// <typeparam name="T">约束返回的T必须是引用类型</typeparam>
+        /// <returns>T类型</returns>
+        public static void InvokeMethod(this object obj, string methodName, object[] args)
+        {
+            var type = obj.GetType();
+            var parameter = Expression.Parameter(type, "e");
+            var callExpression = Expression.Call(parameter, type.GetMethod(methodName, args.Select(o => o.GetType()).ToArray()), args.Select(Expression.Constant));
+            Expression.Lambda(callExpression, parameter).Compile().DynamicInvoke(obj);
         }
 
         /// <summary>
@@ -45,8 +62,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="value">值</param>
         public static void SetField(this object obj, string name, object value)
         {
-            FieldInfo fi = obj.GetType().GetField(name, bf);
-            fi.SetValue(obj, value);
+            SetProperty(obj, name, value);
         }
 
         /// <summary>
@@ -56,10 +72,9 @@ namespace Masuit.Tools.Reflection
         /// <param name="name">字段名</param>
         /// <typeparam name="T">约束返回的T必须是引用类型</typeparam>
         /// <returns>T类型</returns>
-        public static T GetField<T>(this object obj, string name) where T : class
+        public static T GetField<T>(this object obj, string name)
         {
-            FieldInfo fi = obj.GetType().GetField(name, bf);
-            return fi.GetValue(obj) as T;
+            return GetProperty<T>(obj, name);
         }
 
         /// <summary>
@@ -81,9 +96,10 @@ namespace Masuit.Tools.Reflection
         /// <param name="value">值</param>
         public static void SetProperty(this object obj, string name, object value)
         {
-            PropertyInfo fieldInfo = obj.GetType().GetProperty(name, bf);
-            value = Convert.ChangeType(value, fieldInfo.PropertyType);
-            fieldInfo.SetValue(obj, value, null);
+            var parameter = Expression.Parameter(obj.GetType(), "e");
+            var property = Expression.PropertyOrField(parameter, name);
+            var assign = Expression.Assign(property, Expression.Constant(value));
+            Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
         }
 
         /// <summary>
@@ -93,10 +109,11 @@ namespace Masuit.Tools.Reflection
         /// <param name="name">属性名</param>
         /// <typeparam name="T">约束返回的T必须是引用类型</typeparam>
         /// <returns>T类型</returns>
-        public static T GetProperty<T>(this object obj, string name) where T : class
+        public static T GetProperty<T>(this object obj, string name)
         {
-            PropertyInfo fieldInfo = obj.GetType().GetProperty(name, bf);
-            return fieldInfo.GetValue(obj, null) as T;
+            var parameter = Expression.Parameter(obj.GetType(), "e");
+            var property = Expression.PropertyOrField(parameter, name);
+            return (T)Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
         }
 
         /// <summary>
@@ -139,13 +156,13 @@ namespace Masuit.Tools.Reflection
 
             FieldInfo fi = value.GetType().GetField(value.ToString());
             var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            var text1 = attributes.Length > 0 ? attributes[0].Description : value.ToString();
+            var text = attributes.Length > 0 ? attributes[0].Description : value.ToString();
             if ((args != null) && args.Length > 0)
             {
-                return string.Format(null, text1, args);
+                return string.Format(null, text, args);
             }
 
-            return text1;
+            return text;
         }
 
         /// <summary>
@@ -166,144 +183,25 @@ namespace Masuit.Tools.Reflection
         /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
         public static string GetDescription(this MemberInfo member, params object[] args)
         {
-            string text1;
-
             if (member == null)
             {
                 throw new ArgumentNullException(nameof(member));
             }
 
-            if (member.IsDefined(typeof(DescriptionAttribute), false))
-            {
-                DescriptionAttribute[] attributes = (DescriptionAttribute[])member.GetCustomAttributes(typeof(DescriptionAttribute), false);
-                text1 = attributes[0].Description;
-            }
-            else
-            {
-                return string.Empty;
-            }
-
-            if ((args != null) && (args.Length > 0))
-            {
-                return string.Format(null, text1, args);
-            }
-
-            return text1;
+            return member.IsDefined(typeof(DescriptionAttribute), false) ? member.GetAttribute<DescriptionAttribute>().Description : string.Empty;
         }
 
         #endregion 获取Description
 
-        #region 获取Attribute信息
-
         /// <summary>
-        /// 获取对象的Attributes
+        /// 获取对象的Attribute
         /// </summary>
-        /// <param name="attributeType">Type类型</param>
-        /// <param name="assembly">程序集信息</param>
         /// <returns></returns>
-        public static object GetAttribute(this Type attributeType, Assembly assembly)
+        public static T GetAttribute<T>(this ICustomAttributeProvider provider) where T : Attribute
         {
-            if (attributeType == null)
-            {
-                throw new ArgumentNullException(nameof(attributeType));
-            }
-
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-
-            if (assembly.IsDefined(attributeType, false))
-            {
-                object[] attributes = assembly.GetCustomAttributes(attributeType, false);
-                return attributes[0];
-            }
-
-            return null;
+            var attributes = provider.GetCustomAttributes(typeof(T), true);
+            return attributes.Length > 0 ? attributes[0] as T : null;
         }
-
-        /// <summary>
-        /// 获取对象的Attributes
-        /// </summary>
-        /// <param name="attributeType">Type类型</param>
-        /// <param name="type">成员信息</param>
-        /// <returns></returns>
-        public static object GetAttribute(this Type attributeType, MemberInfo type)
-        {
-            return GetAttribute(attributeType, type, false);
-        }
-
-        /// <summary>
-        /// 获取对象的Attributes
-        /// </summary>
-        /// <param name="attributeType">Type类型</param>
-        /// <param name="type">成员信息</param>
-        /// <param name="searchParent">是否在父类中去查找</param>
-        /// <returns></returns>
-        public static object GetAttribute(this Type attributeType, MemberInfo type, bool searchParent)
-        {
-            if (type == null)
-            {
-                return null;
-            }
-
-            if (!(attributeType.IsSubclassOf(typeof(Attribute))))
-            {
-                return null;
-            }
-
-            if (type.IsDefined(attributeType, searchParent))
-            {
-                object[] attributes = type.GetCustomAttributes(attributeType, searchParent);
-
-                if (attributes.Length > 0)
-                {
-                    return attributes[0];
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// 获取对象的Attributes
-        /// </summary>
-        /// <param name="attributeType">Type类型</param>
-        /// <param name="type">成员信息</param>
-        /// <returns></returns>
-        public static object[] GetAttributes(this Type attributeType, MemberInfo type)
-        {
-            return GetAttributes(attributeType, type, false);
-        }
-
-        /// <summary>
-        /// 获取对象的Attributes
-        /// </summary>
-        /// <param name="attributeType">Type类型</param>
-        /// <param name="type">成员信息</param>
-        /// <param name="searchParent">是否在父类中去查找</param>
-        /// <returns></returns>
-        public static object[] GetAttributes(this Type attributeType, MemberInfo type, bool searchParent)
-        {
-            if (type == null)
-            {
-                return null;
-            }
-
-            if (!(attributeType.IsSubclassOf(typeof(Attribute))))
-            {
-                return null;
-            }
-
-            if (type.IsDefined(attributeType, false))
-            {
-                return type.GetCustomAttributes(attributeType, searchParent);
-            }
-
-            return null;
-        }
-
-        #endregion 获取Attribute信息
 
         #region 资源获取
 
