@@ -19,7 +19,7 @@ namespace Masuit.Tools
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(new KeyValuePair<TKey, TValue>(key, value));
+                @this.Add(key, value);
             }
             else
             {
@@ -75,7 +75,7 @@ namespace Masuit.Tools
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(new KeyValuePair<TKey, TValue>(key, addValue));
+                @this.Add(key, addValue);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace Masuit.Tools
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(new KeyValuePair<TKey, TValue>(key, addValue));
+                @this.Add(key, addValue);
             }
             else
             {
@@ -157,11 +157,49 @@ namespace Masuit.Tools
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(new KeyValuePair<TKey, TValue>(key, addValueFactory(key)));
+                @this.Add(key, addValueFactory(key));
             }
             else
             {
                 @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 获取或添加
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key"></param>
+        /// <param name="addValueFactory"></param>
+        /// <returns></returns>
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TValue> addValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValueFactory());
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 获取或添加
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key"></param>
+        /// <param name="addValue"></param>
+        /// <returns></returns>
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValue);
             }
 
             return @this[key];
