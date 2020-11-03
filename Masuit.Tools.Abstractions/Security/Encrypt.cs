@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -478,22 +477,6 @@ namespace Masuit.Tools.Security
 
         #endregion
 
-        #region MD5加密
-
-        /// <summary> 
-        /// MD5加密
-        /// </summary> 
-        /// <param name="strText">原数据</param> 
-        /// <returns>MD5字符串</returns> 
-        public static string MD5Encrypt(this string strText)
-        {
-            using MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] result = md5.ComputeHash(Encoding.Default.GetBytes(strText));
-            return Encoding.Default.GetString(result);
-        }
-
-        #endregion
-
         /// <summary>
         /// SHA256函数
         /// </summary>
@@ -507,333 +490,7 @@ namespace Masuit.Tools.Security
             return Convert.ToBase64String(result); //返回长度为44字节的字符串
         }
 
-        #region 创建Key
-
-        /// <summary>
-        ///     创建Key
-        /// </summary>
-        /// <returns>密钥</returns>
-        public static string GenerateKey()
-        {
-            using var desCrypto = (DESCryptoServiceProvider)DES.Create();
-            return Encoding.ASCII.GetString(desCrypto.Key);
-        }
-
-        #endregion
-
-        #region MD5加密
-
-        /// <summary>
-        ///     MD5加密
-        /// </summary>
-        /// <param name="pToEncrypt">加密字符串</param>
-        /// <param name="sKey">密钥Key</param>
-        /// <returns>加密后的字符串</returns>
-        public static string MD5Encrypt(this string pToEncrypt, string sKey)
-        {
-            using var des = new DESCryptoServiceProvider();
-            var inputByteArray = Encoding.Default.GetBytes(pToEncrypt);
-            des.Key = Encoding.ASCII.GetBytes(sKey);
-            des.IV = Encoding.ASCII.GetBytes(sKey);
-            var ms = new MemoryStream();
-            using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
-            cs.Write(inputByteArray, 0, inputByteArray.Length);
-            cs.FlushFinalBlock();
-            var ret = new StringBuilder();
-            foreach (var b in ms.ToArray())
-            {
-                ret.AppendFormat("{0:X2}", b);
-            }
-
-            return ret.ToString();
-        }
-
-        #endregion
-
-        #region MD5解密
-
-        /// <summary>
-        ///     MD5解密
-        /// </summary>
-        /// <param name="pToDecrypt">解密字符串</param>
-        /// <param name="sKey">密钥Key</param>
-        /// <returns>解密后的数据</returns>
-        public static string MD5Decrypt(this string pToDecrypt, string sKey)
-        {
-            using var des = new DESCryptoServiceProvider();
-            var inputByteArray = new byte[pToDecrypt.Length / 2];
-            for (var x = 0; x < pToDecrypt.Length / 2; x++)
-            {
-                var i = Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16);
-                inputByteArray[x] = (byte)i;
-            }
-
-            des.Key = Encoding.ASCII.GetBytes(sKey);
-            des.IV = Encoding.ASCII.GetBytes(sKey);
-            var ms = new MemoryStream();
-            using var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
-            cs.Write(inputByteArray, 0, inputByteArray.Length);
-            cs.FlushFinalBlock();
-            return Encoding.Default.GetString(ms.ToArray());
-        }
-
-        #endregion
-
         #region MD5加密算法
-
-        private const int S11 = 7;
-        private const int S12 = 12;
-        private const int S13 = 17;
-        private const int S14 = 22;
-        private const int S21 = 5;
-        private const int S22 = 9;
-        private const int S23 = 14;
-        private const int S24 = 20;
-        private const int S31 = 4;
-        private const int S32 = 11;
-        private const int S33 = 16;
-        private const int S34 = 23;
-        private const int S41 = 6;
-        private const int S42 = 10;
-        private const int S43 = 15;
-        private const int S44 = 21;
-
-        private static uint A;
-        private static uint B;
-        private static uint C;
-        private static uint D;
-
-        private static uint F(uint x, uint y, uint z)
-        {
-            return (x & y) | (~x & z);
-        }
-
-        private static uint G(uint x, uint y, uint z)
-        {
-            return (x & z) | (y & ~z);
-        }
-
-        private static uint H(uint x, uint y, uint z)
-        {
-            return x ^ y ^ z;
-        }
-
-        private static uint I(uint x, uint y, uint z)
-        {
-            return y ^ (x | ~z);
-        }
-
-        private static void FF(ref uint a, uint b, uint c, uint d, uint mj, int s, uint ti)
-        {
-            a = a + F(b, c, d) + mj + ti;
-            a = (a << s) | (a >> (32 - s));
-            a += b;
-        }
-
-        private static void GG(ref uint a, uint b, uint c, uint d, uint mj, int s, uint ti)
-        {
-            a = a + G(b, c, d) + mj + ti;
-            a = (a << s) | (a >> (32 - s));
-            a += b;
-        }
-
-        private static void HH(ref uint a, uint b, uint c, uint d, uint mj, int s, uint ti)
-        {
-            a = a + H(b, c, d) + mj + ti;
-            a = (a << s) | (a >> (32 - s));
-            a += b;
-        }
-
-        private static void II(ref uint a, uint b, uint c, uint d, uint mj, int s, uint ti)
-        {
-            a = a + I(b, c, d) + mj + ti;
-            a = (a << s) | (a >> (32 - s));
-            a += b;
-        }
-
-        private static void MD5_Init()
-        {
-            A = 0x67452301; //in memory, this is 0x01234567
-            B = 0xefcdab89; //in memory, this is 0x89abcdef
-            C = 0x98badcfe; //in memory, this is 0xfedcba98
-            D = 0x10325476; //in memory, this is 0x76543210
-        }
-
-        private static uint[] MD5_Append(byte[] input)
-        {
-            int zeros;
-            var ones = 1;
-            int size;
-            var n = input.Length;
-            var m = n % 64;
-            if (m < 56)
-            {
-                zeros = 55 - m;
-                size = n - m + 64;
-            }
-            else if (m == 56)
-            {
-                zeros = 0;
-                ones = 0;
-                size = n + 8;
-            }
-            else
-            {
-                zeros = 63 - m + 56;
-                size = n + 64 - m + 64;
-            }
-
-            var bs = new ArrayList(input);
-            if (ones == 1)
-                bs.Add((byte)0x80); // 0x80 = $10000000
-            for (var i = 0; i < zeros; i++)
-                bs.Add((byte)0);
-
-            var N = (ulong)n * 8;
-            var h1 = (byte)(N & 0xFF);
-            var h2 = (byte)((N >> 8) & 0xFF);
-            var h3 = (byte)((N >> 16) & 0xFF);
-            var h4 = (byte)((N >> 24) & 0xFF);
-            var h5 = (byte)((N >> 32) & 0xFF);
-            var h6 = (byte)((N >> 40) & 0xFF);
-            var h7 = (byte)((N >> 48) & 0xFF);
-            var h8 = (byte)(N >> 56);
-            bs.Add(h1);
-            bs.Add(h2);
-            bs.Add(h3);
-            bs.Add(h4);
-            bs.Add(h5);
-            bs.Add(h6);
-            bs.Add(h7);
-            bs.Add(h8);
-            var ts = (byte[])bs.ToArray(typeof(byte));
-
-            /* Decodes input (byte[]) into output (UInt32[]). Assumes len is
-            * a multiple of 4.
-           */
-            var output = new uint[size / 4];
-            for (long i = 0, j = 0; i < size; j++, i += 4)
-                output[j] = (uint)(ts[i] | (ts[i + 1] << 8) | (ts[i + 2] << 16) | (ts[i + 3] << 24));
-            return output;
-        }
-
-        private static uint[] MD5_Trasform(uint[] x)
-        {
-            for (var k = 0; k < x.Length; k += 16)
-            {
-                var a = A;
-                var b = B;
-                var c = C;
-                var d = D;
-
-                FF(ref a, b, c, d, x[k + 0], S11, 0xd76aa478); /* 1 */
-                FF(ref d, a, b, c, x[k + 1], S12, 0xe8c7b756); /* 2 */
-                FF(ref c, d, a, b, x[k + 2], S13, 0x242070db); /* 3 */
-                FF(ref b, c, d, a, x[k + 3], S14, 0xc1bdceee); /* 4 */
-                FF(ref a, b, c, d, x[k + 4], S11, 0xf57c0faf); /* 5 */
-                FF(ref d, a, b, c, x[k + 5], S12, 0x4787c62a); /* 6 */
-                FF(ref c, d, a, b, x[k + 6], S13, 0xa8304613); /* 7 */
-                FF(ref b, c, d, a, x[k + 7], S14, 0xfd469501); /* 8 */
-                FF(ref a, b, c, d, x[k + 8], S11, 0x698098d8); /* 9 */
-                FF(ref d, a, b, c, x[k + 9], S12, 0x8b44f7af); /* 10 */
-                FF(ref c, d, a, b, x[k + 10], S13, 0xffff5bb1); /* 11 */
-                FF(ref b, c, d, a, x[k + 11], S14, 0x895cd7be); /* 12 */
-                FF(ref a, b, c, d, x[k + 12], S11, 0x6b901122); /* 13 */
-                FF(ref d, a, b, c, x[k + 13], S12, 0xfd987193); /* 14 */
-                FF(ref c, d, a, b, x[k + 14], S13, 0xa679438e); /* 15 */
-                FF(ref b, c, d, a, x[k + 15], S14, 0x49b40821); /* 16 */
-
-                GG(ref a, b, c, d, x[k + 1], S21, 0xf61e2562); /* 17 */
-                GG(ref d, a, b, c, x[k + 6], S22, 0xc040b340); /* 18 */
-                GG(ref c, d, a, b, x[k + 11], S23, 0x265e5a51); /* 19 */
-                GG(ref b, c, d, a, x[k + 0], S24, 0xe9b6c7aa); /* 20 */
-                GG(ref a, b, c, d, x[k + 5], S21, 0xd62f105d); /* 21 */
-                GG(ref d, a, b, c, x[k + 10], S22, 0x2441453); /* 22 */
-                GG(ref c, d, a, b, x[k + 15], S23, 0xd8a1e681); /* 23 */
-                GG(ref b, c, d, a, x[k + 4], S24, 0xe7d3fbc8); /* 24 */
-                GG(ref a, b, c, d, x[k + 9], S21, 0x21e1cde6); /* 25 */
-                GG(ref d, a, b, c, x[k + 14], S22, 0xc33707d6); /* 26 */
-                GG(ref c, d, a, b, x[k + 3], S23, 0xf4d50d87); /* 27 */
-                GG(ref b, c, d, a, x[k + 8], S24, 0x455a14ed); /* 28 */
-                GG(ref a, b, c, d, x[k + 13], S21, 0xa9e3e905); /* 29 */
-                GG(ref d, a, b, c, x[k + 2], S22, 0xfcefa3f8); /* 30 */
-                GG(ref c, d, a, b, x[k + 7], S23, 0x676f02d9); /* 31 */
-                GG(ref b, c, d, a, x[k + 12], S24, 0x8d2a4c8a); /* 32 */
-
-                HH(ref a, b, c, d, x[k + 5], S31, 0xfffa3942); /* 33 */
-                HH(ref d, a, b, c, x[k + 8], S32, 0x8771f681); /* 34 */
-                HH(ref c, d, a, b, x[k + 11], S33, 0x6d9d6122); /* 35 */
-                HH(ref b, c, d, a, x[k + 14], S34, 0xfde5380c); /* 36 */
-                HH(ref a, b, c, d, x[k + 1], S31, 0xa4beea44); /* 37 */
-                HH(ref d, a, b, c, x[k + 4], S32, 0x4bdecfa9); /* 38 */
-                HH(ref c, d, a, b, x[k + 7], S33, 0xf6bb4b60); /* 39 */
-                HH(ref b, c, d, a, x[k + 10], S34, 0xbebfbc70); /* 40 */
-                HH(ref a, b, c, d, x[k + 13], S31, 0x289b7ec6); /* 41 */
-                HH(ref d, a, b, c, x[k + 0], S32, 0xeaa127fa); /* 42 */
-                HH(ref c, d, a, b, x[k + 3], S33, 0xd4ef3085); /* 43 */
-                HH(ref b, c, d, a, x[k + 6], S34, 0x4881d05); /* 44 */
-                HH(ref a, b, c, d, x[k + 9], S31, 0xd9d4d039); /* 45 */
-                HH(ref d, a, b, c, x[k + 12], S32, 0xe6db99e5); /* 46 */
-                HH(ref c, d, a, b, x[k + 15], S33, 0x1fa27cf8); /* 47 */
-                HH(ref b, c, d, a, x[k + 2], S34, 0xc4ac5665); /* 48 */
-
-                II(ref a, b, c, d, x[k + 0], S41, 0xf4292244); /* 49 */
-                II(ref d, a, b, c, x[k + 7], S42, 0x432aff97); /* 50 */
-                II(ref c, d, a, b, x[k + 14], S43, 0xab9423a7); /* 51 */
-                II(ref b, c, d, a, x[k + 5], S44, 0xfc93a039); /* 52 */
-                II(ref a, b, c, d, x[k + 12], S41, 0x655b59c3); /* 53 */
-                II(ref d, a, b, c, x[k + 3], S42, 0x8f0ccc92); /* 54 */
-                II(ref c, d, a, b, x[k + 10], S43, 0xffeff47d); /* 55 */
-                II(ref b, c, d, a, x[k + 1], S44, 0x85845dd1); /* 56 */
-                II(ref a, b, c, d, x[k + 8], S41, 0x6fa87e4f); /* 57 */
-                II(ref d, a, b, c, x[k + 15], S42, 0xfe2ce6e0); /* 58 */
-                II(ref c, d, a, b, x[k + 6], S43, 0xa3014314); /* 59 */
-                II(ref b, c, d, a, x[k + 13], S44, 0x4e0811a1); /* 60 */
-                II(ref a, b, c, d, x[k + 4], S41, 0xf7537e82); /* 61 */
-                II(ref d, a, b, c, x[k + 11], S42, 0xbd3af235); /* 62 */
-                II(ref c, d, a, b, x[k + 2], S43, 0x2ad7d2bb); /* 63 */
-                II(ref b, c, d, a, x[k + 9], S44, 0xeb86d391); /* 64 */
-
-                A += a;
-                B += b;
-                C += c;
-                D += d;
-            }
-
-            return new[]
-            {
-                A,
-                B,
-                C,
-                D
-            };
-        }
-
-        #region MD5对数组数据加密
-
-        /// <summary>
-        ///     MD5对数组数据加密
-        /// </summary>
-        /// <param name="input">包含需要加密的数据的数组</param>
-        /// <returns>加密后的字节流</returns>
-        public static byte[] MD5Array(this byte[] input)
-        {
-            MD5_Init();
-            var block = MD5_Append(input);
-            var bits = MD5_Trasform(block);
-            var output = new byte[bits.Length * 4];
-            for (int i = 0, j = 0; i < bits.Length; i++, j += 4)
-            {
-                output[j] = (byte)(bits[i] & 0xff);
-                output[j + 1] = (byte)((bits[i] >> 8) & 0xff);
-                output[j + 2] = (byte)((bits[i] >> 16) & 0xff);
-                output[j + 3] = (byte)((bits[i] >> 24) & 0xff);
-            }
-
-            return output;
-        }
-
-        #endregion
 
         #region 获取数组的Hex值
 
@@ -865,15 +522,10 @@ namespace Masuit.Tools.Security
         /// <returns>加密后的结果</returns>
         public static string MDString(this string message)
         {
-            var c = message.ToCharArray();
-            var b = new byte[c.Length];
-            for (var i = 0; i < c.Length; i++)
-            {
-                b[i] = (byte)c[i];
-            }
-
-            var digest = MD5Array(b);
-            return ArrayToHexString(digest, false);
+            MD5 md5 = MD5.Create();
+            byte[] buffer = Encoding.Default.GetBytes(message);
+            byte[] bytes = md5.ComputeHash(buffer);
+            return ArrayToHexString(bytes, false);
         }
 
         /// <summary>
@@ -895,13 +547,7 @@ namespace Masuit.Tools.Security
             byte[] bytes1 = md5.ComputeHash(bytes);
             byte[] bytes2 = md5.ComputeHash(bytes1);
             byte[] bytes3 = md5.ComputeHash(bytes2);
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in bytes3)
-            {
-                sb.Append(item.ToString("x").PadLeft(2, '0'));
-            }
-
-            return sb.ToString();
+            return ArrayToHexString(bytes3, false);
         }
 
         /// <summary>
@@ -933,13 +579,7 @@ namespace Masuit.Tools.Security
             byte[] bytes1 = md5.ComputeHash(bytes);
             byte[] bytes2 = md5.ComputeHash(bytes1);
             byte[] bytes3 = md5.ComputeHash(bytes2);
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in bytes3)
-            {
-                sb.Append(item.ToString("x").PadLeft(2, '0'));
-            }
-
-            return sb.ToString();
+            return ArrayToHexString(bytes3, false);
         }
 
         #endregion
@@ -956,43 +596,23 @@ namespace Masuit.Tools.Security
             using var fs = File.Open(fileName, FileMode.Open, FileAccess.Read);
             var array = new byte[fs.Length];
             fs.Read(array, 0, (int)fs.Length);
-            var digest = MD5Array(array);
-            return ArrayToHexString(digest, false);
+            using MD5 md5 = MD5.Create();
+            byte[] bytes = md5.ComputeHash(array);
+            return ArrayToHexString(bytes, false);
         }
 
-        #endregion
-
-        #region 测试MD5加密算法的函数
-
         /// <summary>
-        ///     测试MD5加密算法的函数
+        /// 获取数据流的MD5值
         /// </summary>
-        /// <param name="message">需要加密的字符串</param>
-        /// <returns>加密后的 数据</returns>
-        private static string MD5Test(this string message)
+        /// <param name="stream"></param>
+        /// <returns>MD5字符串</returns>
+        public static string MDString(this Stream stream)
         {
-            return "rnMD5 (" + "message" + ") = " + MDString(message);
-        }
-
-        #endregion
-
-        #region MD5加密算法测试用数据
-
-        /// <summary>
-        ///     MD5加密算法测试用数据
-        /// </summary>
-        /// <returns> </returns>
-        private static string TestSuite()
-        {
-            var s = "";
-            s += MD5Test("");
-            s += MD5Test("a");
-            s += MD5Test("abc");
-            s += MD5Test("message digest");
-            s += MD5Test("abcdefghijklmnopqrstuvwxyz");
-            s += MD5Test("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-            s += MD5Test("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
-            return s;
+            var bytes = stream.ToArray();
+            using var md5 = MD5.Create();
+            var mdstr = ArrayToHexString(md5.ComputeHash(bytes), false);
+            stream.Position = 0;
+            return mdstr;
         }
 
         #endregion
