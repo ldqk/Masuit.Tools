@@ -47,9 +47,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Masuit.Tools.Abstractions\Database\DataExt.cs">
-      <Link>Database\DataExt.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Database\DataTableBuilder.cs">
       <Link>Database\DataTableBuilder.cs</Link>
     </Compile>
@@ -64,12 +61,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\DateTimeHelper.cs">
       <Link>DateTimeExt\DateTimeHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\DateUtil.cs">
-      <Link>DateTimeExt\DateUtil.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\TimeHelper.cs">
-      <Link>DateTimeExt\TimeHelper.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\WeekHolidayStruct.cs">
       <Link>DateTimeExt\WeekHolidayStruct.cs</Link>
@@ -121,9 +112,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\INIFile.cs">
       <Link>Files\INIFile.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\WinrarHelper.cs">
-      <Link>Files\WinrarHelper.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CpuInfo.cs">
       <Link>Hardware\CpuInfo.cs</Link>
