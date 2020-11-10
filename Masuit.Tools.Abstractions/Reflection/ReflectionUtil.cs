@@ -60,7 +60,7 @@ namespace Masuit.Tools.Reflection
         /// <param name="obj">反射对象</param>
         /// <param name="name">字段名</param>
         /// <param name="value">值</param>
-        public static void SetField(this object obj, string name, object value)
+        public static void SetField<T>(this T obj, string name, object value) where T : class
         {
             SetProperty(obj, name, value);
         }
@@ -94,19 +94,22 @@ namespace Masuit.Tools.Reflection
         /// <param name="obj">反射对象</param>
         /// <param name="name">属性名</param>
         /// <param name="value">值</param>
-        public static void SetProperty(this object obj, string name, object value)
+        public static string SetProperty<T>(this T obj, string name, object value) where T : class
         {
-            var parameter = Expression.Parameter(obj.GetType(), "e");
+            var parameter = Expression.Parameter(typeof(T), "e");
             var property = Expression.PropertyOrField(parameter, name);
+            var before = Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj).ToJsonString();
             if (property.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                obj.GetType().GetProperty(name)?.SetValue(obj, value);
+                typeof(T).GetProperty(name)?.SetValue(obj, value);
             }
             else
             {
                 var assign = Expression.Assign(property, Expression.Constant(value));
                 Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
             }
+
+            return before;
         }
 
         /// <summary>
