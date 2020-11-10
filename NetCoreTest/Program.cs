@@ -1,4 +1,5 @@
-﻿using Masuit.Tools.Security;
+﻿using Masuit.Tools.Reflection;
+using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -10,6 +11,9 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            var myClass = new MyClass();
+            myClass.SetProperty(nameof(MyClass.MyProperty1), 1);
+            Console.ReadKey();
             var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
             Console.WriteLine(rsaKey.PrivateKey);
             Console.WriteLine(rsaKey.PublicKey);
@@ -32,7 +36,7 @@ namespace NetCoreTest
     {
         [Description("test")]
         public string MyProperty { get; set; }
-        public int MyProperty1 { get; set; }
+        public int? MyProperty1 { get; set; }
 
     }
 }

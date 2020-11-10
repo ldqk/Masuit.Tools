@@ -98,8 +98,15 @@ namespace Masuit.Tools.Reflection
         {
             var parameter = Expression.Parameter(obj.GetType(), "e");
             var property = Expression.PropertyOrField(parameter, name);
-            var assign = Expression.Assign(property, Expression.Constant(value));
-            Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+            if (property.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                obj.GetType().GetProperty(name)?.SetValue(obj, value);
+            }
+            else
+            {
+                var assign = Expression.Assign(property, Expression.Constant(value));
+                Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+            }
         }
 
         /// <summary>
