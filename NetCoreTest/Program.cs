@@ -11,7 +11,11 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            var myClass = new MyClass();
+            var myClass = new MyClass()
+            {
+                MyProperty1 = 1
+            };
+
             myClass.SetProperty(nameof(MyClass.MyProperty1), 1);
             Console.ReadKey();
             var rsaKey = RsaCrypt.GenerateRsaKeys(RsaKeyType.PKCS8, 2048);
