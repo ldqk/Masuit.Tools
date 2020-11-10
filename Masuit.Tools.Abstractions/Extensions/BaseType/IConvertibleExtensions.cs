@@ -9,26 +9,26 @@ namespace Masuit.Tools
         /// 类型直转
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="convertibleValue"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
 
-        public static T ConvertTo<T>(this IConvertible convertibleValue) where T : IConvertible
+        public static T ConvertTo<T>(this IConvertible value) where T : IConvertible
         {
-            return (T)ConvertTo(convertibleValue, typeof(T));
+            return (T)ConvertTo(value, typeof(T));
         }
 
         /// <summary>
         /// 类型直转
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="convertibleValue"></param>
+        /// <param name="value"></param>
         /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns></returns>
-        public static T TryConvertTo<T>(this IConvertible convertibleValue, T defaultValue = default) where T : IConvertible
+        public static T TryConvertTo<T>(this IConvertible value, T defaultValue = default) where T : IConvertible
         {
             try
             {
-                return (T)ConvertTo(convertibleValue, typeof(T));
+                return (T)ConvertTo(value, typeof(T));
             }
             catch
             {
@@ -40,19 +40,19 @@ namespace Masuit.Tools
         /// 类型直转
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="convertibleValue"></param>
-        /// <param name="value">转换失败的默认值</param>
+        /// <param name="value"></param>
+        /// <param name="result">转换失败的默认值</param>
         /// <returns></returns>
-        public static bool TryConvertTo<T>(this IConvertible convertibleValue, out T value) where T : IConvertible
+        public static bool TryConvertTo<T>(this IConvertible value, out T result) where T : IConvertible
         {
             try
             {
-                value = (T)ConvertTo(convertibleValue, typeof(T));
+                result = (T)ConvertTo(value, typeof(T));
                 return true;
             }
             catch
             {
-                value = default;
+                result = default;
                 return false;
             }
         }
@@ -60,20 +60,20 @@ namespace Masuit.Tools
         /// <summary>
         /// 类型直转
         /// </summary>
-        /// <param name="convertibleValue"></param>
+        /// <param name="value"></param>
         /// <param name="type">目标类型</param>
-        /// <param name="value">转换失败的默认值</param>
+        /// <param name="result">转换失败的默认值</param>
         /// <returns></returns>
-        public static bool TryConvertTo(this IConvertible convertibleValue, Type type, out object value)
+        public static bool TryConvertTo(this IConvertible value, Type type, out object result)
         {
             try
             {
-                value = ConvertTo(convertibleValue, type);
+                result = ConvertTo(value, type);
                 return true;
             }
             catch
             {
-                value = default;
+                result = default;
                 return false;
             }
         }
@@ -81,33 +81,28 @@ namespace Masuit.Tools
         /// <summary>
         /// 类型直转
         /// </summary>
-        /// <param name="convertibleValue"></param>
+        /// <param name="value"></param>
         /// <param name="type">目标类型</param>
         /// <returns></returns>
-        public static object ConvertTo(this IConvertible convertibleValue, Type type)
+        public static object ConvertTo(this IConvertible value, Type type)
         {
-            if (null == convertibleValue)
+            if (null == value)
             {
                 return default;
             }
 
             if (type.IsEnum)
             {
-                return Enum.Parse(type, convertibleValue.ToString(CultureInfo.InvariantCulture));
+                return Enum.Parse(type, value.ToString(CultureInfo.InvariantCulture));
             }
 
-            if (!type.IsGenericType)
-            {
-                return Convert.ChangeType(convertibleValue, type);
-            }
-
-            if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var underlyingType = Nullable.GetUnderlyingType(type);
-                return underlyingType!.IsEnum ? Enum.Parse(underlyingType, convertibleValue.ToString(CultureInfo.CurrentCulture)) : Convert.ChangeType(convertibleValue, underlyingType);
+                return underlyingType!.IsEnum ? Enum.Parse(underlyingType, value.ToString(CultureInfo.CurrentCulture)) : Convert.ChangeType(value, underlyingType);
             }
 
-            throw new InvalidCastException($"不能将类型 \"{convertibleValue.GetType().FullName}\" 转换为 \"{type.FullName}\"");
+            return Convert.ChangeType(value, type);
         }
     }
 }
