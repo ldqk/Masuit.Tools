@@ -3,11 +3,11 @@
   <Import Project="..\SDKPulishNuget.targets" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <Version>2.3.2.6</Version>
+    <Version>2.4.0</Version>
     <Authors>懒得勤快</Authors>
     <Description>Masuit.Tools基础公共库</Description>
     <Copyright>懒得勤快，长空X</Copyright>
@@ -20,9 +20,9 @@
     <RepositoryType>Github</RepositoryType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <FileVersion>2.3.2.6</FileVersion>
+    <FileVersion>2.4</FileVersion>
     <Company>masuit.com</Company>
-    <AssemblyVersion>2.3.2.6</AssemblyVersion>
+    <AssemblyVersion>2.4</AssemblyVersion>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="DnsClient" Version="1.3.2" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.26" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="HtmlSanitizer" Version="5.0.355" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

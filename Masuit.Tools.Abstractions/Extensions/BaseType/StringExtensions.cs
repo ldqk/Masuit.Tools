@@ -16,6 +16,8 @@ namespace Masuit.Tools
 {
     public static partial class StringExtensions
     {
+        public static string Join(this IEnumerable<string> strs, string separate = ", ") => string.Join(separate, strs);
+
         /// <summary>
         /// 字符串转时间
         /// </summary>
