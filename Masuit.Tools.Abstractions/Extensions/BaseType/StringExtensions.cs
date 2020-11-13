@@ -156,12 +156,12 @@ namespace Masuit.Tools
             string masks = mask.ToString().PadLeft(4, mask);
             return s.Length switch
             {
-                _ when s.Length >= 11 => Regex.Replace(s, "(.{3}).*(.{4})", $"$1{masks}$2"),
-                _ when s.Length == 10 => Regex.Replace(s, "(.{3}).*(.{3})", $"$1{masks}$2"),
-                _ when s.Length == 9 => Regex.Replace(s, "(.{2}).*(.{3})", $"$1{masks}$2"),
-                _ when s.Length == 8 => Regex.Replace(s, "(.{2}).*(.{2})", $"$1{masks}$2"),
-                _ when s.Length == 7 => Regex.Replace(s, "(.{1}).*(.{2})", $"$1{masks}$2"),
-                _ when s.Length == 6 => Regex.Replace(s, "(.{1}).*(.{1})", $"$1{masks}$2"),
+                >= 11 => Regex.Replace(s, "(.{3}).*(.{4})", $"$1{masks}$2"),
+                10 => Regex.Replace(s, "(.{3}).*(.{3})", $"$1{masks}$2"),
+                9 => Regex.Replace(s, "(.{2}).*(.{3})", $"$1{masks}$2"),
+                8 => Regex.Replace(s, "(.{2}).*(.{2})", $"$1{masks}$2"),
+                7 => Regex.Replace(s, "(.{1}).*(.{2})", $"$1{masks}$2"),
+                6 => Regex.Replace(s, "(.{1}).*(.{1})", $"$1{masks}$2"),
                 _ => Regex.Replace(s, "(.{1}).*", $"$1{masks}")
             };
         }
@@ -201,7 +201,9 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static string MaskEmail(this string s, char mask = '*')
         {
-            return !MatchEmail(s).isMatch ? s : s.Replace(s.Substring(0, s.LastIndexOf("@")), Mask(s.Substring(0, s.LastIndexOf("@")), mask));
+            var index = s.LastIndexOf("@");
+            var oldValue = s.Substring(0, index);
+            return !MatchEmail(s).isMatch ? s : s.Replace(oldValue, Mask(oldValue, mask));
         }
 
         #endregion Email
@@ -467,7 +469,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static byte[] ToByteArray(this string @this)
         {
-            return Activator.CreateInstance<ASCIIEncoding>().GetBytes(@this);
+            return Encoding.ASCII.GetBytes(@this);
         }
 
         #region Crc32
