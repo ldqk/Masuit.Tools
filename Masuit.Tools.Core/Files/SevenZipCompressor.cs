@@ -165,9 +165,9 @@ namespace Masuit.Tools.Files
                     return null;
                 }
             }).Where(u => u != null).ToList();
-            foreach (var (key, value) in dic)
+            foreach (var pair in dic)
             {
-                archive.AddEntry(Path.Combine(rootdir, value), key);
+                archive.AddEntry(Path.Combine(rootdir, pair.Value), pair.Key);
             }
 
             if (remoteUrls.Any())
@@ -188,9 +188,9 @@ namespace Masuit.Tools.Files
                         }
                     }).Wait();
                 });
-                foreach (var (key, value) in streams)
+                foreach (var pair in streams)
                 {
-                    archive.AddEntry(key, value);
+                    archive.AddEntry(pair.Key, pair.Value);
                 }
             }
 

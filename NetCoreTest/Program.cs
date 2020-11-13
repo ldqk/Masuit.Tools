@@ -1,8 +1,10 @@
-﻿using Masuit.Tools.Reflection;
+﻿using Masuit.Tools.Core.Models;
+using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace NetCoreTest
@@ -13,8 +15,15 @@ namespace NetCoreTest
         {
             var myClass = new MyClass()
             {
-                MyProperty1 = 1
+                MyProperty1 = 1,
+                Name = "1",
+                Parent = new MyClass()
+                {
+                    Name = "mc"
+                }
             };
+            var path = myClass.Path();
+            Console.WriteLine(path);
 
             myClass.SetProperty(nameof(MyClass.MyProperty1), 1);
             Console.ReadKey();
@@ -36,11 +45,25 @@ namespace NetCoreTest
 
     }
 
-    public class MyClass
+    public class MyClass : ITree<MyClass>
     {
         [Description("test")]
         public string MyProperty { get; set; }
         public int? MyProperty1 { get; set; }
 
+        /// <summary>
+        /// 名字
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 父节点
+        /// </summary>
+        public virtual MyClass Parent { get; set; }
+
+        /// <summary>
+        /// 子级
+        /// </summary>
+        public ICollection<MyClass> Children { get; set; }
     }
 }
