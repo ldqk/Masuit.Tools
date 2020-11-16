@@ -31,8 +31,13 @@ namespace Masuit.Tools.Core.Test.AspNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseStaticHttpContext();
-            app.UseMvcWithDefaultRoute();
+
+            app.UseRouting(); // 放在 UseStaticFiles 之后
+            app.UseEndpoints(endpoints =>
+           {
+               endpoints.MapControllers(); // 属性路由
+               endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}"); // 默认路由
+           });
         }
     }
 }

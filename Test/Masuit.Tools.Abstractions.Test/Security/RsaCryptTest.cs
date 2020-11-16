@@ -1,6 +1,5 @@
-using System;
 using Masuit.Tools.Security;
-using Masuit.Tools.Systems;
+using System;
 using Xunit;
 
 namespace Masuit.Tools.Abstractions.Test.Security
@@ -27,7 +26,12 @@ namespace Masuit.Tools.Abstractions.Test.Security
             .RSAEncrypt()
             .RSADecrypt();
 
-            Assert.Equal(result, "123");
+            Assert.Equal(result, new RsaCryptTestEntity()
+            {
+                SdTime = DateTime.Parse("2020-08-14"),
+                Name = "asdf"
+            }
+            .ToJsonString());
         }
     }
 }
