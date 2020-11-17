@@ -105,10 +105,10 @@ namespace Masuit.Tools
 
             if (ignoreCase)
             {
-                return Regex.IsMatch(s, string.Join("|", keys), RegexOptions.IgnoreCase);
+                return Regex.IsMatch(s, string.Join("|", keys.Select(Regex.Escape)), RegexOptions.IgnoreCase);
             }
 
-            return Regex.IsMatch(s, string.Join("|", keys));
+            return Regex.IsMatch(s, string.Join("|", keys.Select(Regex.Escape)));
         }
 
         /// <summary>
