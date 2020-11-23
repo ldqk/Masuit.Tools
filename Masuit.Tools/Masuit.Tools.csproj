@@ -230,6 +230,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs">
       <Link>Models\TaobaoIP.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\UserAgent.cs">
+      <Link>Models\UserAgent.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Net\FtpClient.cs">
       <Link>Net\FtpClient.cs</Link>
     </Compile>

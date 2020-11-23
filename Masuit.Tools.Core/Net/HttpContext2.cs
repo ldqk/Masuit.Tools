@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Masuit.Tools.Core.Net
 {
@@ -7,6 +8,7 @@ namespace Masuit.Tools.Core.Net
     /// </summary>
     public static class HttpContext2
     {
+        [ThreadStatic]
         private static IHttpContextAccessor _accessor;
 
         /// <summary>
