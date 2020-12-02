@@ -492,27 +492,6 @@ namespace Masuit.Tools.Security
 
         #region MD5加密算法
 
-        #region 获取数组的Hex值
-
-        /// <summary>
-        ///     获取数组的Hex值
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexString(this byte[] array, bool uppercase)
-        {
-            var format = "x2";
-            if (uppercase)
-            {
-                format = "X2";
-            }
-
-            return array.Aggregate("", (current, b) => current + b.ToString(format));
-        }
-
-        #endregion
-
         #region 对字符串进行MD5加密
 
         /// <summary>
@@ -525,7 +504,7 @@ namespace Masuit.Tools.Security
             MD5 md5 = MD5.Create();
             byte[] buffer = Encoding.Default.GetBytes(message);
             byte[] bytes = md5.ComputeHash(buffer);
-            return ArrayToHexString(bytes, false);
+            return bytes.Aggregate("", (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -547,7 +526,7 @@ namespace Masuit.Tools.Security
             byte[] bytes1 = md5.ComputeHash(bytes);
             byte[] bytes2 = md5.ComputeHash(bytes1);
             byte[] bytes3 = md5.ComputeHash(bytes2);
-            return ArrayToHexString(bytes3, false);
+            return bytes3.Aggregate("", (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -579,7 +558,7 @@ namespace Masuit.Tools.Security
             byte[] bytes1 = md5.ComputeHash(bytes);
             byte[] bytes2 = md5.ComputeHash(bytes1);
             byte[] bytes3 = md5.ComputeHash(bytes2);
-            return ArrayToHexString(bytes3, false);
+            return bytes3.Aggregate("", (current, b) => current + b.ToString("x2"));
         }
 
         #endregion
@@ -598,7 +577,7 @@ namespace Masuit.Tools.Security
             fs.Read(array, 0, (int)fs.Length);
             using MD5 md5 = MD5.Create();
             byte[] bytes = md5.ComputeHash(array);
-            return ArrayToHexString(bytes, false);
+            return bytes.Aggregate("", (current, b) => current + b.ToString("x2"));
         }
 
         /// <summary>
@@ -610,7 +589,7 @@ namespace Masuit.Tools.Security
         {
             var bytes = stream.ToArray();
             using var md5 = MD5.Create();
-            var mdstr = ArrayToHexString(md5.ComputeHash(bytes), false);
+            var mdstr = md5.ComputeHash(bytes).Aggregate("", (current, b) => current + b.ToString("x2"));
             stream.Position = 0;
             return mdstr;
         }
