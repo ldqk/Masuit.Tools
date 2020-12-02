@@ -493,15 +493,15 @@ namespace Masuit.Tools.Security
 
         #region 获取数组的Hex值
 
-        ///// <summary>
-        /////     获取数组的Hex值
-        ///// </summary>
-        ///// <param name="array">需要求Hex值的数组</param>
-        ///// <param name="uppercase">是否转大写</param>
-        ///// <returns>字节数组的16进制表示</returns>
-
 #if NETSTANDARD2_1 || NET5_0
 
+        /// <summary>
+        /// 获取数组的Hex值
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="separator">分隔符</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexString(
             this byte[] array,
             ReadOnlySpan<char> separator,
@@ -525,6 +525,12 @@ namespace Masuit.Tools.Security
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// 获取数组的Hex值,无分隔符
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexString(
             this byte[] array,
             bool uppercase = true)
@@ -532,6 +538,12 @@ namespace Masuit.Tools.Security
             return Encrypt.ArrayToHexString(array, ReadOnlySpan<char>.Empty, uppercase);
         }
 
+        /// <summary>
+        /// 获取数组的Hex值,以" "分隔
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexStringWithSeparator(
             this byte[] array,
             bool uppercase = true)
@@ -543,6 +555,13 @@ namespace Masuit.Tools.Security
 
 #if !(NETSTANDARD2_1 || NET5_0)
 
+        /// <summary>
+        /// 获取数组的Hex值
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="separator">分隔符</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexString(
             this byte[] array,
             string separator,
@@ -566,6 +585,12 @@ namespace Masuit.Tools.Security
             return stringBuilder.ToString();
         }
 
+        /// <summary>
+        /// 获取数组的Hex值,无分隔符
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexString(
             this byte[] array,
             bool uppercase = true)
@@ -573,6 +598,12 @@ namespace Masuit.Tools.Security
             return Encrypt.ArrayToHexString(array, string.Empty, uppercase);
         }
 
+        /// <summary>
+        /// 获取数组的Hex值,以" "分隔
+        /// </summary>
+        /// <param name="array">需要求Hex值的数组</param>
+        /// <param name="uppercase">是否转大写</param>
+        /// <returns>字节数组的16进制表示</returns>
         public static string ArrayToHexStringWithSeparator(
             this byte[] array,
             bool uppercase = true)
