@@ -493,24 +493,15 @@ namespace Masuit.Tools.Security
 
         #region 获取数组的Hex值
 
-#if NETSTANDARD2_1 || NET5_0
-
         /// <summary>
-        /// 获取数组的Hex值
+        ///     获取数组的Hex值
         /// </summary>
         /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="separator">分隔符</param>
         /// <param name="uppercase">是否转大写</param>
         /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexString(
-            this byte[] array,
-            ReadOnlySpan<char> separator,
-            bool uppercase = true)
+        private static string ArrayToHexString(this byte[] array, bool uppercase)
         {
-            if (array.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
+            if (array.IsNullOrEmpty()) { return string.Empty; }
 
             string format = uppercase ? "X2" : "x2";
             StringBuilder stringBuilder = new StringBuilder();
@@ -518,100 +509,10 @@ namespace Masuit.Tools.Security
             foreach (byte item in array)
             {
                 stringBuilder.Append(item.ToString(format));
-                stringBuilder.Append(separator);
             }
-            stringBuilder.Remove(stringBuilder.Length - separator.Length, separator.Length);//移除最后多加的分隔符
 
             return stringBuilder.ToString();
         }
-
-        /// <summary>
-        /// 获取数组的Hex值,无分隔符
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexString(
-            this byte[] array,
-            bool uppercase = true)
-        {
-            return Encrypt.ArrayToHexString(array, ReadOnlySpan<char>.Empty, uppercase);
-        }
-
-        /// <summary>
-        /// 获取数组的Hex值,以" "分隔
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexStringWithSeparator(
-            this byte[] array,
-            bool uppercase = true)
-        {
-            return Encrypt.ArrayToHexString(array, " ".AsSpan(), uppercase);
-        }
-
-#endif
-
-#if !(NETSTANDARD2_1 || NET5_0)
-
-        /// <summary>
-        /// 获取数组的Hex值
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="separator">分隔符</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexString(
-            this byte[] array,
-            string separator,
-            bool uppercase = true)
-        {
-            if (array.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-
-            string format = uppercase ? "X2" : "x2";
-            StringBuilder stringBuilder = new StringBuilder();
-
-            foreach (byte item in array)
-            {
-                stringBuilder.Append(item.ToString(format));
-                stringBuilder.Append(separator);
-            }
-            stringBuilder.Remove(stringBuilder.Length - separator.Length, separator.Length);//移除最后多加的分隔符
-
-            return stringBuilder.ToString();
-        }
-
-        /// <summary>
-        /// 获取数组的Hex值,无分隔符
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexString(
-            this byte[] array,
-            bool uppercase = true)
-        {
-            return Encrypt.ArrayToHexString(array, string.Empty, uppercase);
-        }
-
-        /// <summary>
-        /// 获取数组的Hex值,以" "分隔
-        /// </summary>
-        /// <param name="array">需要求Hex值的数组</param>
-        /// <param name="uppercase">是否转大写</param>
-        /// <returns>字节数组的16进制表示</returns>
-        public static string ArrayToHexStringWithSeparator(
-            this byte[] array,
-            bool uppercase = true)
-        {
-            return Encrypt.ArrayToHexString(array, " ", uppercase);
-        }
-
-#endif
 
         #endregion 获取数组的Hex值
 
