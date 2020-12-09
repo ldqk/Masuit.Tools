@@ -12,7 +12,7 @@ namespace Masuit.Tools
         /// <returns>int类型的数字</returns>
         public static int ToInt32(this string s, int defaultValue = 0)
         {
-            return int.TryParse(s, out int result) ? result : defaultValue;
+            return s.TryConvertTo(defaultValue);
         }
 
         /// <summary>
@@ -21,9 +21,9 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static long ToInt64(this string s, int defaultValue = 0)
+        public static long ToInt64(this string s, long defaultValue = 0)
         {
-            return long.TryParse(s, out var result) ? result : defaultValue;
+            return s.TryConvertTo(defaultValue);
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>double类型的数据</returns>
-        public static double ToDouble(this string s, int defaultValue = 0)
+        public static double ToDouble(this string s, double defaultValue = 0)
         {
-            return double.TryParse(s, out var result) ? result : defaultValue;
+            return s.TryConvertTo(defaultValue);
         }
 
         /// <summary>
@@ -43,9 +43,9 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static decimal ToDecimal(this string s, int defaultValue = 0)
+        public static decimal ToDecimal(this string s, decimal defaultValue = 0)
         {
-            return decimal.TryParse(s, out var result) ? result : defaultValue;
+            return s.TryConvertTo(defaultValue);
         }
 
         /// <summary>
@@ -86,17 +86,6 @@ namespace Masuit.Tools
         public static int ToInt32(this decimal num)
         {
             return (int)Math.Floor(num);
-        }
-
-        /// <summary>
-        /// 字符串转long类型
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="defaultResult">转换失败的默认值</param>
-        /// <returns></returns>
-        public static long ToLong(this string str, long defaultResult = 0)
-        {
-            return long.TryParse(str, out var result) ? result : defaultResult;
         }
 
         /// <summary>

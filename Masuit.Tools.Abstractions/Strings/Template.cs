@@ -48,9 +48,9 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public string Render(bool check = false)
         {
-            var mc = Regex.Matches(Content, @"\{\{.+?\}\}");
             if (check)
             {
+                var mc = Regex.Matches(Content, @"\{\{.+?\}\}");
                 foreach (Match m in mc)
                 {
                     throw new ArgumentException($"模版变量{m.Value}未被使用");
