@@ -8,7 +8,7 @@
 ## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！  
 <img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">     
 
-## Stargazers over time  
+## Star趋势
 <img src="https://starchart.cc/ldqk/Masuit.Tools.svg">    
 
 ## 请注意：
