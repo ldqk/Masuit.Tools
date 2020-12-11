@@ -224,8 +224,8 @@ namespace Masuit.Tools.Mvc.ActionResults
                 };
             }
 
-            var start = matches[0].Groups[1].Value.ToLong(-1);
-            var end = matches[0].Groups[2].Value.ToLong(-1);
+            var start = matches[0].Groups[1].Value.ToInt64(-1);
+            var end = matches[0].Groups[2].Value.ToInt64(-1);
 
             if (start != -1 || end != -1)
             {
