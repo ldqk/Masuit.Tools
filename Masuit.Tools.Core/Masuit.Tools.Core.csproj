@@ -345,7 +345,7 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <CodeAnalysisRuleSet />
-        <DocumentationFile>.\Masuit.Tools.Core.xml</DocumentationFile>
+        <DocumentationFile></DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -381,7 +381,7 @@
         <PackageReference Include="System.Management" Version="4.7.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0" />
