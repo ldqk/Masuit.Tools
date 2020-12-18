@@ -399,7 +399,7 @@
       <Version>1.3.2</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.28</Version>
+      <Version>1.11.29</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
       <Version>5.0.355</Version>

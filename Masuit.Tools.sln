@@ -19,11 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core.Test", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Abstractions.Test", "Test\Masuit.Tools.Abstractions.Test\Masuit.Tools.Abstractions.Test.csproj", "{61430D45-3808-49B5-BDF3-4536DA399DD4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E01BF3AC-4407-49E2-A191-F89DE2F9E349}"
-	ProjectSection(SolutionItems) = preProject
-		SDKPulishNuget.targets = SDKPulishNuget.targets
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.ResumeFileResults.WebTest", "Test\Masuit.Tools.AspNetCore.ResumeFileResults.WebTest\Masuit.Tools.AspNetCore.ResumeFileResults.WebTest.csproj", "{99185F12-DFAD-4DB8-A2C4-C7E9700C0A31}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Test", "Test\Masuit.Tools.Test\Masuit.Tools.Test.csproj", "{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}"

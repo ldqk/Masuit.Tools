@@ -62,6 +62,7 @@ namespace Masuit.Tools.Win32
                     }
                 }
             }
+            GC.Collect();
         }
 
         /// <summary>
