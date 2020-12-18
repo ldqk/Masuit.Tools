@@ -21,10 +21,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.1.1</Version>
-        <FileVersion>2.4.1.1</FileVersion>
+        <Version>2.4.1.2</Version>
+        <FileVersion>2.4.1.2</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>2.4.1.1</AssemblyVersion>
+        <AssemblyVersion>2.4.1.2</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
