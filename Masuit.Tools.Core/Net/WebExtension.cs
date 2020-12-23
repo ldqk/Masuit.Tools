@@ -56,7 +56,11 @@ namespace Masuit.Tools.Core.Net
             HttpClient.DefaultRequestHeaders.Referrer = new Uri("http://lbsyun.baidu.com/jsdemo.htm");
             var ipAddress = await HttpClient.GetAsync($"http://api.map.baidu.com/location/ip?ak={ak}&ip={ip}&coor=bd09ll", _cts.Token).ContinueWith(t =>
             {
-                if (t.IsCompleted && t.Result.IsSuccessStatusCode)
+                if (t.IsCanceled || t.IsFaulted)
+                {
+                    return null;
+                }
+                if (t.Result.IsSuccessStatusCode)
                 {
                     using var content = t.Result.Content;
                     return JsonConvert.DeserializeObject<BaiduIP>(content.ReadAsStringAsync().Result);
@@ -67,11 +71,15 @@ namespace Masuit.Tools.Core.Net
             if (ipAddress?.Status == 0)
             {
                 var point = ipAddress.AddressInfo.LatiLongitude;
-                var result = await HttpClient.GetAsync($"http://api.map.baidu.com/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}", _cts.Token).ContinueWith(tt =>
+                var result = await HttpClient.GetAsync($"http://api.map.baidu.com/geocoder/v2/?location={point.Y},{point.X}&output=json&pois=1&radius=1000&latest_admin=1&coordtype=bd09ll&ak={ak}", _cts.Token).ContinueWith(t =>
                 {
-                    if (tt.IsCompleted && tt.Result.IsSuccessStatusCode)
+                    if (t.IsCanceled || t.IsFaulted)
                     {
-                        using var content = tt.Result.Content;
+                        return null;
+                    }
+                    if (t.Result.IsSuccessStatusCode)
+                    {
+                        using var content = t.Result.Content;
                         return JsonConvert.DeserializeObject<PhysicsAddress>(content.ReadAsStringAsync().Result);
                     }
 
@@ -84,11 +92,15 @@ namespace Masuit.Tools.Core.Net
             }
             else
             {
-                var taobaoIp = await HttpClient.GetAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}", _cts.Token).ContinueWith(tt =>
+                var taobaoIp = await HttpClient.GetAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}", _cts.Token).ContinueWith(t =>
                 {
-                    if (tt.IsCompleted && tt.Result.IsSuccessStatusCode)
+                    if (t.IsCanceled || t.IsFaulted)
                     {
-                        using var content = tt.Result.Content;
+                        return null;
+                    }
+                    if (t.Result.IsSuccessStatusCode)
+                    {
+                        using var content = t.Result.Content;
                         return JsonConvert.DeserializeObject<TaobaoIP>(content.ReadAsStringAsync().Result);
                     }
 
@@ -129,7 +141,11 @@ namespace Masuit.Tools.Core.Net
 
             var task = HttpClient.GetAsync($"http://ip.taobao.com/service/getIpInfo.php?ip={ip}", _cts.Token).ContinueWith(t =>
              {
-                 if (t.IsCompleted)
+                 if (t.IsCanceled || t.IsFaulted)
+                 {
+                     return $"未能找到{ip}的ISP信息";
+                 }
+                 if (t.Result.IsSuccessStatusCode)
                  {
                      using var content = t.Result.Content;
                      var taobaoIp = JsonConvert.DeserializeObject<TaobaoIP>(content.ReadAsStringAsync().Result);
