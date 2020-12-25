@@ -1,4 +1,5 @@
-﻿using Masuit.Tools.Core.Models;
+﻿using Masuit.Tools;
+using Masuit.Tools.Core.Models;
 using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 
 namespace NetCoreTest
 {
@@ -13,6 +15,10 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            var fs = File.OpenRead(@"E:\下载\BlazorSamples.7z");
+            var bytes = fs.ToArrayAsync().Result;
+            Console.WriteLine(bytes.Length);
+            Console.ReadKey();
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,

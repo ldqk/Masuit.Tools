@@ -402,7 +402,7 @@
       <Version>1.11.29</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>5.0.355</Version>
+      <Version>5.0.372</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.7</Version>
