@@ -49,7 +49,6 @@ namespace Masuit.Tools
         {
             byte[] bytes = new byte[stream.Length];
             await stream.ReadAsync(bytes, cancellationToken);
-            stream.Seek(0, SeekOrigin.Begin);// 设置当前流的位置为流的开始
             return bytes;
         }
 #endif
