@@ -249,9 +249,6 @@
         <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\WeightedSelector.cs">
             <Link>RandomSelector\WeightedSelector.cs</Link>
         </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ReflectHelper.cs">
-            <Link>Reflection\ReflectHelper.cs</Link>
-        </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ReflectionUtil.cs">
             <Link>Reflection\ReflectionUtil.cs</Link>
         </Compile>
