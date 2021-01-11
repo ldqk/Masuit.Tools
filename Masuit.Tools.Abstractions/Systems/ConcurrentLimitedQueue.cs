@@ -34,6 +34,16 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static implicit operator ConcurrentLimitedQueue<T>(List<T> list)
+        {
+            return new(list);
+        }
+
+        /// <summary>
         /// 入队
         /// </summary>
         /// <param name="item"></param>
