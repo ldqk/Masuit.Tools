@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Masuit.Tools.Core.Models
+namespace Masuit.Tools.Models
 {
     /// <summary>
     /// 树形数据扩展
@@ -80,9 +80,9 @@ namespace Masuit.Tools.Core.Models
         public static bool IsLeaf<T>(this ITree<T> tree) where T : ITree<T> => tree.Children.Count == 0;
 
         /// <summary>
-        /// 深度
+        /// 深度层级
         /// </summary>
-        public static int Level<T>(this ITree<T> tree) where T : ITree<T> => IsRoot(tree) ? 0 : Level(tree.Parent) + 1;
+        public static int Level<T>(this ITree<T> tree) where T : ITree<T> => IsRoot(tree) ? 1 : Level(tree.Parent) + 1;
 
         /// <summary>
         /// 节点路径（UNIX路径格式，以“/”分隔）

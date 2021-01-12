@@ -20,10 +20,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.1.4</Version>
-        <FileVersion>2.4.1.4</FileVersion>
+        <Version>2.4.1.5</Version>
+        <FileVersion>2.4.1.5</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>2.4.1.4</AssemblyVersion>
+        <AssemblyVersion>2.4.1.5</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -201,6 +201,7 @@
         <Compile Include="..\Masuit.Tools.Abstractions\Models\IspInfo.cs">
             <Link>Models\IspInfo.cs</Link>
         </Compile>
+        <Compile Include="..\Masuit.Tools.Abstractions\Models\ITree.cs" Link="Models\ITree.cs" />
         <Compile Include="..\Masuit.Tools.Abstractions\Models\Location.cs">
             <Link>Models\Location.cs</Link>
         </Compile>
@@ -216,6 +217,7 @@
         <Compile Include="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs">
             <Link>Models\TaobaoIP.cs</Link>
         </Compile>
+        <Compile Include="..\Masuit.Tools.Abstractions\Models\TreeExtensions.cs" Link="Models\TreeExtensions.cs" />
         <Compile Include="..\Masuit.Tools.Abstractions\Net\FtpClient.cs">
             <Link>Net\FtpClient.cs</Link>
         </Compile>

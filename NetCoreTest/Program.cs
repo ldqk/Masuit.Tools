@@ -1,5 +1,5 @@
 ﻿using Masuit.Tools;
-using Masuit.Tools.Core.Models;
+using Masuit.Tools.Models;
 using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
 using Microsoft.AspNetCore;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Masuit.Tools.Core.Models
+namespace Masuit.Tools.Models
 {
     /// <summary>
     /// 树形实体接口
