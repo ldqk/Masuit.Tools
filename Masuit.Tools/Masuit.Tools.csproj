@@ -405,7 +405,7 @@
       <Version>1.11.29</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>5.0.372</Version>
+      <Version>5.0.376</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.7</Version>
@@ -414,7 +414,7 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpCompress">
-      <Version>0.26.0</Version>
+      <Version>0.27.1</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
       <Version>2.2.4</Version>
