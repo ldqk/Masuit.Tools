@@ -1,123 +1,104 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Masuit.Tools
 {
-    public static partial class ObjectExtensions
+    public static class ObjectExtensions
     {
-        #region Map
+        private static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        /// <summary>
-        /// 浅克隆
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static TDestination Clone<TDestination>(this object source)
-            where TDestination : new()
+        public static bool IsPrimitive(this Type type)
         {
-            TDestination dest = new TDestination();
-            dest.GetType().GetProperties().ForEach(p =>
+            if (type == typeof(string))
             {
-                p.SetValue(dest, source.GetType().GetProperty(p.Name)?.GetValue(source));
-            });
-            return dest;
+                return true;
+            }
+
+            return type.IsValueType & type.IsPrimitive;
         }
 
-        /// <summary>
-        /// 深克隆
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static TDestination DeepClone<TDestination>(this object source)
-            where TDestination : new()
+        public static object DeepClone(this object originalObject)
         {
-            return JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source));
+            return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
         }
 
-        /// <summary>
-        /// 浅克隆(异步)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static Task<TDestination> CloneAsync<TDestination>(this object source)
-            where TDestination : new()
+        public static T DeepClone<T>(this T original)
         {
-            return Task.Run(() =>
-           {
-               return source.Clone<TDestination>();
-           });
+            return (T)DeepClone((object)original);
         }
 
-        /// <summary>
-        /// 深克隆(异步)
-        /// </summary>
-        /// <param name="source">源</param>
-        /// <typeparam name="TDestination">目标类型</typeparam>
-        /// <returns>目标类型</returns>
-        public static async Task<TDestination> DeepCloneAsync<TDestination>(this object source)
-            where TDestination : new()
+        private static object InternalCopy(object originalObject, IDictionary<object, object> visited)
         {
-            return await Task.Run(() => JsonConvert.DeserializeObject<TDestination>(JsonConvert.SerializeObject(source)));
+            if (originalObject == null)
+            {
+                return null;
+            }
+
+            var typeToReflect = originalObject.GetType();
+            if (IsPrimitive(typeToReflect))
+            {
+                return originalObject;
+            }
+
+            if (visited.ContainsKey(originalObject))
+            {
+                return visited[originalObject];
+            }
+
+            if (typeof(Delegate).IsAssignableFrom(typeToReflect))
+            {
+                return null;
+            }
+
+            var cloneObject = CloneMethod.Invoke(originalObject, null);
+            if (typeToReflect.IsArray)
+            {
+                var arrayType = typeToReflect.GetElementType();
+                if (!IsPrimitive(arrayType))
+                {
+                    Array clonedArray = (Array)cloneObject;
+                    clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited), indices));
+                }
+
+            }
+
+            visited.Add(originalObject, cloneObject);
+            CopyFields(originalObject, visited, cloneObject, typeToReflect);
+            RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect);
+            return cloneObject;
         }
 
-        #endregion Map
-
-        #region CheckNull
-
-        /// <summary>
-        /// 检查参数是否为null，为null时抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj">      要检查的对象</param>
-        /// <param name="paramName">抛出异常时,显示的参数名</param>
-        /// <exception cref="ArgumentNullException"><paramref name="obj" /> 为null时抛出</exception>
-        public static void CheckNullWithException<T>(this T obj, string paramName)
+        private static void RecursiveCopyBaseTypePrivateFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect)
         {
-            if (obj == null) throw new ArgumentNullException(paramName);
+            if (typeToReflect.BaseType != null)
+            {
+                RecursiveCopyBaseTypePrivateFields(originalObject, visited, cloneObject, typeToReflect.BaseType);
+                CopyFields(originalObject, visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate);
+            }
         }
 
-        /// <summary>
-        /// 检查参数是否为null，为null时抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj">      要检查的对象</param>
-        /// <param name="paramName">抛出异常时,显示的参数名</param>
-        /// <param name="message">  抛出异常时,显示的错误信息</param>
-        /// <exception cref="ArgumentNullException"><paramref name="obj" /> 为null时抛出</exception>
-        public static void CheckNullWithException<T>(this T obj, string paramName, string message)
+        private static void CopyFields(object originalObject, IDictionary<object, object> visited, object cloneObject, Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy, Func<FieldInfo, bool> filter = null)
         {
-            if (obj == null) throw new ArgumentNullException(paramName, message);
-        }
+            foreach (FieldInfo fieldInfo in typeToReflect.GetFields(bindingFlags))
+            {
+                if (filter != null && !filter(fieldInfo))
+                {
+                    continue;
+                }
 
-        /// <summary>
-        /// 检查参数是否为null或emtpy，为null或emtpy时抛出异常
-        /// </summary>
-        /// <param name="obj">      要检查的对象</param>
-        /// <param name="paramName">抛出异常时,显示的参数名</param>
-        /// <exception cref="ArgumentNullException"><paramref name="obj" /> 为null或emtpy时抛出</exception>
-        public static void CheckNullOrEmptyWithException(this IEnumerable obj, string paramName)
-        {
-            if (obj.IsNullOrEmpty()) throw new ArgumentNullException(paramName);
-        }
+                if (IsPrimitive(fieldInfo.FieldType))
+                {
+                    continue;
+                }
 
-        /// <summary>
-        /// 检查参数是否为null或emtpy，为null或emtpy时抛出异常
-        /// </summary>
-        /// <param name="obj">      要检查的对象</param>
-        /// <param name="paramName">抛出异常时,显示的参数名</param>
-        /// <param name="message">  抛出异常时,显示的错误信息</param>
-        /// <exception cref="ArgumentNullException"><paramref name="obj" /> 为null或emtpy时抛出</exception>
-        public static void CheckNullOrEmptyWithException(this IEnumerable obj, string paramName, string message)
-        {
-            if (obj.IsNullOrEmpty()) throw new ArgumentNullException(paramName, message);
+                var originalFieldValue = fieldInfo.GetValue(originalObject);
+                var clonedFieldValue = InternalCopy(originalFieldValue, visited);
+                fieldInfo.SetValue(cloneObject, clonedFieldValue);
+            }
         }
-
-        #endregion CheckNull
 
         /// <summary>
         /// 判断是否为null，null或0长度都返回true
@@ -126,13 +107,16 @@ namespace Masuit.Tools
         /// <param name="value"></param>
         /// <returns></returns>
         public static bool IsNullOrEmpty<T>(this T value)
-          where T : class?
+          where T : class
         {
             #region 1.对象级别
 
             //引用为null
-            bool isObjectNull = value == null;
-            if (isObjectNull == true) return true;
+            bool isObjectNull = value is null;
+            if (isObjectNull)
+            {
+                return true;
+            }
 
             //判断是否为集合
             IEnumerator? tempEnumerator = (value as IEnumerable)?.GetEnumerator();
@@ -145,7 +129,7 @@ namespace Masuit.Tools
             //到这里就代表是集合且引用不为空，判断长度
             //MoveNext方法返回tue代表集合中至少有一个数据,返回false就代表0长度
             bool isZeroLenth = tempEnumerator.MoveNext() == false;
-            if (isZeroLenth == true) return true;
+            if (isZeroLenth) return true;
 
             return isZeroLenth;
 
@@ -156,16 +140,11 @@ namespace Masuit.Tools
         /// 转换成json字符串
         /// </summary>
         /// <param name="obj"></param>
+        /// <param name="setting"></param>
         /// <returns></returns>
         public static string ToJsonString(this object obj, JsonSerializerSettings setting = null)
         {
             if (obj == null) return string.Empty;
-
-            if (setting == null)
-            {
-                return JsonConvert.SerializeObject(obj);
-            }
-
             return JsonConvert.SerializeObject(obj, setting);
         }
 
@@ -179,5 +158,66 @@ namespace Masuit.Tools
         {
             return object.ReferenceEquals(@this, o);
         }
+
     }
+    class ReferenceEqualityComparer : EqualityComparer<object>
+    {
+        public override bool Equals(object x, object y)
+        {
+            return ReferenceEquals(x, y);
+        }
+        public override int GetHashCode(object obj)
+        {
+            if (obj is null) return 0;
+            return obj.GetHashCode();
+        }
+    }
+    static class ArrayExtensions
+    {
+        public static void ForEach(this Array array, Action<Array, int[]> action)
+        {
+            if (array.LongLength == 0)
+            {
+                return;
+            }
+
+            ArrayTraverse walker = new ArrayTraverse(array);
+            do action(array, walker.Position);
+            while (walker.Step());
+        }
+        internal class ArrayTraverse
+        {
+            public int[] Position;
+            private readonly int[] _maxLengths;
+
+            public ArrayTraverse(Array array)
+            {
+                _maxLengths = new int[array.Rank];
+                for (int i = 0; i < array.Rank; ++i)
+                {
+                    _maxLengths[i] = array.GetLength(i) - 1;
+                }
+                Position = new int[array.Rank];
+            }
+
+            public bool Step()
+            {
+                for (int i = 0; i < Position.Length; ++i)
+                {
+                    if (Position[i] < _maxLengths[i])
+                    {
+                        Position[i]++;
+                        for (int j = 0; j < i; j++)
+                        {
+                            Position[j] = 0;
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
+
 }
