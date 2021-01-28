@@ -68,9 +68,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\BigIntegerExtensions.cs">
       <Link>Extensions\BaseType\BigIntegerExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DeepCopyExt.cs">
-      <Link>Extensions\BaseType\DeepCopyExt.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DoubleExtensions.cs">
       <Link>Extensions\BaseType\DoubleExtensions.cs</Link>
     </Compile>

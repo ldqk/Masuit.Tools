@@ -104,9 +104,6 @@
         <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\LongExtensions.cs">
             <Link>Extensions\BaseType\LongExtensions.cs</Link>
         </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DeepCopyExt.cs">
-            <Link>Extensions\BaseType\DeepCopyExt.cs</Link>
-        </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ObjectExtensions.cs">
             <Link>Extensions\BaseType\ObjectExtensions.cs</Link>
         </Compile>
