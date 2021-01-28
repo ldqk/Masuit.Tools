@@ -20,10 +20,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.2.1</Version>
-        <FileVersion>2.4.2.1</FileVersion>
+        <Version>2.4.2.2</Version>
+        <FileVersion>2.4.2.2</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>2.4.2.1</AssemblyVersion>
+        <AssemblyVersion>2.4.2.2</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -103,6 +103,9 @@
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\LongExtensions.cs">
             <Link>Extensions\BaseType\LongExtensions.cs</Link>
+        </Compile>
+        <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DeepCopyExt.cs">
+            <Link>Extensions\BaseType\DeepCopyExt.cs</Link>
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ObjectExtensions.cs">
             <Link>Extensions\BaseType\ObjectExtensions.cs</Link>
