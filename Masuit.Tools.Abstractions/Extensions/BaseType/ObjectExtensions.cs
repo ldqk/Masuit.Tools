@@ -119,7 +119,7 @@ namespace Masuit.Tools
             }
 
             //判断是否为集合
-            IEnumerator? tempEnumerator = (value as IEnumerable)?.GetEnumerator();
+            var tempEnumerator = (value as IEnumerable)?.GetEnumerator();
             if (tempEnumerator == null) return false;//这里出去代表是对象 且 引用不为null.所以为false
 
             #endregion 1.对象级别
