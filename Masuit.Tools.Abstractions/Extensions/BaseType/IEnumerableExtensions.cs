@@ -29,6 +29,14 @@ namespace Masuit.Tools
 
         #region AsyncForEach
 
+        /// <summary>
+        /// 异步foreach
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="maxParallelCount">并行线程数</param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public static async Task ForeachAsync<T>(this IEnumerable<T> source, int maxParallelCount, Func<T, Task> action)
         {
             using SemaphoreSlim completeSemphoreSlim = new(1);
@@ -61,10 +69,19 @@ namespace Masuit.Tools
 
             await completeSemphoreSlim.WaitAsync();
         }
-        public static async Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
+
+        /// <summary>
+        /// 异步foreach
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
         {
-            await ForeachAsync(source, source.Count(), action);
+            return ForeachAsync(source, source.Count(), action);
         }
+
         #endregion AsyncForEach
 
         /// <summary>
