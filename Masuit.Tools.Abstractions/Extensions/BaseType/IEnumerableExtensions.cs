@@ -228,9 +228,9 @@ namespace Masuit.Tools
         /// <param name="source"></param>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static async Task<IEnumerable<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector)
+        public static Task<TResult[]> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector)
         {
-            return await Task.WhenAll(source.Select(selector));
+            return Task.WhenAll(source.Select(selector));
         }
     }
 }
