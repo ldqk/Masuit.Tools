@@ -9,8 +9,6 @@ namespace Masuit.Tools
 {
     public static partial class IEnumerableExtensions
     {
-        #region SyncForEach
-
         /// <summary>
         /// 遍历IEnumerable
         /// </summary>
@@ -24,10 +22,6 @@ namespace Masuit.Tools
                 action(o);
             }
         }
-
-        #endregion SyncForEach
-
-        #region AsyncForEach
 
         /// <summary>
         /// 异步foreach
@@ -51,7 +45,7 @@ namespace Masuit.Tools
                 {
                     try
                     {
-                        await action(item).ContinueWith(task =>
+                        await action(item).ContinueWith(_ =>
                         {
                             Interlocked.Decrement(ref runningtaskCount);
                             if (runningtaskCount == 0)
@@ -81,8 +75,6 @@ namespace Masuit.Tools
         {
             return ForeachAsync(source, source.Count(), action);
         }
-
-        #endregion AsyncForEach
 
         /// <summary>
         /// 按字段去重

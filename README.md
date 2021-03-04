@@ -74,7 +74,9 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
         //fs.CopyToFile(@"D:\1.bak");//同步复制大文件
         fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
         string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
+        string sha1 = fs.GetFileSha1();//异步获取文件的SHA1
 }
+memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 ### 4.html的防XSS处理：
 ```csharp
@@ -445,6 +447,7 @@ ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);//
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
 myClass.SetProperty("Email","1@1.cn");//给对象设置值
+myClass.DeepClone(); // 对象深拷贝，带嵌套层级的
 ```
 ### 28.获取线程内唯一对象
 ```csharp
@@ -506,12 +509,15 @@ Bitmap newBmp = bmp.BWPic(bmp.Width, bmp.Height);//转换成黑白
 Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁剪并缩放
 bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
 bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
+
+var marker=ImageWatermarker(stream);
+stream=maker.AddWatermark("水印文字",color,水印位置,边距,字体大小,字体,抗锯齿); // 给图片添加水印
 ```
 ### 32.随机数
 ```csharp
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
-double gauss = rnd.NextGauss(20,5);//产生正态分布的随机数
+double gauss = rnd.NextGauss(20,5);//产生正态高斯分布的随机数
 ```
 ### 33.权重筛选功能
 ```csharp
@@ -573,6 +579,8 @@ dic.AddOrUpdate(new Dictionary<string, int>()
 }); // 批量添加或更新键值对
 dic.AddOrUpdate("5", 6, (s, i) => 66); // 如果是添加，则值为6，若更新则值为66
 dic.AddOrUpdate("5", 6, 666); // 如果是添加，则值为6，若更新则值为666
+dic.GetOrAdd("7",77); // 字典获取或添加元素
+dic.GetOrAdd("7",()=>77); // 字典获取或添加元素
 dic.AsConcurrentDictionary(); // 普通字典转换成并发字典集合
 var table=list.ToDataTable(); // 转换成DataTable类型
 table.AddIdentityColumn(); //给DataTable增加一个自增列
@@ -587,6 +595,13 @@ await list.SelectAsync(async i=>{
     await Task.Delay(100);
     return i*10;
 }); // 异步Select
+string s=list.Join(",");//将字符串集合连接成逗号分隔的单字符串
+var max=list.MaxOrDefault(); // 取最大值，当集合为空的时候不会报错
+var max=list.MaxOrDefault(selector); // 取最大值，当集合为空的时候不会报错
+var max=list.MaxOrDefault(selector,default); // 取最大值，当集合为空的时候不会报错
+var max=list.MinOrDefault(); // 取最小值，当集合为空的时候不会报错
+var max=list.MinOrDefault(selector); // 取最小值，当集合为空的时候不会报错
+var max=list.MinOrDefault(selector,default); // 取最小值，当集合为空的时候不会报错
 ```
 ### 37.Mime类型
 ```csharp
@@ -601,6 +616,7 @@ DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00
 DateTime.Now.GetTotalMicroseconds(); // 获取该时间相对于1970-01-01 00:00:00的微秒数
 DateTime.Now.GetTotalNanoseconds(); // 获取该时间相对于1970-01-01 00:00:00的纳秒数
 var indate=DateTime.Parse("2020-8-3").In(DateTime.Parse("2020-8-2"),DateTime.Parse("2020-8-4"));//true
+DateTime time="2021-1-1 8:00:00".ToDateTime(); //字符串转DateTime
 
 //时间段计算工具
 var range = new DateTimeRange(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-5"));
@@ -618,13 +634,27 @@ stream.ToArray(); // 任意流转换成二进制数组
 ### 40.数值转换
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
-1.23.To<int>(); // 小数转int
-1.23.To<T>(); // 小数转T基本类型
+1.23.ConvertTo<int>(); // 小数转int
+1.23.ConvertTo<T>(); // 小数转T基本类型
+bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 ```
 ### 41.简繁转换
 ```csharp
 var str="个体".ToTraditional(); // 转繁体
 var str="個體".ToSimplified(); // 转简体
+```
+### 42.INI配置文件操作
+```csharp
+INIFile ini=new INIFile("filename.ini");
+ini.IniWriteValue(section,key,value); // 写值
+ini.IniReadValue(section,key); // 读值
+ini.ClearAllSection(); // 清空所有配置节
+ini.ClearSection(section); // 清空配置节
+```
+### 43.雷达图计算引擎
+```csharp
+var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个多边形的相交区域
+points.ComputeArea(); //计算多边形面积
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
