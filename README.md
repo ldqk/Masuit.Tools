@@ -656,6 +656,23 @@ ini.ClearSection(section); // 清空配置节
 var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个多边形的相交区域
 points.ComputeArea(); //计算多边形面积
 ```
+### 44.树形结构实现
+基本接口类：  
+ITreeChildren：带Children属性的接口  
+ITreeParent：带Parent属性的接口  
+ITree：继承ITreeParent和ITreeChildren，同时多了Name属性  
+
+相关扩展方法
+```csharp
+trees.Filter(func); // 从树形集合中过滤
+trees.Flatten(); // 将数据平铺开
+tree.AllChildren(); // 获取所有的子级
+tree.AllParent(); // 获取所有的父级
+tree.IsRoot(); // 是否是根节点
+tree.IsLeaf(); // 是否是叶子节点
+tree.Level(); // 所处深度/层级
+tree.Path(); // 全路径
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
