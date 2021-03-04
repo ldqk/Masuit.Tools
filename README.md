@@ -49,6 +49,7 @@ bool isPhoneNumber = "15205201520".MatchPhoneNumber();
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 bool isCNPatentNumber = "200410018477.9".MatchCNPatentNumber(); // 校验中国专利申请号或专利号，是否带校验位，校验位前是否带“.”，都可以校验，待校验的号码前不要带CN、ZL字样的前缀
 ```
+
 ### 2.硬件监测(仅支持Windows)
 ```csharp
 float load = SystemInfo.CpuLoad;// 获取CPU占用率
@@ -578,6 +579,14 @@ table.AddIdentityColumn(); //给DataTable增加一个自增列
 table.HasRows(); // 检查DataTable 是否有数据行
 table.ToList<T>(); // datatable转List
 var set = list.ToHashSet(s=>s.Name);// 转HashSet
+await list.ForeachAsync(async i=>{
+    await Task.Delay(100);
+    Console.WriteLine(i);
+}); // 异步foreach
+await list.SelectAsync(async i=>{
+    await Task.Delay(100);
+    return i*10;
+}); // 异步Select
 ```
 ### 37.Mime类型
 ```csharp
