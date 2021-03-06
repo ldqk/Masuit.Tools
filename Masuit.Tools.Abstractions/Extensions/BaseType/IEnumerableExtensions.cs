@@ -33,35 +33,38 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static async Task ForeachAsync<T>(this IEnumerable<T> source, int maxParallelCount, Func<T, Task> action)
         {
-            using SemaphoreSlim completeSemphoreSlim = new(1);
-            using SemaphoreSlim taskCountLimitsemaphoreSlim = new(maxParallelCount);
-            await completeSemphoreSlim.WaitAsync();
-            int runningtaskCount = source.Count();
-
-            foreach (var item in source)
+            if (source.Any())
             {
-                await taskCountLimitsemaphoreSlim.WaitAsync();
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        await action(item).ContinueWith(_ =>
-                        {
-                            Interlocked.Decrement(ref runningtaskCount);
-                            if (runningtaskCount == 0)
-                            {
-                                completeSemphoreSlim.Release();
-                            }
-                        });
-                    }
-                    finally
-                    {
-                        taskCountLimitsemaphoreSlim.Release();
-                    }
-                });
-            }
+                using SemaphoreSlim completeSemphoreSlim = new(1);
+                using SemaphoreSlim taskCountLimitsemaphoreSlim = new(maxParallelCount);
+                await completeSemphoreSlim.WaitAsync();
+                int runningtaskCount = source.Count();
 
-            await completeSemphoreSlim.WaitAsync();
+                foreach (var item in source)
+                {
+                    await taskCountLimitsemaphoreSlim.WaitAsync();
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await action(item).ContinueWith(_ =>
+                            {
+                                Interlocked.Decrement(ref runningtaskCount);
+                                if (runningtaskCount == 0)
+                                {
+                                    completeSemphoreSlim.Release();
+                                }
+                            });
+                        }
+                        finally
+                        {
+                            taskCountLimitsemaphoreSlim.Release();
+                        }
+                    });
+                }
+
+                await completeSemphoreSlim.WaitAsync();
+            }
         }
 
         /// <summary>
