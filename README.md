@@ -591,10 +591,19 @@ await list.ForeachAsync(async i=>{
     await Task.Delay(100);
     Console.WriteLine(i);
 }); // 异步foreach
+
+await list.ForAsync(async (item,index)=>{
+    await Task.Delay(100);
+    Console.WriteLine(item+"_"+index);
+}); // 异步for，带索引编号
 await list.SelectAsync(async i=>{
     await Task.Delay(100);
     return i*10;
 }); // 异步Select
+await list.SelectAsync(async (item,index)=>{
+    await Task.Delay(100);
+    return item*10;
+}); // 异步Select，带索引编号
 string s=list.Join(",");//将字符串集合连接成逗号分隔的单字符串
 var max=list.MaxOrDefault(); // 取最大值，当集合为空的时候不会报错
 var max=list.MaxOrDefault(selector); // 取最大值，当集合为空的时候不会报错
