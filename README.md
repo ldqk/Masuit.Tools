@@ -652,6 +652,7 @@ ini.ClearAllSection(); // 清空所有配置节
 ini.ClearSection(section); // 清空配置节
 ```
 ### 43.雷达图计算引擎
+应用场景：计算两个多边形的相似度，用户画像之类的
 ```csharp
 var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个多边形的相交区域
 points.ComputeArea(); //计算多边形面积
@@ -662,7 +663,7 @@ ITreeChildren：带Children属性的接口
 ITreeParent：带Parent属性的接口  
 ITree：继承ITreeParent和ITreeChildren，同时多了Name属性  
 
-相关扩展方法
+相关扩展方法：
 ```csharp
 trees.Filter(func); // 从树形集合中过滤
 trees.Flatten(); // 将数据平铺开
