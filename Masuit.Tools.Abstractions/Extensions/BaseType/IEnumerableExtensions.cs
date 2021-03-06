@@ -227,5 +227,30 @@ namespace Masuit.Tools
         {
             return Task.WhenAll(source.Select(selector));
         }
+
+        /// <summary>
+        /// 异步Select
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static Task<TResult[]> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<TResult>> selector)
+        {
+            return Task.WhenAll(source.Select(selector));
+        }
+
+        /// <summary>
+        /// 异步For
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static Task ForAsync<T>(this IEnumerable<T> source, Func<T, int, Task> selector)
+        {
+            return Task.WhenAll(source.Select(selector));
+        }
     }
 }

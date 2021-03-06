@@ -56,7 +56,7 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static TResult MaxOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault();
+        public static TResult MaxOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).DefaultIfEmpty().Max();
 
         /// <summary>
         /// 取最大值
@@ -67,7 +67,7 @@ namespace Masuit.Tools.Linq
         /// <param name="selector"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TResult MaxOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector, TResult defaultValue) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TResult MaxOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector, TResult defaultValue) => source.Select(selector).DefaultIfEmpty(defaultValue).Max();
 
         /// <summary>
         /// 取最大值
@@ -75,7 +75,7 @@ namespace Masuit.Tools.Linq
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TSource MaxOrDefault<TSource>(this IQueryable<TSource> source) => source.OrderByDescending(_ => _).FirstOrDefault();
+        public static TSource MaxOrDefault<TSource>(this IQueryable<TSource> source) => source.DefaultIfEmpty().Max();
 
         /// <summary>
         /// 取最大值
@@ -84,7 +84,7 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TSource MaxOrDefault<TSource>(this IQueryable<TSource> source, TSource defaultValue) => source.OrderByDescending(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TSource MaxOrDefault<TSource>(this IQueryable<TSource> source, TSource defaultValue) => source.DefaultIfEmpty(defaultValue).Max();
 
         /// <summary>
         /// 取最大值
@@ -95,7 +95,7 @@ namespace Masuit.Tools.Linq
         /// <param name="selector"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) => source.Select(selector).DefaultIfEmpty(defaultValue).Max();
 
         /// <summary>
         /// 取最大值
@@ -105,7 +105,7 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).OrderByDescending(_ => _).FirstOrDefault();
+        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).DefaultIfEmpty().Max();
 
         /// <summary>
         /// 取最大值
@@ -113,7 +113,7 @@ namespace Masuit.Tools.Linq
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source) => source.OrderByDescending(_ => _).FirstOrDefault();
+        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source) => source.DefaultIfEmpty().Max();
 
         /// <summary>
         /// 取最大值
@@ -122,7 +122,7 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) => source.OrderByDescending(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) => source.DefaultIfEmpty(defaultValue).Max();
 
         /// <summary>
         /// 取最小值
@@ -132,45 +132,7 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="selector"></param>
         /// <returns></returns>
-        public static TResult MinOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).OrderBy(_ => _).FirstOrDefault();
-
-        /// <summary>
-        /// 取最小值
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="selector"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public static TResult MinOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector, TResult defaultValue) => source.Select(selector).OrderBy(_ => _).FirstOrDefault() ?? defaultValue;
-
-        /// <summary>
-        /// 取最小值
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static TSource MinOrDefault<TSource>(this IQueryable<TSource> source) => source.OrderBy(_ => _).FirstOrDefault();
-
-        /// <summary>
-        /// 取最小值
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        public static TSource MinOrDefault<TSource>(this IQueryable<TSource> source, TSource defaultValue) => source.OrderBy(_ => _).FirstOrDefault() ?? defaultValue;
-
-        /// <summary>
-        /// 取最小值
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="selector"></param>
-        /// <returns></returns>
-        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).OrderBy(_ => _).FirstOrDefault();
+        public static TResult MinOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector) => source.Select(selector).DefaultIfEmpty().Min();
 
         /// <summary>
         /// 取最小值
@@ -181,7 +143,7 @@ namespace Masuit.Tools.Linq
         /// <param name="selector"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) => source.Select(selector).OrderBy(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TResult MinOrDefault<TSource, TResult>(this IQueryable<TSource> source, Expression<Func<TSource, TResult>> selector, TResult defaultValue) => source.Select(selector).DefaultIfEmpty(defaultValue).Min();
 
         /// <summary>
         /// 取最小值
@@ -189,7 +151,7 @@ namespace Masuit.Tools.Linq
         /// <typeparam name="TSource"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source) => source.OrderBy(_ => _).FirstOrDefault();
+        public static TSource MinOrDefault<TSource>(this IQueryable<TSource> source) => source.DefaultIfEmpty().Min();
 
         /// <summary>
         /// 取最小值
@@ -198,7 +160,45 @@ namespace Masuit.Tools.Linq
         /// <param name="source"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) => source.OrderBy(_ => _).FirstOrDefault() ?? defaultValue;
+        public static TSource MinOrDefault<TSource>(this IQueryable<TSource> source, TSource defaultValue) => source.DefaultIfEmpty(defaultValue).Min();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) => source.Select(selector).DefaultIfEmpty().Min();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) => source.Select(selector).DefaultIfEmpty(defaultValue).Min();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source) => source.DefaultIfEmpty().Min();
+
+        /// <summary>
+        /// 取最小值
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) => source.DefaultIfEmpty(defaultValue).Min();
     }
 
     internal class SubstituteParameterVisitor : ExpressionVisitor
