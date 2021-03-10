@@ -20,10 +20,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.2.5</Version>
-        <FileVersion>2.4.2.5</FileVersion>
+        <Version>2.4.2.6</Version>
+        <FileVersion>2.4.2.6</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>2.4.2.5</AssemblyVersion>
+        <AssemblyVersion>2.4.2.6</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -33,7 +33,7 @@
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.4.0" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
         <PackageReference Include="HtmlSanitizer" Version="5.0.376" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
@@ -60,9 +60,9 @@
         <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
-        <PackageReference Include="System.Drawing.Common" Version="5.0.1" />
+        <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="..\Masuit.Tools.Abstractions\Config\CoreConfig.cs" Link="Config\CoreConfig.cs" />

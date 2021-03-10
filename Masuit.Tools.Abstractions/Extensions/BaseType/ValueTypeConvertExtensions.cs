@@ -49,9 +49,9 @@ namespace Masuit.Tools
         }
 
         /// <summary>
-        /// 字符串转decimal
+        /// 转decimal
         /// </summary>
-        /// <param name="s">源字符串</param>
+        /// <param name="s"></param>
         /// <returns>int类型的数字</returns>
         public static decimal ToDecimal(this double s)
         {
@@ -59,9 +59,9 @@ namespace Masuit.Tools
         }
 
         /// <summary>
-        /// 字符串转double
+        /// 转double
         /// </summary>
-        /// <param name="s">源字符串</param>
+        /// <param name="s"></param>
         /// <returns>double类型的数据</returns>
         public static double ToDouble(this decimal s)
         {

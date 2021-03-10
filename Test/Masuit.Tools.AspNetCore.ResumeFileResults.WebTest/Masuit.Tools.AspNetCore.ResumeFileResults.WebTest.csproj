@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
