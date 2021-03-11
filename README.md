@@ -611,6 +611,7 @@ var max=list.MaxOrDefault(selector,default); // 取最大值，当集合为空�
 var max=list.MinOrDefault(); // 取最小值，当集合为空的时候不会报错
 var max=list.MinOrDefault(selector); // 取最小值，当集合为空的时候不会报错
 var max=list.MinOrDefault(selector,default); // 取最小值，当集合为空的时候不会报错
+var stdDev=list.Select(s=>s.ConvertTo<int>()).StandardDeviation(); // 求标准差
 ```
 ### 37.Mime类型
 ```csharp
