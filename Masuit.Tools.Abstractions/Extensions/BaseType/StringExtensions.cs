@@ -181,13 +181,21 @@ namespace Masuit.Tools
                 return (false, null);
             }
 
-            Match match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            var match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
             var isMatch = match.Success;
             if (isMatch && valid)
             {
                 var nslookup = new LookupClient();
-                var query = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
-                isMatch = query.Any(ip => !ip.IsPrivateIP());
+                var task = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
+                {
+                    if (t.IsCanceled || t.IsFaulted)
+                    {
+                        return new[] { IPAddress.Loopback };
+                    }
+
+                    return t.Result;
+                }));
+                isMatch = task.Result.SelectMany(a => a).Any(ip => !ip.IsPrivateIP());
             }
 
             return (isMatch, match);
