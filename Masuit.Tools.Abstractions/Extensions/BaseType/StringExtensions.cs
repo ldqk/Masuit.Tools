@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Masuit.Tools
 {
@@ -196,6 +197,40 @@ namespace Masuit.Tools
                     return t.Result;
                 }));
                 isMatch = task.Result.SelectMany(a => a).Any(ip => !ip.IsPrivateIP());
+            }
+
+            return (isMatch, match);
+        }
+
+        /// <summary>
+        /// 匹配Email
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="valid">是否验证有效性</param>
+        /// <returns>匹配对象；是否匹配成功，若返回true，则会得到一个Match对象，否则为null</returns>
+        public static async Task<(bool isMatch, Match match)> MatchEmailAsync(this string s, bool valid = false)
+        {
+            if (string.IsNullOrEmpty(s) || s.Length < 7)
+            {
+                return (false, null);
+            }
+
+            var match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            var isMatch = match.Success;
+            if (isMatch && valid)
+            {
+                var nslookup = new LookupClient();
+                var query = await nslookup.QueryAsync(s.Split('@')[1], QueryType.MX);
+                var result = await query.Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
+                {
+                    if (t.IsCanceled || t.IsFaulted)
+                    {
+                        return new[] { IPAddress.Loopback };
+                    }
+
+                    return t.Result;
+                }));
+                isMatch = result.SelectMany(a => a).Any(ip => !ip.IsPrivateIP());
             }
 
             return (isMatch, match);
