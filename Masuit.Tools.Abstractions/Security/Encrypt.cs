@@ -212,6 +212,22 @@ namespace Masuit.Tools.Security
         };
 
         /// <summary>
+        /// 生成符合AES加密规则的密钥
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GenerateAesKey(int length)
+        {
+            var crypto = new AesCryptoServiceProvider
+            {
+                KeySize = length,
+                BlockSize = 128
+            };
+            crypto.GenerateKey();
+            return Convert.ToBase64String(crypto.Key);
+        }
+
+        /// <summary>
         /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
