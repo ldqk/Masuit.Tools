@@ -232,7 +232,7 @@ var list = new List<MyClass>()
         Age = 28
     }
 };
-var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToList().ToDataTable();// 将自动填充列姓名和年龄
+var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToDataTable();// 将自动填充列姓名和年龄
 ```
 ### 14.文件压缩解压
 .NET Framework
