@@ -647,6 +647,7 @@ stream.ToArray(); // 任意流转换成二进制数组
 1.23.ConvertTo<int>(); // 小数转int
 1.23.ConvertTo<T>(); // 小数转T基本类型
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
+var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
 ```
 ### 41.简繁转换
 ```csharp
