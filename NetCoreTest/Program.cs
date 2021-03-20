@@ -19,10 +19,14 @@ namespace NetCoreTest
                 Name = "1",
                 Parent = new MyClass()
                 {
-                    Name = "mc"
+                    Name = "mc",
+                    Parent = new MyClass()
+                    {
+                        Name = "ccc"
+                    }
                 }
             };
-            var path = myClass.Path();
+            var path = myClass.Path(c => c.Name);
             Console.WriteLine(path);
 
             myClass.SetProperty(nameof(MyClass.MyProperty1), 1);
@@ -45,7 +49,7 @@ namespace NetCoreTest
 
     }
 
-    public class MyClass : ITree<MyClass>
+    public class MyClass : ITreeParent<MyClass>
     {
         [Description("test")]
         public string MyProperty { get; set; }

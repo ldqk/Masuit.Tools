@@ -82,12 +82,22 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 所有子级
         /// </summary>
-        public static ICollection<T> AllChildren<T>(this ITreeChildren<T> tree) where T : ITreeChildren<T> => GetChildren(tree);
+        public static ICollection<T> AllChildren<T>(this T tree) where T : ITreeChildren<T> => GetChildren(tree, c => c.Children);
+
+        /// <summary>
+        /// 所有子级
+        /// </summary>
+        public static ICollection<T> AllChildren<T>(this T tree, Func<T, IEnumerable<T>> selector) => GetChildren(tree, selector);
 
         /// <summary>
         /// 所有父级
         /// </summary>
-        public static ICollection<T> AllParent<T>(this ITreeParent<T> tree) where T : ITreeParent<T> => GetParents(tree);
+        public static ICollection<T> AllParent<T>(this T tree) where T : ITreeParent<T> => GetParents(tree, c => c.Parent);
+
+        /// <summary>
+        /// 所有父级
+        /// </summary>
+        public static ICollection<T> AllParent<T>(this T tree, Func<T, T> selector) => GetParents(tree, selector);
 
         /// <summary>
         /// 是否是根节点
@@ -107,18 +117,23 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 节点路径（UNIX路径格式，以“/”分隔）
         /// </summary>
-        public static string Path<T>(this ITree<T> tree) where T : ITree<T> => GetFullPath(tree);
+        public static string Path<T>(this T tree) where T : ITree<T> => GetFullPath(tree, t => t.Name);
 
-        private static string GetFullPath<T>(ITree<T> c) where T : ITree<T> => c.Parent != null ? GetFullPath(c.Parent) + "/" + c.Name : c.Name;
+        /// <summary>
+        /// 节点路径（UNIX路径格式，以“/”分隔）
+        /// </summary>
+        public static string Path<T>(this T tree, Func<T, string> selector) where T : ITreeParent<T> => GetFullPath(tree, selector);
+
+        private static string GetFullPath<T>(T c, Func<T, string> selector) where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector) + "/" + selector(c) : selector(c);
 
         /// <summary>
         /// 递归取出所有下级
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private static List<T> GetChildren<T>(ITreeChildren<T> t) where T : ITreeChildren<T>
+        private static List<T> GetChildren<T>(T t, Func<T, IEnumerable<T>> selector)
         {
-            return t.Children.Union(t.Children.Where(c => c.Children.Any()).SelectMany(tree => GetChildren(tree))).ToList();
+            return selector(t).Union(selector(t).Where(c => selector(c).Any()).SelectMany(c => GetChildren(c, selector))).ToList();
         }
 
         /// <summary>
@@ -126,10 +141,16 @@ namespace Masuit.Tools.Models
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        private static List<T> GetParents<T>(ITreeParent<T> t) where T : ITreeParent<T>
+        private static List<T> GetParents<T>(T t, Func<T, T> selector)
         {
-            var list = new List<T>() { t.Parent };
-            return t.Parent != null ? list.Union(GetParents(t.Parent)).ToList() : list;
+            var list = new List<T>() { selector(t) };
+            if (selector(t) != null)
+            {
+                return list.Union(GetParents(selector(t), selector)).Where(x => x != null).ToList();
+            }
+
+            list.RemoveAll(x => x == null);
+            return list;
         }
     }
 }
