@@ -56,6 +56,26 @@ namespace Masuit.Tools.Models
                 result.Add(item);
                 result.AddRange(item.Children.Flatten());
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 平铺开任意树形结构数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector)
+        {
+            var result = new List<T>();
+            foreach (var item in items)
+            {
+                result.Add(item);
+                result.AddRange(selector(item).Flatten(selector));
+            }
+
             return result;
         }
 
