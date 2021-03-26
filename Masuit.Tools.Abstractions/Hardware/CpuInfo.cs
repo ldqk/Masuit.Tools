@@ -54,6 +54,11 @@
         /// 核心温度
         /// </summary>
         public double Temperature { get; set; }
+
+        /// <summary>
+        /// 序列号
+        /// </summary>
+        public string SerialNumber { get; set; }
     }
 #pragma warning restore 1591
 }

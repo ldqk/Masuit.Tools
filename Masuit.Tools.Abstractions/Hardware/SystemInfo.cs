@@ -230,6 +230,7 @@ namespace Masuit.Tools.Hardware
                     MaxClockSpeed = mo.Properties["MaxClockSpeed"].Value.ToString(),
                     Type = mo.Properties["Name"].Value.ToString(),
                     DataWidth = mo.Properties["DataWidth"].Value.ToString(),
+                    SerialNumber = mo.Properties["ProcessorId"].Value.ToString(),
                     DeviceID = mo.Properties["DeviceID"].Value.ToString(),
                     NumberOfCores = Convert.ToInt32(mo.Properties["NumberOfCores"].Value),
                     Temperature = GetCPUTemperature()
@@ -579,124 +580,38 @@ namespace Masuit.Tools.Hardware
 
         #region 获取磁盘空间
 
+        private static readonly List<DiskInfo> DiskInfos = new();
+
         /// <summary>
         /// 获取磁盘可用空间
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<string, string> DiskFree()
+        private static List<DiskInfo> GetDiskInfo()
         {
             try
             {
-                var dic = new Dictionary<string, string>();
-                var mos = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-                foreach (var mo in mos.Get())
+                if (DiskInfos.Count > 0)
                 {
-                    if (null != mo["DeviceID"] && null != mo["FreeSpace"])
-                    {
-                        dic.Add(mo["DeviceID"].ToString(), FormatBytes(float.Parse(mo["FreeSpace"].ToString())));
-                    }
+                    return DiskInfos;
                 }
 
-                return dic;
+                using var mc = new ManagementClass("Win32_DiskDrive");
+                using var moc = mc.GetInstances();
+                foreach (var mo in moc)
+                {
+                    DiskInfos.Add(new DiskInfo()
+                    {
+                        Total = float.Parse(mo["Size"].ToString()),
+                        Model = mo["Model"].ToString(),
+                        SerialNumber = mo["SerialNumber"].ToString(),
+                    });
+                }
+
+                return DiskInfos;
             }
             catch (Exception)
             {
-                return new Dictionary<string, string>()
-                {
-                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
-                };
-            }
-        }
-
-        /// <summary>
-        /// 获取磁盘总空间
-        /// </summary>
-        /// <returns></returns>
-        public static Dictionary<string, string> DiskTotalSpace()
-        {
-            try
-            {
-                var dic = new Dictionary<string, string>();
-                using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-                foreach (var mo in mos.Get())
-                {
-                    if (null != mo["DeviceID"] && null != mo["Size"])
-                    {
-                        dic.Add(mo["DeviceID"].ToString(), FormatBytes(float.Parse(mo["Size"].ToString())));
-                    }
-                }
-
-                return dic;
-            }
-            catch (Exception)
-            {
-                return new Dictionary<string, string>();
-            }
-        }
-
-
-        /// <summary>
-        /// 获取磁盘已用空间
-        /// </summary>
-        /// <returns></returns>
-        public static Dictionary<string, string> DiskUsedSpace()
-        {
-            try
-            {
-                var dic = new Dictionary<string, string>();
-                using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-                foreach (var mo in mos.Get())
-                {
-                    if (null != mo["DeviceID"] && null != mo["Size"])
-                    {
-                        var free = mo["FreeSpace"];
-                        dic.Add(mo["DeviceID"].ToString(), FormatBytes(float.Parse(mo["Size"].ToString()) - free.ToString().ToDouble()));
-                    }
-                }
-
-                return dic;
-            }
-            catch (Exception)
-            {
-                return new Dictionary<string, string>()
-                {
-                    { "null", "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。" }
-                };
-            }
-        }
-
-        /// <summary>
-        /// 获取磁盘使用率
-        /// </summary>
-        /// <returns></returns>
-        public static Dictionary<string, float> DiskUsage()
-        {
-            try
-            {
-                var dic = new Dictionary<string, float>();
-                using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_LogicalDisk");
-                foreach (var mo in mos.Get())
-                {
-                    var device = mo["DeviceID"];
-                    if (null != device)
-                    {
-                        var free = mo["FreeSpace"];
-                        var total = mo["Size"];
-                        if (null != total && total.ToString().TryConvertTo<float>() > 0)
-                        {
-                            dic.Add(device.ToString(), 1 - free.ToString().TryConvertTo<float>() / total.ToString().TryConvertTo<float>());
-                        }
-                    }
-                }
-
-                return dic;
-            }
-            catch (Exception)
-            {
-                return new Dictionary<string, float>()
-                {
-                    { "未能获取到当前计算机的磁盘信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。", 0 }
-                };
+                return new List<DiskInfo>();
             }
         }
 
@@ -713,24 +628,6 @@ namespace Masuit.Tools.Hardware
         #region Win32API声明 
 
 #pragma warning disable 1591
-        [DllImport("kernel32")]
-        public static extern void GetWindowsDirectory(StringBuilder winDir, int count);
-
-        [DllImport("kernel32")]
-        public static extern void GetSystemDirectory(StringBuilder sysDir, int count);
-
-        [DllImport("kernel32")]
-        public static extern void GetSystemInfo(ref CPU_INFO cpuinfo);
-
-        [DllImport("kernel32")]
-        public static extern void GlobalMemoryStatus(ref MemoryInfo meminfo);
-
-        [DllImport("kernel32")]
-        public static extern void GetSystemTime(ref SystemtimeInfo stinfo);
-
-        [DllImport("IpHlpApi.dll")]
-        public static extern uint GetIfTable(byte[] pIfTable, ref uint pdwSize, bool bOrder);
-
         [DllImport("User32")]
         public static extern int GetWindow(int hWnd, int wCmd);
 

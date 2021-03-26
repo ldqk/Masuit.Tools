@@ -16,11 +16,12 @@ namespace Masuit.Tools.Models
         /// <param name="items"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Filter<T>(this IEnumerable<T> items, Func<T, bool> func) where T : ITreeChildren<T>
+        public static IEnumerable<T> Filter<T>(this IEnumerable<T> items, Func<T, bool> func) where T : class, ITreeChildren<T>
         {
             var results = new List<T>();
             foreach (var item in items.Where(i => i != null))
             {
+                item.Children ??= new List<T>();
                 item.Children = item.Children.Filter(func).ToList();
                 if (item.Children.Any() || func(item))
                 {
@@ -37,7 +38,7 @@ namespace Masuit.Tools.Models
         /// <param name="item"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Filter<T>(this T item, Func<T, bool> func) where T : ITreeChildren<T>
+        public static IEnumerable<T> Filter<T>(this T item, Func<T, bool> func) where T : class, ITreeChildren<T>
         {
             return new[] { item }.Filter(func);
         }
@@ -48,12 +49,34 @@ namespace Masuit.Tools.Models
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items) where T : ITreeChildren<T>
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items) where T : class, ITreeChildren<T>
         {
             var result = new List<T>();
             foreach (var item in items)
             {
                 result.Add(item);
+                item.Children ??= new List<T>();
+                result.AddRange(item.Children.Flatten());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 平铺开
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<T> Flatten<T>(this T p) where T : class, ITreeChildren<T>
+        {
+            var result = new List<T>()
+            {
+                p
+            };
+            foreach (var item in p.Children)
+            {
+                result.Add(item);
+                item.Children ??= new List<T>();
                 result.AddRange(item.Children.Flatten());
             }
 
@@ -124,7 +147,17 @@ namespace Masuit.Tools.Models
         /// </summary>
         public static string Path<T>(this T tree, Func<T, string> selector) where T : ITreeParent<T> => GetFullPath(tree, selector);
 
+        /// <summary>
+        /// 根节点
+        /// </summary>
+        public static T Root<T>(this T tree) where T : ITreeParent<T> => GetRoot(tree, t => t.Parent);
+
         private static string GetFullPath<T>(T c, Func<T, string> selector) where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector) + "/" + selector(c) : selector(c);
+
+        /// <summary>
+        /// 根节点
+        /// </summary>
+        public static T GetRoot<T>(T c, Func<T, T> selector) where T : ITreeParent<T> => c.Parent != null ? GetRoot(c.Parent, selector) : c;
 
         /// <summary>
         /// 递归取出所有下级

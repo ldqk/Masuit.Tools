@@ -49,13 +49,15 @@ namespace Masuit.Tools
         }
 
         /// <summary>
-        /// 转decimal
+        /// 字符串转decimal
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">源字符串</param>
+        /// <param name="round">小数位数</param>
+        /// <param name="defaultValue">转换失败的默认值</param>
         /// <returns>int类型的数字</returns>
-        public static decimal ToDecimal(this double s)
+        public static decimal ToDecimal(this string s, int round, decimal defaultValue = 0)
         {
-            return new decimal(s);
+            return Math.Round(s.TryConvertTo(defaultValue), round);
         }
 
         /// <summary>

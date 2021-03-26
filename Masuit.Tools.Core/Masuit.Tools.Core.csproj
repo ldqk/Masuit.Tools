@@ -20,10 +20,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.2.9</Version>
-        <FileVersion>2.4.2.9</FileVersion>
+        <Version>2.4.2.10</Version>
+        <FileVersion>2.4.2.10</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>2.4.2.9</AssemblyVersion>
+        <AssemblyVersion>2.4.2.10</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -154,6 +154,9 @@
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemInfo.cs">
             <Link>Hardware\SystemInfo.cs</Link>
+        </Compile>
+        <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskInfo.cs">
+            <Link>Hardware\DiskInfo.cs</Link>
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemtimeInfo.cs">
             <Link>Hardware\SystemtimeInfo.cs</Link>
