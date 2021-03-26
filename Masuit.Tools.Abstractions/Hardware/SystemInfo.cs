@@ -586,7 +586,7 @@ namespace Masuit.Tools.Hardware
         /// 获取磁盘可用空间
         /// </summary>
         /// <returns></returns>
-        private static List<DiskInfo> GetDiskInfo()
+        public static List<DiskInfo> GetDiskInfo()
         {
             try
             {
