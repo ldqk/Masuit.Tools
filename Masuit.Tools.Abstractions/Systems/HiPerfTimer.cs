@@ -27,11 +27,9 @@ namespace Masuit.Tools.Systems
         {
             _startTime = 0;
             _stopTime = 0;
-
             if (QueryPerformanceFrequency(out _freq) == false)
             {
-                // 不支持高性能计数器 
-                throw new Win32Exception();
+                throw new Win32Exception("不支持高性能计数器");
             }
         }
 
@@ -40,9 +38,27 @@ namespace Masuit.Tools.Systems
         /// </summary>
         public void Start()
         {
-            // 来让等待线程工作 
+            // 让等待线程工作 
             Thread.Sleep(0);
             QueryPerformanceCounter(out _startTime);
+        }
+
+        /// <summary>
+        /// 开始计时器
+        /// </summary>
+        public void Restart()
+        {
+            _startTime = 0;
+            Start();
+        }
+
+        /// <summary>
+        /// 停止计时器
+        /// </summary>
+        public double Stop()
+        {
+            QueryPerformanceCounter(out _stopTime);
+            return Duration;
         }
 
         /// <summary>
@@ -57,17 +73,21 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
-        /// 停止计时器
-        /// </summary>
-        public void Stop()
-        {
-            QueryPerformanceCounter(out _stopTime);
-        }
-
-        /// <summary>
         /// 时器经过时间(单位：秒)
         /// </summary>
         public double Duration => (_stopTime - _startTime) / (double)_freq;
+
+        /// <summary>
+        /// 时器经过的总时间
+        /// </summary>
+        public double Elapsed
+        {
+            get
+            {
+                Stop();
+                return Duration;
+            }
+        }
 
         /// <summary>
         /// 执行一个方法并测试执行时间

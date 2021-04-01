@@ -67,7 +67,7 @@ namespace Masuit.Tools.Models
         }
     }
 
-    public static class IQueryableExt
+    public static partial class IQueryableExt
     {
         /// <summary>
         /// 生成分页集合

@@ -77,7 +77,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
         {
-            return ForeachAsync(source, source.Count(), action);
+            return ForAsync(source, (t, _) => action(t));
         }
 
         /// <summary>

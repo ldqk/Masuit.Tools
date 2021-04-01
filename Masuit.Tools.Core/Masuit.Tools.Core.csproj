@@ -20,10 +20,10 @@
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.3</Version>
-        <FileVersion>2.4.3</FileVersion>
+        <Version>2.4.3.1</Version>
+        <FileVersion>2.4.3.1</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>2.4.3</AssemblyVersion>
+        <AssemblyVersion>2.4.3.1</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -33,14 +33,14 @@
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.4.0" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.32" />
         <PackageReference Include="HtmlSanitizer" Version="5.0.376" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.Win32.Registry" Version="5.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
         <PackageReference Include="System.Management" Version="4.7.0" />

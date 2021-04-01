@@ -12,21 +12,21 @@ namespace Masuit.Tools.Systems
         #region 私有字段
 
         private static long _machineId; //机器码
-        private static long _datacenterId; //数据ID
+        private static long _dataId; //数据ID
         private static long _sequence; //计数从零开始
         private static long _lastTimestamp = -1L; //最后时间戳
 
         private const long Twepoch = 687888001020L; //唯一时间随机量
 
         private const long MachineIdBits = 5L; //机器码字节数
-        private const long DatacenterIdBits = 5L; //数据字节数
+        private const long DataBits = 5L; //数据字节数
         private const long MaxMachineId = -1L ^ -1L << (int)MachineIdBits; //最大机器码
-        private const long MaxDatacenterId = -1L ^ (-1L << (int)DatacenterIdBits); //最大数据ID
+        private const long MaxDataBitId = -1L ^ (-1L << (int)DataBits); //最大数据字节数
 
         private const long SequenceBits = 12L; //计数器字节数，12个字节用来保存计数码        
         private const long MachineIdShift = SequenceBits; //机器码数据左移位数，就是后面计数器占用的位数
         private const long DatacenterIdShift = SequenceBits + MachineIdBits;
-        private const long TimestampLeftShift = DatacenterIdShift + DatacenterIdBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数
+        private const long TimestampLeftShift = DatacenterIdShift + DataBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数
         private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一毫秒内可以产生计数，如果达到该值则等到下一毫秒在进行生成
 
         private static readonly object SyncRoot = new object(); //加锁对象
@@ -90,12 +90,12 @@ namespace Masuit.Tools.Systems
 
             if (datacenterId >= 0)
             {
-                if (datacenterId > MaxDatacenterId)
+                if (datacenterId > MaxDataBitId)
                 {
                     throw new Exception("数据中心ID非法");
                 }
 
-                _datacenterId = datacenterId;
+                _dataId = datacenterId;
             }
         }
 
@@ -134,7 +134,7 @@ namespace Masuit.Tools.Systems
                 }
 
                 _lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳
-                long id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | (_datacenterId << (int)DatacenterIdShift) | (_machineId << (int)MachineIdShift) | _sequence;
+                long id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | (_dataId << (int)DatacenterIdShift) | (_machineId << (int)MachineIdShift) | _sequence;
                 return id;
             }
         }
