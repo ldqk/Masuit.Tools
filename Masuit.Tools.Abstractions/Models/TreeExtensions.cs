@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Masuit.Tools.Models
 {
@@ -100,6 +101,151 @@ namespace Masuit.Tools.Models
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T>(this IEnumerable<T> source, Expression<Func<T, string>> idSelector, Expression<Func<T, string>> pidSelector, string topValue = default) where T : ITreeParent<T>, ITreeChildren<T>
+        {
+            return ToTree<T, string>(source, idSelector, pidSelector, topValue);
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T>(this IEnumerable<T> source, Expression<Func<T, int>> idSelector, Expression<Func<T, int>> pidSelector, int topValue = 0) where T : ITreeParent<T>, ITreeChildren<T>
+        {
+            return ToTree<T, int>(source, idSelector, pidSelector, topValue);
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T>(this IEnumerable<T> source, Expression<Func<T, long>> idSelector, Expression<Func<T, long>> pidSelector, long topValue = 0) where T : ITreeParent<T>, ITreeChildren<T>
+        {
+            return ToTree<T, long>(source, idSelector, pidSelector, topValue);
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T>(this IEnumerable<T> source, Expression<Func<T, Guid>> idSelector, Expression<Func<T, Guid>> pidSelector, Guid topValue = default) where T : ITreeParent<T>, ITreeChildren<T>
+        {
+            return ToTree<T, Guid>(source, idSelector, pidSelector, topValue);
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T, TKey>(this IEnumerable<T> source, Expression<Func<T, TKey>> idSelector, Expression<Func<T, TKey>> pidSelector, TKey topValue = default) where T : ITreeParent<T>, ITreeChildren<T> where TKey : IComparable
+        {
+            if (idSelector.Body.ToString() == pidSelector.Body.ToString())
+            {
+                throw new ArgumentException("idSelector和pidSelector不应该为同一字段！");
+            }
+
+            var pidFunc = pidSelector.Compile();
+            var idFunc = idSelector.Compile();
+            source = source.Where(t => t != null);
+            var temp = new List<T>();
+            foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
+            {
+                item.Parent = default;
+                TransData(source, item, idFunc, pidFunc);
+                temp.Add(item);
+            }
+
+            return temp;
+        }
+
+        private static void TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where T : ITreeParent<T>, ITreeChildren<T> where TKey : IComparable
+        {
+            var temp = new List<T>();
+            foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent)) == true))
+            {
+                TransData(source, item, idSelector, pidSelector);
+                item.Parent = parent;
+                temp.Add(item);
+            }
+
+            parent.Children = temp;
+        }
+
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<Tree<T>> ToTreeGeneral<T, TKey>(this IEnumerable<T> source, Expression<Func<T, TKey>> idSelector, Expression<Func<T, TKey>> pidSelector, TKey topValue = default) where TKey : IComparable
+        {
+            if (idSelector.Body.ToString() == pidSelector.Body.ToString())
+            {
+                throw new ArgumentException("idSelector和pidSelector不应该为同一字段！");
+            }
+
+            var pidFunc = pidSelector.Compile();
+            var idFunc = idSelector.Compile();
+            source = source.Where(t => t != null);
+            var temp = new List<Tree<T>>();
+            foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
+            {
+                var parent = new Tree<T>(item);
+                TransData(source, parent, idFunc, pidFunc);
+                temp.Add(parent);
+            }
+
+            return temp;
+        }
+
+        private static void TransData<T, TKey>(IEnumerable<T> source, Tree<T> parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where TKey : IComparable
+        {
+            var temp = new List<Tree<T>>();
+            foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent.Value)) == true))
+            {
+                var p = new Tree<T>(item);
+                TransData(source, p, idSelector, pidSelector);
+                p.Parent = parent.Value;
+                temp.Add(p);
+            }
+
+            parent.Children = temp;
         }
 
         /// <summary>

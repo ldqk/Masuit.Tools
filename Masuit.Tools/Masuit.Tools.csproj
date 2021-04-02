@@ -236,6 +236,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs">
       <Link>Models\TaobaoIP.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Tree.cs">
+      <Link>Models\Tree.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\TreeExtensions.cs">
       <Link>Models\TreeExtensions.cs</Link>
     </Compile>

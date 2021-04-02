@@ -11,76 +11,6 @@ namespace Masuit.Tools
     public static partial class IEnumerableExtensions
     {
         /// <summary>
-        /// 遍历IEnumerable
-        /// </summary>
-        /// <param name="objs"></param>
-        /// <param name="action">回调方法</param>
-        /// <typeparam name="T"></typeparam>
-        public static void ForEach<T>(this IEnumerable<T> objs, Action<T> action)
-        {
-            foreach (var o in objs)
-            {
-                action(o);
-            }
-        }
-
-        /// <summary>
-        /// 异步foreach
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="maxParallelCount">并行线程数</param>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static async Task ForeachAsync<T>(this IEnumerable<T> source, int maxParallelCount, Func<T, Task> action)
-        {
-            if (source.Any())
-            {
-                using SemaphoreSlim completeSemphoreSlim = new(1);
-                using SemaphoreSlim taskCountLimitsemaphoreSlim = new(maxParallelCount);
-                await completeSemphoreSlim.WaitAsync();
-                int runningtaskCount = source.Count();
-
-                foreach (var item in source)
-                {
-                    await taskCountLimitsemaphoreSlim.WaitAsync();
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await action(item).ContinueWith(_ =>
-                            {
-                                Interlocked.Decrement(ref runningtaskCount);
-                                if (runningtaskCount == 0)
-                                {
-                                    completeSemphoreSlim.Release();
-                                }
-                            });
-                        }
-                        finally
-                        {
-                            taskCountLimitsemaphoreSlim.Release();
-                        }
-                    });
-                }
-
-                await completeSemphoreSlim.WaitAsync();
-            }
-        }
-
-        /// <summary>
-        /// 异步foreach
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action)
-        {
-            return ForAsync(source, (t, _) => action(t));
-        }
-
-        /// <summary>
         /// 按字段去重
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
@@ -217,6 +147,62 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 遍历IEnumerable
+        /// </summary>
+        /// <param name="objs"></param>
+        /// <param name="action">回调方法</param>
+        /// <typeparam name="T"></typeparam>
+        public static void ForEach<T>(this IEnumerable<T> objs, Action<T> action)
+        {
+            foreach (var o in objs)
+            {
+                action(o);
+            }
+        }
+
+        /// <summary>
+        /// 异步foreach
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="maxParallelCount">最大并行数</param>
+        /// <param name="action"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public static async Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int maxParallelCount, CancellationToken cancellationToken = default)
+        {
+            var list = new List<Task>();
+            foreach (var item in source)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                list.Add(action(item));
+                if (list.Count >= maxParallelCount)
+                {
+                    await Task.WhenAll(list);
+                    list.Clear();
+                }
+            }
+
+            await Task.WhenAll(list);
+        }
+
+        /// <summary>
+        /// 异步foreach
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, CancellationToken cancellationToken = default)
+        {
+            return ForeachAsync(source, action, source.Count(), cancellationToken);
+        }
+
+        /// <summary>
         /// 异步Select
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -248,10 +234,42 @@ namespace Masuit.Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="selector"></param>
+        /// <param name="maxParallelCount">最大并行数</param>
+        /// <param name="cancellationToken">取消口令</param>
         /// <returns></returns>
-        public static Task ForAsync<T>(this IEnumerable<T> source, Func<T, int, Task> selector)
+        public static async Task ForAsync<T>(this IEnumerable<T> source, Func<T, int, Task> selector, int maxParallelCount, CancellationToken cancellationToken = default)
         {
-            return Task.WhenAll(source.Select(selector));
+            var list = new List<Task>();
+            int index = 0;
+            foreach (var item in source)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                list.Add(selector(item, index++));
+                if (list.Count >= maxParallelCount)
+                {
+                    await Task.WhenAll(list);
+                    list.Clear();
+                }
+            }
+
+            await Task.WhenAll(list);
+        }
+
+        /// <summary>
+        /// 异步For
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="cancellationToken">取消口令</param>
+        /// <returns></returns>
+        public static Task ForAsync<T>(this IEnumerable<T> source, Func<T, int, Task> selector, CancellationToken cancellationToken = default)
+        {
+            return ForAsync(source, selector, source.Count(), cancellationToken);
         }
 
         /// <summary>

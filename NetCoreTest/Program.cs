@@ -1,11 +1,14 @@
-﻿using Masuit.Tools.Models;
+﻿using Masuit.Tools;
+using Masuit.Tools.Models;
 using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NetCoreTest
 {
@@ -16,17 +19,26 @@ namespace NetCoreTest
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,
-                Name = "1",
+                Id = "mcc",
+                Pid = "mc",
                 Parent = new MyClass()
                 {
-                    Name = "mc",
+                    Id = "mc",
+                    Pid = "ccc",
                     Parent = new MyClass()
                     {
-                        Name = "ccc"
+                        Id = "ccc"
                     }
                 }
             };
-            var path = myClass.Path(c => c.Name);
+            var allParent = myClass.AllParent().Append(myClass);
+            var tree = allParent.ToTreeGeneral(c => c.Id, c => c.Pid);
+            Console.WriteLine(tree.ToJsonString(new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented
+            }));
+            var path = myClass.Path(c => c.Id);
             Console.WriteLine(path);
 
             myClass.SetProperty(nameof(MyClass.MyProperty1), 1);
@@ -49,25 +61,32 @@ namespace NetCoreTest
 
     }
 
-    public class MyClass : ITreeParent<MyClass>
+    public class MyClass : ITree<MyClass>
     {
         [Description("test")]
-        public string MyProperty { get; set; }
+        public string Pid { get; set; }
         public int? MyProperty1 { get; set; }
 
         /// <summary>
         /// 名字
         /// </summary>
-        public string Name { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 父节点
         /// </summary>
+        [JsonIgnore]
         public virtual MyClass Parent { get; set; }
 
         /// <summary>
         /// 子级
         /// </summary>
+        [JsonIgnore]
         public ICollection<MyClass> Children { get; set; } = new List<MyClass>();
+
+        /// <summary>
+        /// 名字
+        /// </summary>
+        public string Name { get; set; }
     }
 }
