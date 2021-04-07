@@ -1,4 +1,5 @@
 ﻿using Masuit.Tools;
+using Masuit.Tools.Core.Validator;
 using Masuit.Tools.Models;
 using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
@@ -16,6 +17,17 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            var cpa = new ComplexPasswordAttribute(6, 30)
+            {
+                MustNumber = false,
+                MustSymbol = true,
+                MustLetter = false
+            };
+            var valid = cpa.IsValid("000000a");
+            Console.WriteLine(cpa.ErrorMessage);
+
+
+            Console.ReadKey();
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,

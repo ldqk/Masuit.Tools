@@ -60,7 +60,7 @@
         <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
         <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>
@@ -319,9 +319,6 @@
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaPem.cs">
             <Link>Security\RsaPem.cs</Link>
-        </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Strings\ChineseString.cs">
-            <Link>Strings\ChineseString.cs</Link>
         </Compile>
         <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
             <Link>Strings\NumberFormater.cs</Link>

@@ -305,9 +305,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaPem.cs">
       <Link>Security\RsaPem.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Strings\ChineseString.cs">
-      <Link>Strings\ChineseString.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
       <Link>Strings\NumberFormater.cs</Link>
     </Compile>
