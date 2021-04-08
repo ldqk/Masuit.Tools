@@ -5,7 +5,7 @@ using System.Text;
 namespace Masuit.Tools.Files
 {
     /// <summary>
-    /// INI文件操作辅助类
+    /// INI文件操作辅助类，仅支持Windows系统
     /// </summary>
     public class INIFile
     {

@@ -101,7 +101,7 @@ namespace Masuit.Tools.DateTimeExt
         }
 
         /// <summary>
-        /// 设置本地计算机时间
+        /// 设置本地计算机系统时间，仅支持Windows系统
         /// </summary>
         /// <param name="dt">DateTime对象</param>
         public static void SetLocalTime(this in DateTime dt)
@@ -155,12 +155,25 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns></returns>
         public static long GetTotalMicroseconds(this in DateTime dt) => (new DateTimeOffset(dt).UtcTicks - 621355968000000000) / 10;
 
+        [DllImport("Kernel32.dll")]
+        private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
+
         /// <summary>
         /// 获取该时间相对于1970-01-01T00:00:00Z的纳秒时间戳
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static long GetTotalNanoseconds(this in DateTime dt) => (new DateTimeOffset(dt).UtcTicks - 621355968000000000) * 100 + Stopwatch.GetTimestamp() % 100;
+        public static long GetTotalNanoseconds(this in DateTime dt)
+        {
+            var ticks = (new DateTimeOffset(dt).UtcTicks - 621355968000000000) * 100;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                QueryPerformanceCounter(out var timestamp);
+                return ticks + timestamp % 100;
+            }
+
+            return ticks + Stopwatch.GetTimestamp() % 100;
+        }
 
         /// <summary>
         /// 获取该时间相对于1970-01-01T00:00:00Z的分钟数

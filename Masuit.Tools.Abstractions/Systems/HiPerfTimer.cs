@@ -6,7 +6,7 @@ using System.Threading;
 namespace Masuit.Tools.Systems
 {
     /// <summary>
-    /// 纳秒级计时器
+    /// 纳秒级计时器，仅支持Windows系统
     /// </summary>
     public class HiPerfTimer
     {
@@ -14,11 +14,11 @@ namespace Masuit.Tools.Systems
         private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
 
         [DllImport("Kernel32.dll")]
-        private static extern bool QueryPerformanceFrequency(out long lpFrequency);
+        private static extern bool QueryPerformanceFrequency(out long clock);
 
         private long _startTime;
         private long _stopTime;
-        private readonly long _freq;
+        private readonly long _exFreq;
 
         /// <summary>
         /// 纳秒计数器
@@ -27,7 +27,7 @@ namespace Masuit.Tools.Systems
         {
             _startTime = 0;
             _stopTime = 0;
-            if (QueryPerformanceFrequency(out _freq) == false)
+            if (QueryPerformanceFrequency(out _exFreq) == false)
             {
                 throw new Win32Exception("不支持高性能计数器");
             }
@@ -75,10 +75,11 @@ namespace Masuit.Tools.Systems
         /// <summary>
         /// 时器经过时间(单位：秒)
         /// </summary>
-        public double Duration => (_stopTime - _startTime) / (double)_freq;
+        public double Duration => (_stopTime - _startTime) / (double)_exFreq;
+        public double DurationNanoseconds => _stopTime - _startTime;
 
         /// <summary>
-        /// 时器经过的总时间
+        /// 时器经过的总时间(单位：秒)
         /// </summary>
         public double Elapsed
         {
@@ -86,6 +87,18 @@ namespace Masuit.Tools.Systems
             {
                 Stop();
                 return Duration;
+            }
+        }
+
+        /// <summary>
+        /// 时器经过的总时间(单位：纳秒)
+        /// </summary>
+        public double ElapsedNanoseconds
+        {
+            get
+            {
+                Stop();
+                return DurationNanoseconds;
             }
         }
 
