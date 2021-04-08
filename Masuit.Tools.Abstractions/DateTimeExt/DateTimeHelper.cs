@@ -135,49 +135,49 @@ namespace Masuit.Tools.DateTimeExt
         public static string GetDateTimeF(this in DateTime dt) => dt.ToString("yyyy-MM-dd HH:mm:ss:fffffff");
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的秒数
+        /// 获取该时间相对于1970-01-01T00:00:00Z的秒数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
         public static double GetTotalSeconds(this in DateTime dt) => new DateTimeOffset(dt).ToUnixTimeSeconds();
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的毫秒数
+        /// 获取该时间相对于1970-01-01T00:00:00Z的毫秒数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
         public static double GetTotalMilliseconds(this in DateTime dt) => new DateTimeOffset(dt).ToUnixTimeMilliseconds();
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的微秒时间戳
+        /// 获取该时间相对于1970-01-01T00:00:00Z的微秒时间戳
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static long GetTotalMicroseconds(this in DateTime dt) => new DateTimeOffset(dt).Ticks / 10;
+        public static long GetTotalMicroseconds(this in DateTime dt) => (new DateTimeOffset(dt).UtcTicks - 621355968000000000) / 10;
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的纳秒时间戳
+        /// 获取该时间相对于1970-01-01T00:00:00Z的纳秒时间戳
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static long GetTotalNanoseconds(this in DateTime dt) => new DateTimeOffset(dt).Ticks * 100 + Stopwatch.GetTimestamp() % 100;
+        public static long GetTotalNanoseconds(this in DateTime dt) => (new DateTimeOffset(dt).UtcTicks - 621355968000000000) * 100 + Stopwatch.GetTimestamp() % 100;
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的分钟数
+        /// 获取该时间相对于1970-01-01T00:00:00Z的分钟数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
         public static double GetTotalMinutes(this in DateTime dt) => new DateTimeOffset(dt).Offset.TotalMinutes;
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的小时数
+        /// 获取该时间相对于1970-01-01T00:00:00Z的小时数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
         public static double GetTotalHours(this in DateTime dt) => new DateTimeOffset(dt).Offset.TotalHours;
 
         /// <summary>
-        /// 获取该时间相对于1970-01-01 00:00:00的天数
+        /// 获取该时间相对于1970-01-01T00:00:00Z的天数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
@@ -258,33 +258,15 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>星期名称</returns>
         public static string GetWeekNameOfDay(this in DateTime idt)
         {
-            return idt.DayOfWeek.ToString() switch
+            return idt.DayOfWeek switch
             {
-                "Mondy" => "星期一",
-                "Tuesday" => "星期二",
-                "Wednesday" => "星期三",
-                "Thursday" => "星期四",
-                "Friday" => "星期五",
-                "Saturday" => "星期六",
-                "Sunday" => "星期日",
-                _ => ""
-            };
-        }
-
-        /// <summary>返回当前日期的星期编号</summary>
-        /// <param name="idt">日期</param>
-        /// <returns>星期数字编号</returns>
-        public static string GetWeekNumberOfDay(this in DateTime idt)
-        {
-            return idt.DayOfWeek.ToString() switch
-            {
-                "Mondy" => "1",
-                "Tuesday" => "2",
-                "Wednesday" => "3",
-                "Thursday" => "4",
-                "Friday" => "5",
-                "Saturday" => "6",
-                "Sunday" => "7",
+                DayOfWeek.Monday => "星期一",
+                DayOfWeek.Tuesday => "星期二",
+                DayOfWeek.Wednesday => "星期三",
+                DayOfWeek.Thursday => "星期四",
+                DayOfWeek.Friday => "星期五",
+                DayOfWeek.Saturday => "星期六",
+                DayOfWeek.Sunday => "星期日",
                 _ => ""
             };
         }
