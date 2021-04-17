@@ -47,8 +47,10 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static async Task<byte[]> ToArrayAsync(this Stream stream, CancellationToken cancellationToken = default)
         {
+            stream.Position = 0;
             byte[] bytes = new byte[stream.Length];
             await stream.ReadAsync(bytes, cancellationToken);
+            stream.Seek(0, SeekOrigin.Begin);
             return bytes;
         }
 #endif

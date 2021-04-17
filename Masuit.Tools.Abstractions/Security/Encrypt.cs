@@ -588,12 +588,23 @@ namespace Masuit.Tools.Security
         /// <returns>MD5字符串</returns>
         public static string MDFile(this string fileName)
         {
-            using var fs = File.Open(fileName, FileMode.Open, FileAccess.Read);
-            var array = new byte[fs.Length];
-            fs.Read(array, 0, (int)fs.Length);
+            using var fs = new BufferedStream(File.Open(fileName, FileMode.Open, FileAccess.Read), 1048576);
             using MD5 md5 = MD5.Create();
-            byte[] bytes = md5.ComputeHash(array);
+            byte[] bytes = md5.ComputeHash(fs);
             return bytes.Aggregate("", (current, b) => current + b.ToString("x2"));
+        }
+
+        /// <summary>
+        /// 计算文件的sha256
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static string SHA256(this Stream stream)
+        {
+            using var fs = new BufferedStream(stream, 1048576);
+            SHA256Managed sha = new SHA256Managed();
+            byte[] checksum = sha.ComputeHash(fs);
+            return BitConverter.ToString(checksum).Replace("-", string.Empty);
         }
 
         /// <summary>
@@ -603,9 +614,10 @@ namespace Masuit.Tools.Security
         /// <returns>MD5字符串</returns>
         public static string MDString(this Stream stream)
         {
-            var bytes = stream.ToArray();
-            using var md5 = MD5.Create();
-            var mdstr = md5.ComputeHash(bytes).Aggregate("", (current, b) => current + b.ToString("x2"));
+            using var fs = new BufferedStream(stream, 1048576);
+            using MD5 md5 = MD5.Create();
+            byte[] bytes = md5.ComputeHash(fs);
+            var mdstr = bytes.Aggregate("", (current, b) => current + b.ToString("x2"));
             stream.Position = 0;
             return mdstr;
         }

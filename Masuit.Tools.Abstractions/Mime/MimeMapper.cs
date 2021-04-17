@@ -19,12 +19,12 @@ namespace Masuit.Tools.AspNetCore.Mime
         private readonly Regex _pathExtensionPattern = new Regex("\\.(\\w*)$");
 
         /// <summary>
-        /// Mime类型与扩展名的映射字典(Content types)
+        /// Mime类型与扩展名的映射字典(扩展名:mimetype)
         /// </summary>
         public static Dictionary<string, string> MimeTypes { get; } = new Dictionary<string, string>();
 
         /// <summary>
-        /// mime类型与扩展名的映射关系
+        /// mime类型与扩展名的映射关系(mimetype:扩展名)
         /// </summary>
         public static Dictionary<string, string> ExtTypes { get; } = new Dictionary<string, string>();
 
