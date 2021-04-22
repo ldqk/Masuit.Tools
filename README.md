@@ -311,6 +311,9 @@ mtd.FileMergeProgressChanged+=(sender, e) =>
 {
     Console.WriteLine("下载完成");
 };
+mtd.FileMergedComplete+=(sender,e)=>{
+    Console.WriteLine("文件合并完成");
+};
 mtd.Start();//开始下载
 //mtd.Pause(); // 暂停下载
 //mtd.Resume(); // 继续下载
