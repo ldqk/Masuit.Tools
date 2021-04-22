@@ -1,5 +1,6 @@
-﻿using Ganss.XSS;
-using HtmlAgilityPack;
+﻿using AngleSharp;
+using AngleSharp.Dom;
+using Ganss.XSS;
 using Masuit.Tools.RandomSelector;
 using System;
 using System.Collections.Generic;
@@ -89,29 +90,15 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static string RemoveHtmlTag(this string html, int length = 0)
         {
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
-            var strText = doc.DocumentNode.InnerText;
+            var context = BrowsingContext.New(Configuration.Default);
+            var doc = context.OpenAsync(req => req.Content(html)).Result;
+            var strText = doc.Body.TextContent;
             if (length > 0 && strText.Length > length)
             {
                 return strText.Substring(0, length);
             }
 
             return strText;
-        }
-
-        /// <summary>
-        /// 清理Word文档转html后的冗余标签属性
-        /// </summary>
-        /// <param name="html"></param>
-        /// <returns></returns>
-        public static string ClearHtml(this string html)
-        {
-            string s = Regex.Match(Regex.Replace(html, @"background-color:#?\w{3,7}|font-family:'?[\w|\(|\)]*'?;?", string.Empty), @"<body[^>]*>([\s\S]*)<\/body>").Groups[1].Value.Replace("&#xa0;", string.Empty);
-            s = Regex.Replace(s, @"\w+-?\w+:0\w+;?", string.Empty); //去除多余的零值属性
-            s = Regex.Replace(s, "alt=\"(.+?)\"", string.Empty); //除去alt属性
-            s = Regex.Replace(s, @"-aw.+?\s", string.Empty); //去除Word产生的-aw属性
-            return s;
         }
 
         /// <summary>
@@ -137,12 +124,11 @@ namespace Masuit.Tools.Html
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static IEnumerable<HtmlNode> MatchImgTags(this string html)
+        public static IHtmlCollection<IElement> MatchImgTags(this string html)
         {
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
-            var nodes = doc.DocumentNode.Descendants("img");
-            return nodes;
+            var context = BrowsingContext.New(Configuration.Default);
+            var doc = context.OpenAsync(req => req.Content(html)).Result;
+            return doc.Body.GetElementsByTagName("img");
         }
 
         /// <summary>
@@ -152,7 +138,7 @@ namespace Masuit.Tools.Html
         /// <returns></returns>
         public static IEnumerable<string> MatchImgSrcs(this string html)
         {
-            return MatchImgTags(html).Where(n => n.Attributes.Contains("src")).Select(n => n.Attributes["src"].Value);
+            return MatchImgTags(html).Where(n => n.HasAttribute("src")).Select(n => n.GetAttribute("src"));
         }
 
         /// <summary>
