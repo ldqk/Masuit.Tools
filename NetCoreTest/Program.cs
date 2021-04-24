@@ -1,5 +1,7 @@
 ﻿using Masuit.Tools;
-using Masuit.Tools.Core.Validator;
+using Masuit.Tools.Database;
+using Masuit.Tools.Excel;
+using Masuit.Tools.Files;
 using Masuit.Tools.Models;
 using Masuit.Tools.Reflection;
 using Masuit.Tools.Security;
@@ -17,17 +19,6 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
-            var cpa = new ComplexPasswordAttribute(6, 30)
-            {
-                MustNumber = false,
-                MustSymbol = true,
-                MustLetter = false
-            };
-            var valid = cpa.IsValid("000000a");
-            Console.WriteLine(cpa.ErrorMessage);
-
-
-            Console.ReadKey();
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,
@@ -45,6 +36,7 @@ namespace NetCoreTest
             };
             var allParent = myClass.AllParent().Append(myClass);
             var tree = allParent.ToTreeGeneral(c => c.Id, c => c.Pid);
+            tree.ToDataTable().ToExcel().SaveFile(@"Y:\1.xlsx");
             Console.WriteLine(tree.ToJsonString(new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,

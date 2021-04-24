@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore.Res
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Test", "Test\Masuit.Tools.Test\Masuit.Tools.Test.csproj", "{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Excel", "Masuit.Tools.Excel\Masuit.Tools.Excel.csproj", "{47DF4A43-9C19-4572-B025-876A7710C1CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47DF4A43-9C19-4572-B025-876A7710C1CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47DF4A43-9C19-4572-B025-876A7710C1CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47DF4A43-9C19-4572-B025-876A7710C1CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47DF4A43-9C19-4572-B025-876A7710C1CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
