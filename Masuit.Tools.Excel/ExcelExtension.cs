@@ -91,9 +91,11 @@ namespace Masuit.Tools.Excel
             var sheet = pkg.Workbook.Worksheets[table.TableName];
 
             // 填充表头
+            var maxWidth = new int[table.Columns.Count];
             for (var j = 0; j < table.Columns.Count; j++)
             {
                 sheet.SetValue(1, j + 1, table.Columns[j].ColumnName);
+                maxWidth[j] = Encoding.UTF8.GetBytes(table.Columns[j].ColumnName).Length;
             }
 
             sheet.Row(1).Style.Font.Bold = true; // 表头设置为粗体
@@ -126,8 +128,8 @@ namespace Masuit.Tools.Excel
                         sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
 
                         // 根据单元格内容长度来自适应调整列宽
-                        var maxWidth = Encoding.UTF8.GetBytes(table.Rows[i][j].ToString()).Length;
-                        if (sheet.Column(j + 1).Width < maxWidth)
+                        maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
+                        if (sheet.Column(j + 1).Width < maxWidth[j])
                         {
                             sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
                         }

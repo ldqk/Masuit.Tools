@@ -36,7 +36,7 @@ namespace NetCoreTest
             };
             var allParent = myClass.AllParent().Append(myClass);
             var tree = allParent.ToTreeGeneral(c => c.Id, c => c.Pid);
-            tree.ToDataTable().ToExcel().SaveFile(@"Y:\1.xlsx");
+            tree.Flatten(t => t.Children).Select(t => t.Value).ToDataTable().ToExcel().SaveFile(@"Y:\1.xlsx");
             Console.WriteLine(tree.ToJsonString(new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,

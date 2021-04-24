@@ -88,7 +88,15 @@ namespace Masuit.Tools.Database
             }
 
             var properties = list[0].GetType().GetProperties();
-            result.Columns.AddRange(properties.Select(p => new DataColumn(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name, p.PropertyType)).ToArray());
+            result.Columns.AddRange(properties.Select(p =>
+            {
+                if (p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    return new DataColumn(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name, Nullable.GetUnderlyingType(p.PropertyType));
+                }
+
+                return new DataColumn(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name, p.PropertyType);
+            }).ToArray());
             list.ForEach(item => result.LoadDataRow(properties.Select(p => p.GetValue(item)).ToArray(), true));
             return result;
         }
