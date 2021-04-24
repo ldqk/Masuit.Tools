@@ -33,7 +33,7 @@
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.4.0" />
-        <PackageReference Include="HtmlSanitizer" Version="5.0.376" />
+        <PackageReference Include="HtmlSanitizer" Version="5.0.404" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
