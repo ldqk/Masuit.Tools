@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Core.Config;
+﻿using Masuit.Tools.Config;
 using Masuit.Tools.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;

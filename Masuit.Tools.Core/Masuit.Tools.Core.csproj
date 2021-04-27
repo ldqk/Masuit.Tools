@@ -14,7 +14,7 @@
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <Product>Masuit.Tools.Core</Product>
         <PackageId>Masuit.Tools.Core</PackageId>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>latest</LangVersion>
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -43,7 +43,7 @@
         <PackageReference Include="System.Management" Version="4.7.0" />
         <PackageReference Include="System.Management" Version="5.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.28.1" />
+        <PackageReference Include="SharpCompress" Version="0.28.2" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">

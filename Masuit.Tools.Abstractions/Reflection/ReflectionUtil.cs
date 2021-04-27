@@ -444,7 +444,7 @@ namespace Masuit.Tools.Reflection
                 };
 
                 Type[] constructorArgumentTypes = argumentTypes.Where(t => t != typeof(TypeToIgnore)).ToArray();
-                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, Array.Empty<ParameterModifier>());
+                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, new ParameterModifier[0]);
 
                 var lamdaParameterExpressions = new[]
                 {

@@ -1,7 +1,7 @@
 ﻿#if NET461
 using System.Configuration;
 
-namespace Masuit.Tools.Core.Config
+namespace Masuit.Tools.Config
 {
     public static class ConfigHelper
     {
@@ -17,7 +17,7 @@ namespace Masuit.Tools.Core.Config
 using Microsoft.Extensions.Configuration;
 using System;
 
-namespace Masuit.Tools.Core.Config
+namespace Masuit.Tools.Config
 {
     /// <summary>
     /// .net core的配置导入

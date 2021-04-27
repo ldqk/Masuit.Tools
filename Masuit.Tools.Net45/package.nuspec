@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <!--*-->
+    <id>Masuit.Tools.Net45</id>
+    <!--*-->
+    <version>2.4.3.3</version>
+    <title>Masuit.Tools</title>
+    <!--*-->
+    <authors>masuit.com</authors>
+    <owners>ldqk.org</owners>
+    <licenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/ldqk/Masuit.Tools</projectUrl>
+    <!--<iconUrl></iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--*-->
+    <description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，硬件信息，字符串扩展方法，日期时间扩展操作，大文件拷贝，图像裁剪，html处理，验证码、NoSql等常用封装。
+      
+官网教程：https://ldqk.org/55
+      
+github：https://github.com/ldqk/Masuit.Tools</description>
+    <!--*-->
+    <releaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</releaseNotes>
+    <copyright>Copyright ©  懒得勤快</copyright>
+    <tags>Masuit.Tools,工具库,Utility,Crypt,Extensions</tags>
+  </metadata>
+</package>

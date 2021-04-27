@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Core.Config;
+﻿using Masuit.Tools.Config;
 using Masuit.Tools.Logging;
 using Masuit.Tools.Models;
 using Masuit.Tools.NoSQL;
