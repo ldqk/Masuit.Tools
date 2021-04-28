@@ -110,28 +110,48 @@ namespace Masuit.Tools.Excel
                 sheet.Row(i + 2).CustomHeight = true; // 自动调整行高
                 for (var j = 0; j < table.Columns.Count; j++)
                 {
-                    if (table.Rows[i][j] is Stream s)
+                    switch (table.Rows[i][j])
                     {
-                        if (s.Length > 0)
+                        case Stream s:
                         {
-                            using var img = Image.FromStream(s);
-                            using var bmp = new Bitmap(img);
-                            bmp.SetResolution(96, 96);
-                            using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                            picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
-                            sheet.Row(i + 2).Height = 90;
-                            sheet.Column(j + 1).Width = 30;
-                        }
-                    }
-                    else
-                    {
-                        sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
+                            if (s.Length > 0)
+                            {
+                                using var img = Image.FromStream(s);
+                                using var bmp = new Bitmap(img);
+                                bmp.SetResolution(96, 96);
+                                using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
+                                sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
+                                sheet.Column(j + 1).Width = bmp.Width > 32 ? bmp.Width : 32;
+                            }
 
-                        // 根据单元格内容长度来自适应调整列宽
-                        maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
-                        if (sheet.Column(j + 1).Width < maxWidth[j])
+                            break;
+                        }
+                        case Bitmap bmp:
                         {
-                            sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
+                            if (bmp.Width + bmp.Height > 2)
+                            {
+                                bmp.SetResolution(96, 96);
+                                using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
+                                sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
+                                sheet.Column(j + 1).Width = bmp.Width > 32 ? bmp.Width : 32;
+                            }
+
+                            break;
+                        }
+                        default:
+                        {
+                            sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
+
+                            // 根据单元格内容长度来自适应调整列宽
+                            maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
+                            if (sheet.Column(j + 1).Width < maxWidth[j])
+                            {
+                                sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
+                            }
+
+                            break;
                         }
                     }
                 }
