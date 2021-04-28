@@ -703,6 +703,7 @@ var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChil
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
 ### 45.Excel导出
+需要额外依赖包：Masuit.Tools.Excel
 ```csharp
 var stream=list.Select(item=>new{
     姓名=item.Name,
