@@ -168,7 +168,7 @@ namespace Masuit.Tools.Security
             //从字符串中取得Hash描述
             using var md5 = HashAlgorithm.Create("MD5");
             var buffer = Encoding.UTF8.GetBytes(mStrSource);
-            return md5?.ComputeHash(buffer);
+            return md5.ComputeHash(buffer);
         }
 
         /// <summary>
