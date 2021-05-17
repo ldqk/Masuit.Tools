@@ -20,8 +20,8 @@
 SDK：.Net Core 3.1.0及以上版本
 
 ## 安装程序包
-.NET Framework 4.5  
-`.NET Framework 4.5专用版本，相比4.6.1及.NET Core的版本，阉割了HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等功能。`
+.NET Framework 4.5特供版  
+`.NET Framework 4.5专用版本，相比4.6.1及.NET Core的版本，阉割了Redis、HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等功能。`
 ```shell
 PM> Install-Package Masuit.Tools.Net45
 ```
