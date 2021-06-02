@@ -18,10 +18,10 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.3.4</Version>
-        <FileVersion>2.4.3.4</FileVersion>
+        <Version>2.4.3.5</Version>
+        <FileVersion>2.4.3.5</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>2.4.3.4</AssemblyVersion>
+        <AssemblyVersion>2.4.3.5</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -57,7 +57,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
         <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>

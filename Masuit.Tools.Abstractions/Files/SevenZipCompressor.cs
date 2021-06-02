@@ -38,7 +38,7 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(List<string> files, string rootdir = "")
+        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "")
         {
             using var archive = CreateZipArchive(files, rootdir);
             var ms = new MemoryStream();
@@ -59,7 +59,7 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹</param>
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
-        public void Zip(List<string> files, string zipFile, string rootdir = "")
+        public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "")
         {
             using var archive = CreateZipArchive(files, rootdir);
             archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
@@ -150,7 +150,7 @@ namespace Masuit.Tools.Files
         /// <param name="files"></param>
         /// <param name="rootdir"></param>
         /// <returns></returns>
-        private ZipArchive CreateZipArchive(List<string> files, string rootdir)
+        private ZipArchive CreateZipArchive(IEnumerable<string> files, string rootdir)
         {
             var archive = ZipArchive.Create();
             var dic = GetFileEntryMaps(files);
@@ -202,7 +202,7 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        private Dictionary<string, string> GetFileEntryMaps(List<string> files)
+        private Dictionary<string, string> GetFileEntryMaps(IEnumerable<string> files)
         {
             var fileList = new List<string>();
             void GetFilesRecurs(string path)
@@ -217,19 +217,17 @@ namespace Masuit.Tools.Files
                 }
             }
 
-            files
-                .Where(s => !s.StartsWith("http"))
-                .ForEach(s =>
+            files.Where(s => !s.StartsWith("http")).ForEach(s =>
+            {
+                if (Directory.Exists(s))
                 {
-                    if (Directory.Exists(s))
-                    {
-                        GetFilesRecurs(s);
-                    }
-                    else
-                    {
-                        fileList.Add(s);
-                    }
-                });
+                    GetFilesRecurs(s);
+                }
+                else
+                {
+                    fileList.Add(s);
+                }
+            });
 
             if (!fileList.Any())
             {

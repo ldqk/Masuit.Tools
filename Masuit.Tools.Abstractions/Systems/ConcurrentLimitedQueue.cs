@@ -49,7 +49,7 @@ namespace Masuit.Tools.Systems
         /// <param name="item"></param>
         public new void Enqueue(T item)
         {
-            if (Count >= Limit)
+            while (Count >= Limit)
             {
                 TryDequeue(out _);
             }

@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <Version>2.4.3.4</Version>
+    <Version>2.4.3.5</Version>
     <Authors>懒得勤快</Authors>
     <Description>Masuit.Tools基础公共库</Description>
     <Copyright>懒得勤快，长空X</Copyright>
@@ -17,9 +17,9 @@
     <RepositoryType>Github</RepositoryType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <FileVersion>2.4.3.4</FileVersion>
+    <FileVersion>2.4.3.5</FileVersion>
     <Company>ldqk.org</Company>
-    <AssemblyVersion>2.4.3.4</AssemblyVersion>
+    <AssemblyVersion>2.4.3.5</AssemblyVersion>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>

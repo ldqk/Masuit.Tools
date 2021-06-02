@@ -38,7 +38,7 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹</param>
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
-        void Zip(List<string> files, string zipFile, string rootdir = "");
+        void Zip(IEnumerable<string> files, string zipFile, string rootdir = "");
 
         /// <summary>
         /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
@@ -46,6 +46,6 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>
         /// <returns>文件流</returns>
-        MemoryStream ZipStream(List<string> files, string rootdir = "");
+        MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "");
     }
 }
