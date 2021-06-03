@@ -708,7 +708,8 @@ var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树
 var stream=list.Select(item=>new{
     姓名=item.Name,
     年龄=item.Age,
-    item.Gender
+    item.Gender,
+    Avatar=Image.FromStream(stream) //图片列
 }).ToDataTable().ToExcel("Sheet1"); //自定义列名导出
 var stream=list.ToDataTable().ToExcel("Sheet1");//默认字段名作为列名导出
 ```
