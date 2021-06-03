@@ -709,7 +709,7 @@ var stream=list.Select(item=>new{
     姓名=item.Name,
     年龄=item.Age,
     item.Gender,
-    Avatar=Image.FromStream(stream) //图片列
+    Avatar=Image.FromStream(filestream) //图片列
 }).ToDataTable().ToExcel("Sheet1"); //自定义列名导出
 var stream=list.ToDataTable().ToExcel("Sheet1");//默认字段名作为列名导出
 ```
