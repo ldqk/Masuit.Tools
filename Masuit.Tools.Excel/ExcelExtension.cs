@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Masuit.Tools.Excel
@@ -113,46 +114,84 @@ namespace Masuit.Tools.Excel
                     switch (table.Rows[i][j])
                     {
                         case Stream s:
-                        {
-                            if (s.Length > 0)
                             {
-                                using var img = Image.FromStream(s);
-                                using var bmp = new Bitmap(img);
-                                bmp.SetResolution(96, 96);
-                                using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
-                                sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
-                                sheet.Column(j + 1).Width = bmp.Width > 32 ? bmp.Width : 32;
+                                if (s.Length > 0)
+                                {
+                                    using var bmp = new Bitmap(s);
+                                    bmp.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
+                                    sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
+                                    sheet.Column(j + 1).Width = bmp.Width / 6 > 32 ? bmp.Width / 6 : 32;
+                                }
+
+                                break;
                             }
 
-                            break;
-                        }
                         case Bitmap bmp:
-                        {
-                            if (bmp.Width + bmp.Height > 2)
                             {
-                                bmp.SetResolution(96, 96);
-                                using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
-                                sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
-                                sheet.Column(j + 1).Width = bmp.Width > 32 ? bmp.Width : 32;
+                                if (bmp.Width + bmp.Height > 2)
+                                {
+                                    bmp.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
+                                    sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
+                                    sheet.Column(j + 1).Width = bmp.Width / 6 > 32 ? bmp.Width / 6 : 32;
+                                }
+
+                                break;
                             }
 
-                            break;
-                        }
+                        case IEnumerable<Stream> streams:
+                            {
+                                int maxHeight = 0;
+                                int sumWidth = 0;
+                                foreach (var stream in streams.Where(stream => stream.Length > 0))
+                                {
+                                    using var bmp = new Bitmap(stream);
+                                    bmp.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    picture.SetPosition(i + 1, 3, j, 5 + sumWidth); //设置图片显示位置
+                                    maxHeight = Math.Max(maxHeight, bmp.Height > 24 ? bmp.Height : 24);
+                                    sheet.Row(i + 2).Height = maxHeight;
+                                    sumWidth += bmp.Width;
+                                    sheet.Column(j + 1).Width = sumWidth / 6 > 32 ? sumWidth / 6 : 32;
+                                }
+
+                                break;
+                            }
+
+                        case IEnumerable<Bitmap> bmps:
+                            {
+                                int maxHeight = 0;
+                                int sumWidth = 0;
+                                foreach (var bmp in bmps.Where(stream => stream.Width + stream.Height > 2))
+                                {
+                                    bmp.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    picture.SetPosition(i + 1, 3, j, 5 + sumWidth); //设置图片显示位置
+                                    maxHeight = Math.Max(maxHeight, bmp.Height > 24 ? bmp.Height : 24);
+                                    sheet.Row(i + 2).Height = maxHeight;
+                                    sumWidth += bmp.Width;
+                                    sheet.Column(j + 1).Width = sumWidth / 6 > 32 ? sumWidth / 6 : 32;
+                                }
+
+                                break;
+                            }
+
                         default:
-                        {
-                            sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
-
-                            // 根据单元格内容长度来自适应调整列宽
-                            maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
-                            if (sheet.Column(j + 1).Width < maxWidth[j])
                             {
-                                sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
-                            }
+                                sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
 
-                            break;
-                        }
+                                // 根据单元格内容长度来自适应调整列宽
+                                maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
+                                if (sheet.Column(j + 1).Width < maxWidth[j])
+                                {
+                                    sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
+                                }
+
+                                break;
+                            }
                     }
                 }
             }

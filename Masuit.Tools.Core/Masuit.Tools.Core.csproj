@@ -62,9 +62,18 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="..\Masuit.Tools.Abstractions\*\*.*">
+        <Compile Include="..\Masuit.Tools.Abstractions\*\*.cs">
             <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
         </Compile>
+        <Compile Include="..\Masuit.Tools.Abstractions\Extensions\*\*.cs">
+            <Link>Extensions\%(RecursiveDir)%(FileName)%(Extension)</Link>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="..\Masuit.Tools.Abstractions\Reflection\ClassHelper.cs" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
