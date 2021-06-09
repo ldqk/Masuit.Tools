@@ -22,7 +22,7 @@ namespace Masuit.Tools.Excel
         /// <param name="sheetTables">sheet名和内存表的映射</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream DataTableToExcel(this Dictionary<string, DataTable> sheetTables, string password = null)
+        public static MemoryStream ToExcel(this Dictionary<string, DataTable> sheetTables, string password = null)
         {
             using (var pkg = new ExcelPackage())
             {
@@ -42,7 +42,7 @@ namespace Masuit.Tools.Excel
         /// <param name="tables">内存表</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream DataTableToExcel(this List<DataTable> tables, string password = null)
+        public static MemoryStream ToExcel(this List<DataTable> tables, string password = null)
         {
             using var pkg = new ExcelPackage();
             foreach (var table in tables)
@@ -115,14 +115,16 @@ namespace Masuit.Tools.Excel
                     {
                         case Stream s:
                             {
-                                if (s.Length > 0)
+                                if (s.Length > 2)
                                 {
                                     using var bmp = new Bitmap(s);
                                     bmp.SetResolution(96, 96);
                                     using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
-                                    sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
-                                    sheet.Column(j + 1).Width = bmp.Width / 6 > 32 ? bmp.Width / 6 : 32;
+                                    var percent = 11000f / bmp.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width / 6 > 32 ? bmp.Width / 6 : 32);
                                 }
 
                                 break;
@@ -130,13 +132,15 @@ namespace Masuit.Tools.Excel
 
                         case Bitmap bmp:
                             {
-                                if (bmp.Width + bmp.Height > 2)
+                                if (bmp.Width + bmp.Height > 4)
                                 {
                                     bmp.SetResolution(96, 96);
                                     using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + 1, 3, j, 5); //设置图片显示位置
-                                    sheet.Row(i + 2).Height = bmp.Height > 24 ? bmp.Height : 24;
-                                    sheet.Column(j + 1).Width = bmp.Width / 6 > 32 ? bmp.Width / 6 : 32;
+                                    var percent = 11000f / bmp.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width / 6 > 32 ? bmp.Width / 6 : 32);
                                 }
 
                                 break;
@@ -144,18 +148,18 @@ namespace Masuit.Tools.Excel
 
                         case IEnumerable<Stream> streams:
                             {
-                                int maxHeight = 0;
-                                int sumWidth = 0;
-                                foreach (var stream in streams.Where(stream => stream.Length > 0))
+                                double sumWidth = 0;
+                                foreach (var stream in streams.Where(stream => stream.Length > 2))
                                 {
                                     using var bmp = new Bitmap(stream);
                                     bmp.SetResolution(96, 96);
                                     using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                    picture.SetPosition(i + 1, 3, j, 5 + sumWidth); //设置图片显示位置
-                                    maxHeight = Math.Max(maxHeight, bmp.Height > 24 ? bmp.Height : 24);
-                                    sheet.Row(i + 2).Height = maxHeight;
-                                    sumWidth += bmp.Width;
-                                    sheet.Column(j + 1).Width = sumWidth / 6 > 32 ? sumWidth / 6 : 32;
+                                    picture.SetPosition(i + 1, 3, j, (int)(5 + sumWidth)); //设置图片显示位置
+                                    var percent = 11000f / bmp.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
                                 break;
@@ -163,17 +167,54 @@ namespace Masuit.Tools.Excel
 
                         case IEnumerable<Bitmap> bmps:
                             {
-                                int maxHeight = 0;
-                                int sumWidth = 0;
-                                foreach (var bmp in bmps.Where(stream => stream.Width + stream.Height > 2))
+                                double sumWidth = 0;
+                                foreach (var bmp in bmps.Where(stream => stream.Width + stream.Height > 4))
                                 {
                                     bmp.SetResolution(96, 96);
                                     using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                    picture.SetPosition(i + 1, 3, j, 5 + sumWidth); //设置图片显示位置
-                                    maxHeight = Math.Max(maxHeight, bmp.Height > 24 ? bmp.Height : 24);
-                                    sheet.Row(i + 2).Height = maxHeight;
-                                    sumWidth += bmp.Width;
-                                    sheet.Column(j + 1).Width = sumWidth / 6 > 32 ? sumWidth / 6 : 32;
+                                    picture.SetPosition(i + 1, 3, j, (int)(5 + sumWidth)); //设置图片显示位置
+                                    var percent = 11000f / bmp.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
+                                }
+
+                                break;
+                            }
+
+                        case IDictionary<string, Stream> dic:
+                            {
+                                double sumWidth = 0;
+                                foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
+                                {
+                                    using var bmp = new Bitmap(kv.Value);
+                                    bmp.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp, new Uri(kv.Key));
+                                    picture.SetPosition(i + 1, 3, j, (int)(5 + sumWidth)); //设置图片显示位置
+                                    var percent = 11000f / bmp.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
+                                }
+
+                                break;
+                            }
+
+                        case IDictionary<string, Bitmap> bmps:
+                            {
+                                double sumWidth = 0;
+                                foreach (var kv in bmps.Where(kv => kv.Value.Width + kv.Value.Height > 4))
+                                {
+                                    kv.Value.SetResolution(96, 96);
+                                    using var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
+                                    picture.SetPosition(i + 1, 3, j, (int)(5 + sumWidth)); //设置图片显示位置
+                                    var percent = 11000f / kv.Value.Height;
+                                    picture.SetSize((int)percent);
+                                    sheet.Row(i + 2).Height = 90;
+                                    sumWidth += kv.Value.Width * 1.0 * percent / 100 + 5;
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
                                 break;

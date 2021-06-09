@@ -54,7 +54,7 @@ namespace Masuit.Tools.Files
         /// <param name="filename"></param>
         public static void SaveFile(this MemoryStream ms, string filename)
         {
-            using var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using var fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
             byte[] buffer = ms.ToArray(); // 转化为byte格式存储
             fs.Write(buffer, 0, buffer.Length);
             fs.Flush();

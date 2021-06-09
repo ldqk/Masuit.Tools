@@ -4,7 +4,7 @@
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <CodeAnalysisRuleSet />
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Authors>懒得勤快</Authors>
         <Description>Masuit.Tools.Excel导出库</Description>
         <Copyright>懒得勤快</Copyright>
@@ -17,9 +17,9 @@
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <FileVersion>1.0.1</FileVersion>
+        <FileVersion>1.0.2</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>1.0.1</AssemblyVersion>
+        <AssemblyVersion>1.0.2</AssemblyVersion>
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
