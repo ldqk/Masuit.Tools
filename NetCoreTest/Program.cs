@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 
 namespace NetCoreTest
@@ -19,6 +20,14 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            Enumerable.Range(1, 2).Select(i => new
+            {
+                序号 = i,
+                图片 = new Dictionary<string, FileStream>()
+                {
+                    ["https://ldqk.org/1383"] = File.OpenRead(@"D:\images\emotion\16.jpg")
+                }
+            }).ToDataTable("aa").ToExcel2().SaveFile(@"Y:\2.xlsx");
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,
@@ -36,7 +45,6 @@ namespace NetCoreTest
             };
             var allParent = myClass.AllParent().Append(myClass);
             var tree = allParent.ToTreeGeneral(c => c.Id, c => c.Pid);
-            tree.Flatten(t => t.Children).Select(t => t.Value).ToDataTable().ToExcel().SaveFile(@"Y:\1.xlsx");
             Console.WriteLine(tree.ToJsonString(new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
