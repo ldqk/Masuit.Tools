@@ -5,7 +5,7 @@
 
 项目开发模式：日常代码积累+网络搜集  
 ⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐  
-关于本项目，如果你有任何不懂的地方或使用过程中遇到任何问题，可以直接提issue或私信联系我，我会为你提供`完全免费`的技术指导，当然，如果你觉得不好意思接受免费的指导，想适当打赏我也是不会拒绝的！🤣🤣🤣
+关于本项目，如果你有任何不懂的地方或使用过程中遇到任何问题，可以直接提issue或私信联系我，我会为你提供**完全免费**的技术指导，当然，如果你觉得不好意思接受免费的指导，想适当打赏我也是不会拒绝的！🤣🤣🤣
 ## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！  
 <img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">     
 
