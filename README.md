@@ -702,8 +702,8 @@ tree.Path(); // 全路径
 var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
-### 45.Excel导出
-需要额外依赖包：Masuit.Tools.Excel
+### 45.简单的Excel导出
+需要额外依赖包：`Masuit.Tools.Excel`
 ```csharp
 var stream=list.Select(item=>new{
     姓名=item.Name,
@@ -711,11 +711,16 @@ var stream=list.Select(item=>new{
     item.Gender,
     Avatar=Image.FromStream(filestream) //图片列
 }).ToDataTable().ToExcel("Sheet1"); //自定义列名导出
-// 图片列支持Stream、Bitmap、IEnumerable<Stream>、IEnumerable<Bitmap>、IDictionary<string,Stream>、IDictionary<string,MemoryStream>、IDictionary<string,Bitmap>类型；
-// 其中，如果是IDictionary类型的图片列，字典的键为图片超链接的完整url
-var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");//默认字段名作为列名导出
+var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 ```
-
+#### 一些约定规则：  
+1. 图片列支持Stream、Bitmap、IEnumerable<Stream>、IEnumerable<Bitmap>、IDictionary<string,Stream>、IDictionary<string,MemoryStream>、IDictionary<string,Bitmap>类型；
+2. 其中，如果是IDictionary类型的图片列，字典的键为图片超链接的完整url；
+3. 默认字段名作为列名导出；
+4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
+5. ToExcel方法支持DataTable、List<DataTable>、Dictionary<string, DataTable>类型的直接调用
+    
+    
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载支持。
