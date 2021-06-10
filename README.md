@@ -3,8 +3,9 @@
 包含一些常用的操作类，大都是静态类，加密解密，反射操作，动态编译，权重随机筛选算法，简繁转换，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，实体映射、集合扩展等常用封装。**诸多功能集一身，代码量不到1MB！**  
 [官网教程](https://masuit.com/55)  
 
-⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐  
 项目开发模式：日常代码积累+网络搜集  
+⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐  
+关于本项目，如果你有任何不懂的地方或使用过程中遇到任何问题，可以直接提issue或私信联系我，我会为你提供`完全免费`的技术指导，当然，如果你觉得不好意思接受免费的指导，想适当打赏我也是不会拒绝的！🤣🤣🤣
 ## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！  
 <img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">     
 
