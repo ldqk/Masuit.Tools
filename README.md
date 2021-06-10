@@ -20,18 +20,22 @@
 SDK：.Net Core 3.1.0及以上版本
 
 ## 安装程序包
-.NET Framework 4.5特供版  
-`.NET Framework 4.5专用版本，相比4.6.1及.NET Core的版本，阉割了Redis、HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等功能。`
-```shell
-PM> Install-Package Masuit.Tools.Net45
-```
-.NET Framework ≥4.6.1
+### .NET Framework ≥ 4.6.1
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
-.NET Core 2.1以上或.NET5
+### .NET Standard ≥ 2.1
+```shell
+PM> Install-Package Masuit.Tools.Abstraction
+```
+### .NET Core ≥ 2.1
 ```shell
 PM> Install-Package Masuit.Tools.Core
+```
+### .NET Framework 4.5特供版  
+请注意：`这是.NET Framework 4.5的专用版本，相比4.6.1及.NET Core的版本，阉割了Redis、HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等一些功能。`**如果你的项目版本高于4.5，请务必使用上述版本的包，以享受完整的功能体验！**
+```shell
+PM> Install-Package Masuit.Tools.Net45
 ```
 ## 为工具库注册配置
 工具库需要用到外部配置节：  
