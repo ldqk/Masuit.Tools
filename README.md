@@ -713,7 +713,7 @@ var stream=list.Select(item=>new{
 }).ToDataTable().ToExcel("Sheet1"); //自定义列名导出
 // 图片列支持Stream、Bitmap、IEnumerable<Stream>、IEnumerable<Bitmap>、IDictionary<string,Stream>、IDictionary<string,MemoryStream>、IDictionary<string,Bitmap>类型；
 // 其中，如果是IDictionary类型的图片列，字典的键为图片超链接的完整url
-var stream=list.ToDataTable().ToExcel("Sheet1");//默认字段名作为列名导出
+var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");//默认字段名作为列名导出
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
