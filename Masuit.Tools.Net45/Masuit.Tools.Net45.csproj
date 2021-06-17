@@ -166,15 +166,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Mime\MimeMappingItem.cs">
       <Link>Mime\MimeMappingItem.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\AddressComponent.cs">
-      <Link>Models\AddressComponent.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\AddressResult.cs">
-      <Link>Models\AddressResult.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\BaiduIP.cs">
-      <Link>Models\BaiduIP.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\DateTimeRange.cs">
       <Link>Models\DateTimeRange.cs</Link>
     </Compile>
@@ -184,26 +175,11 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Models\EmailAddress.cs">
       <Link>Models\EmailAddress.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\IspInfo.cs">
-      <Link>Models\IspInfo.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\ITree.cs">
       <Link>Models\ITree.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\Location.cs">
-      <Link>Models\Location.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\PagedList.cs">
       <Link>Models\PagedList.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\PhysicsAddress.cs">
-      <Link>Models\PhysicsAddress.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\Pois.cs">
-      <Link>Models\Pois.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs">
-      <Link>Models\TaobaoIP.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\Tree.cs">
       <Link>Models\Tree.cs</Link>

@@ -73,6 +73,14 @@ github：https://github.com/ldqk/Masuit.Tools
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />
     </ItemGroup>
     <ItemGroup>
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\AddressComponent.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\AddressResult.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\BaiduIP.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\IspInfo.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\Location.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\PhysicsAddress.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\Pois.cs" />
+      <Compile Remove="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs" />
       <Compile Remove="..\Masuit.Tools.Abstractions\Reflection\ClassHelper.cs" />
     </ItemGroup>
 
