@@ -159,6 +159,18 @@ namespace Masuit.Tools
             return object.ReferenceEquals(@this, o);
         }
 
+        /// <summary>
+        /// 链式操作
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public static T2 Next<T1, T2>(this T1 source, Func<T1, T2> action)
+        {
+            return action(source);
+        }
     }
     class ReferenceEqualityComparer : EqualityComparer<object>
     {
@@ -218,6 +230,4 @@ namespace Masuit.Tools
             }
         }
     }
-
-
 }

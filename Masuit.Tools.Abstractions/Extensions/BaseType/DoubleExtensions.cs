@@ -28,11 +28,11 @@ namespace Masuit.Tools
         /// 转decimal
         /// </summary>
         /// <param name="num"></param>
-        /// <param name="round">小数位数</param>
+        /// <param name="precision">小数位数</param>
         /// <returns></returns>
-        public static decimal ToDecimal(this double num, int round)
+        public static decimal ToDecimal(this double num, int precision)
         {
-            return Math.Round(num.ConvertTo<decimal>(), round);
+            return Math.Round(num.ConvertTo<decimal>(), precision);
         }
 
         /// <summary>
@@ -49,11 +49,11 @@ namespace Masuit.Tools
         /// 转decimal
         /// </summary>
         /// <param name="num"></param>
-        /// <param name="round">小数位数</param>
+        /// <param name="precision">小数位数</param>
         /// <returns></returns>
-        public static decimal ToDecimal(this float num, int round)
+        public static decimal ToDecimal(this float num, int precision)
         {
-            return Math.Round(num.ConvertTo<decimal>(), round);
+            return Math.Round(num.ConvertTo<decimal>(), precision);
         }
     }
 }
