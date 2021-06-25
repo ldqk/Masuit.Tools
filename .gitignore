@@ -249,5 +249,4 @@ ModelManifest.xml
 /Masuit.Tools.Abstractions/Mapping
 /Test/Masuit.Tools.Abstractions.Test/Mapping
 /Test/Masuit.Tools.ExpressionMapperBenchmark
-/Masuit.Tools.Abstractions/Extensions/BaseType/TestClass.cs
-/Masuit.Tools.Excel/TestClass.cs
+**/TestClass.cs
