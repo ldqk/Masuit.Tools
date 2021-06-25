@@ -721,6 +721,18 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
 5. ToExcel方法支持DataTable、List<DataTable>、Dictionary<string, DataTable>类型的直接调用
     
+
+### 46.EFCore实体对比功能
+```csharp
+var changes=dbContext.GetChanges<Post>();//获取变更字段信息
+var added=dbContext.GetAdded<Post>();//获取添加的实体字段信息
+var removed=dbContext.GetRemoved<Post>();//获取被移除的实体字段信息
+```
+### 47.任何类型支持链式调用
+```csharp
+a.Next(func1).Next(func2).Next(func3);
+"123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
+```
     
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
