@@ -59,7 +59,7 @@ namespace Masuit.Tools.Excel
         /// <param name="table">内存表</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream ToExcel2(this DataTable table, string password = null)
+        public static MemoryStream ToExcel(this DataTable table, string password = null)
         {
             using var pkg = new ExcelPackage();
             CreateWorksheet(pkg, table);
@@ -124,7 +124,7 @@ namespace Masuit.Tools.Excel
                                     var percent = 11000f / bmp.Height;
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + 2).Height = 90;
-                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width / 6 > 32 ? bmp.Width / 6 : 32);
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
 
                                 break;
@@ -140,7 +140,7 @@ namespace Masuit.Tools.Excel
                                     var percent = 11000f / bmp.Height;
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + 2).Height = 90;
-                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width / 6 > 32 ? bmp.Width / 6 : 32);
+                                    sheet.Column(j + 1).Width = Math.Max(sheet.Column(j + 1).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
 
                                 break;
