@@ -79,13 +79,22 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public string ToString(long number)
         {
+            int start = 0;
+            int resultOffset = 0;
+            if (_offset > 0)
+            {
+                start = 1;
+                resultOffset = _offset - 1;
+            }
+
+            number = number - resultOffset;
             List<string> result = new List<string>();
             long t = Math.Abs(number);
             while (t != 0)
             {
                 var mod = t % Length;
                 t = Math.Abs(t / Length);
-                var character = Characters[Convert.ToInt32(mod) - _offset].ToString();
+                var character = Characters[Convert.ToInt32(mod) - start].ToString();
                 result.Insert(0, character);
             }
 
@@ -104,6 +113,15 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public string ToString(BigInteger number)
         {
+            int start = 0;
+            int resultOffset = 0;
+            if (_offset > 0)
+            {
+                start = 1;
+                resultOffset = _offset - 1;
+            }
+
+            number = number - resultOffset;
             List<string> result = new List<string>();
             if (number < 0)
             {
@@ -117,7 +135,7 @@ namespace Masuit.Tools.Strings
             {
                 var mod = t % Length;
                 t = BigInteger.Abs(BigInteger.Divide(t, Length));
-                var character = Characters[(int)mod - _offset].ToString();
+                var character = Characters[(int)mod - start].ToString();
                 result.Insert(0, character);
             }
 
@@ -131,8 +149,15 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public long FromString(string str)
         {
+            int start = 0;
+            int resultOffset = 0;
+            if (_offset > 0)
+            {
+                start = 1;
+                resultOffset = _offset - 1;
+            }
             int j = 0;
-            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + _offset) * (long)Math.Pow(Length, j++));
+            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
         }
 
         /// <summary>
@@ -142,9 +167,16 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public BigInteger FromStringBig(string str)
         {
+            int start = 0;
+            int resultOffset = 0;
+            if (_offset > 0)
+            {
+                start = 1;
+                resultOffset = _offset - 1;
+            }
             int j = 0;
             var chars = new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch));
-            return chars.Aggregate(BigInteger.Zero, (current, c) => current + (Characters.IndexOf(c) + _offset) * BigInteger.Pow(Length, j++));
+            return chars.Aggregate(BigInteger.Zero, (current, c) => current + (Characters.IndexOf(c) + start) * BigInteger.Pow(Length, j++)) + resultOffset;
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
