@@ -20,7 +20,12 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 进制长度
         /// </summary>
-        public int Length => Characters?.Length ?? 0;
+        public int Length => Characters.Length;
+
+        /// <summary>
+        /// 起始值偏移
+        /// </summary>
+        private readonly int _offset;
 
         /// <summary>
         /// 数制格式化器
@@ -33,17 +38,25 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 数制格式化器
         /// </summary>
-        /// <param name="characters">进制转换</param>
-        public NumberFormater(string characters)
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(string characters, int offset = 0)
         {
+            if (string.IsNullOrEmpty(characters))
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
+
             Characters = characters;
+            _offset = offset;
         }
 
         /// <summary>
         /// 数制格式化器
         /// </summary>
         /// <param name="bin">进制</param>
-        public NumberFormater(int bin)
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(int bin, int offset = 0)
         {
             if (bin < 2)
             {
@@ -56,6 +69,7 @@ namespace Masuit.Tools.Strings
             }
 
             Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, bin);
+            _offset = offset;
         }
 
         /// <summary>
@@ -71,7 +85,7 @@ namespace Masuit.Tools.Strings
             {
                 var mod = t % Length;
                 t = Math.Abs(t / Length);
-                var character = Characters[Convert.ToInt32(mod)].ToString();
+                var character = Characters[Convert.ToInt32(mod) - _offset].ToString();
                 result.Insert(0, character);
             }
 
@@ -103,7 +117,7 @@ namespace Masuit.Tools.Strings
             {
                 var mod = t % Length;
                 t = BigInteger.Abs(BigInteger.Divide(t, Length));
-                var character = Characters[(int)mod].ToString();
+                var character = Characters[(int)mod - _offset].ToString();
                 result.Insert(0, character);
             }
 
@@ -118,7 +132,7 @@ namespace Masuit.Tools.Strings
         public long FromString(string str)
         {
             int j = 0;
-            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => Characters.IndexOf(ch) * (long)Math.Pow(Length, j++));
+            return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + _offset) * (long)Math.Pow(Length, j++));
         }
 
         /// <summary>
@@ -130,7 +144,7 @@ namespace Masuit.Tools.Strings
         {
             int j = 0;
             var chars = new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch));
-            return chars.Aggregate(BigInteger.Zero, (current, c) => current + Characters.IndexOf(c) * BigInteger.Pow(Length, j++));
+            return chars.Aggregate(BigInteger.Zero, (current, c) => current + (Characters.IndexOf(c) + _offset) * BigInteger.Pow(Length, j++));
         }
 
         /// <summary>Returns a string that represents the current object.</summary>

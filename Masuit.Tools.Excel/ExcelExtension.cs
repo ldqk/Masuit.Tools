@@ -22,18 +22,16 @@ namespace Masuit.Tools.Excel
         /// <param name="sheetTables">sheet名和内存表的映射</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream ToExcel(this Dictionary<string, DataTable> sheetTables, string password = null)
+        public static MemoryStream ToExcel(this Dictionary<string, DataTable> sheetTables, string password = null, ColumnSettings settings = null)
         {
-            using (var pkg = new ExcelPackage())
+            using var pkg = new ExcelPackage();
+            foreach (var pair in sheetTables)
             {
-                foreach (var pair in sheetTables)
-                {
-                    pair.Value.TableName = pair.Key;
-                    CreateWorksheet(pkg, pair.Value);
-                }
-
-                return SaveAsStream(pkg, password);
+                pair.Value.TableName = pair.Key;
+                CreateWorksheet(pkg, pair.Value, settings);
             }
+
+            return SaveAsStream(pkg, password);
         }
 
         /// <summary>
@@ -42,12 +40,12 @@ namespace Masuit.Tools.Excel
         /// <param name="tables">内存表</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream ToExcel(this List<DataTable> tables, string password = null)
+        public static MemoryStream ToExcel(this List<DataTable> tables, string password = null, ColumnSettings settings = null)
         {
             using var pkg = new ExcelPackage();
             foreach (var table in tables)
             {
-                CreateWorksheet(pkg, table);
+                CreateWorksheet(pkg, table, settings);
             }
 
             return SaveAsStream(pkg, password);
@@ -59,10 +57,10 @@ namespace Masuit.Tools.Excel
         /// <param name="table">内存表</param>
         /// <param name="password">密码</param>
         /// <returns>内存流</returns>
-        public static MemoryStream ToExcel(this DataTable table, string password = null)
+        public static MemoryStream ToExcel(this DataTable table, string password = null, ColumnSettings settings = null)
         {
             using var pkg = new ExcelPackage();
-            CreateWorksheet(pkg, table);
+            CreateWorksheet(pkg, table, settings);
             return SaveAsStream(pkg, password);
         }
 
@@ -81,7 +79,7 @@ namespace Masuit.Tools.Excel
             return ms;
         }
 
-        public static void CreateWorksheet(this ExcelPackage pkg, DataTable table)
+        public static void CreateWorksheet(this ExcelPackage pkg, DataTable table, ColumnSettings settings = null)
         {
             if (string.IsNullOrEmpty(table.TableName))
             {
@@ -104,6 +102,13 @@ namespace Masuit.Tools.Excel
             sheet.Row(1).CustomHeight = true; // 自动调整行高
             sheet.Cells.AutoFitColumns(); // 表头自适应列宽
             sheet.Cells.Style.WrapText = true;
+            if (settings != null)
+            {
+                foreach (var x in settings.ColumnTypes)
+                {
+                    sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
+                }
+            }
 
             // 填充内容
             for (var i = 0; i < table.Rows.Count; i++)
@@ -242,14 +247,19 @@ namespace Masuit.Tools.Excel
                         default:
                             {
                                 sheet.SetValue(i + 2, j + 1, table.Rows[i][j] ?? "");
-
-                                // 根据单元格内容长度来自适应调整列宽
-                                maxWidth[j] = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length, maxWidth[j]);
-                                if (sheet.Column(j + 1).Width < maxWidth[j])
+                                if (table.Rows[i][j] is ValueType)
                                 {
-                                    sheet.Cells[i + 2, j + 1].AutoFitColumns(18, 110); // 自适应最大列宽，最小18，最大110
+                                    sheet.Column(j + 1).AutoFit();
                                 }
-
+                                else
+                                {
+                                    // 根据单元格内容长度来自适应调整列宽
+                                    sheet.Column(j + 1).Width = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length + 2, sheet.Column(j + 1).Width);
+                                    if (sheet.Column(j + 1).Width > 110)
+                                    {
+                                        sheet.Column(j + 1).AutoFit(100, 110);
+                                    }
+                                }
                                 break;
                             }
                     }

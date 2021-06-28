@@ -27,7 +27,7 @@ namespace NetCoreTest
                 {
                     ["https://ldqk.org/1383"] = File.OpenRead(@"D:\images\emotion\16.jpg")
                 }
-            }).ToDataTable("aa").ToExcel2().SaveFile(@"Y:\2.xlsx");
+            }).ToDataTable("aa").ToExcel().SaveFile(@"Y:\2.xlsx");
             var myClass = new MyClass()
             {
                 MyProperty1 = 1,
