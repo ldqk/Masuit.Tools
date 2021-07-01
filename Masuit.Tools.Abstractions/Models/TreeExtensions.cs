@@ -36,10 +36,45 @@ namespace Masuit.Tools.Models
         /// 过滤
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tree<T>> Filter<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, bool> func) where T : class
+        {
+            var results = new List<Tree<T>>();
+            foreach (var item in items.Where(i => i != null))
+            {
+                item.Children ??= new List<Tree<T>>();
+                item.Children = item.Children.Filter(func).ToList();
+                if (item.Children.Any() || func(item))
+                {
+                    results.Add(item);
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// 过滤
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
         /// <param name="func"></param>
         /// <returns></returns>
         public static IEnumerable<T> Filter<T>(this T item, Func<T, bool> func) where T : class, ITreeChildren<T>
+        {
+            return new[] { item }.Filter(func);
+        }
+
+        /// <summary>
+        /// 过滤
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tree<T>> Filter<T>(this Tree<T> item, Func<Tree<T>, bool> func) where T : class
         {
             return new[] { item }.Filter(func);
         }
@@ -94,6 +129,65 @@ namespace Masuit.Tools.Models
         public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector)
         {
             var result = new List<T>();
+            foreach (var item in items)
+            {
+                result.Add(item);
+                result.AddRange(selector(item).Flatten(selector));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 平铺开
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items) where T : class
+        {
+            var result = new List<Tree<T>>();
+            foreach (var item in items)
+            {
+                result.Add(item);
+                item.Children ??= new List<Tree<T>>();
+                result.AddRange(item.Children.Flatten());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 平铺开
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static IEnumerable<Tree<T>> Flatten<T>(this Tree<T> p) where T : class
+        {
+            var result = new List<Tree<T>>()
+            {
+                p
+            };
+            foreach (var item in p.Children)
+            {
+                result.Add(item);
+                item.Children ??= new List<Tree<T>>();
+                result.AddRange(item.Children.Flatten());
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 平铺开任意树形结构数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, IEnumerable<Tree<T>>> selector)
+        {
+            var result = new List<Tree<T>>();
             foreach (var item in items)
             {
                 result.Add(item);
@@ -256,7 +350,17 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 所有子级
         /// </summary>
-        public static ICollection<T> AllChildren<T>(this T tree, Func<T, IEnumerable<T>> selector) => GetChildren(tree, selector);
+        public static ICollection<T> AllChildren<T>(this T tree, Func<T, IEnumerable<T>> selector) where T : ITreeChildren<T> => GetChildren(tree, selector);
+
+        /// <summary>
+        /// 所有子级
+        /// </summary>
+        public static ICollection<Tree<T>> AllChildren<T>(this Tree<T> tree) => GetChildren(tree, c => c.Children);
+
+        /// <summary>
+        /// 所有子级
+        /// </summary>
+        public static ICollection<Tree<T>> AllChildren<T>(this Tree<T> tree, Func<Tree<T>, IEnumerable<Tree<T>>> selector) => GetChildren(tree, selector);
 
         /// <summary>
         /// 所有父级
@@ -266,7 +370,12 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 所有父级
         /// </summary>
-        public static ICollection<T> AllParent<T>(this T tree, Func<T, T> selector) => GetParents(tree, selector);
+        public static ICollection<T> AllParent<T>(this T tree, Func<T, T> selector) where T : ITreeParent<T> => GetParents(tree, selector);
+
+        /// <summary>
+        /// 所有父级
+        /// </summary>
+        public static ICollection<Tree<T>> AllParent<T>(this Tree<T> tree, Func<Tree<T>, Tree<T>> selector) => GetParents(tree, selector);
 
         /// <summary>
         /// 是否是根节点
@@ -277,6 +386,16 @@ namespace Masuit.Tools.Models
         /// 是否是叶子节点
         /// </summary>
         public static bool IsLeaf<T>(this ITreeChildren<T> tree) where T : ITreeChildren<T> => tree.Children?.Count == 0;
+
+        /// <summary>
+        /// 是否是根节点
+        /// </summary>
+        public static bool IsRoot<T>(this Tree<T> tree) => tree.Parent == null;
+
+        /// <summary>
+        /// 是否是叶子节点
+        /// </summary>
+        public static bool IsLeaf<T>(this Tree<T> tree) => tree.Children?.Count == 0;
 
         /// <summary>
         /// 深度层级
