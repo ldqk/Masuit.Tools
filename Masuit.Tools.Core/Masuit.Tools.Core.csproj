@@ -36,9 +36,6 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.Win32.Registry" Version="5.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
         <PackageReference Include="System.Management" Version="4.7.0" />
         <PackageReference Include="System.Management" Version="5.0" />
