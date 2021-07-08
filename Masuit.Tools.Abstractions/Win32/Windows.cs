@@ -127,9 +127,9 @@ namespace Masuit.Tools.Win32
             {
                 return Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion")?.GetValue("ProductName").ToString();
             }
-            catch (Exception)
+            catch
             {
-                return "未能获取到操作系统版本，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。";
+                return Environment.OSVersion.VersionString;
             }
         }
     }

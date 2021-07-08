@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 
 namespace Masuit.Tools.Models
@@ -41,6 +42,11 @@ namespace Masuit.Tools.Models
         public bool EnableSsl { get; set; } = true;
 
         /// <summary>
+        /// 附件
+        /// </summary>
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+
+        /// <summary>
         /// 邮件消息对象
         /// </summary>
         private MailMessage GetClient()
@@ -59,6 +65,11 @@ namespace Masuit.Tools.Models
             mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
             mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
             mailMessage.Priority = MailPriority.High;
+            foreach (var item in Attachments)
+            {
+                mailMessage.Attachments.Add(item);
+            }
+
             return mailMessage;
         }
 
