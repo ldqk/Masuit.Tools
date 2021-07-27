@@ -54,7 +54,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
         <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     </ItemGroup>
