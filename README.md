@@ -102,12 +102,13 @@ string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         </div>";
 string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
 ```
-### 5.整理操作系统的内存：
+### 5.整理Windows系统的内存：
+类似于各大系统优化软件的加速球功能
 ```csharp
 Windows.ClearMemorySilent();
 ```
 ### 6.任意进制转换
-可用于生成短id，短hash等操作，纯数学运算。
+可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
@@ -115,6 +116,7 @@ string s36 = nf.ToString(12345678);
 long num = nf.FromString("7clzi");
 Console.WriteLine("12345678的36进制是：" + s36); // 7clzi
 Console.WriteLine("36进制的7clzi是：" + num); // 12345678
+var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue)); //配合随机数生成随机字符串
 ```
 ```csharp
 //扩展方法形式调用
@@ -449,6 +451,7 @@ var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的�
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
 ### 26.定长队列实现
+`如果是.NET5及以上，推荐使用框架自带的Channel实现该功能`
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
@@ -529,6 +532,7 @@ stream=maker.AddWatermark("水印文字",color,水印位置,边距,字体大小,
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
 double gauss = rnd.NextGauss(20,5);//产生正态高斯分布的随机数
+var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue));//生成随机字符串
 ```
 ### 33.权重筛选功能
 ```csharp
