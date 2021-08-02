@@ -53,7 +53,7 @@ public Startup(IConfiguration configuration)
 https://dotnetfiddle.net/jclU4y
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号等
 ```csharp
-bool isEmail="3444764617@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单，逗号分隔，如"EmailDomainBlockList": "^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com",
+bool isEmail="337845818@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单，逗号分隔，如"EmailDomainBlockList": "^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com",
 bool isInetAddress = "114.114.114.114".MatchInetAddress();
 bool isUrl = "http://ldqk.org/20/history".MatchUrl();
 bool isPhoneNumber = "15205201520".MatchPhoneNumber();
