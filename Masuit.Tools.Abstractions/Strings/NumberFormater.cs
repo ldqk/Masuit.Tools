@@ -25,7 +25,7 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 起始值偏移
         /// </summary>
-        private readonly int _offset;
+        private readonly byte _offset;
 
         /// <summary>
         /// 数制格式化器
@@ -40,7 +40,7 @@ namespace Masuit.Tools.Strings
         /// </summary>
         /// <param name="characters">符号集</param>
         /// <param name="offset">起始值偏移</param>
-        public NumberFormater(string characters, int offset = 0)
+        public NumberFormater(string characters, byte offset = 0)
         {
             if (string.IsNullOrEmpty(characters))
             {
@@ -54,21 +54,26 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 数制格式化器
         /// </summary>
-        /// <param name="bin">进制</param>
+        /// <param name="base">进制</param>
         /// <param name="offset">起始值偏移</param>
-        public NumberFormater(int bin, int offset = 0)
+        public NumberFormater(byte @base, byte offset = 0)
         {
-            if (bin < 2)
+            if (@base < 2)
             {
-                bin = 2;
+                @base = 2;
             }
 
-            if (bin > 64)
+            if (@base > 64)
             {
                 throw new ArgumentException("默认进制最大支持64进制");
             }
 
-            Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, bin);
+            Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, @base);
+            if (offset >= @base)
+            {
+                throw new ArgumentException("偏移量不能超过进制基数" + @base);
+            }
+
             _offset = offset;
         }
 
@@ -149,13 +154,14 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public long FromString(string str)
         {
-            int start = 0;
+            byte start = 0;
             int resultOffset = 0;
             if (_offset > 0)
             {
                 start = 1;
                 resultOffset = _offset - 1;
             }
+
             int j = 0;
             return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
         }
@@ -167,7 +173,7 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public BigInteger FromStringBig(string str)
         {
-            int start = 0;
+            byte start = 0;
             int resultOffset = 0;
             if (_offset > 0)
             {

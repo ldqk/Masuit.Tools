@@ -11,7 +11,7 @@ namespace Masuit.Tools.Test
         [InlineData(16, 16, "10")]
         [InlineData(36, 36, "10")]
         [InlineData(62, 62, "10")]
-        public void Can_ConvertOct2AnySystem(int bin, long input, string expectOutput)
+        public void Can_ConvertOct2AnySystem(byte bin, long input, string expectOutput)
         {
             var nf = new NumberFormater(bin);
             string output = nf.ToString(input);
@@ -24,7 +24,7 @@ namespace Masuit.Tools.Test
         [InlineData(16, "10", 16)]
         [InlineData(36, "10", 36)]
         [InlineData(62, "10", 62)]
-        public void Can_ConvertAnySystem2Oct(int bin, string input, long expected)
+        public void Can_ConvertAnySystem2Oct(byte bin, string input, long expected)
         {
             var nf = new NumberFormater(bin);
             string output = nf.ToString(expected);

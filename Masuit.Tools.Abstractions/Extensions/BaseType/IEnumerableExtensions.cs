@@ -465,5 +465,16 @@ namespace Masuit.Tools
 
             return result;
         }
+
+        /// <summary>
+        /// 随机排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IOrderedEnumerable<T> OrderByRandom<T>(this IEnumerable<T> source)
+        {
+            return source.OrderBy(_ => Guid.NewGuid());
+        }
     }
 }

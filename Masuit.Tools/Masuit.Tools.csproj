@@ -172,7 +172,7 @@
       <Version>0.28.3</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.2.50</Version>
+      <Version>2.2.62</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
