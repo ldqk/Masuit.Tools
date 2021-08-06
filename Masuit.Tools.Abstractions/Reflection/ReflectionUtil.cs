@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -21,6 +22,7 @@ namespace Masuit.Tools.Reflection
 #pragma warning disable 1591
         public static BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 #pragma warning restore 1591
+        private static readonly ConcurrentDictionary<string, Delegate> _delegatesCache = new();
 
         /// <summary>
         /// 执行方法
@@ -32,10 +34,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>T类型</returns>
         public static T InvokeMethod<T>(this object obj, string methodName, object[] args)
         {
-            var type = obj.GetType();
-            var parameter = Expression.Parameter(type, "e");
-            var callExpression = Expression.Call(parameter, type.GetMethod(methodName, args.Select(o => o.GetType()).ToArray()), args.Select(Expression.Constant));
-            return (T)Expression.Lambda(callExpression, parameter).Compile().DynamicInvoke(obj);
+            return (T)obj.GetType().GetMethod(methodName, args.Select(o => o.GetType()).ToArray()).Invoke(obj, args);
         }
 
         /// <summary>
@@ -44,14 +43,11 @@ namespace Masuit.Tools.Reflection
         /// <param name="obj">反射对象</param>
         /// <param name="methodName">方法名，区分大小写</param>
         /// <param name="args">方法参数</param>
-        /// <typeparam name="T">约束返回的T必须是引用类型</typeparam>
         /// <returns>T类型</returns>
         public static void InvokeMethod(this object obj, string methodName, object[] args)
         {
             var type = obj.GetType();
-            var parameter = Expression.Parameter(type, "e");
-            var callExpression = Expression.Call(parameter, type.GetMethod(methodName, args.Select(o => o.GetType()).ToArray()), args.Select(Expression.Constant));
-            Expression.Lambda(callExpression, parameter).Compile().DynamicInvoke(obj);
+            type.GetMethod(methodName, args.Select(o => o.GetType()).ToArray()).Invoke(obj, args);
         }
 
         /// <summary>
@@ -98,7 +94,7 @@ namespace Masuit.Tools.Reflection
         {
             var parameter = Expression.Parameter(typeof(T), "e");
             var property = Expression.PropertyOrField(parameter, name);
-            var before = Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
+            var before = _delegatesCache.GetOrAdd(typeof(T) + "Get" + name, () => Expression.Lambda(property, parameter).Compile()).DynamicInvoke(obj);
             if (value.Equals(before))
             {
                 return value.ToString();
@@ -110,8 +106,12 @@ namespace Masuit.Tools.Reflection
             }
             else
             {
-                var assign = Expression.Assign(property, Expression.Constant(value));
-                Expression.Lambda(assign, parameter).Compile().DynamicInvoke(obj);
+                _delegatesCache.GetOrAdd(typeof(T) + "Set" + name, () =>
+                {
+                    var valueExpression = Expression.Parameter(value.GetType(), "v");
+                    var assign = Expression.Assign(property, valueExpression);
+                    return Expression.Lambda(assign, parameter, valueExpression).Compile();
+                }).DynamicInvoke(obj, value);
             }
 
             return before.ToJsonString();
@@ -126,9 +126,12 @@ namespace Masuit.Tools.Reflection
         /// <returns>T类型</returns>
         public static T GetProperty<T>(this object obj, string name)
         {
-            var parameter = Expression.Parameter(obj.GetType(), "e");
-            var property = Expression.PropertyOrField(parameter, name);
-            return (T)Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
+            return (T)_delegatesCache.GetOrAdd(obj.GetType() + "Get" + name, () =>
+            {
+                var parameter = Expression.Parameter(obj.GetType(), "e");
+                var property = Expression.PropertyOrField(parameter, name);
+                return Expression.Lambda(property, parameter).Compile();
+            }).DynamicInvoke(obj);
         }
 
         /// <summary>
@@ -172,7 +175,7 @@ namespace Masuit.Tools.Reflection
             FieldInfo fi = value.GetType().GetField(value.ToString());
             var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
             var text = attributes.Length > 0 ? attributes[0].Description : value.ToString();
-            if ((args != null) && args.Length > 0)
+            if (args is { Length: > 0 })
             {
                 return string.Format(null, text, args);
             }
@@ -277,7 +280,7 @@ namespace Masuit.Tools.Reflection
             int iLen = (int)st.Length;
             byte[] bytes = new byte[iLen];
             st.Read(bytes, 0, iLen);
-            return (bytes != null) ? Encoding.GetEncoding(charset).GetString(bytes) : "";
+            return Encoding.GetEncoding(charset).GetString(bytes);
         }
 
         #endregion 资源获取
@@ -444,7 +447,7 @@ namespace Masuit.Tools.Reflection
                 };
 
                 Type[] constructorArgumentTypes = argumentTypes.Where(t => t != typeof(TypeToIgnore)).ToArray();
-                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, new ParameterModifier[0]);
+                var constructor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, constructorArgumentTypes, Array.Empty<ParameterModifier>());
 
                 var lamdaParameterExpressions = new[]
                 {
