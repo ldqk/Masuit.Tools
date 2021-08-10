@@ -61,9 +61,12 @@ namespace Masuit.Tools.Hardware
                 using var moc = mc.GetInstances();
                 foreach (var mo in moc)
                 {
-                    if (mo["TotalPhysicalMemory"] != null)
+                    using (mo)
                     {
-                        PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
+                        if (mo["TotalPhysicalMemory"] != null)
+                        {
+                            PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
+                        }
                     }
                 }
 
@@ -118,12 +121,16 @@ namespace Masuit.Tools.Hardware
             {
                 try
                 {
-                    using var mos = new ManagementClass("Win32_OperatingSystem");
-                    foreach (var mo in mos.GetInstances())
+                    using var mc = new ManagementClass("Win32_OperatingSystem");
+                    using var moc = mc.GetInstances();
+                    foreach (var mo in moc)
                     {
-                        if (mo["FreePhysicalMemory"] != null)
+                        using (mo)
                         {
-                            return 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                            if (mo["FreePhysicalMemory"] != null)
+                            {
+                                return 1024 * long.Parse(mo["FreePhysicalMemory"].ToString());
+                            }
                         }
                     }
 
@@ -195,8 +202,8 @@ namespace Masuit.Tools.Hardware
             try
             {
                 using var m = new ManagementClass("Win32_Processor");
-                using var mn = m.GetInstances();
-                return mn.Count;
+                using var moc = m.GetInstances();
+                return moc.Count;
             }
             catch (Exception)
             {
@@ -208,7 +215,12 @@ namespace Masuit.Tools.Hardware
 
         #region 获取CPU信息
 
-        private static List<ManagementBaseObject> _cpuObjects;
+        private static readonly Lazy<List<ManagementBaseObject>> CpuObjects = new Lazy<List<ManagementBaseObject>>(() =>
+        {
+            using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+            using var moc = mos.Get();
+            return moc.AsParallel().Cast<ManagementBaseObject>().ToList();
+        });
 
         /// <summary>
         /// 获取CPU信息
@@ -218,10 +230,7 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
-                using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-                using var moc = mos.Get();
-                _cpuObjects ??= moc.AsParallel().Cast<ManagementBaseObject>().ToList();
-                return _cpuObjects.Select(mo => new CpuInfo
+                return CpuObjects.Value.Select(mo => new CpuInfo
                 {
                     CpuLoad = CpuLoad,
                     NumberOfLogicalProcessors = ProcessorCount,
@@ -252,7 +261,7 @@ namespace Masuit.Tools.Hardware
         /// <returns>内存信息</returns>
         public static RamInfo GetRamInfo()
         {
-            var info = new RamInfo
+            return new RamInfo
             {
                 MemoryAvailable = GetFreePhysicalMemory(),
                 PhysicalMemory = GetTotalPhysicalMemory(),
@@ -261,7 +270,6 @@ namespace Masuit.Tools.Hardware
                 AvailableVirtual = 1 - GetUsageVirtualMemory(),
                 TotalVirtual = 1 - GetUsedPhysicalMemory()
             };
-            return info;
         }
 
         #endregion
@@ -276,22 +284,24 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
-                string str = "";
                 using var mos = new ManagementObjectSearcher(@"root\WMI", "select * from MSAcpi_ThermalZoneTemperature");
-                var moc = mos.Get();
+                using var moc = mos.Get();
                 foreach (var mo in moc)
                 {
-                    str += mo.Properties["CurrentTemperature"].Value.ToString();
+                    using (mo)
+                    {
+                        //这就是CPU的温度了
+                        var temp = (float.Parse(mo.Properties["CurrentTemperature"].Value.ToString()) - 2732) / 10;
+                        return (float)Math.Round(temp, 2);
+                    }
                 }
-
-                //这就是CPU的温度了
-                float temp = (float.Parse(str) - 2732) / 10;
-                return (float)Math.Round(temp, 2);
             }
             catch (Exception)
             {
                 return 0;
             }
+
+            return 0;
         }
 
         #endregion
@@ -469,9 +479,12 @@ namespace Masuit.Tools.Hardware
                 using var moc = mc.GetInstances();
                 foreach (var mo in moc)
                 {
-                    if ((bool)mo["IPEnabled"])
+                    using (mo)
                     {
-                        list.Add(mo["MacAddress"].ToString());
+                        if ((bool)mo["IPEnabled"])
+                        {
+                            list.Add(mo["MacAddress"].ToString());
+                        }
                     }
                 }
 
@@ -534,9 +547,13 @@ namespace Masuit.Tools.Hardware
         {
             var query = new SelectQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem WHERE Primary='true'");
             using var searcher = new ManagementObjectSearcher(query);
-            foreach (var mo in searcher.Get())
+            using var moc = searcher.Get();
+            foreach (var mo in moc)
             {
-                return ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
+                using (mo)
+                {
+                    return ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
+                }
             }
 
             return DateTime.Now - TimeSpan.FromMilliseconds(Environment.TickCount & int.MaxValue);
@@ -551,18 +568,21 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
-                string str = null;
                 var mos = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
-                foreach (var mo in mos.Get())
+                using var moc = mos.Get();
+                foreach (var mo in moc)
                 {
-                    str = mo[type].ToString();
+                    using (mo)
+                    {
+                        return mo[type].ToString();
+                    }
                 }
-                return str;
             }
             catch (Exception e)
             {
                 return "未能获取到当前计算机系统信息，可能是当前程序无管理员权限，如果是web应用程序，请将应用程序池的高级设置中的进程模型下的标识设置为：LocalSystem；如果是普通桌面应用程序，请提升管理员权限后再操作。异常信息：" + e.Message;
             }
+            return string.Empty;
         }
 
         #endregion
@@ -599,12 +619,15 @@ namespace Masuit.Tools.Hardware
                 using var moc = mc.GetInstances();
                 foreach (var mo in moc)
                 {
-                    DiskInfos.Add(new DiskInfo()
+                    using (mo)
                     {
-                        Total = float.Parse(mo["Size"].ToString()),
-                        Model = mo["Model"].ToString(),
-                        SerialNumber = mo["SerialNumber"].ToString(),
-                    });
+                        DiskInfos.Add(new DiskInfo()
+                        {
+                            Total = float.Parse(mo["Size"].ToString()),
+                            Model = mo["Model"].ToString(),
+                            SerialNumber = mo["SerialNumber"].ToString(),
+                        });
+                    }
                 }
 
                 return DiskInfos;

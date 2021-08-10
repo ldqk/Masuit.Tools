@@ -18,10 +18,10 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.3.8</Version>
-        <FileVersion>2.4.3.8</FileVersion>
+        <Version>2.4.3.9</Version>
+        <FileVersion>2.4.3.9</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>2.4.3.8</AssemblyVersion>
+        <AssemblyVersion>2.4.3.9</AssemblyVersion>
         <Authors>懒得勤快X</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -31,7 +31,7 @@ github：https://github.com/ldqk/Masuit.Tools
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.5.0" />
-        <PackageReference Include="HtmlSanitizer" Version="5.0.404" />
+        <PackageReference Include="HtmlSanitizer" Version="6.0.437" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
