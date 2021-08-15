@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Masuit.Tools
 {
@@ -9,11 +8,11 @@ namespace Masuit.Tools
         /// 生成真正的随机数
         /// </summary>
         /// <param name="r"></param>
-        /// <param name="seed"></param>
+        /// <param name="maxValue"></param>
         /// <returns></returns>
-        public static int StrictNext(this Random r, int seed = int.MaxValue)
+        public static int StrictNext(this Random r, int maxValue = int.MaxValue)
         {
-            return new Random((int)Stopwatch.GetTimestamp()).Next(seed);
+            return new Random(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0)).Next(maxValue);
         }
 
         /// <summary>

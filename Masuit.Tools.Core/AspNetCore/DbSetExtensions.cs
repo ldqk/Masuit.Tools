@@ -96,7 +96,7 @@ namespace Masuit.Tools.Core.AspNetCore
                     }
                 }
 
-                foreach (var idField in keyIgnoreFields.Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
+                foreach (var idField in keyIgnoreFields.Where(p => p.SetMethod != null && p.GetMethod != null))
                 {
                     var existingValue = idField.GetValue(item);
                     if (idField.GetValue(entity) != existingValue)

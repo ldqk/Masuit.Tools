@@ -361,6 +361,25 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
+        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+        /// </summary>
+        /// <param name="encryptString">待加密字符串</param>
+        /// <param name="encryptKey">加密密钥，须半角字符</param>
+        /// <returns>加密结果字符串</returns>
+        public static string AESEncrypt(this string encryptString, byte[] encryptKey)
+        {
+            using var rijndaelProvider = new RijndaelManaged
+            {
+                Key = encryptKey,
+                IV = Keys
+            };
+            using ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
+            byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
+            byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+            return Convert.ToBase64String(encryptedData);
+        }
+
+        /// <summary>
         /// 对称加密算法AES RijndaelManaged解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
@@ -385,6 +404,32 @@ namespace Masuit.Tools.Security
                 using var rijndaelProvider = new RijndaelManaged()
                 {
                     Key = Encoding.UTF8.GetBytes(decryptKey),
+                    IV = Keys
+                };
+                using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
+                byte[] inputData = Convert.FromBase64String(decryptString);
+                byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+                return Encoding.UTF8.GetString(decryptedData);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// 对称加密算法AES RijndaelManaged解密字符串
+        /// </summary>
+        /// <param name="decryptString">待解密的字符串</param>
+        /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
+        /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
+        public static string AESDecrypt(this string decryptString, byte[] decryptKey)
+        {
+            try
+            {
+                using var rijndaelProvider = new RijndaelManaged()
+                {
+                    Key = decryptKey,
                     IV = Keys
                 };
                 using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
@@ -514,6 +559,23 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
+        /// 加密文件流
+        /// </summary>
+        /// <param name="fs">需要加密的文件流</param>
+        /// <param name="decryptKey">加密密钥</param>
+        /// <returns>加密流</returns>
+        public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey)
+        {
+            using var rijndaelProvider = new RijndaelManaged()
+            {
+                Key = decryptKey,
+                IV = Keys
+            };
+            using var encrypto = rijndaelProvider.CreateEncryptor();
+            return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
+        }
+
+        /// <summary>
         /// 解密文件流
         /// </summary>
         /// <param name="fs">需要解密的文件流</param>
@@ -526,6 +588,23 @@ namespace Masuit.Tools.Security
             using var rijndaelProvider = new RijndaelManaged()
             {
                 Key = Encoding.UTF8.GetBytes(decryptKey),
+                IV = Keys
+            };
+            using var decrypto = rijndaelProvider.CreateDecryptor();
+            return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
+        }
+
+        /// <summary>
+        /// 解密文件流
+        /// </summary>
+        /// <param name="fs">需要解密的文件流</param>
+        /// <param name="decryptKey">解密密钥</param>
+        /// <returns>加密流</returns>
+        public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey)
+        {
+            using var rijndaelProvider = new RijndaelManaged()
+            {
+                Key = decryptKey,
                 IV = Keys
             };
             using var decrypto = rijndaelProvider.CreateDecryptor();
