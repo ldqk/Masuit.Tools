@@ -15,7 +15,7 @@ namespace Masuit.Tools.Models
             get
             {
                 var nslookup = new LookupClient();
-                var query = nslookup.Query(Domain, QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
+                var query = nslookup.QueryCache(Domain, QueryType.MX).Answers.MxRecords().SelectMany(r => Dns.GetHostAddresses(r.Exchange.Value)).ToList();
                 return query.FindAll(ip => !ip.IsPrivateIP());
             }
         }

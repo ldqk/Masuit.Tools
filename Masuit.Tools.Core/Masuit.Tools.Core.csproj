@@ -31,7 +31,7 @@ github：https://github.com/ldqk/Masuit.Tools
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.5.0" />
-        <PackageReference Include="HtmlSanitizer" Version="6.0.437" />
+        <PackageReference Include="HtmlSanitizer" Version="6.0.441" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />

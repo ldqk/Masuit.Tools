@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools
@@ -187,7 +188,7 @@ namespace Masuit.Tools
             if (isMatch && valid)
             {
                 var nslookup = new LookupClient();
-                var task = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
+                var task = nslookup.QueryCache(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
                 {
                     if (t.IsCanceled || t.IsFaulted)
                     {
@@ -220,7 +221,8 @@ namespace Masuit.Tools
             if (isMatch && valid)
             {
                 var nslookup = new LookupClient();
-                var query = await nslookup.QueryAsync(s.Split('@')[1], QueryType.MX);
+                using var cts = new CancellationTokenSource(100);
+                var query = await nslookup.QueryAsync(s.Split('@')[1], QueryType.MX, cancellationToken: cts.Token);
                 var result = await query.Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
                 {
                     if (t.IsCanceled || t.IsFaulted)
