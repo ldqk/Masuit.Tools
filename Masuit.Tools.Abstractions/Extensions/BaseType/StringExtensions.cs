@@ -188,7 +188,7 @@ namespace Masuit.Tools
             if (isMatch && valid)
             {
                 var nslookup = new LookupClient();
-                var task = nslookup.QueryCache(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
+                var task = nslookup.Query(s.Split('@')[1], QueryType.MX).Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
                 {
                     if (t.IsCanceled || t.IsFaulted)
                     {
@@ -423,12 +423,8 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool IsPrivateIP(this string ip)
         {
-            if (MatchInetAddress(ip))
-            {
-                return IPAddress.Parse(ip).IsPrivateIP();
-            }
-
-            return false;
+            var address = MatchInetAddress(ip, out var b);
+            return b && address.IsPrivateIP();
         }
 
         /// <summary>
