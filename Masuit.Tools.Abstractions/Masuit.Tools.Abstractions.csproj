@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <Version>2.4.3.9</Version>
+    <Version>2.4.4</Version>
     <Authors>懒得勤快</Authors>
     <Description>Masuit.Tools基础公共库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。</Description>
     <Copyright>懒得勤快，长空X</Copyright>
@@ -17,9 +17,9 @@
     <RepositoryType>Github</RepositoryType>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <FileVersion>2.4.3.9</FileVersion>
-    <Company>ldqk.org</Company>
-    <AssemblyVersion>2.4.3.9</AssemblyVersion>
+    <FileVersion>2.4.4</FileVersion>
+    <Company>masuit.com</Company>
+    <AssemblyVersion>2.4.4</AssemblyVersion>
     <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>

@@ -114,6 +114,36 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 检测字符串中是否包含列表中的关键词
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="regex">关键词列表</param>
+        /// <param name="ignoreCase">忽略大小写</param>
+        /// <returns></returns>
+        public static bool RegexMatch(this string s, string regex, bool ignoreCase = true)
+        {
+            if (string.IsNullOrEmpty(regex) || string.IsNullOrEmpty(s))
+            {
+                return false;
+            }
+
+            if (ignoreCase)
+            {
+                return Regex.IsMatch(s, regex, RegexOptions.IgnoreCase);
+            }
+
+            return Regex.IsMatch(s, regex);
+        }
+
+        /// <summary>
+        /// 检测字符串中是否包含列表中的关键词
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="regex">关键词列表</param>
+        /// <returns></returns>
+        public static bool RegexMatch(this string s, Regex regex) => !string.IsNullOrEmpty(s) && regex.IsMatch(s);
+
+        /// <summary>
         /// 判断是否包含符号
         /// </summary>
         /// <param name="str"></param>
@@ -124,9 +154,8 @@ namespace Masuit.Tools
             return str switch
             {
                 null => false,
-                string a when string.IsNullOrEmpty(a) => false,
-                string a when a == string.Empty => false,
-                _ => symbols.Any(t => str.Contains(t))
+                "" => false,
+                _ => symbols.Any(str.Contains)
             };
         }
 

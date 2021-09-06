@@ -333,10 +333,11 @@ namespace Masuit.Tools.Security
         /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密结果字符串</returns>
-        public static string AESEncrypt(this string encryptString)
+        public static string AESEncrypt(this string encryptString, CipherMode mode = CipherMode.CBC)
         {
-            return AESEncrypt(encryptString, Default_AES_Key);
+            return AESEncrypt(encryptString, Default_AES_Key, mode);
         }
 
         /// <summary>
@@ -344,15 +345,17 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
         /// <param name="encryptKey">加密密钥，须半角字符</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密结果字符串</returns>
-        public static string AESEncrypt(this string encryptString, string encryptKey)
+        public static string AESEncrypt(this string encryptString, string encryptKey, CipherMode mode = CipherMode.CBC)
         {
             encryptKey = GetSubString(encryptKey, 32, "");
             encryptKey = encryptKey.PadRight(32, ' ');
             using var rijndaelProvider = new RijndaelManaged
             {
                 Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32)),
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
@@ -364,14 +367,30 @@ namespace Masuit.Tools.Security
         /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
-        /// <param name="encryptKey">加密密钥，须半角字符</param>
+        /// <param name="options">加密选项</param>
         /// <returns>加密结果字符串</returns>
-        public static string AESEncrypt(this string encryptString, byte[] encryptKey)
+        public static string AESEncrypt(this string encryptString, RijndaelManaged options)
+        {
+            using ICryptoTransform rijndaelEncrypt = options.CreateEncryptor();
+            byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
+            byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+            return Convert.ToBase64String(encryptedData);
+        }
+
+        /// <summary>
+        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+        /// </summary>
+        /// <param name="encryptString">待加密字符串</param>
+        /// <param name="encryptKey">加密密钥，须半角字符</param>
+        /// <param name="mode">加密模式</param>
+        /// <returns>加密结果字符串</returns>
+        public static string AESEncrypt(this string encryptString, byte[] encryptKey, CipherMode mode = CipherMode.CBC)
         {
             using var rijndaelProvider = new RijndaelManaged
             {
                 Key = encryptKey,
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
@@ -383,10 +402,11 @@ namespace Masuit.Tools.Security
         /// 对称加密算法AES RijndaelManaged解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>解密成功返回解密后的字符串,失败返源串</returns>
-        public static string AESDecrypt(this string decryptString)
+        public static string AESDecrypt(this string decryptString, CipherMode mode = CipherMode.CBC)
         {
-            return AESDecrypt(decryptString, Default_AES_Key);
+            return AESDecrypt(decryptString, Default_AES_Key, mode);
         }
 
         /// <summary>
@@ -394,8 +414,9 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
         /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
-        public static string AESDecrypt(this string decryptString, string decryptKey)
+        public static string AESDecrypt(this string decryptString, string decryptKey, CipherMode mode = CipherMode.CBC)
         {
             try
             {
@@ -404,7 +425,8 @@ namespace Masuit.Tools.Security
                 using var rijndaelProvider = new RijndaelManaged()
                 {
                     Key = Encoding.UTF8.GetBytes(decryptKey),
-                    IV = Keys
+                    IV = Keys,
+                    Mode = mode
                 };
                 using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
                 byte[] inputData = Convert.FromBase64String(decryptString);
@@ -421,16 +443,39 @@ namespace Masuit.Tools.Security
         /// 对称加密算法AES RijndaelManaged解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
-        /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
+        /// <param name="options">加密选项</param>
         /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
-        public static string AESDecrypt(this string decryptString, byte[] decryptKey)
+        public static string AESDecrypt(this string decryptString, RijndaelManaged options)
+        {
+            try
+            {
+                using ICryptoTransform rijndaelDecrypt = options.CreateDecryptor();
+                byte[] inputData = Convert.FromBase64String(decryptString);
+                byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+                return Encoding.UTF8.GetString(decryptedData);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// 对称加密算法AES RijndaelManaged解密字符串
+        /// </summary>
+        /// <param name="decryptString">待解密的字符串</param>
+        /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
+        /// <param name="mode">加密模式</param>
+        /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
+        public static string AESDecrypt(this string decryptString, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
         {
             try
             {
                 using var rijndaelProvider = new RijndaelManaged()
                 {
                     Key = decryptKey,
-                    IV = Keys
+                    IV = Keys,
+                    Mode = mode
                 };
                 using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
                 byte[] inputData = Convert.FromBase64String(decryptString);
@@ -544,15 +589,17 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="fs">需要加密的文件流</param>
         /// <param name="decryptKey">加密密钥</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密流</returns>
-        public static CryptoStream AESEncryptStrream(this FileStream fs, string decryptKey)
+        public static CryptoStream AESEncryptStrream(this FileStream fs, string decryptKey, CipherMode mode = CipherMode.CBC)
         {
             decryptKey = GetSubString(decryptKey, 32, "");
             decryptKey = decryptKey.PadRight(32, ' ');
             using var rijndaelProvider = new RijndaelManaged()
             {
                 Key = Encoding.UTF8.GetBytes(decryptKey),
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using var encrypto = rijndaelProvider.CreateEncryptor();
             return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
@@ -563,13 +610,15 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="fs">需要加密的文件流</param>
         /// <param name="decryptKey">加密密钥</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密流</returns>
-        public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey)
+        public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
         {
             using var rijndaelProvider = new RijndaelManaged()
             {
                 Key = decryptKey,
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using var encrypto = rijndaelProvider.CreateEncryptor();
             return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
@@ -580,15 +629,17 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="fs">需要解密的文件流</param>
         /// <param name="decryptKey">解密密钥</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密流</returns>
-        public static CryptoStream AESDecryptStream(this FileStream fs, string decryptKey)
+        public static CryptoStream AESDecryptStream(this FileStream fs, string decryptKey, CipherMode mode = CipherMode.CBC)
         {
             decryptKey = GetSubString(decryptKey, 32, "");
             decryptKey = decryptKey.PadRight(32, ' ');
             using var rijndaelProvider = new RijndaelManaged()
             {
                 Key = Encoding.UTF8.GetBytes(decryptKey),
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using var decrypto = rijndaelProvider.CreateDecryptor();
             return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
@@ -599,13 +650,15 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="fs">需要解密的文件流</param>
         /// <param name="decryptKey">解密密钥</param>
+        /// <param name="mode">加密模式</param>
         /// <returns>加密流</returns>
-        public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey)
+        public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
         {
             using var rijndaelProvider = new RijndaelManaged()
             {
                 Key = decryptKey,
-                IV = Keys
+                IV = Keys,
+                Mode = mode
             };
             using var decrypto = rijndaelProvider.CreateDecryptor();
             return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
@@ -615,11 +668,12 @@ namespace Masuit.Tools.Security
         /// 对指定文件AES加密
         /// </summary>
         /// <param name="input">源文件流</param>
+        /// <param name="mode">加密模式</param>
         /// <param name="outputPath">输出文件路径</param>
-        public static void AESEncryptFile(this FileStream input, string outputPath)
+        public static void AESEncryptFile(this FileStream input, string outputPath, CipherMode mode = CipherMode.CBC)
         {
             using var fren = new FileStream(outputPath, FileMode.Create);
-            using var enfr = AESEncryptStrream(fren, Default_AES_Key);
+            using var enfr = AESEncryptStrream(fren, Default_AES_Key, mode);
             byte[] bytearrayinput = new byte[input.Length];
             input.Read(bytearrayinput, 0, bytearrayinput.Length);
             enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
@@ -629,11 +683,12 @@ namespace Masuit.Tools.Security
         /// 对指定的文件AES解密
         /// </summary>
         /// <param name="input">源文件流</param>
+        /// <param name="mode">加密模式</param>
         /// <param name="outputPath">输出文件路径</param>
-        public static void AESDecryptFile(this FileStream input, string outputPath)
+        public static void AESDecryptFile(this FileStream input, string outputPath, CipherMode mode = CipherMode.CBC)
         {
             using FileStream frde = new FileStream(outputPath, FileMode.Create);
-            using CryptoStream defr = AESDecryptStream(input, Default_AES_Key);
+            using CryptoStream defr = AESDecryptStream(input, Default_AES_Key, mode);
             byte[] bytearrayoutput = new byte[1024];
             while (true)
             {
