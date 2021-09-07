@@ -26,18 +26,8 @@ namespace Masuit.Tools
                 AddressFamily.InterNetwork when bytes[0] == 198 && bytes[1] == 18 => true,
                 AddressFamily.InterNetwork when bytes[0] == 198 && bytes[1] == 51 && bytes[2] == 100 => true,
                 AddressFamily.InterNetwork when bytes[0] == 203 && bytes[1] == 0 && bytes[2] == 113 => true,
-                AddressFamily.InterNetworkV6 when ip.IsIPv6Teredo || ip.IsIPv6LinkLocal || ip.IsIPv6Multicast || ip.IsIPv6SiteLocal => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("::") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("64:ff9b::") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("100::") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("2001::") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("2001:2") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("2001:db8:") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("2002:") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("fc") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("fd") => true,
-                AddressFamily.InterNetworkV6 when ip.ToString().StartsWith("fe") => true,
-                AddressFamily.InterNetworkV6 when bytes[0] == 255 => true,
+                AddressFamily.InterNetwork when bytes[0] >= 233 => true,
+                AddressFamily.InterNetworkV6 when ip.IsIPv6Teredo || ip.IsIPv6LinkLocal || ip.IsIPv6Multicast || ip.IsIPv6SiteLocal || bytes[0] == 0 || bytes[0] >= 252 => true,
                 _ => false
             };
         }
