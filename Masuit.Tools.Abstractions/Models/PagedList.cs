@@ -18,7 +18,7 @@ namespace Masuit.Tools.Models
         /// <summary>
         /// 当前页
         /// </summary>
-        public int CurrentPage { get; }
+        public int CurrentPage { get; set; }
 
         /// <summary>
         /// 总页数
