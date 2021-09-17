@@ -1,6 +1,8 @@
-﻿using Masuit.Tools.Config;
+﻿using DnsClient;
+using Masuit.Tools.Config;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.Core.Validator
@@ -23,7 +25,7 @@ namespace Masuit.Tools.Core.Validator
         private string BlockList { get; }
 
         /// <summary>
-        /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，EmailDomainBlockList配置邮箱域名黑名单，逗号分隔，每个单独的元素支持正则表达式
+        /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，EmailDomainBlockList配置邮箱域名黑名单，英文分号(;)或感叹号(!)或逗号(,)分隔，每个单独的元素支持正则表达式
         /// </summary>
         /// <param name="valid">是否检查邮箱的有效性</param>
         public IsEmailAttribute(bool valid = true)
@@ -59,7 +61,7 @@ namespace Masuit.Tools.Core.Validator
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(BlockList) && BlockList.Split('!').Any(item => Regex.IsMatch(email, item)))
+            if (!string.IsNullOrEmpty(BlockList) && BlockList.Split('!', ';').Any(item => Regex.IsMatch(email, item)))
             {
                 ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
@@ -70,7 +72,29 @@ namespace Masuit.Tools.Core.Validator
                 return true;
             }
 
-            if (email.MatchEmail(_valid).isMatch)
+            var isMatch = email.MatchEmail().isMatch;
+            if (isMatch && _valid)
+            {
+                var nslookup = new LookupClient();
+                var records = nslookup.Query(email.Split('@')[1], QueryType.MX).Answers.MxRecords().ToList();
+                if (!string.IsNullOrEmpty(BlockList) && records.Any(r => BlockList.Split('!').Any(item => Regex.IsMatch(r.Exchange.Value, item))))
+                {
+                    ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
+                    return false;
+                }
+
+                var task = records.SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
+                {
+                    if (t.IsCanceled || t.IsFaulted)
+                    {
+                        return new[] { IPAddress.Loopback };
+                    }
+
+                    return t.Result;
+                }));
+                isMatch = task.Result.SelectMany(a => a).Any(ip => !ip.IsPrivateIP());
+            }
+            if (isMatch)
             {
                 return true;
             }

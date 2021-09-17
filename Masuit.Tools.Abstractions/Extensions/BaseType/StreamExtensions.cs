@@ -1,10 +1,12 @@
-﻿using System.IO;
-#if NET5_0
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+#if NET5_0_OR_GREATER
 using System;
 using System.Buffers;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 #endif
 
 namespace Masuit.Tools
@@ -38,7 +40,276 @@ namespace Masuit.Tools
             return bytes;
         }
 
-#if NET5_0
+        /// <summary>
+        /// 读取所有行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static List<string> ReadAllLines(this StreamReader stream, bool closeAfter = true)
+        {
+            var stringList = new List<string>();
+            string str;
+            while ((str = stream.ReadLine()) != null)
+            {
+                stringList.Add(str);
+            }
+
+            if (closeAfter)
+            {
+                stream.Close();
+                stream.Dispose();
+            }
+            return stringList;
+        }
+
+        /// <summary>
+        /// 读取所有行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static List<string> ReadAllLines(this FileStream stream, Encoding encoding, bool closeAfter = true)
+        {
+            var stringList = new List<string>();
+            string str;
+            var sr = new StreamReader(stream, encoding);
+            while ((str = sr.ReadLine()) != null)
+            {
+                stringList.Add(str);
+            }
+
+            if (closeAfter)
+            {
+                sr.Close();
+                sr.Dispose();
+                stream.Close();
+                stream.Dispose();
+            }
+
+            return stringList;
+        }
+
+        /// <summary>
+        /// 读取所有文本
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static string ReadAllText(this FileStream stream, Encoding encoding, bool closeAfter = true)
+        {
+            var sr = new StreamReader(stream, encoding);
+            var text = sr.ReadToEnd();
+            if (closeAfter)
+            {
+                sr.Close();
+                sr.Dispose();
+                stream.Close();
+                stream.Dispose();
+            }
+
+            return text;
+        }
+
+        /// <summary>
+        /// 写入所有文本
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="content"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static void WriteAllText(this FileStream stream, string content, Encoding encoding, bool closeAfter = true)
+        {
+            var sw = new StreamWriter(stream, encoding);
+            sw.Write(content);
+            if (closeAfter)
+            {
+                sw.Close();
+                sw.Dispose();
+                stream.Close();
+                stream.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 写入所有文本行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="lines"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static void WriteAllLines(this FileStream stream, IEnumerable<string> lines, Encoding encoding, bool closeAfter = true)
+        {
+            var sw = new StreamWriter(stream, encoding);
+            foreach (var line in lines)
+            {
+                sw.WriteLine(line);
+            }
+
+            sw.Flush();
+            if (closeAfter)
+            {
+                sw.Close();
+                sw.Dispose();
+                stream.Close();
+                stream.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 共享读写打开文件
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static FileStream ShareReadWrite(this FileInfo file)
+        {
+            return file.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+        }
+
+        /// <summary>
+        /// 读取所有行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static async Task<List<string>> ReadAllLinesAsync(this StreamReader stream, bool closeAfter = true)
+        {
+            var stringList = new List<string>();
+            string str;
+            while ((str = await stream.ReadLineAsync().ConfigureAwait(false)) != null)
+            {
+                stringList.Add(str);
+            }
+
+            if (closeAfter)
+            {
+                stream.Close();
+                stream.Dispose();
+            }
+            return stringList;
+        }
+
+        /// <summary>
+        /// 读取所有行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static async Task<List<string>> ReadAllLinesAsync(this FileStream stream, Encoding encoding, bool closeAfter = true)
+        {
+            var stringList = new List<string>();
+            string str;
+            var sr = new StreamReader(stream, encoding);
+            while ((str = await sr.ReadLineAsync().ConfigureAwait(false)) != null)
+            {
+                stringList.Add(str);
+            }
+
+            if (closeAfter)
+            {
+                sr.Close();
+                sr.Dispose();
+                stream.Close();
+#if NET5_0_OR_GREATER
+                await stream.DisposeAsync().ConfigureAwait(false); 
+#else
+                stream.Dispose();
+#endif
+            }
+
+            return stringList;
+        }
+
+        /// <summary>
+        /// 读取所有文本
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static async Task<string> ReadAllTextAsync(this FileStream stream, Encoding encoding, bool closeAfter = true)
+        {
+            var sr = new StreamReader(stream, encoding);
+            var text = await sr.ReadToEndAsync().ConfigureAwait(false);
+            if (closeAfter)
+            {
+                sr.Close();
+                sr.Dispose();
+                stream.Close();
+#if NET5_0_OR_GREATER
+                await stream.DisposeAsync().ConfigureAwait(false); 
+#else
+                stream.Dispose();
+#endif
+            }
+
+            return text;
+        }
+
+        /// <summary>
+        /// 写入所有文本
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="content"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static async Task WriteAllTextAsync(this FileStream stream, string content, Encoding encoding, bool closeAfter = true)
+        {
+            var sw = new StreamWriter(stream, encoding);
+            await sw.WriteAsync(content).ConfigureAwait(false);
+            await sw.FlushAsync().ConfigureAwait(false);
+            if (closeAfter)
+            {
+                sw.Close();
+                stream.Close();
+#if NET5_0_OR_GREATER
+                await sw.DisposeAsync().ConfigureAwait(false);
+                await stream.DisposeAsync().ConfigureAwait(false); 
+#else
+                sw.Dispose();
+                stream.Dispose();
+#endif
+            }
+        }
+
+        /// <summary>
+        /// 写入所有文本行
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="lines"></param>
+        /// <param name="encoding"></param>
+        /// <param name="closeAfter">读取完毕后关闭流</param>
+        /// <returns></returns>
+        public static async Task WriteAllLinesAsync(this FileStream stream, IEnumerable<string> lines, Encoding encoding, bool closeAfter = true)
+        {
+            var sw = new StreamWriter(stream, encoding);
+            foreach (var line in lines)
+            {
+                await sw.WriteLineAsync(line).ConfigureAwait(false);
+            }
+
+            await sw.FlushAsync().ConfigureAwait(false);
+            if (closeAfter)
+            {
+                sw.Close();
+                stream.Close();
+#if NET5_0_OR_GREATER
+                await sw.DisposeAsync().ConfigureAwait(false);
+                await stream.DisposeAsync().ConfigureAwait(false); 
+#else
+                sw.Dispose();
+                stream.Dispose();
+#endif
+            }
+        }
+
+#if NET5_0_OR_GREATER
         /// <summary>
         /// 
         /// </summary>
