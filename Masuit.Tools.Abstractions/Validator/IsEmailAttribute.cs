@@ -1,5 +1,6 @@
 ﻿using DnsClient;
 using Masuit.Tools.Config;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
@@ -61,7 +62,7 @@ namespace Masuit.Tools.Core.Validator
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(BlockList) && BlockList.Split('!', ';').Any(item => Regex.IsMatch(email, item)))
+            if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(new[] { '!', ';' }, StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
             {
                 ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
