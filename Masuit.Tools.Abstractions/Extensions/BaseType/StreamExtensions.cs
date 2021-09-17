@@ -124,6 +124,7 @@ namespace Masuit.Tools
         public static void WriteAllText(this FileStream stream, string content, Encoding encoding, bool closeAfter = true)
         {
             var sw = new StreamWriter(stream, encoding);
+            stream.SetLength(0);
             sw.Write(content);
             if (closeAfter)
             {
@@ -145,6 +146,7 @@ namespace Masuit.Tools
         public static void WriteAllLines(this FileStream stream, IEnumerable<string> lines, Encoding encoding, bool closeAfter = true)
         {
             var sw = new StreamWriter(stream, encoding);
+            stream.SetLength(0);
             foreach (var line in lines)
             {
                 sw.WriteLine(line);
@@ -262,6 +264,7 @@ namespace Masuit.Tools
         public static async Task WriteAllTextAsync(this FileStream stream, string content, Encoding encoding, bool closeAfter = true)
         {
             var sw = new StreamWriter(stream, encoding);
+            stream.SetLength(0);
             await sw.WriteAsync(content).ConfigureAwait(false);
             await sw.FlushAsync().ConfigureAwait(false);
             if (closeAfter)
@@ -289,6 +292,7 @@ namespace Masuit.Tools
         public static async Task WriteAllLinesAsync(this FileStream stream, IEnumerable<string> lines, Encoding encoding, bool closeAfter = true)
         {
             var sw = new StreamWriter(stream, encoding);
+            stream.SetLength(0);
             foreach (var line in lines)
             {
                 await sw.WriteLineAsync(line).ConfigureAwait(false);
