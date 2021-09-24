@@ -732,8 +732,9 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 ```csharp
 var changes=dbContext.GetChanges<Post>();//获取变更字段信息
 var added=dbContext.GetAdded<Post>();//获取添加的实体字段信息
-var removed=dbContext.GetRemoved<Post>();//获取被移除的实体字段信息
+var removed=dbContext.GetRemoved<Post>();//获取被移除的实体字段信息  
 ```
+对比信息包含属性信息、旧值、新值、实体信息、键信息、变更状态等
 ### 47.任何类型支持链式调用
 ```csharp
 a.Next(func1).Next(func2).Next(func3);
