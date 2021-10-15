@@ -166,6 +166,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Mime\MimeMappingItem.cs">
       <Link>Mime\MimeMappingItem.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Circle.cs">
+      <Link>Models\Circle.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\DateTimeRange.cs">
       <Link>Models\DateTimeRange.cs</Link>
     </Compile>
@@ -180,6 +183,9 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\PagedList.cs">
       <Link>Models\PagedList.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Models\Sphere.cs">
+      <Link>Models\Sphere.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Models\Tree.cs">
       <Link>Models\Tree.cs</Link>
