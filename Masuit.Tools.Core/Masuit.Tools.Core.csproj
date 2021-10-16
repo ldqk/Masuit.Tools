@@ -18,11 +18,11 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.4.7</Version>
-        <FileVersion>2.4.4.7</FileVersion>
+        <Version>2.4.4.8</Version>
+        <FileVersion>2.4.4.8</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>2.4.4.7</AssemblyVersion>
-        <Authors>懒得勤快X</Authors>
+        <AssemblyVersion>2.4.4.8</AssemblyVersion>
+        <Authors>懒得勤快</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
@@ -44,6 +44,7 @@ github：https://github.com/ldqk/Masuit.Tools
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
