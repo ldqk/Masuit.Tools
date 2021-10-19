@@ -114,6 +114,23 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 检测字符串中是否以列表中的关键词结尾
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="keys">关键词列表</param>
+        /// <param name="ignoreCase">忽略大小写</param>
+        /// <returns></returns>
+        public static bool EndsWith(this string s, string[] keys, bool ignoreCase = true)
+        {
+            if (keys.Length == 0 || string.IsNullOrEmpty(s))
+            {
+                return false;
+            }
+
+            return ignoreCase ? keys.Any(key => s.EndsWith(key, StringComparison.CurrentCultureIgnoreCase)) : keys.Any(s.EndsWith);
+        }
+
+        /// <summary>
         /// 检测字符串中是否包含列表中的关键词
         /// </summary>
         /// <param name="s">源字符串</param>
