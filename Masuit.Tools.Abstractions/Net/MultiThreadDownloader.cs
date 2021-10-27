@@ -71,7 +71,7 @@ namespace Masuit.Tools.Net
                 {
                     return PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
                 }
-                catch (Exception e)
+                catch
                 {
                     return 0;
                 }

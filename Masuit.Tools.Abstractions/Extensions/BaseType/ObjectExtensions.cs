@@ -186,6 +186,7 @@ namespace Masuit.Tools
             }
             return double.Parse(value.ToString()) == 0;
         }
+
         /// <summary>
         /// 链式操作
         /// </summary>
