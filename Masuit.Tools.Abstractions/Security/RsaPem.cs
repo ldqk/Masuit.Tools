@@ -121,9 +121,7 @@ namespace Masuit.Tools.Security
                 BigInteger q = n / p;
                 if (p.CompareTo(q) > 0)
                 {
-                    BigInteger t = p;
-                    p = q;
-                    q = t;
+                    (p, q) = (q, p);
                 }
 
                 BigInteger exp1 = d % (p - BigInteger.One);
@@ -325,7 +323,7 @@ namespace Masuit.Tools.Security
                 return val;
             };
             //比较data从idx位置开始是否是byts内容
-            Func<byte[], bool> eq = (byts) =>
+            Func<byte[], bool> eq = byts =>
             {
                 for (var i = 0; i < byts.Length; i++, idx++)
                 {
@@ -423,29 +421,9 @@ namespace Masuit.Tools.Security
 
         private static readonly Regex PemCode = new Regex(@"--+.+?--+|\s+");
 
-        private static readonly byte[] SeqOid = {
-            0x30,
-            0x0D,
-            0x06,
-            0x09,
-            0x2A,
-            0x86,
-            0x48,
-            0x86,
-            0xF7,
-            0x0D,
-            0x01,
-            0x01,
-            0x01,
-            0x05,
-            0x00
-        };
+        private static readonly byte[] SeqOid = { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00 };
 
-        private static readonly byte[] Ver = {
-            0x02,
-            0x01,
-            0x00
-        };
+        private static readonly byte[] Ver = { 0x02, 0x01, 0x00 };
 
 
         /// <summary>
@@ -701,12 +679,7 @@ namespace Masuit.Tools.Security
             str.Append("<RSAKeyValue>");
             str.Append("<Modulus>" + Convert.ToBase64String(KeyModulus) + "</Modulus>");
             str.Append("<Exponent>" + Convert.ToBase64String(KeyExponent) + "</Exponent>");
-            if (KeyD == null || convertToPublic)
-            {
-                /****生成公钥****/
-                //NOOP
-            }
-            else
+            if (KeyD != null && !convertToPublic)
             {
                 /****生成私钥****/
                 str.Append("<P>" + Convert.ToBase64String(ValP) + "</P>");

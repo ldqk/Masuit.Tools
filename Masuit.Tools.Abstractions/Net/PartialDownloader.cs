@@ -33,6 +33,7 @@ namespace Masuit.Tools.Net
         int _counter;
         private int _to;
         private int _totalBytesRead;
+        private bool _wait;
 
         /// <summary>
         /// 下载已停止
