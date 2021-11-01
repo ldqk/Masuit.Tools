@@ -723,8 +723,15 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的数据</returns>
         public static string Base64Decrypt(this string str)
         {
-            byte[] decbuff = Convert.FromBase64String(str);
-            return Encoding.UTF8.GetString(decbuff);
+            try
+            {
+                byte[] decbuff = Convert.FromBase64String(str);
+                return Encoding.UTF8.GetString(decbuff);
+            }
+            catch
+            {
+                return str;
+            }
         }
 
         #endregion
