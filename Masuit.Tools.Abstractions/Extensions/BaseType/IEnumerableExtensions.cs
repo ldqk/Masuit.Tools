@@ -580,5 +580,18 @@ namespace Masuit.Tools
         {
             return (news.Where(c => olds.All(m => key1Selector(m) != key2Selector(c))), olds.Where(m => news.All(c => key2Selector(c) != key1Selector(m))), olds.Where(m => news.Any(c => key1Selector(m) == key2Selector(c))));
         }
+
+        /// <summary>
+        /// 对比两个集合哪些是新增的、删除的、修改的
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="olds"></param>
+        /// <param name="news"></param>
+        /// <param name="keySelector">对比因素属性</param>
+        /// <returns></returns>
+        public static (IEnumerable<T> adds, IEnumerable<T> remove, IEnumerable<T> updates) CompareChanges<T>(this IEnumerable<T> olds, IEnumerable<T> news, Func<T, dynamic> keySelector)
+        {
+            return (news.Where(c => olds.All(m => keySelector(m) != keySelector(c))), olds.Where(m => news.All(c => keySelector(c) != keySelector(m))), olds.Where(m => news.Any(c => keySelector(m) == keySelector(c))));
+        }
     }
 }

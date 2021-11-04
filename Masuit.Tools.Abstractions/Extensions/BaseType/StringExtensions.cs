@@ -229,7 +229,7 @@ namespace Masuit.Tools
                 return (false, null);
             }
 
-            var match = Regex.Match(s, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$");
+            var match = Regex.Match(s, @"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+");
             var isMatch = match.Success;
             if (isMatch && valid)
             {
