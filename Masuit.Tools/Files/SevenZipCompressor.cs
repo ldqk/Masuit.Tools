@@ -1,6 +1,4 @@
 ﻿using SharpCompress.Archives;
-using SharpCompress.Archives.Rar;
-using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
 using SharpCompress.Readers;
 using SharpCompress.Writers;
@@ -48,9 +46,10 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹</param>
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
-        public static void Zip(List<string> files, string zipFile, string rootdir = "")
+        /// <param name="archiveType"></param>
+        public static void Zip(List<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
         {
-            using var archive = CreateZipArchive(files, rootdir);
+            using var archive = CreateZipArchive(files, rootdir, archiveType);
             archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
             {
                 LeaveStreamOpen = true,
@@ -60,39 +59,6 @@ namespace Masuit.Tools.Files
                 }
             });
         }
-
-        /// <summary>
-        /// 解压rar文件
-        /// </summary>
-        /// <param name="rar">rar文件</param>
-        /// <param name="dir">解压到...</param>
-        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public static void UnRar(string rar, string dir = "", bool ignoreEmptyDir = true)
-        {
-            if (string.IsNullOrEmpty(dir))
-            {
-                dir = Path.GetDirectoryName(rar);
-            }
-
-            using var archive = RarArchive.Open(rar);
-            var entries = ignoreEmptyDir ? archive.Entries.Where(entry => !entry.IsDirectory) : archive.Entries;
-            foreach (var entry in entries)
-            {
-                entry.WriteToDirectory(dir, new ExtractionOptions()
-                {
-                    ExtractFullPath = true,
-                    Overwrite = true
-                });
-            }
-        }
-
-        /// <summary>
-        /// 解压文件，自动检测压缩包类型
-        /// </summary>
-        /// <param name="compressedFile">rar文件</param>
-        /// <param name="dir">解压到...</param>
-        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public static void Extract(string compressedFile, string dir = "", bool ignoreEmptyDir = true) => Decompress(compressedFile, dir, ignoreEmptyDir);
 
         /// <summary>
         /// 解压文件，自动检测压缩包类型
@@ -138,10 +104,11 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="files"></param>
         /// <param name="rootdir"></param>
+        /// <param name="archiveType"></param>
         /// <returns></returns>
-        private static ZipArchive CreateZipArchive(List<string> files, string rootdir)
+        private static IWritableArchive CreateZipArchive(List<string> files, string rootdir, ArchiveType archiveType = ArchiveType.SevenZip)
         {
-            var archive = ZipArchive.Create();
+            var archive = ArchiveFactory.Create(archiveType);
             var dic = GetFileEntryMaps(files);
             var remoteUrls = files.Distinct().Where(s => s.StartsWith("http")).Select(s =>
             {
@@ -154,9 +121,9 @@ namespace Masuit.Tools.Files
                     return null;
                 }
             }).Where(u => u != null).ToList();
-            foreach (var fileEntry in dic)
+            foreach (var pair in dic)
             {
-                archive.AddEntry(Path.Combine(rootdir, fileEntry.Value), fileEntry.Key);
+                archive.AddEntry(Path.Combine(rootdir, pair.Value), pair.Key);
             }
 
             if (!remoteUrls.Any())
@@ -183,7 +150,7 @@ namespace Masuit.Tools.Files
             });
             foreach (var kv in streams)
             {
-                archive.AddEntry(kv.Key, kv.Value);
+                archive.AddEntry(kv.Key, kv.Value, true);
             }
 
             return archive;

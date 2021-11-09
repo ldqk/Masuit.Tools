@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5;net6</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <CodeAnalysisRuleSet />
-        <Version>1.0.5</Version>
+        <Version>1.0.6</Version>
         <Authors>懒得勤快</Authors>
         <Description>Masuit.Tools.Excel导出库，支持一些简单数据的导出，支持图片列</Description>
         <Copyright>懒得勤快</Copyright>
@@ -17,9 +17,9 @@
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <FileVersion>1.0.5</FileVersion>
+        <FileVersion>1.0.6</FileVersion>
         <Company>ldqk.org</Company>
-        <AssemblyVersion>1.0.5</AssemblyVersion>
+        <AssemblyVersion>1.0.6</AssemblyVersion>
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
@@ -29,7 +29,7 @@
         <DocumentationFile>.\Masuit.Tools.Excel.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="EPPlus" Version="5.7.5" />
+        <PackageReference Include="EPPlus" Version="5.8.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>

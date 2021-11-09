@@ -10,19 +10,19 @@ namespace Masuit.Tools
 {
     public static partial class IEnumerableExtensions
     {
-        /// <summary>
-        /// 按字段去重
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <returns></returns>
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            var hash = new HashSet<TKey>();
-            return source.Where(p => hash.Add(keySelector(p)));
-        }
+        ///// <summary>
+        ///// 按字段去重
+        ///// </summary>
+        ///// <typeparam name="TSource"></typeparam>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="keySelector"></param>
+        ///// <returns></returns>
+        //public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        //{
+        //    var hash = new HashSet<TKey>();
+        //    return source.Where(p => hash.Add(keySelector(p)));
+        //}
 
         /// <summary>
         /// 添加多个元素

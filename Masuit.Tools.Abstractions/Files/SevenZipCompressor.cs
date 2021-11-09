@@ -1,8 +1,5 @@
 ﻿using SharpCompress.Archives;
-using SharpCompress.Archives.Rar;
-using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
-using SharpCompress.Readers;
 using SharpCompress.Writers;
 using System;
 using System.Collections.Concurrent;
@@ -37,10 +34,11 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>
+        /// <param name="archiveType"></param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "")
+        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
         {
-            using var archive = CreateZipArchive(files, rootdir);
+            using var archive = CreateZipArchive(files, rootdir, archiveType);
             var ms = new MemoryStream();
             archive.SaveTo(ms, new WriterOptions(CompressionType.Deflate)
             {
@@ -59,9 +57,10 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹</param>
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
-        public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "")
+        /// <param name="archiveType"></param>
+        public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
         {
-            using var archive = CreateZipArchive(files, rootdir);
+            using var archive = CreateZipArchive(files, rootdir, archiveType);
             archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
             {
                 LeaveStreamOpen = true,
@@ -71,39 +70,6 @@ namespace Masuit.Tools.Files
                 }
             });
         }
-
-        /// <summary>
-        /// 解压rar文件
-        /// </summary>
-        /// <param name="rar">rar文件</param>
-        /// <param name="dir">解压到...</param>
-        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public void UnRar(string rar, string dir = "", bool ignoreEmptyDir = true)
-        {
-            if (string.IsNullOrEmpty(dir))
-            {
-                dir = Path.GetDirectoryName(rar);
-            }
-
-            using var archive = RarArchive.Open(rar);
-            var entries = ignoreEmptyDir ? archive.Entries.Where(entry => !entry.IsDirectory) : archive.Entries;
-            foreach (var entry in entries)
-            {
-                entry.WriteToDirectory(dir, new ExtractionOptions()
-                {
-                    ExtractFullPath = true,
-                    Overwrite = true
-                });
-            }
-        }
-
-        /// <summary>
-        /// 解压文件，自动检测压缩包类型
-        /// </summary>
-        /// <param name="compressedFile">rar文件</param>
-        /// <param name="dir">解压到...</param>
-        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public void Extract(string compressedFile, string dir = "", bool ignoreEmptyDir = true) => Decompress(compressedFile, dir, ignoreEmptyDir);
 
         /// <summary>
         /// 解压文件，自动检测压缩包类型
@@ -118,30 +84,10 @@ namespace Masuit.Tools.Files
                 dir = Path.GetDirectoryName(compressedFile);
             }
 
-            using Stream stream = File.OpenRead(compressedFile);
-            using var reader = ReaderFactory.Open(stream);
-            while (reader.MoveToNextEntry())
+            ArchiveFactory.WriteToDirectory(compressedFile, dir, new ExtractionOptions()
             {
-                if (ignoreEmptyDir)
-                {
-                    reader.WriteEntryToDirectory(dir, new ExtractionOptions()
-                    {
-                        ExtractFullPath = true,
-                        Overwrite = true
-                    });
-                }
-                else
-                {
-                    if (!reader.Entry.IsDirectory)
-                    {
-                        reader.WriteEntryToDirectory(dir, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
-                }
-            }
+                ExtractFullPath = true
+            });
         }
 
         /// <summary>
@@ -149,10 +95,11 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="files"></param>
         /// <param name="rootdir"></param>
+        /// <param name="archiveType"></param>
         /// <returns></returns>
-        private ZipArchive CreateZipArchive(IEnumerable<string> files, string rootdir)
+        private IWritableArchive CreateZipArchive(IEnumerable<string> files, string rootdir, ArchiveType archiveType)
         {
-            var archive = ZipArchive.Create();
+            var archive = ArchiveFactory.Create(archiveType);
             var dic = GetFileEntryMaps(files);
             var remoteUrls = files.Distinct().Where(s => s.StartsWith("http")).Select(s =>
             {
@@ -190,7 +137,7 @@ namespace Masuit.Tools.Files
                 });
                 foreach (var pair in streams)
                 {
-                    archive.AddEntry(pair.Key, pair.Value);
+                    archive.AddEntry(pair.Key, pair.Value, true);
                 }
             }
 

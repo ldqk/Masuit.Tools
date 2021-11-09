@@ -36,6 +36,5 @@ namespace Masuit.Tools.Test
                 Assert.True(stream.Length > 0);
             }
         }
-
     }
 }
