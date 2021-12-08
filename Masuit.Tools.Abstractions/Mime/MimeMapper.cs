@@ -32,8 +32,8 @@ namespace Masuit.Tools.AspNetCore.Mime
         {
             foreach (var item in DefaultMimeItems.Items)
             {
-                MimeTypes.AddOrUpdate("." + item.Extension, item.MimeType);
-                ExtTypes.AddOrUpdate(item.MimeType, "." + item.Extension);
+                MimeTypes["." + item.Extension] = item.MimeType;
+                ExtTypes[item.MimeType] = "." + item.Extension;
             }
         }
 
@@ -64,8 +64,8 @@ namespace Masuit.Tools.AspNetCore.Mime
             {
                 foreach (var mapping in extensions)
                 {
-                    MimeTypes.AddOrUpdate(mapping.Extension, mapping.MimeType);
-                    ExtTypes.AddOrUpdate(mapping.MimeType, mapping.Extension);
+                    MimeTypes[mapping.Extension] = mapping.MimeType;
+                    ExtTypes[mapping.MimeType] = mapping.Extension;
                 }
             }
             return this;

@@ -8,11 +8,13 @@ using Masuit.Tools.Security;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace NetCoreTest
 {
@@ -20,6 +22,26 @@ namespace NetCoreTest
     {
         public static void Main(string[] args)
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var pkg = new ExcelPackage();
+            pkg.Workbook.Worksheets.Add("Sheet1");
+            var sheet = pkg.Workbook.Worksheets["Sheet1"];
+            sheet.FillWorksheet(Enumerable.Range(1, 2).Select(i => new
+            {
+                序号 = i,
+                图片 = new Dictionary<string, Stream>()
+                {
+                    ["https://ldqk.org/1383"] = File.OpenRead(@"D:\images\emotion\16.jpg"),
+                    ["https://ldqk.org/1384"] = File.OpenRead(@"D:\images\emotion\16.jpg"),
+                    ["https://ldqk.org/1385"] = File.OpenRead(@"D:\images\emotion\16.jpg"),
+                }
+            }).ToDataTable("aa"), null, 4, 3);
+            sheet.Cells["A1:F1"].Merge = true;
+            sheet.Cells["A1"].Value = "title";
+            pkg.SaveAs("Y:\\1.xlsx");
+            Console.WriteLine("ok");
+
+            Console.ReadKey();
             Enumerable.Range(1, 2).Select(i => new
             {
                 序号 = i,
