@@ -109,7 +109,7 @@ namespace Masuit.Tools.Excel
         /// <param name="settings">列设置</param>
         /// <param name="startRow">起始行，默认第一行</param>
         /// <param name="startColumn">起始列，默认第一列A列</param>
-        public static void FillWorksheet(this ExcelWorksheet sheet, DataTable table, ColumnSettings settings, int startRow = 1, int startColumn = 1)
+        public static void FillWorksheet(this ExcelWorksheet sheet, DataTable table, ColumnSettings settings = null, int startRow = 1, int startColumn = 1)
         {
             // 填充表头
             var maxWidth = new int[table.Columns.Count];
@@ -153,6 +153,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
 
                                 break;
                             }
@@ -169,6 +170,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
 
                                 break;
                             }
@@ -189,6 +191,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
                                 break;
                             }
 
@@ -207,6 +210,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
                                 break;
                             }
 
@@ -226,6 +230,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
                                 break;
                             }
 
@@ -245,6 +250,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
                                 break;
                             }
 
@@ -263,6 +269,7 @@ namespace Masuit.Tools.Excel
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
+                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
                                 break;
                             }
 
