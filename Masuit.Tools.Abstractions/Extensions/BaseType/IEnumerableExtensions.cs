@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -177,6 +178,16 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static async Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int maxParallelCount, CancellationToken cancellationToken = default)
         {
+            if (Debugger.IsAttached)
+            {
+                foreach (var item in source)
+                {
+                    await action(item);
+                }
+
+                return;
+            }
+
             var list = new List<Task>();
             foreach (var item in source)
             {
@@ -245,8 +256,19 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static async Task ForAsync<T>(this IEnumerable<T> source, Func<T, int, Task> selector, int maxParallelCount, CancellationToken cancellationToken = default)
         {
-            var list = new List<Task>();
             int index = 0;
+            if (Debugger.IsAttached)
+            {
+                foreach (var item in source)
+                {
+                    await selector(item, index);
+                    index++;
+                }
+
+                return;
+            }
+
+            var list = new List<Task>();
             foreach (var item in source)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -254,7 +276,8 @@ namespace Masuit.Tools
                     return;
                 }
 
-                list.Add(selector(item, index++));
+                list.Add(selector(item, index));
+                Interlocked.Add(ref index, 1);
                 if (list.Count >= maxParallelCount)
                 {
                     await Task.WhenAll(list);
