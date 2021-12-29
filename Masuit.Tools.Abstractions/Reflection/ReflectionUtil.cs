@@ -172,7 +172,13 @@ namespace Masuit.Tools.Reflection
                 throw new ArgumentNullException(nameof(value));
             }
 
-            FieldInfo fi = value.GetType().GetField(value.ToString());
+            var type = value.GetType();
+            if (!Enum.IsDefined(type, value))
+            {
+                return value.ToString();
+            }
+
+            FieldInfo fi = type.GetField(value.ToString());
             var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
             var text = attributes.Length > 0 ? attributes[0].Description : value.ToString();
             if (args is { Length: > 0 })
