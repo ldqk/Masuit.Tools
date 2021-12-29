@@ -84,15 +84,17 @@ namespace Masuit.Tools.Models
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items) where T : class, ITreeChildren<T>
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Action<T, T> optionAction = null) where T : class, ITreeChildren<T>
         {
             var result = new List<T>();
             foreach (var item in items)
             {
                 result.Add(item);
                 item.Children ??= new List<T>();
-                result.AddRange(item.Children.Flatten());
+                item.Children.ForEach(c => optionAction?.Invoke(c, item));
+                result.AddRange(item.Children.Flatten(optionAction));
             }
 
             return result;
@@ -102,8 +104,10 @@ namespace Masuit.Tools.Models
         /// 平铺开
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="p"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<T> Flatten<T>(this T p) where T : class, ITreeChildren<T>
+        public static IEnumerable<T> Flatten<T>(this T p, Action<T, T> optionAction = null) where T : class, ITreeChildren<T>
         {
             var result = new List<T>()
             {
@@ -113,6 +117,7 @@ namespace Masuit.Tools.Models
             {
                 result.Add(item);
                 item.Children ??= new List<T>();
+                item.Children.ForEach(c => optionAction?.Invoke(c, item));
                 result.AddRange(item.Children.Flatten());
             }
 
@@ -125,13 +130,15 @@ namespace Masuit.Tools.Models
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
         /// <param name="selector"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector)
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector, Action<T, T> optionAction = null)
         {
             var result = new List<T>();
             foreach (var item in items)
             {
                 result.Add(item);
+                selector(item).ForEach(c => optionAction?.Invoke(c, item));
                 result.AddRange(selector(item).Flatten(selector));
             }
 
@@ -143,14 +150,16 @@ namespace Masuit.Tools.Models
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items) where T : class
+        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Action<Tree<T>, Tree<T>> optionAction = null) where T : class
         {
             var result = new List<Tree<T>>();
             foreach (var item in items)
             {
                 result.Add(item);
                 item.Children ??= new List<Tree<T>>();
+                item.Children.ForEach(c => optionAction?.Invoke(c, item));
                 result.AddRange(item.Children.Flatten());
             }
 
@@ -161,8 +170,10 @@ namespace Masuit.Tools.Models
         /// 平铺开
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="p"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<Tree<T>> Flatten<T>(this Tree<T> p) where T : class
+        public static IEnumerable<Tree<T>> Flatten<T>(this Tree<T> p, Action<Tree<T>, Tree<T>> optionAction = null) where T : class
         {
             var result = new List<Tree<T>>()
             {
@@ -172,6 +183,7 @@ namespace Masuit.Tools.Models
             {
                 result.Add(item);
                 item.Children ??= new List<Tree<T>>();
+                item.Children.ForEach(c => optionAction?.Invoke(c, item));
                 result.AddRange(item.Children.Flatten());
             }
 
@@ -184,13 +196,15 @@ namespace Masuit.Tools.Models
         /// <typeparam name="T"></typeparam>
         /// <param name="items"></param>
         /// <param name="selector"></param>
+        /// <param name="optionAction">平铺时子级需要做的操作，参数1：子级对象，参数2：父级对象</param>
         /// <returns></returns>
-        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, IEnumerable<Tree<T>>> selector)
+        public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, IEnumerable<Tree<T>>> selector, Action<Tree<T>, Tree<T>> optionAction = null)
         {
             var result = new List<Tree<T>>();
             foreach (var item in items)
             {
                 result.Add(item);
+                item.Children.ForEach(c => optionAction?.Invoke(c, item));
                 result.AddRange(selector(item).Flatten(selector));
             }
 

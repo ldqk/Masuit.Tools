@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -46,6 +47,34 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 添加多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="values"></param>
+        public static void AddRange<T>(this ConcurrentBag<T> @this, params T[] values)
+        {
+            foreach (var obj in values)
+            {
+                @this.Add(obj);
+            }
+        }
+
+        /// <summary>
+        /// 添加多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="values"></param>
+        public static void AddRange<T>(this ConcurrentQueue<T> @this, params T[] values)
+        {
+            foreach (var obj in values)
+            {
+                @this.Enqueue(obj);
+            }
+        }
+
+        /// <summary>
         /// 添加符合条件的多个元素
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -59,6 +88,42 @@ namespace Masuit.Tools
                 if (predicate(obj))
                 {
                     @this.Add(obj);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 添加符合条件的多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="predicate"></param>
+        /// <param name="values"></param>
+        public static void AddRangeIf<T>(this ConcurrentBag<T> @this, Func<T, bool> predicate, params T[] values)
+        {
+            foreach (var obj in values)
+            {
+                if (predicate(obj))
+                {
+                    @this.Add(obj);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 添加符合条件的多个元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="predicate"></param>
+        /// <param name="values"></param>
+        public static void AddRangeIf<T>(this ConcurrentQueue<T> @this, Func<T, bool> predicate, params T[] values)
+        {
+            foreach (var obj in values)
+            {
+                if (predicate(obj))
+                {
+                    @this.Enqueue(obj);
                 }
             }
         }
