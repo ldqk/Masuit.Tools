@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Masuit.Tools.Systems;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace NetCoreTest
@@ -86,6 +87,7 @@ namespace NetCoreTest
             var dec = enc.RSADecrypt();
             Console.WriteLine(dec);
             Console.ReadKey();
+
             //CreateWebHostBuilder(args).Build().Run();
         }
 
@@ -98,6 +100,7 @@ namespace NetCoreTest
     {
         [Description("test")]
         public string Pid { get; set; }
+
         public int? MyProperty1 { get; set; }
 
         /// <summary>
@@ -120,6 +123,7 @@ namespace NetCoreTest
         /// <summary>
         /// 名字
         /// </summary>
+        [DeserializeOnlyJsonProperty]
         public string Name { get; set; }
     }
 }
