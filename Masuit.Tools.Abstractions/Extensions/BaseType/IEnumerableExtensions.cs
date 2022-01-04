@@ -13,6 +13,34 @@ namespace Masuit.Tools
 {
     public static partial class IEnumerableExtensions
     {
+        /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        /// <typeparam name="TFirst"></typeparam>
+        /// <typeparam name="TSecond"></typeparam>
+        /// <param name="second"></param>
+        /// <param name="condition"></param>
+        /// <param name="first"></param>
+        /// <returns></returns>
+        public static IEnumerable<TFirst> IntersectBy<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, bool> condition)
+        {
+            return first.Where(f => second.Any(s => condition(f, s)));
+        }
+
+        /// <summary>
+        /// 按字段属性判等取差集
+        /// </summary>
+        /// <typeparam name="TFirst"></typeparam>
+        /// <typeparam name="TSecond"></typeparam>
+        /// <param name="second"></param>
+        /// <param name="condition"></param>
+        /// <param name="first"></param>
+        /// <returns></returns>
+        public static IEnumerable<TFirst> ExceptBy<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, bool> condition)
+        {
+            return first.Where(f => !second.Any(s => condition(f, s)));
+        }
+
 #if NET6_0
 #else
 
@@ -28,6 +56,96 @@ namespace Masuit.Tools
         {
             var hash = new HashSet<TKey>();
             return source.Where(p => hash.Add(keySelector(p)));
+        }
+
+        /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector)
+        {
+            return first.IntersectBy(second, keySelector, null);
+        }
+
+        /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
+        {
+            if (first == null)
+                throw new ArgumentNullException(nameof(first));
+            if (second == null)
+                throw new ArgumentNullException(nameof(second));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            return IntersectByIterator(first, second, keySelector, comparer);
+        }
+
+        private static IEnumerable<TSource> IntersectByIterator<TSource, TKey>(IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+        {
+            var set = new HashSet<TKey>(second, comparer);
+            foreach (var source in first)
+            {
+                if (set.Remove(keySelector(source)))
+                    yield return source;
+            }
+        }
+
+        /// <summary>
+        /// 按字段属性判等取差集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> ExceptBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector)
+        {
+            return first.ExceptBy(second, keySelector, null);
+        }
+
+        /// <summary>
+        /// 按字段属性判等取差集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static IEnumerable<TSource> ExceptBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
+        {
+            if (first == null)
+                throw new ArgumentNullException(nameof(first));
+            if (second == null)
+                throw new ArgumentNullException(nameof(second));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            return ExceptByIterator(first, second, keySelector, comparer);
+        }
+
+        private static IEnumerable<TSource> ExceptByIterator<TSource, TKey>(IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+        {
+            var set = new HashSet<TKey>(second, comparer);
+            foreach (var source in first)
+            {
+                if (set.Add(keySelector(source)))
+                    yield return source;
+            }
         }
 
 #endif
@@ -168,7 +286,11 @@ namespace Masuit.Tools
         /// <param name="value">值</param>
         public static void InsertAfter<T>(this IList<T> list, Func<T, bool> condition, T value)
         {
-            foreach (var item in list.Select((item, index) => new { item, index }).Where(p => condition(p.item)).OrderByDescending(p => p.index))
+            foreach (var item in list.Select((item, index) => new
+            {
+                item,
+                index
+            }).Where(p => condition(p.item)).OrderByDescending(p => p.index))
             {
                 if (item.index + 1 == list.Count)
                 {
@@ -190,7 +312,11 @@ namespace Masuit.Tools
         /// <param name="value">值</param>
         public static void InsertAfter<T>(this IList<T> list, int index, T value)
         {
-            foreach (var item in list.Select((v, i) => new { Value = v, Index = i }).Where(p => p.Index == index).OrderByDescending(p => p.Index))
+            foreach (var item in list.Select((v, i) => new
+            {
+                Value = v,
+                Index = i
+            }).Where(p => p.Index == index).OrderByDescending(p => p.Index))
             {
                 if (item.Index + 1 == list.Count)
                 {
@@ -598,6 +724,7 @@ namespace Masuit.Tools
                             return false;
                         }
                     }
+
                     return true;
                 }
             }
@@ -643,6 +770,7 @@ namespace Masuit.Tools
                             return false;
                         }
                     }
+
                     return true;
                 }
             }
@@ -665,27 +793,32 @@ namespace Masuit.Tools
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <typeparam name="T2"></typeparam>
-        /// <param name="olds"></param>
-        /// <param name="news"></param>
-        /// <param name="key1Selector">对比因素属性</param>
-        /// <param name="key2Selector">对比因素属性</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="condition">对比因素条件</param>
         /// <returns></returns>
-        public static (List<T2> adds, List<T1> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> olds, IEnumerable<T2> news, Func<T1, object> key1Selector, Func<T2, object> key2Selector)
+        public static (List<T1> adds, List<T2> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
         {
-            return (news.Where(c => olds.All(m => key1Selector(m) != key2Selector(c))).ToList(), olds.Where(m => news.All(c => key2Selector(c) != key1Selector(m))).ToList(), olds.Where(m => news.Any(c => key1Selector(m) == key2Selector(c))).ToList());
+            var add = first.ExceptBy(second, condition).ToList();
+            var remove = second.ExceptBy(first, (s, f) => condition(f, s)).ToList();
+            var update = first.IntersectBy(second, condition).ToList();
+            return (add, remove, update);
         }
 
         /// <summary>
         /// 对比两个集合哪些是新增的、删除的、修改的
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="olds"></param>
-        /// <param name="news"></param>
-        /// <param name="keySelector">对比因素属性</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="condition">对比因素条件</param>
         /// <returns></returns>
-        public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T>(this IEnumerable<T> olds, IEnumerable<T> news, Func<T, object> keySelector)
+        public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, T, bool> condition)
         {
-            return (news.Where(c => olds.All(m => keySelector(m) != keySelector(c))).ToList(), olds.Where(m => news.All(c => keySelector(c) != keySelector(m))).ToList(), olds.Where(m => news.Any(c => keySelector(m) == keySelector(c))).ToList());
+            var add = first.ExceptBy(second, condition).ToList();
+            var remove = second.ExceptBy(first, (s, f) => condition(f, s)).ToList();
+            var update = first.IntersectBy(second, condition).ToList();
+            return (add, remove, update);
         }
     }
 }

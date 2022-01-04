@@ -96,6 +96,20 @@ namespace NetCoreTest
                 .UseStartup<Startup>();
     }
 
+    public class ClassCmd
+    {
+        public string MyProperty { get; set; }
+
+        public int Num { get; set; }
+    }
+
+    public class ClassDto
+    {
+        public string MyProperty { get; set; }
+
+        public int Num { get; set; }
+    }
+
     public class MyClass : ITree<MyClass>
     {
         [Description("test")]
