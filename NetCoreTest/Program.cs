@@ -105,6 +105,7 @@ namespace NetCoreTest
 
     public class ClassDto
     {
+        [DeserializeOnlyJsonProperty]
         public string MyProperty { get; set; }
 
         public int Num { get; set; }

@@ -381,6 +381,12 @@ public class MyClass
 
     [ComplexPassword]//密码复杂度校验
     public string Password { get; set; }
+    
+    [EnumOf] // 检测是否是有效枚举值
+    public MyEnum MyEnum { get; set; }
+    
+    [MinItemsCount(1)] // 检测集合元素最少1个
+    public List<string> Strs { get; set; }
 }
 ```
 ### 21.HTML操作
@@ -452,11 +458,14 @@ string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
-### 26.定长队列实现
+### 26.定长队列和ConcurrentHashSet实现
 `如果是.NET5及以上，推荐使用框架自带的Channel实现该功能`
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
+```
+```csharp
+var set = new ConcurrentHashSet<string>(); // 用法和hashset保持一致
 ```
 ### 27.反射操作
 ```csharp
@@ -633,6 +642,11 @@ var stdDev=list.Select(s=>s.ConvertTo<int>()).StandardDeviation(); // 求标准�
 
 var pages=queryable.ToPagedList(1,10); // 分页查询
 var pages=await queryable.ToPagedListAsync(1,10); // 分页查询
+
+var nums=Enumerable.Range(1, 10).ExceptBy(Enumerable.Range(5, 10), i => i); // 按字段取差集
+var nums=Enumerable.Range(1, 10).IntersectBy(Enumerable.Range(5, 10), i => i); // 按字段取交集
+var nums=Enumerable.Range(1, 10).SequenceEqual(Enumerable.Range(5, 10), i => i); // 判断序列相等
+var nums=Enumerable.Range(1, 10).OrderByRandom(); // 随机排序
 ```
 ### 37.Mime类型
 ```csharp
@@ -748,6 +762,32 @@ var allchanges=dbContext.GetAllChanges();//获取增删改的实体字段信息
 ```csharp
 a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
+```
+### 48.Newtonsoft.Json的只允许字段反序列化行为的契约解释器DeserializeOnlyContractResolver
+该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
+```csharp
+public class ClassDto
+    {
+        [DeserializeOnlyJsonProperty]
+        public string MyProperty { get; set; }
+
+        public int Num { get; set; }
+    }
+    
+    JsonConvert.SerializeObject(new MyClass(),new JsonSerializerSettings()
+	{
+		ContractResolver = new DeserializeOnlyContractResolver() // 配置使用DeserializeOnlyContractResolver解释器
+	});
+```
+如果是WebAPI全局使用：
+```csharp
+		//在Startup.ConfigureServices中
+		services.AddMvc().AddNewtonsoftJson(options =>
+             {
+                 var resolver = new DeserializeOnlyContractResolver();
+                 resolver.NamingStrategy = new CamelCaseNamingStrategy();
+                 options.SerializerSettings.ContractResolver = resolver;
+             });
 ```
     
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult

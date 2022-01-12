@@ -34,7 +34,7 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
