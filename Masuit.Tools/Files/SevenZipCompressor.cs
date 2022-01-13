@@ -1,6 +1,5 @@
 ﻿using SharpCompress.Archives;
 using SharpCompress.Common;
-using SharpCompress.Readers;
 using SharpCompress.Writers;
 using System;
 using System.Collections.Concurrent;
@@ -29,7 +28,7 @@ namespace Masuit.Tools.Files
         {
             using var archive = CreateZipArchive(files, rootdir);
             var ms = new MemoryStream();
-            archive.SaveTo(ms, new WriterOptions(CompressionType.Deflate)
+            archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
                 ArchiveEncoding = new ArchiveEncoding()
@@ -47,10 +46,10 @@ namespace Masuit.Tools.Files
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
         /// <param name="archiveType"></param>
-        public static void Zip(List<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
+        public static void Zip(List<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
         {
             using var archive = CreateZipArchive(files, rootdir, archiveType);
-            archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
+            archive.SaveTo(zipFile, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
                 ArchiveEncoding = new ArchiveEncoding()
@@ -65,8 +64,7 @@ namespace Masuit.Tools.Files
         /// </summary>
         /// <param name="compressedFile">rar文件</param>
         /// <param name="dir">解压到...</param>
-        /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public static void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true)
+        public static void Decompress(string compressedFile, string dir)
         {
             if (string.IsNullOrEmpty(dir))
             {
@@ -75,7 +73,8 @@ namespace Masuit.Tools.Files
 
             ArchiveFactory.WriteToDirectory(compressedFile, dir, new ExtractionOptions()
             {
-                ExtractFullPath = true
+                ExtractFullPath = true,
+                Overwrite = true
             });
         }
 
@@ -86,7 +85,7 @@ namespace Masuit.Tools.Files
         /// <param name="rootdir"></param>
         /// <param name="archiveType"></param>
         /// <returns></returns>
-        private static IWritableArchive CreateZipArchive(List<string> files, string rootdir, ArchiveType archiveType = ArchiveType.SevenZip)
+        private static IWritableArchive CreateZipArchive(List<string> files, string rootdir, ArchiveType archiveType = ArchiveType.Zip)
         {
             var archive = ArchiveFactory.Create(archiveType);
             var dic = GetFileEntryMaps(files);

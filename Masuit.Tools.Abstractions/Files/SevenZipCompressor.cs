@@ -36,11 +36,11 @@ namespace Masuit.Tools.Files
         /// <param name="rootdir"></param>
         /// <param name="archiveType"></param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
+        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
         {
             using var archive = CreateZipArchive(files, rootdir, archiveType);
             var ms = new MemoryStream();
-            archive.SaveTo(ms, new WriterOptions(CompressionType.Deflate)
+            archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
                 ArchiveEncoding = new ArchiveEncoding()
@@ -58,10 +58,10 @@ namespace Masuit.Tools.Files
         /// <param name="zipFile">压缩到...</param>
         /// <param name="rootdir">压缩包内部根文件夹</param>
         /// <param name="archiveType"></param>
-        public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.SevenZip)
+        public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
         {
             using var archive = CreateZipArchive(files, rootdir, archiveType);
-            archive.SaveTo(zipFile, new WriterOptions(CompressionType.Deflate)
+            archive.SaveTo(zipFile, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
                 ArchiveEncoding = new ArchiveEncoding()
@@ -77,7 +77,7 @@ namespace Masuit.Tools.Files
         /// <param name="compressedFile">rar文件</param>
         /// <param name="dir">解压到...</param>
         /// <param name="ignoreEmptyDir">忽略空文件夹</param>
-        public void Decompress(string compressedFile, string dir = "", bool ignoreEmptyDir = true)
+        public void Decompress(string compressedFile, string dir, bool ignoreEmptyDir = true)
         {
             if (string.IsNullOrEmpty(dir))
             {
@@ -86,7 +86,8 @@ namespace Masuit.Tools.Files
 
             ArchiveFactory.WriteToDirectory(compressedFile, dir, new ExtractionOptions()
             {
-                ExtractFullPath = true
+                ExtractFullPath = true,
+                Overwrite = true
             });
         }
 
