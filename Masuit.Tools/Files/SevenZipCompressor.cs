@@ -73,30 +73,10 @@ namespace Masuit.Tools.Files
                 dir = Path.GetDirectoryName(compressedFile);
             }
 
-            using Stream stream = File.OpenRead(compressedFile);
-            using var reader = ReaderFactory.Open(stream);
-            while (reader.MoveToNextEntry())
+            ArchiveFactory.WriteToDirectory(compressedFile, dir, new ExtractionOptions()
             {
-                if (ignoreEmptyDir)
-                {
-                    reader.WriteEntryToDirectory(dir, new ExtractionOptions()
-                    {
-                        ExtractFullPath = true,
-                        Overwrite = true
-                    });
-                }
-                else
-                {
-                    if (!reader.Entry.IsDirectory)
-                    {
-                        reader.WriteEntryToDirectory(dir, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
-                }
-            }
+                ExtractFullPath = true
+            });
         }
 
         /// <summary>
@@ -126,31 +106,29 @@ namespace Masuit.Tools.Files
                 archive.AddEntry(Path.Combine(rootdir, pair.Value), pair.Key);
             }
 
-            if (!remoteUrls.Any())
+            if (remoteUrls.Any())
             {
-                return archive;
-            }
-
-            var streams = new ConcurrentDictionary<string, Stream>();
-            using var httpClient = new HttpClient();
-            Parallel.ForEach(remoteUrls, url =>
-            {
-                httpClient.GetAsync(url).ContinueWith(async t =>
+                var streams = new ConcurrentDictionary<string, Stream>();
+                using var httpClient = new HttpClient();
+                Parallel.ForEach(remoteUrls, url =>
                 {
-                    if (t.IsCompleted)
+                    httpClient.GetAsync(url).ContinueWith(async t =>
                     {
-                        var res = await t;
-                        if (res.IsSuccessStatusCode)
+                        if (t.IsCompleted)
                         {
-                            Stream stream = await res.Content.ReadAsStreamAsync();
-                            streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
+                            var res = await t;
+                            if (res.IsSuccessStatusCode)
+                            {
+                                Stream stream = await res.Content.ReadAsStreamAsync();
+                                streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
+                            }
                         }
-                    }
-                }).Wait();
-            });
-            foreach (var kv in streams)
-            {
-                archive.AddEntry(kv.Key, kv.Value, true);
+                    }).Wait();
+                });
+                foreach (var kv in streams)
+                {
+                    archive.AddEntry(kv.Key, kv.Value, true);
+                }
             }
 
             return archive;
