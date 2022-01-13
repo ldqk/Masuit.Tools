@@ -790,6 +790,17 @@ public class ClassDto
              });
 ```
     
+### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody的模型绑点器BodyAndQueryModelBinder
+用法：在action的参数模型前打上标记：`[ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]`即可，示例代码如下：
+```csharp
+        [HttpGet("query"),HttpPost("query")]
+        public IActionResult Query([ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]QueryModel query)
+        {
+            return Ok(...);
+        }
+```
+	
+	
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载支持。
