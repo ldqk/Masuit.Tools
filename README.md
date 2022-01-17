@@ -339,12 +339,12 @@ socket.SendFile("D:\\test\\1.txt",false,i =>
 ```
 ### 19.加密解密
 ```csharp
-var enc="123456".MDString();// MD5加密
-var enc="123456".MDString("abc");// MD5加盐加密
-var enc="123456".MDString2();// MD5两次加密
-var enc="123456".MDString2("abc");// MD5两次加盐加密
-var enc="123456".MDString3();// MD5三次加密
-var enc="123456".MDString3("abc");// MD5三次加盐加密
+var enc="123456".MDString();// MD5
+var enc="123456".MDString("abc");// MD5加盐
+var enc="123456".MDString2();// MD5两次
+var enc="123456".MDString2("abc");// MD5两次加盐
+var enc="123456".MDString3();// MD5三次
+var enc="123456".MDString3("abc");// MD5三次加盐
 
 string aes = "123456".AESEncrypt();// AES加密为密文
 string s = aes.AESDecrypt(); //AES解密为明文
