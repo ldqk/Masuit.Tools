@@ -800,6 +800,9 @@ public class ClassDto
         }
 ```
 	
+### 49. 可空key的字典类型
+NullableConcurrentDictionary和NullableDictionary  
+用法和普通的字典类型保持一致，相比于普通的字典类型，其key是可以为null的，并且索引器获取时，如果key不存在，是不会报错的，会get到value类型的默认值。
 	
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 

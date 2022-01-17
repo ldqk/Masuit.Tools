@@ -277,6 +277,15 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\LimitedQueue.cs">
       <Link>Systems\LimitedQueue.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableConcurrentDictionary.cs">
+      <Link>Systems\NullableConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableDictionary.cs">
+      <Link>Systems\NullableDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullObject.cs">
+      <Link>Systems\NullObject.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlake.cs">
       <Link>Systems\SnowFlake.cs</Link>
     </Compile>

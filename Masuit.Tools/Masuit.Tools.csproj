@@ -112,6 +112,15 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
       <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableConcurrentDictionary.cs">
+      <Link>Systems\NullableConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableDictionary.cs">
+      <Link>Systems\NullableDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullObject.cs">
+      <Link>Systems\NullObject.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Validator\*.*">
       <Link>Validator\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>

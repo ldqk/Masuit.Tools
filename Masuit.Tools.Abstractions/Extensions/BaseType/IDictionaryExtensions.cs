@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools
 {
@@ -309,7 +310,7 @@ namespace Masuit.Tools
         /// <param name="source"></param>
         /// <param name="keySelector">键选择器</param>
         /// <returns></returns>
-        public static Dictionary<TKey, TSource> ToDictionarySafety<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        public static NullableDictionary<TKey, TSource> ToDictionarySafety<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             var dic = new Dictionary<TKey, TSource>();
             foreach (var item in source)
@@ -330,9 +331,9 @@ namespace Masuit.Tools
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
-        public static Dictionary<TKey, TElement> ToDictionarySafety<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+        public static NullableDictionary<TKey, TElement> ToDictionarySafety<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
         {
-            var dic = new Dictionary<TKey, TElement>();
+            var dic = new NullableDictionary<TKey, TElement>();
             foreach (var item in source)
             {
                 dic[keySelector(item)] = elementSelector(item);
@@ -351,9 +352,9 @@ namespace Masuit.Tools
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
-        public static async Task<IDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+        public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
         {
-            var dic = new ConcurrentDictionary<TKey, TElement>();
+            var dic = new NullableConcurrentDictionary<TKey, TElement>();
             await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
             return dic;
         }
@@ -367,9 +368,9 @@ namespace Masuit.Tools
         /// <param name="source"></param>
         /// <param name="keySelector">键选择器</param>
         /// <returns></returns>
-        public static ConcurrentDictionary<TKey, TSource> ToConcurrentDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        public static NullableConcurrentDictionary<TKey, TSource> ToConcurrentDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            var dic = new ConcurrentDictionary<TKey, TSource>();
+            var dic = new NullableConcurrentDictionary<TKey, TSource>();
             foreach (var item in source)
             {
                 dic[keySelector(item)] = item;
@@ -388,9 +389,9 @@ namespace Masuit.Tools
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
-        public static ConcurrentDictionary<TKey, TElement> ToConcurrentDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+        public static NullableConcurrentDictionary<TKey, TElement> ToConcurrentDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
         {
-            var dic = new ConcurrentDictionary<TKey, TElement>();
+            var dic = new NullableConcurrentDictionary<TKey, TElement>();
             foreach (var item in source)
             {
                 dic[keySelector(item)] = elementSelector(item);
@@ -409,7 +410,7 @@ namespace Masuit.Tools
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
-        public static async Task<ConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+        public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
         {
             var dic = new ConcurrentDictionary<TKey, TElement>();
             await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
@@ -423,7 +424,7 @@ namespace Masuit.Tools
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dic"></param>
         /// <returns></returns>
-        public static ConcurrentDictionary<TKey, TValue> AsConcurrentDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dic) => new(dic);
+        public static NullableConcurrentDictionary<TKey, TValue> AsConcurrentDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dic) => dic;
 
         /// <summary>
         /// 转换成普通字典集合
@@ -432,6 +433,6 @@ namespace Masuit.Tools
         /// <typeparam name="TValue"></typeparam>
         /// <param name="dic"></param>
         /// <returns></returns>
-        public static Dictionary<TKey, TValue> AsDictionary<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dic) => new(dic);
+        public static NullableDictionary<TKey, TValue> AsDictionary<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dic) => dic;
     }
 }
