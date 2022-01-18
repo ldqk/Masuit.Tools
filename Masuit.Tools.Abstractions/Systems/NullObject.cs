@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Masuit.Tools.Systems;
 
@@ -6,7 +7,7 @@ namespace Masuit.Tools.Systems;
 /// 可空对象
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public readonly struct NullObject<T>
+public readonly struct NullObject<T> : IComparable, IComparable<T>
 {
     [DefaultValue(true)]
     private readonly bool _isnull;
@@ -58,6 +59,31 @@ public readonly struct NullObject<T>
     public override string ToString()
     {
         return (Item != null) ? Item.ToString() : "NULL";
+    }
+
+    public int CompareTo(object value)
+    {
+        if (value is NullObject<T> nullObject)
+        {
+            if (nullObject.Item is IComparable c)
+            {
+                return ((IComparable)Item).CompareTo(c);
+            }
+
+            return Item.ToString().CompareTo(nullObject.Item.ToString());
+        }
+
+        return 1;
+    }
+
+    public int CompareTo(T other)
+    {
+        if (other is IComparable c)
+        {
+            return ((IComparable)Item).CompareTo(c);
+        }
+
+        return Item.ToString().CompareTo(other.ToString());
     }
 
     public override bool Equals(object obj)
