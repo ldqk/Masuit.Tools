@@ -804,5 +804,22 @@ namespace Masuit.Tools
             var update = first.IntersectBy(second, condition).ToList();
             return (add, remove, update);
         }
+
+        /// <summary>
+        /// 对比两个集合哪些是新增的、删除的、修改的
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <typeparam name="T2"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="condition">对比因素条件</param>
+        /// <returns></returns>
+        public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
+        {
+            var add = first.ExceptBy(second, condition).ToList();
+            var remove = second.ExceptBy(first, (s, f) => condition(f, s)).ToList();
+            var updates = first.IntersectBy(second, condition).Select(t1 => (t1, second.FirstOrDefault(t2 => condition(t1, t2)))).ToList();
+            return (add, remove, updates);
+        }
     }
 }
