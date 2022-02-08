@@ -118,7 +118,8 @@ namespace Masuit.Tools.DateTimeExt
             SetLocalTime(ref st);
         }
 
-        #endregion
+        #endregion P/Invoke 设置本地时间
+
         /// <summary>
         /// 返回相对于当前时间的相对天数
         /// </summary>
@@ -166,7 +167,7 @@ namespace Masuit.Tools.DateTimeExt
         public static long GetTotalNanoseconds(this in DateTime dt)
         {
             var ticks = (new DateTimeOffset(dt).UtcTicks - 621355968000000000) * 100;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 QueryPerformanceCounter(out var timestamp);
                 return ticks + timestamp % 100;
@@ -347,46 +348,57 @@ namespace Masuit.Tools.DateTimeExt
                     firstDay = DateTime.Now.ToString($"{year}-0{month}-01");
                     lastDay = DateTime.Now.ToString($"{year}-0{month}-31");
                     break;
+
                 case 2:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.IsLeapYear(DateTime.Now.Year) ? DateTime.Now.ToString(year + "-0" + month + "-29") : DateTime.Now.ToString(year + "-0" + month + "-28");
                     break;
+
                 case 3:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString("yyyy-0" + month + "-31");
                     break;
+
                 case 4:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-30");
                     break;
+
                 case 5:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-31");
                     break;
+
                 case 6:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-30");
                     break;
+
                 case 7:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-31");
                     break;
+
                 case 8:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-31");
                     break;
+
                 case 9:
                     firstDay = DateTime.Now.ToString(year + "-0" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-0" + month + "-30");
                     break;
+
                 case 10:
                     firstDay = DateTime.Now.ToString(year + "-" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-" + month + "-31");
                     break;
+
                 case 11:
                     firstDay = DateTime.Now.ToString(year + "-" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-" + month + "-30");
                     break;
+
                 default:
                     firstDay = DateTime.Now.ToString(year + "-" + month + "-01");
                     lastDay = DateTime.Now.ToString(year + "-" + month + "-31");
@@ -464,6 +476,7 @@ namespace Masuit.Tools.DateTimeExt
         public static string GetDiffTime(this in DateTime beginTime, in DateTime endTime)
         {
             string strResout = string.Empty;
+
             //获得2时间的时间间隔秒计算
             TimeSpan span = endTime.Subtract(beginTime);
             int sec = Convert.ToInt32(span.TotalSeconds);

@@ -30,8 +30,8 @@ github：https://github.com/ldqk/Masuit.Tools
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DnsClient" Version="1.5.0" />
-        <PackageReference Include="HtmlSanitizer" Version="7.0.473" />
+        <PackageReference Include="DnsClient" Version="1.6.0" />
+        <PackageReference Include="HtmlSanitizer" Version="7.1.475" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
         <PackageReference Include="System.Management" Version="4.7.0" />

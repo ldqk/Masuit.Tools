@@ -41,25 +41,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DnsClient" Version="1.5.0" />
-    <PackageReference Include="HtmlSanitizer" Version="7.0.473" />
+    <PackageReference Include="DnsClient" Version="1.6.0" />
+    <PackageReference Include="HtmlSanitizer" Version="7.1.475" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.29.0" />
+        <PackageReference Include="SharpCompress" Version="0.30.1" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 
@@ -69,6 +71,7 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
     <PackageReference Include="System.Management" Version="5.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
@@ -79,6 +82,7 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0" />
     <PackageReference Include="System.Management" Version="6.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
@@ -86,6 +90,7 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System.Web" />
     <PackageReference Include="System.Buffers" version="4.5.1" targetFramework="net461" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime.Numerics" version="4.3.0" targetFramework="net461" />
     <PackageReference Include="System.ValueTuple" version="4.5.0" targetFramework="net461" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
