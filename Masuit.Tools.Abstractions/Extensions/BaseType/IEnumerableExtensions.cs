@@ -814,7 +814,7 @@ namespace Masuit.Tools
         /// <param name="second"></param>
         /// <param name="condition">对比因素条件</param>
         /// <returns></returns>
-        public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
+        public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
         {
             var add = first.ExceptBy(second, condition).ToList();
             var remove = second.ExceptBy(first, (s, f) => condition(f, s)).ToList();
