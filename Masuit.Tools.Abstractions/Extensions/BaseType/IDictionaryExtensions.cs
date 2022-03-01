@@ -32,6 +32,22 @@ namespace Masuit.Tools
         /// <param name="this"></param>
         /// <param name="that">另一个字典集</param>
         /// <returns></returns>
+        public static void AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
+        {
+            foreach (var item in that)
+            {
+                @this[item.Key] = item.Value;
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <returns></returns>
         public static void AddOrUpdateTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
         {
             foreach (var item in @this)

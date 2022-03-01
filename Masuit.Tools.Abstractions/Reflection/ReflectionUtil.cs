@@ -19,10 +19,7 @@ namespace Masuit.Tools.Reflection
     {
         #region 属性字段设置
 
-#pragma warning disable 1591
         public static BindingFlags bf = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-#pragma warning restore 1591
-        private static readonly ConcurrentDictionary<string, Delegate> _delegatesCache = new();
 
         /// <summary>
         /// 执行方法
@@ -94,7 +91,7 @@ namespace Masuit.Tools.Reflection
         {
             var parameter = Expression.Parameter(typeof(T), "e");
             var property = Expression.PropertyOrField(parameter, name);
-            var before = _delegatesCache.GetOrAdd(typeof(T) + "Get" + name, () => Expression.Lambda(property, parameter).Compile()).DynamicInvoke(obj);
+            var before = Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
             if (value.Equals(before))
             {
                 return value.ToString();
@@ -106,12 +103,9 @@ namespace Masuit.Tools.Reflection
             }
             else
             {
-                _delegatesCache.GetOrAdd(typeof(T) + "Set" + name, () =>
-                {
-                    var valueExpression = Expression.Parameter(value.GetType(), "v");
-                    var assign = Expression.Assign(property, valueExpression);
-                    return Expression.Lambda(assign, parameter, valueExpression).Compile();
-                }).DynamicInvoke(obj, value);
+                var valueExpression = Expression.Parameter(value.GetType(), "v");
+                var assign = Expression.Assign(property, valueExpression);
+                Expression.Lambda(assign, parameter, valueExpression).Compile().DynamicInvoke(obj, value);
             }
 
             return before.ToJsonString();
@@ -126,12 +120,9 @@ namespace Masuit.Tools.Reflection
         /// <returns>T类型</returns>
         public static T GetProperty<T>(this object obj, string name)
         {
-            return (T)_delegatesCache.GetOrAdd(obj.GetType() + "Get" + name, () =>
-            {
-                var parameter = Expression.Parameter(obj.GetType(), "e");
-                var property = Expression.PropertyOrField(parameter, name);
-                return Expression.Lambda(property, parameter).Compile();
-            }).DynamicInvoke(obj);
+            var parameter = Expression.Parameter(obj.GetType(), "e");
+            var property = Expression.PropertyOrField(parameter, name);
+            return (T)Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
         }
 
         /// <summary>
