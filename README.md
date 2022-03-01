@@ -25,7 +25,7 @@ SDK：.Net Core 2.1.0及以上所有版本
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
-### .NET Standard ≥ 2.1
+### .NET Standard ≥ 2.1 或只想使用一些基本功能
 ```shell
 PM> Install-Package Masuit.Tools.Abstraction
 ```
