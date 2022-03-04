@@ -21,30 +21,30 @@
 SDK：.Net Core 2.1.0及以上所有版本
 
 ## 安装程序包
-## 基础功能包
-### .NET Framework ≥ 4.6.1
+### 基础功能包
+#### .NET Framework ≥ 4.6.1
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
-### .NET Standard ≥ 2.1 或只想使用一些基本功能
+#### .NET Standard ≥ 2.1 或只想使用一些基本功能
 ```shell
 PM> Install-Package Masuit.Tools.Abstraction
 ```
-### .NET Core ≥ 2.1
+#### .NET Core ≥ 2.1
 ```shell
 PM> Install-Package Masuit.Tools.Core
 ```
-### .NET Framework 4.5特供版  
+#### .NET Framework 4.5特供版  
 请注意：`这是.NET Framework 4.5的专用版本，相比4.6.1及.NET Core的版本，阉割了Redis、HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等一些功能。`**如果你的项目版本高于4.5，请务必使用上述版本的包，以享受完整的功能体验！**
 ```shell
 PM> Install-Package Masuit.Tools.Net45
 ```
-## 增值包
-### Masuit.Tools.AspNetCore
+### 增值包
+#### Masuit.Tools.AspNetCore
 ASP.NET Core Web专用包，包含Masuit.Tools.Core的全部功能，并且增加了一些对ASP.NET Core Web功能的额外支持。
-### Masuit.Tools.Excel
+#### Masuit.Tools.Excel
 Excel导入导出的专用独立包
-### Masuit.Tools.NoSQL.MongoDBClient
+#### Masuit.Tools.NoSQL.MongoDBClient
 mongodb的封装操作类独立包
 
 ## 为工具库注册配置
