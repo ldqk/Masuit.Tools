@@ -790,17 +790,31 @@ public class ClassDto
              });
 ```
     
-### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody的模型绑点器BodyAndQueryModelBinder
-用法：在action的参数模型前打上标记：`[ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]`即可，示例代码如下：
+### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody和FromForm的模型绑点器BodyOrDefaultModelBinder
+用法：  
+Startup配置：
+```csharp
+	services.AddMvc(options =>
+        {
+             options.ModelBinderProviders.InsertBodyOrDefaultBinding();
+        })
+```
+在action的参数模型前打上标记：`[BodyOrDefault]`即可，示例代码如下：
 ```csharp
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]QueryModel query)
+        public IActionResult Query([BodyOrDefault]QueryModel query)
+        {
+            return Ok(...);
+        }
+	
+        [HttpGet("query"),HttpPost("query")]
+        public IActionResult Query([BodyOrDefault]int id,[BodyOrDefault]string name)
         {
             return Ok(...);
         }
 ```
 	
-### 49. 可空key的字典类型
+### 50. 可空key的字典类型
 NullableConcurrentDictionary和NullableDictionary  
 用法和普通的字典类型保持一致，相比于普通的字典类型，其key是可以为null的，并且索引器获取时，如果key不存在，是不会报错的，会get到value类型的默认值。
 	
