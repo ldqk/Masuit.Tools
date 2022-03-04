@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Masuit.Tools.AspNetCore": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63779;http://localhost:63780"
+    }
+  }
+}

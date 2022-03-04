@@ -185,7 +185,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool IsNullOrEmpty(this string s)
         {
-            return string.IsNullOrEmpty(s);
+            return string.IsNullOrEmpty(s) || s.Equals("null", StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
@@ -584,6 +584,7 @@ namespace Masuit.Tools
         #endregion Crc32
 
         #region 权威校验中国专利申请号/专利号
+
         /// <summary>
         /// 中国专利申请号（授权以后就是专利号）由两种组成
         /// 2003年9月30号以前的9位（不带校验位是8号），校验位之前可能还会有一个点，例如：00262311, 002623110 或 00262311.0
@@ -696,5 +697,6 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
             return s.Length > length ? s.Substring(0, length) : s;
         }
     }
-    #endregion
+
+    #endregion 权威校验中国专利申请号/专利号
 }
