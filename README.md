@@ -792,7 +792,10 @@ public class ClassDto
     
 ### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody和FromForm的模型绑点器BodyOrDefaultModelBinder
 用法：  
-引入包：Masuit.Tools.AspNetCore  
+引入包：`Masuit.Tools.AspNetCore`  
+```shell
+PM> Install-Package Masuit.Tools.AspNetCore
+```
 Startup配置：
 ```csharp
 	services.AddMvc(options =>
