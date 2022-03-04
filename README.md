@@ -21,6 +21,7 @@
 SDK：.Net Core 2.1.0及以上所有版本
 
 ## 安装程序包
+## 基础功能包
 ### .NET Framework ≥ 4.6.1
 ```shell
 PM> Install-Package Masuit.Tools.Net
@@ -38,6 +39,14 @@ PM> Install-Package Masuit.Tools.Core
 ```shell
 PM> Install-Package Masuit.Tools.Net45
 ```
+## 增值包
+### Masuit.Tools.AspNetCore
+ASP.NET Core Web专用包，包含Masuit.Tools.Core的全部功能，并且增加了一些对ASP.NET Core Web功能的额外支持。
+### Masuit.Tools.Excel
+Excel导入导出的专用独立包
+### Masuit.Tools.NoSQL.MongoDBClient
+mongodb的封装操作类独立包
+
 ## 为工具库注册配置
 工具库需要用到外部配置节，.NET Framework项目配置在web.config/app.config的AppSettings配置节中，.NET Core项目配置在appsettings.json中：  
 1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名，英文逗号分隔，每个元素支持正则表达式，若未配置，则不启用邮箱校验白名单，示例: `"^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com"`
