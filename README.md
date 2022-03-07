@@ -801,7 +801,8 @@ public class ClassDto
 ```
 #### FallbackJsonPropertyResolver
 该解释器针对某个属性设置多个别名，反序列化时支持多个别名key进行绑定，弥补官方JsonProperty别名属性只能设置单一别名的不足
-public class ClassDto
+```csharp
+    public class ClassDto
     {
         [FallbackJsonProperty("MyProperty","a","b")]
         public string MyProperty { get; set; }
