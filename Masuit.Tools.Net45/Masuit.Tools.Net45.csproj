@@ -262,14 +262,29 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
       <Link>Strings\Template.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\CompositeContractResolver.cs">
+      <Link>Systems\CompositeContractResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\ConcurrentLimitedQueue.cs">
       <Link>Systems\ConcurrentLimitedQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyContractResolver.cs">
+      <Link>Systems\DeserializeOnlyContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyJsonPropertyAttribute.cs">
+      <Link>Systems\DeserializeOnlyJsonPropertyAttribute.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\Disposable.cs">
       <Link>Systems\Disposable.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\EnumExt.cs">
       <Link>Systems\EnumExt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonProperty.cs">
+      <Link>Systems\FallbackJsonProperty.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonPropertyResolver.cs">
+      <Link>Systems\FallbackJsonPropertyResolver.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\HiPerfTimer.cs">
       <Link>Systems\HiPerfTimer.cs</Link>

@@ -112,6 +112,18 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
       <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\CompositeContractResolver.cs">
+      <Link>Systems\CompositeContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyJsonPropertyAttribute.cs">
+      <Link>Systems\DeserializeOnlyJsonPropertyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonProperty.cs">
+      <Link>Systems\FallbackJsonProperty.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonPropertyResolver.cs">
+      <Link>Systems\FallbackJsonPropertyResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableConcurrentDictionary.cs">
       <Link>Systems\NullableConcurrentDictionary.cs</Link>
     </Compile>
@@ -187,7 +199,7 @@
       <Version>0.30.1</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.2.88</Version>
+      <Version>2.5.43</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
