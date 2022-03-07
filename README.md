@@ -21,23 +21,32 @@
 SDK：.Net Core 2.1.0及以上所有版本
 
 ## 安装程序包
-### .NET Framework ≥ 4.6.1
+### 基础功能包
+#### .NET Framework ≥ 4.6.1
 ```shell
 PM> Install-Package Masuit.Tools.Net
 ```
-### .NET Standard ≥ 2.1 或只想使用一些基本功能
+#### .NET Standard ≥ 2.1 或只想使用一些基本功能
 ```shell
 PM> Install-Package Masuit.Tools.Abstraction
 ```
-### .NET Core ≥ 2.1
+#### .NET Core ≥ 2.1
 ```shell
 PM> Install-Package Masuit.Tools.Core
 ```
-### .NET Framework 4.5特供版  
+#### .NET Framework 4.5特供版  
 请注意：`这是.NET Framework 4.5的专用版本，相比4.6.1及.NET Core的版本，阉割了Redis、HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等一些功能。`**如果你的项目版本高于4.5，请务必使用上述版本的包，以享受完整的功能体验！**
 ```shell
 PM> Install-Package Masuit.Tools.Net45
 ```
+### 增值包
+#### Masuit.Tools.AspNetCore
+ASP.NET Core Web专用包，包含Masuit.Tools.Core的全部功能，并且增加了一些对ASP.NET Core Web功能的额外支持。
+#### Masuit.Tools.Excel
+Excel导入导出的专用独立包
+#### Masuit.Tools.NoSQL.MongoDBClient
+mongodb的封装操作类独立包
+
 ## 为工具库注册配置
 工具库需要用到外部配置节，.NET Framework项目配置在web.config/app.config的AppSettings配置节中，.NET Core项目配置在appsettings.json中：  
 1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名，英文逗号分隔，每个元素支持正则表达式，若未配置，则不启用邮箱校验白名单，示例: `"^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com"`
@@ -790,17 +799,35 @@ public class ClassDto
              });
 ```
     
-### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody的模型绑点器BodyAndQueryModelBinder
-用法：在action的参数模型前打上标记：`[ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]`即可，示例代码如下：
+### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody和FromForm的模型绑点器BodyOrDefaultModelBinder
+用法：  
+引入包：`Masuit.Tools.AspNetCore`  
+```shell
+PM> Install-Package Masuit.Tools.AspNetCore
+```
+Startup配置：
+```csharp
+	services.AddMvc(options =>
+        {
+             options.ModelBinderProviders.InsertBodyOrDefaultBinding();
+        })
+```
+在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：
 ```csharp
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([ModelBinder(BinderType = typeof(BodyAndQueryModelBinder<T>))]QueryModel query)
+        public IActionResult Query([FromBodyOrDefault]QueryModel query)
+        {
+            return Ok(...);
+        }
+	
+        [HttpGet("query"),HttpPost("query")]
+        public IActionResult Query([FromBodyOrDefault]int id,[FromBodyOrDefault]string name)
         {
             return Ok(...);
         }
 ```
 	
-### 49. 可空key的字典类型
+### 50. 可空key的字典类型
 NullableConcurrentDictionary和NullableDictionary  
 用法和普通的字典类型保持一致，相比于普通的字典类型，其key是可以为null的，并且索引器获取时，如果key不存在，是不会报错的，会get到value类型的默认值。
 	
