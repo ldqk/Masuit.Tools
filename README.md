@@ -772,7 +772,8 @@ var allchanges=dbContext.GetAllChanges();//获取增删改的实体字段信息
 a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
-### 48.Newtonsoft.Json的只允许字段反序列化行为的契约解释器DeserializeOnlyContractResolver
+### 48.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+#### DeserializeOnlyContractResolver
 该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
 ```csharp
 public class ClassDto
@@ -798,7 +799,24 @@ public class ClassDto
                  options.SerializerSettings.ContractResolver = resolver;
              });
 ```
+#### FallbackJsonPropertyResolver
+该解释器针对某个属性设置多个别名，反序列化时支持多个别名key进行绑定，弥补官方JsonProperty别名属性只能设置单一别名的不足
+public class ClassDto
+    {
+        [FallbackJsonProperty("MyProperty","a","b")]
+        public string MyProperty { get; set; }
+
+        public int Num { get; set; }
+    }
     
+    JsonConvert.SerializeObject(new MyClass(),new JsonSerializerSettings()
+	{
+		ContractResolver = new FallbackJsonPropertyResolver() // 配置使用FallbackJsonPropertyResolver解释器
+	});
+```
+#### CompositeContractResolver
+该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
+
 ### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody和FromForm的模型绑点器BodyOrDefaultModelBinder
 用法：  
 引入包：`Masuit.Tools.AspNetCore`  
