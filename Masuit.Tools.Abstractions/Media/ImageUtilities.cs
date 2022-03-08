@@ -29,13 +29,14 @@ namespace Masuit.Tools.Media
             //创建目录
             string dir = Path.GetDirectoryName(fileSaveUrl);
             Directory.CreateDirectory(dir);
+
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
             var initImage = Image.FromStream(fromFile, true);
 
             //原图宽高均小于模版，不作处理，直接保存
             if ((initImage.Width <= side) && (initImage.Height <= side))
             {
-                initImage.Save(fileSaveUrl, ImageFormat.Jpeg);
+                initImage.Save(fileSaveUrl);
             }
             else
             {
@@ -56,37 +57,47 @@ namespace Masuit.Tools.Media
                         //对象实例化
                         pickedImage = new Bitmap(initHeight, initHeight);
                         pickedG = Graphics.FromImage(pickedImage);
+
                         //设置质量
                         pickedG.InterpolationMode = InterpolationMode.HighQualityBicubic;
                         pickedG.SmoothingMode = SmoothingMode.HighQuality;
+
                         //定位
                         Rectangle fromR = new Rectangle((initWidth - initHeight) / 2, 0, initHeight, initHeight);
                         Rectangle toR = new Rectangle(0, 0, initHeight, initHeight);
+
                         //画图
                         pickedG.DrawImage(initImage, toR, fromR, GraphicsUnit.Pixel);
+
                         //重置宽
                         initWidth = initHeight;
                     }
+
                     //高大于宽的竖图
                     else
                     {
                         //对象实例化
                         pickedImage = new Bitmap(initWidth, initWidth);
                         pickedG = Graphics.FromImage(pickedImage);
+
                         //设置质量
                         pickedG.InterpolationMode = InterpolationMode.HighQualityBicubic;
                         pickedG.SmoothingMode = SmoothingMode.HighQuality;
+
                         //定位
                         Rectangle fromR = new Rectangle(0, (initHeight - initWidth) / 2, initWidth, initWidth);
                         Rectangle toR = new Rectangle(0, 0, initWidth, initWidth);
+
                         //画图
                         pickedG.DrawImage(initImage, toR, fromR, GraphicsUnit.Pixel);
+
                         //重置高
                         initHeight = initWidth;
                     }
 
                     //将截图对象赋给原图
                     initImage = (Image)pickedImage.Clone();
+
                     //释放截图资源
                     initImage.Dispose();
                     pickedG.Dispose();
@@ -96,11 +107,14 @@ namespace Masuit.Tools.Media
                 //缩略图对象
                 using Image resultImage = new Bitmap(side, side);
                 using var resultG = Graphics.FromImage(resultImage);
+
                 //设置质量
                 resultG.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 resultG.SmoothingMode = SmoothingMode.HighQuality;
+
                 //用指定背景色清空画布
                 resultG.Clear(Color.White);
+
                 //绘制缩略图
                 resultG.DrawImage(initImage, new Rectangle(0, 0, side, side), new Rectangle(0, 0, initWidth, initHeight), GraphicsUnit.Pixel);
 
@@ -121,12 +135,13 @@ namespace Masuit.Tools.Media
                         [0] = new EncoderParameter(Encoder.Quality, quality)
                     }
                 };
+
                 //保存缩略图
                 resultImage.Save(fileSaveUrl, ici, ep);
             }
         }
 
-        #endregion
+        #endregion 正方型裁剪并缩放
 
         #region 自定义裁剪并缩放
 
@@ -147,12 +162,13 @@ namespace Masuit.Tools.Media
             //原图宽高均小于模版，不作处理，直接保存
             if ((initImage.Width <= maxWidth) && (initImage.Height <= maxHeight))
             {
-                initImage.Save(fileSaveUrl, ImageFormat.Jpeg);
+                initImage.Save(fileSaveUrl);
             }
             else
             {
                 //模版的宽高比例
                 double templateRate = (double)maxWidth / maxHeight;
+
                 //原图片的宽高比例
                 double initRate = (double)initImage.Width / initImage.Height;
 
@@ -166,8 +182,9 @@ namespace Masuit.Tools.Media
                     templateG.SmoothingMode = SmoothingMode.HighQuality;
                     templateG.Clear(Color.White);
                     templateG.DrawImage(initImage, new Rectangle(0, 0, maxWidth, maxHeight), new Rectangle(0, 0, initImage.Width, initImage.Height), GraphicsUnit.Pixel);
-                    templateImage.Save(fileSaveUrl, ImageFormat.Jpeg);
+                    templateImage.Save(fileSaveUrl, initImage.RawFormat);
                 }
+
                 //原图与模版比例不等，裁剪后缩放
                 else
                 {
@@ -198,6 +215,7 @@ namespace Masuit.Tools.Media
                         toR.Width = initImage.Width;
                         toR.Height = (int)Math.Floor(initImage.Width / templateRate);
                     }
+
                     //高为标准进行裁剪
                     else
                     {
@@ -251,7 +269,7 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
+        #endregion 自定义裁剪并缩放
 
         #region 等比缩放
 
@@ -269,6 +287,7 @@ namespace Masuit.Tools.Media
             //创建目录
             string dir = Path.GetDirectoryName(savePath);
             Directory.CreateDirectory(dir);
+
             //原始图片（获取原始图片创建对象，并使用流中嵌入的颜色管理信息）
             using Image initImage = Image.FromStream(fromFile, true);
 
@@ -276,7 +295,7 @@ namespace Masuit.Tools.Media
             if ((initImage.Width <= targetWidth) && (initImage.Height <= targetHeight))
             {
                 //文字水印
-                if (watermarkText != "")
+                if (!string.IsNullOrEmpty(watermarkText))
                 {
                     using var gWater = Graphics.FromImage(initImage);
                     Font fontWater = new Font("黑体", 10);
@@ -286,11 +305,12 @@ namespace Masuit.Tools.Media
                 }
 
                 //透明图片水印
-                if (watermarkImage != "")
+                if (!string.IsNullOrEmpty(watermarkImage))
                 {
                     if (File.Exists(watermarkImage))
                     {
                         using var wrImage = Image.FromFile(watermarkImage);
+
                         //水印绘制条件：原始图片宽高均大于或等于水印图片
                         if ((initImage.Width >= wrImage.Width) && (initImage.Height >= wrImage.Height))
                         {
@@ -324,7 +344,7 @@ namespace Masuit.Tools.Media
                 }
 
                 //保存
-                initImage.Save(savePath, ImageFormat.Jpeg);
+                initImage.Save(savePath, initImage.RawFormat);
             }
             else
             {
@@ -343,6 +363,7 @@ namespace Masuit.Tools.Media
                         newHeight = initImage.Height * (targetWidth / initImage.Width);
                     }
                 }
+
                 //高大于宽（竖图）
                 else
                 {
@@ -358,6 +379,7 @@ namespace Masuit.Tools.Media
                 //生成新图
                 //新建一个bmpp图片
                 using Image newImage = new Bitmap((int)newWidth, (int)newHeight);
+
                 //新建一个画板
                 using Graphics newG = Graphics.FromImage(newImage);
 
@@ -367,25 +389,27 @@ namespace Masuit.Tools.Media
 
                 //置背景色
                 newG.Clear(Color.White);
+
                 //画图
                 newG.DrawImage(initImage, new Rectangle(0, 0, newImage.Width, newImage.Height), new Rectangle(0, 0, initImage.Width, initImage.Height), GraphicsUnit.Pixel);
 
                 //文字水印
-                if (watermarkText != "")
+                if (!string.IsNullOrEmpty(watermarkText))
                 {
                     using var gWater = Graphics.FromImage(newImage);
-                    Font fontWater = new Font("宋体", 10);
+                    Font fontWater = new Font("微软雅黑", 10);
                     Brush brushWater = new SolidBrush(Color.White);
                     gWater.DrawString(watermarkText, fontWater, brushWater, 10, 10);
                     gWater.Dispose();
                 }
 
                 //透明图片水印
-                if (watermarkImage != "")
+                if (!string.IsNullOrEmpty(watermarkImage))
                 {
                     if (File.Exists(watermarkImage))
                     {
                         using Image wrImage = Image.FromFile(watermarkImage);
+
                         //水印绘制条件：原始图片宽高均大于或等于水印图片
                         if ((newImage.Width >= wrImage.Width) && (newImage.Height >= wrImage.Height))
                         {
@@ -393,9 +417,11 @@ namespace Masuit.Tools.Media
 
                             //透明属性
                             ImageAttributes imgAttributes = new ImageAttributes();
-                            ColorMap colorMap = new ColorMap();
-                            colorMap.OldColor = Color.FromArgb(255, 0, 255, 0);
-                            colorMap.NewColor = Color.FromArgb(0, 0, 0, 0);
+                            ColorMap colorMap = new ColorMap
+                            {
+                                OldColor = Color.FromArgb(255, 0, 255, 0),
+                                NewColor = Color.FromArgb(0, 0, 0, 0)
+                            };
                             ColorMap[] remapTable = { colorMap };
                             imgAttributes.SetRemapTable(remapTable, ColorAdjustType.Bitmap);
 
@@ -417,11 +443,11 @@ namespace Masuit.Tools.Media
                 }
 
                 //保存缩略图
-                newImage.Save(savePath, ImageFormat.Jpeg);
+                newImage.Save(savePath, initImage.RawFormat);
             }
         }
 
-        #endregion
+        #endregion 等比缩放
 
         #region 判断文件类型是否为WEB格式图片
 
@@ -436,12 +462,12 @@ namespace Masuit.Tools.Media
             return contentType == "image/pjpeg" || contentType == "image/jpeg" || contentType == "image/gif" || contentType == "image/bmpp" || contentType == "image/png";
         }
 
-        #endregion
+        #endregion 判断文件类型是否为WEB格式图片
 
         #region 裁剪图片
 
         /// <summary>
-        /// 裁剪图片 -- 用GDI+   
+        /// 裁剪图片 -- 用GDI+
         /// </summary>
         /// <param name="b">原始Bitmap</param>
         /// <param name="rec">裁剪区域</param>
@@ -478,24 +504,25 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
+        #endregion 裁剪图片
 
         #region 缩放图片
 
-        /// <summary>  
-        ///  Resize图片   
-        /// </summary>  
-        /// <param name="bmpp">原始Bitmap </param>  
-        /// <param name="newWidth">新的宽度</param>  
-        /// <param name="newHeight">新的高度</param>  
-        /// <returns>处理以后的图片</returns>  
+        /// <summary>
+        ///  Resize图片
+        /// </summary>
+        /// <param name="bmpp">原始Bitmap </param>
+        /// <param name="newWidth">新的宽度</param>
+        /// <param name="newHeight">新的高度</param>
+        /// <returns>处理以后的图片</returns>
         public static Bitmap ResizeImage(this Bitmap bmpp, int newWidth, int newHeight)
         {
             try
             {
                 var b = new Bitmap(newWidth, newHeight);
                 using var g = Graphics.FromImage(b);
-                // 插值算法的质量   
+
+                // 插值算法的质量
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(bmpp, new Rectangle(0, 0, newWidth, newHeight), new Rectangle(0, 0, bmpp.Width, bmpp.Height), GraphicsUnit.Pixel);
                 return b;
@@ -506,7 +533,7 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
+        #endregion 缩放图片
 
         #region 裁剪并缩放
 
@@ -515,12 +542,12 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="bmpp">原始图片</param>
         /// <param name="rec">裁剪的矩形区域</param>
-        /// <param name="newWidth">新的宽度</param>  
-        /// <param name="newHeight">新的高度</param>  
+        /// <param name="newWidth">新的宽度</param>
+        /// <param name="newHeight">新的高度</param>
         /// <returns>处理以后的图片</returns>
         public static Bitmap CutAndResize(this Bitmap bmpp, Rectangle rec, int newWidth, int newHeight) => bmpp.CutImage(rec).ResizeImage(newWidth, newHeight);
 
-        #endregion
+        #endregion 裁剪并缩放
 
         #region 无损压缩图片
 
@@ -544,10 +571,10 @@ namespace Masuit.Tools.Media
             }
 
             using Image iSource = Image.FromFile(sFile);
-            ImageFormat tFormat = iSource.RawFormat;
             int dHeight = iSource.Height;
             int dWidth = iSource.Width;
             int sW, sH;
+
             //按比例缩放
             Size temSize = new Size(iSource.Width, iSource.Height);
             if (temSize.Width > dHeight || temSize.Width > dWidth)
@@ -597,7 +624,7 @@ namespace Masuit.Tools.Media
                 }
                 else
                 {
-                    bmpp.Save(dFile, tFormat);
+                    bmpp.Save(dFile, iSource.RawFormat);
                 }
                 return true;
             }
@@ -626,10 +653,10 @@ namespace Masuit.Tools.Media
             }
 
             using Image iSource = Image.FromStream(src);
-            ImageFormat tFormat = iSource.RawFormat;
             int dHeight = iSource.Height;
             int dWidth = iSource.Width;
             int sW, sH;
+
             //按比例缩放
             Size temSize = new Size(iSource.Width, iSource.Height);
             if (temSize.Width > dHeight || temSize.Width > dWidth)
@@ -678,7 +705,7 @@ namespace Masuit.Tools.Media
                 }
                 else
                 {
-                    bmpp.Save(dest, tFormat);
+                    bmpp.Save(dest, iSource.RawFormat);
                 }
                 return true;
             }
@@ -688,7 +715,7 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
+        #endregion 无损压缩图片
 
         #region 缩略图
 
@@ -699,8 +726,21 @@ namespace Masuit.Tools.Media
         /// <param name="thumbnailPath">缩略图路径（物理路径）</param>
         /// <param name="width">缩略图宽度</param>
         /// <param name="height">缩略图高度</param>
-        /// <param name="mode">生成缩略图的方式</param>    
+        /// <param name="mode">生成缩略图的方式</param>
         public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, ThumbnailCutMode mode)
+        {
+            using var bitmap = MakeThumbnail(originalImage, width, height, mode);
+            bitmap.Save(thumbnailPath, originalImage.RawFormat);
+        }
+
+        /// <summary>
+        /// 生成缩略图
+        /// </summary>
+        /// <param name="originalImage">原图</param>
+        /// <param name="width">缩略图宽度</param>
+        /// <param name="height">缩略图高度</param>
+        /// <param name="mode">生成缩略图的方式</param>
+        public static Image MakeThumbnail(this Image originalImage, int width, int height, ThumbnailCutMode mode)
         {
             int towidth = width;
             int toheight = height;
@@ -711,15 +751,18 @@ namespace Masuit.Tools.Media
 
             switch (mode)
             {
-                case ThumbnailCutMode.Fixed: //指定高宽缩放（可能变形）                
+                case ThumbnailCutMode.Fixed: //指定高宽缩放（可能变形）
                     break;
-                case ThumbnailCutMode.LockWidth: //指定宽，高按比例                    
+
+                case ThumbnailCutMode.LockWidth: //指定宽，高按比例
                     toheight = originalImage.Height * width / originalImage.Width;
                     break;
+
                 case ThumbnailCutMode.LockHeight: //指定高，宽按比例
                     towidth = originalImage.Width * height / originalImage.Height;
                     break;
-                case ThumbnailCutMode.Cut: //指定高宽裁减（不变形）                
+
+                case ThumbnailCutMode.Cut: //指定高宽裁减（不变形）
                     if (originalImage.Width / (double)originalImage.Height > towidth / (double)toheight)
                     {
                         oh = originalImage.Height;
@@ -738,7 +781,7 @@ namespace Masuit.Tools.Media
             }
 
             //新建一个bmpp图片
-            using Image bitmap = new Bitmap(towidth, toheight);
+            Image bitmap = new Bitmap(towidth, toheight);
 
             //新建一个画板
             using Graphics g = Graphics.FromImage(bitmap);
@@ -758,11 +801,10 @@ namespace Masuit.Tools.Media
             //三：画那块区域。
             g.DrawImage(originalImage, new Rectangle(0, 0, towidth, toheight), new Rectangle(x, y, ow, oh), GraphicsUnit.Pixel);
 
-            //以jpg格式保存缩略图
-            bitmap.Save(thumbnailPath, ImageFormat.Jpeg);
+            return bitmap;
         }
 
-        #endregion
+        #endregion 缩略图
 
         #region 调整光暗
 
@@ -791,7 +833,7 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 调整光暗
 
         #region 反色处理
 
@@ -819,7 +861,7 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 反色处理
 
         #region 浮雕处理
 
@@ -854,7 +896,7 @@ namespace Masuit.Tools.Media
             return newBitmap;
         }
 
-        #endregion
+        #endregion 浮雕处理
 
         #region 拉伸图片
 
@@ -883,7 +925,7 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
+        #endregion 拉伸图片
 
         #region 滤色处理
 
@@ -909,7 +951,7 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 滤色处理
 
         #region 左右翻转
 
@@ -922,6 +964,7 @@ namespace Masuit.Tools.Media
         public static Bitmap RevPicLR(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height);
+
             //x,y是循环次数,z是用来记录像素点的x坐标的变化的
             for (var y = height - 1; y >= 0; y--)
             {
@@ -937,7 +980,7 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 左右翻转
 
         #region 上下翻转
 
@@ -964,51 +1007,12 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 上下翻转
 
-        #region 压缩图片
-
-        /// <summary>
-        /// 压缩到指定尺寸
-        /// </summary>
-        /// <param name="img"></param>
-        /// <param name="newfile">新文件</param>
-        public static bool Compress(this Image img, string newfile)
-        {
-            try
-            {
-                Size newSize = new Size(100, 125);
-                using Bitmap outBmp = new Bitmap(newSize.Width, newSize.Height);
-                using Graphics g = Graphics.FromImage(outBmp);
-                g.CompositingQuality = CompositingQuality.HighQuality;
-                g.SmoothingMode = SmoothingMode.HighQuality;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(img, new Rectangle(0, 0, newSize.Width, newSize.Height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
-                var encoderParams = new EncoderParameters();
-                var quality = new long[1];
-                quality[0] = 100;
-                encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-                ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
-                ImageCodecInfo jpegICI = arrayICI.FirstOrDefault(t => t.FormatDescription.Equals("JPEG"));
-                if (jpegICI != null)
-                {
-                    outBmp.Save(newfile, ImageFormat.Jpeg);
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
-        #region 图片灰度化
+        #region 灰度化
 
         /// <summary>
-        /// 图片灰度化
+        /// 色彩灰度化
         /// </summary>
         /// <param name="c">输入颜色</param>
         /// <returns>输出颜色</returns>
@@ -1018,7 +1022,7 @@ namespace Masuit.Tools.Media
             return Color.FromArgb(rgb, rgb, rgb);
         }
 
-        #endregion
+        #endregion 灰度化
 
         #region 转换为黑白图片
 
@@ -1044,12 +1048,12 @@ namespace Masuit.Tools.Media
             return bmp;
         }
 
-        #endregion
+        #endregion 转换为黑白图片
 
         #region 获取图片中的各帧
 
         /// <summary>
-        /// 获取图片中的各帧
+        /// 获取gif图片中的各帧
         /// </summary>
         /// <param name="gif">源gif</param>
         /// <param name="pSavedPath">保存路径</param>
@@ -1064,8 +1068,7 @@ namespace Masuit.Tools.Media
             }
         }
 
-        #endregion
-
+        #endregion 获取图片中的各帧
 
         /// <summary>
         /// 将dataUri保存为图片
@@ -1079,6 +1082,7 @@ namespace Masuit.Tools.Media
             byte[] arr = Convert.FromBase64String(strbase64);
             using var ms = new MemoryStream(arr);
             using var bmpp = new Bitmap(ms);
+
             //新建第二个bitmap类型的bmpp2变量。
             var bmpp2 = new Bitmap(bmpp, bmpp.Width, bmpp.Height);
             using var draw = Graphics.FromImage(bmpp2);
