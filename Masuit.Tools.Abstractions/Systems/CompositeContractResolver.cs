@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -14,8 +15,8 @@ public class CompositeContractResolver : FallbackJsonPropertyResolver
         var property = base.CreateProperty(member, memberSerialization);
         if (property is { Writable: true })
         {
-            var attributes = property.AttributeProvider.GetAttributes(typeof(DeserializeOnlyJsonPropertyAttribute), true);
-            if (attributes is { Count: > 0 })
+            var attributes = property.AttributeProvider.GetAttributes(typeof(DeserializeOnlyJsonPropertyAttribute), true).Union(property.AttributeProvider.GetAttributes(typeof(SerializeIgnoreAttribute), true));
+            if (attributes.Any())
             {
                 property.ShouldSerialize = _ => false;
             }

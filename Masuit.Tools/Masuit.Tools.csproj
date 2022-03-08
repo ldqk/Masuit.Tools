@@ -133,6 +133,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullObject.cs">
       <Link>Systems\NullObject.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SerializeIgnoreAttribute.cs">
+      <Link>Systems\SerializeIgnoreAttribute.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Validator\*.*">
       <Link>Validator\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
