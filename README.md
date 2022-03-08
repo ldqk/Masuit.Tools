@@ -818,7 +818,7 @@ public class ClassDto
 #### CompositeContractResolver
 该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
 
-### 49. ASP.NET Core Action同时支持支持FromQuery和FromBody和FromForm的模型绑点器BodyOrDefaultModelBinder
+### 49. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
 用法：  
 引入包：`Masuit.Tools.AspNetCore`  
 ```shell
@@ -831,16 +831,16 @@ Startup配置：
              options.ModelBinderProviders.InsertBodyOrDefaultBinding();
         })
 ```
-在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：
+在action的参数模型前打上标记：`[FromBody]`即可，当然也可以省略，示例代码如下：
 ```csharp
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([FromBodyOrDefault]QueryModel query)
+        public IActionResult Query([FromBody]QueryModel query)
         {
             return Ok(...);
         }
 	
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([FromBodyOrDefault]int id,[FromBodyOrDefault]string name)
+        public IActionResult Query([FromBody]int id,[FromBody]string name)
         {
             return Ok(...);
         }
