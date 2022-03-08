@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+
 #if NET5_0_OR_GREATER
 
 using ComplexDataModelBinderProvider = Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider;
@@ -10,28 +11,27 @@ using ComplexDataModelBinderProvider = Microsoft.AspNetCore.Mvc.ModelBinding.Bin
 
 #endif
 
-namespace Masuit.Tools.AspNetCore.ModelBinder
+namespace Masuit.Tools.AspNetCore.ModelBinder;
+
+public class BodyOrDefaultModelBinderProvider : IModelBinderProvider
 {
-    public class BodyOrDefaultModelBinderProvider : IModelBinderProvider
+    private readonly BodyModelBinderProvider _bodyModelBinderProvider;
+    private readonly ComplexDataModelBinderProvider _complexDataModelBinderProvider;
+
+    public BodyOrDefaultModelBinderProvider(BodyModelBinderProvider bodyModelBinderProvider, ComplexDataModelBinderProvider complexDataModelBinderProvider)
     {
-        private BodyModelBinderProvider _bodyModelBinderProvider;
-        private ComplexDataModelBinderProvider _complexDataModelBinderProvider;
+        _bodyModelBinderProvider = bodyModelBinderProvider;
+        _complexDataModelBinderProvider = complexDataModelBinderProvider;
+    }
 
-        public BodyOrDefaultModelBinderProvider(BodyModelBinderProvider bodyModelBinderProvider, ComplexDataModelBinderProvider complexDataModelBinderProvider)
+    public IModelBinder GetBinder(ModelBinderProviderContext context)
+    {
+        if (context.BindingInfo.BindingSource != null && context.BindingInfo.BindingSource.CanAcceptDataFrom(BodyOrDefaultBindingSource.BodyOrDefault))
         {
-            _bodyModelBinderProvider = bodyModelBinderProvider;
-            _complexDataModelBinderProvider = complexDataModelBinderProvider;
+            var bodyBinder = _bodyModelBinderProvider.GetBinder(context);
+            var complexBinder = _complexDataModelBinderProvider.GetBinder(context);
+            return new BodyOrDefaultModelBinder(bodyBinder, complexBinder);
         }
-
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
-        {
-            if (context.BindingInfo.BindingSource != null && context.BindingInfo.BindingSource.CanAcceptDataFrom(BodyOrDefaultBindingSource.BodyOrDefault))
-            {
-                var bodyBinder = _bodyModelBinderProvider.GetBinder(context);
-                var complexBinder = _complexDataModelBinderProvider.GetBinder(context);
-                return new BodyOrDefaultModelBinder(bodyBinder, complexBinder);
-            }
-            return null;
-        }
+        return null;
     }
 }
