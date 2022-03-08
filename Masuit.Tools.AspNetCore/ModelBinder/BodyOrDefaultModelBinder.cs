@@ -38,7 +38,14 @@ public class BodyOrDefaultModelBinder : IModelBinder
             }
             else if (request.ContentType.StartsWith("application/json"))
             {
-                value = JObject.Parse(text)[parameter] + "";
+                try
+                {
+                    value = JObject.Parse(text)[parameter] + "";
+                }
+                catch
+                {
+                    value = text;
+                }
             }
             else if (request.HasFormContentType)
             {

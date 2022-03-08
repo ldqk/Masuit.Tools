@@ -26,7 +26,7 @@ public class BodyOrDefaultModelBinderProvider : IModelBinderProvider
 
     public IModelBinder GetBinder(ModelBinderProviderContext context)
     {
-        if (context.BindingInfo.BindingSource != null && context.BindingInfo.BindingSource.CanAcceptDataFrom(BodyOrDefaultBindingSource.BodyOrDefault))
+        if (context.BindingInfo.BindingSource != null && context.BindingInfo.BindingSource.CanAcceptDataFrom(BindingSource.Body))
         {
             var bodyBinder = _bodyModelBinderProvider.GetBinder(context);
             var complexBinder = _complexDataModelBinderProvider.GetBinder(context);
