@@ -116,7 +116,7 @@ namespace Masuit.Tools.Systems
         {
             lock (SyncRoot)
             {
-                var timestamp = (long)DateTime.UtcNow.GetTotalMilliseconds();
+                var timestamp = DateTime.UtcNow.GetTotalMilliseconds();
                 if (_lastTimestamp == timestamp)
                 {
                     //同一毫秒中生成ID
@@ -124,7 +124,7 @@ namespace Masuit.Tools.Systems
                     if (_sequence == 0)
                     {
                         //一毫秒内产生的ID计数已达上限，等待下一毫秒
-                        timestamp = (long)DateTime.UtcNow.GetTotalMilliseconds();
+                        timestamp = DateTime.UtcNow.GetTotalMilliseconds();
                     }
                 }
                 else

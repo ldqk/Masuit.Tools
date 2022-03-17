@@ -28,7 +28,8 @@ namespace Masuit.Tools.Net
         private bool _rangeAllowed;
         private readonly HttpWebRequest _request;
         private Action<HttpWebRequest> _requestConfigure = req => req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
-        #endregion
+
+        #endregion 属性
 
         #region 公共属性
 
@@ -69,7 +70,10 @@ namespace Masuit.Tools.Net
             {
                 try
                 {
-                    return PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
+                    lock (this)
+                    {
+                        return PartialDownloaderList.Where(t => t != null).Sum(t => t.TotalBytesRead);
+                    }
                 }
                 catch
                 {
@@ -91,7 +95,16 @@ namespace Masuit.Tools.Net
         /// <summary>
         /// 下载速度
         /// </summary>
-        public float TotalSpeedInBytes => PartialDownloaderList.Sum(t => t.SpeedInBytes);
+        public float TotalSpeedInBytes
+        {
+            get
+            {
+                lock (this)
+                {
+                    return PartialDownloaderList.Sum(t => t.SpeedInBytes);
+                }
+            }
+        }
 
         /// <summary>
         /// 下载块
@@ -103,7 +116,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         public string FilePath { get; set; }
 
-        #endregion
+        #endregion 公共属性
 
         #region 变量
 
@@ -124,7 +137,7 @@ namespace Masuit.Tools.Net
 
         private readonly AsyncOperation _aop;
 
-        #endregion
+        #endregion 变量
 
         #region 下载管理器
 
@@ -166,7 +179,7 @@ namespace Masuit.Tools.Net
         {
         }
 
-        #endregion
+        #endregion 下载管理器
 
         #region 事件
 
@@ -202,16 +215,19 @@ namespace Masuit.Tools.Net
             var temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, true);
             temp.DownloadPartCompleted += temp_DownloadPartCompleted;
             temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
-            PartialDownloaderList.Add(temp);
+            lock (this)
+            {
+                PartialDownloaderList.Add(temp);
+            }
             temp.Start(_requestConfigure);
         }
 
-        void temp_DownloadPartProgressChanged(object sender, EventArgs e)
+        private void temp_DownloadPartProgressChanged(object sender, EventArgs e)
         {
             UpdateProgress();
         }
 
-        void UpdateProgress()
+        private void UpdateProgress()
         {
             int pr = (int)(TotalBytesReceived * 1d / Size * 100);
             if (TotalProgress != pr)
@@ -224,11 +240,11 @@ namespace Masuit.Tools.Net
             }
         }
 
-        #endregion
+        #endregion 事件
 
         #region 方法
 
-        void CreateFirstPartitions()
+        private void CreateFirstPartitions()
         {
             Size = GetContentLength(ref _rangeAllowed, ref _url);
             int maximumPart = (int)(Size / (25 * 1024));
@@ -247,12 +263,15 @@ namespace Masuit.Tools.Net
                 var temp = CreateNew(i, NumberOfParts, Size);
                 temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
                 temp.DownloadPartCompleted += temp_DownloadPartCompleted;
-                PartialDownloaderList.Add(temp);
+                lock (this)
+                {
+                    PartialDownloaderList.Add(temp);
+                }
                 temp.Start(_requestConfigure);
             }
         }
 
-        void MergeParts()
+        private void MergeParts()
         {
             var mergeOrderedList = PartialDownloaderList.OrderBy(x => x.From);
             var dir = new FileInfo(FilePath).DirectoryName;
@@ -293,7 +312,7 @@ namespace Masuit.Tools.Net
             }
         }
 
-        PartialDownloader CreateNew(int order, int parts, long contentLength)
+        private PartialDownloader CreateNew(int order, int parts, long contentLength)
         {
             int division = (int)contentLength / parts;
             int remaining = (int)contentLength % parts;
@@ -310,15 +329,15 @@ namespace Masuit.Tools.Net
         /// <param name="wait"></param>
         public static void WaitOrResumeAll(List<PartialDownloader> list, bool wait)
         {
-            foreach (var item in list)
+            for (var index = 0; index < list.Count; index++)
             {
                 if (wait)
                 {
-                    item.Wait();
+                    list[index].Wait();
                 }
                 else
                 {
-                    item.ResumeAfterWait();
+                    list[index].ResumeAfterWait();
                 }
             }
         }
@@ -355,7 +374,7 @@ namespace Masuit.Tools.Net
             return ctl;
         }
 
-        #endregion
+        #endregion 方法
 
         #region 公共方法
 
@@ -364,9 +383,12 @@ namespace Masuit.Tools.Net
         /// </summary>
         public void Pause()
         {
-            foreach (var t in PartialDownloaderList.Where(t => !t.Completed))
+            lock (this)
             {
-                t.Stop();
+                foreach (var t in PartialDownloaderList.Where(t => !t.Completed))
+                {
+                    t.Stop();
+                }
             }
 
             Thread.Sleep(200);
@@ -401,13 +423,16 @@ namespace Masuit.Tools.Net
                     var temp = new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), from, to, _rangeAllowed);
                     temp.DownloadPartProgressChanged += temp_DownloadPartProgressChanged;
                     temp.DownloadPartCompleted += temp_DownloadPartCompleted;
-                    PartialDownloaderList.Add(temp);
+                    lock (this)
+                    {
+                        PartialDownloaderList.Add(temp);
+                    }
                     PartialDownloaderList[i].To = PartialDownloaderList[i].CurrentPosition;
                     temp.Start(_requestConfigure);
                 }
             }
         }
 
-        #endregion
+        #endregion 公共方法
     }
 }

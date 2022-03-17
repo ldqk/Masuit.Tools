@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Masuit.Tools.Hardware
 {
@@ -24,7 +25,7 @@ namespace Masuit.Tools.Hardware
         private const int GwlStyle = -16;
         private const int WsVisible = 268435456;
         private const int WsBorder = 8388608;
-        private static readonly PerformanceCounter PcCpuLoad; //CPU计数器 
+        private static readonly PerformanceCounter PcCpuLoad; //CPU计数器
 
         private static readonly PerformanceCounter MemoryCounter = new PerformanceCounter();
         private static readonly PerformanceCounter CpuCounter = new PerformanceCounter();
@@ -35,26 +36,26 @@ namespace Masuit.Tools.Hardware
         private static readonly PerformanceCounter[] NetRecvCounters;
         private static readonly PerformanceCounter[] NetSentCounters;
 
-        #endregion
+        #endregion 字段
 
-        #region 构造函数 
+        #region 构造函数
 
         /// <summary>
         /// 静态构造函数
         /// </summary>
         static SystemInfo()
         {
-            //初始化CPU计数器 
+            //初始化CPU计数器
             PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
             {
                 MachineName = "."
             };
             PcCpuLoad.NextValue();
 
-            //CPU个数 
+            //CPU个数
             ProcessorCount = Environment.ProcessorCount;
 
-            //获得物理内存 
+            //获得物理内存
             try
             {
                 using var mc = new ManagementClass("Win32_ComputerSystem");
@@ -88,29 +89,47 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion
+        #endregion 构造函数
 
         private static bool CompactFormat { get; set; }
 
-        #region CPU核心 
+        #region CPU核心
 
         /// <summary>
-        /// 获取CPU核心数 
+        /// 获取CPU核心数
         /// </summary>
         public static int ProcessorCount { get; }
 
-        #endregion
+        #endregion CPU核心
 
-        #region CPU占用率 
+        #region CPU占用率
 
         /// <summary>
         /// 获取CPU占用率 %
         /// </summary>
         public static float CpuLoad => PcCpuLoad.NextValue();
 
-        #endregion
+        /// <summary>
+        /// 获取当前进程的CPU使用率（至少需要0.5s）
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<double> GetCpuUsageForProcess()
+        {
+            var startTime = DateTime.UtcNow;
+            using var p1 = Process.GetCurrentProcess();
+            var startCpuUsage = p1.TotalProcessorTime;
+            await Task.Delay(500);
+            var endTime = DateTime.UtcNow;
+            using var p2 = Process.GetCurrentProcess();
+            var endCpuUsage = p2.TotalProcessorTime;
+            var cpuUsedMs = (endCpuUsage - startCpuUsage).TotalMilliseconds;
+            var totalMsPassed = (endTime - startTime).TotalMilliseconds;
+            return cpuUsedMs / (Environment.ProcessorCount * totalMsPassed) * 100;
+        }
 
-        #region 可用内存 
+        #endregion CPU占用率
+
+        #region 可用内存
 
         /// <summary>
         /// 获取可用内存
@@ -143,21 +162,21 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion
+        #endregion 可用内存
 
-        #region 物理内存 
+        #region 物理内存
 
         /// <summary>
         /// 获取物理内存
         /// </summary>
         public static long PhysicalMemory { get; }
 
-        #endregion
+        #endregion 物理内存
 
-        #region 查找所有应用程序标题 
+        #region 查找所有应用程序标题
 
         /// <summary>
-        /// 查找所有应用程序标题 
+        /// 查找所有应用程序标题
         /// </summary>
         /// <param name="handle">应用程序标题范型</param>
         /// <returns>所有应用程序集合</returns>
@@ -189,7 +208,7 @@ namespace Masuit.Tools.Hardware
             return apps;
         }
 
-        #endregion
+        #endregion 查找所有应用程序标题
 
         #region 获取CPU的数量
 
@@ -211,16 +230,16 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion
+        #endregion 获取CPU的数量
 
         #region 获取CPU信息
 
         private static readonly Lazy<List<ManagementBaseObject>> CpuObjects = new Lazy<List<ManagementBaseObject>>(() =>
-        {
-            using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
-            using var moc = mos.Get();
-            return moc.AsParallel().Cast<ManagementBaseObject>().ToList();
-        });
+                             {
+                                 using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
+                                 using var moc = mos.Get();
+                                 return moc.AsParallel().Cast<ManagementBaseObject>().ToList();
+                             });
 
         /// <summary>
         /// 获取CPU信息
@@ -251,7 +270,7 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion
+        #endregion 获取CPU信息
 
         #region 获取内存信息
 
@@ -272,7 +291,7 @@ namespace Masuit.Tools.Hardware
             };
         }
 
-        #endregion
+        #endregion 获取内存信息
 
         #region 获取CPU温度
 
@@ -304,7 +323,7 @@ namespace Masuit.Tools.Hardware
             return 0;
         }
 
-        #endregion
+        #endregion 获取CPU温度
 
         #region WMI接口获取CPU使用率
 
@@ -318,7 +337,7 @@ namespace Masuit.Tools.Hardware
             return CompactFormat ? (int)d + "%" : d.ToString("F") + "%";
         }
 
-        #endregion
+        #endregion WMI接口获取CPU使用率
 
         #region 获取虚拟内存使用率详情
 
@@ -363,7 +382,7 @@ namespace Masuit.Tools.Hardware
             return GetCounterValue(MemoryCounter, "Memory", "Commit Limit", null);
         }
 
-        #endregion
+        #endregion 获取虚拟内存使用率详情
 
         #region 获取物理内存使用率详情
 
@@ -411,7 +430,7 @@ namespace Masuit.Tools.Hardware
             return GetTotalPhysicalMemory() - GetFreePhysicalMemory();
         }
 
-        #endregion
+        #endregion 获取物理内存使用率详情
 
         #region 获取硬盘的读写速率
 
@@ -422,7 +441,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetDiskData(DiskData dd) => dd == DiskData.Read ? GetCounterValue(DiskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") : dd == DiskData.Write ? GetCounterValue(DiskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") : dd == DiskData.ReadAndWrite ? GetCounterValue(DiskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") + GetCounterValue(DiskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") : 0;
 
-        #endregion
+        #endregion 获取硬盘的读写速率
 
         #region 获取网络的传输速率
 
@@ -448,12 +467,15 @@ namespace Masuit.Tools.Hardware
                     case NetData.Received:
                         d += receied;
                         break;
+
                     case NetData.Sent:
                         d += send;
                         break;
+
                     case NetData.ReceivedAndSent:
                         d += receied + send;
                         break;
+
                     default:
                         d += 0;
                         break;
@@ -463,7 +485,7 @@ namespace Masuit.Tools.Hardware
             return d;
         }
 
-        #endregion
+        #endregion 获取网络的传输速率
 
         /// <summary>
         /// 获取网卡硬件地址
@@ -471,7 +493,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IList<string> GetMacAddress()
         {
-            //获取网卡硬件地址       
+            //获取网卡硬件地址
             try
             {
                 IList<string> list = new List<string>();
@@ -496,19 +518,19 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        /// <summary>  
-        /// 获取当前使用的IP  
-        /// </summary>  
-        /// <returns></returns>  
+        /// <summary>
+        /// 获取当前使用的IP
+        /// </summary>
+        /// <returns></returns>
         public static IPAddress GetLocalUsedIP()
         {
             return NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).SelectMany(n => n.GetIPProperties().UnicastAddresses.Select(u => u.Address)).FirstOrDefault();
         }
 
-        /// <summary>  
+        /// <summary>
         /// 获取本机所有的ip地址
-        /// </summary>  
-        /// <returns></returns>  
+        /// </summary>
+        /// <returns></returns>
         public static List<UnicastIPAddressInformation> GetLocalIPs()
         {
             var interfaces = NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up); //所有网卡信息
@@ -535,7 +557,7 @@ namespace Masuit.Tools.Hardware
             return s + (Unit)unit;
         }
 
-        #endregion
+        #endregion 将速度值格式化成字节单位
 
         #region 查询计算机系统信息
 
@@ -585,7 +607,7 @@ namespace Masuit.Tools.Hardware
             return string.Empty;
         }
 
-        #endregion
+        #endregion 查询计算机系统信息
 
         #region 获取环境变量
 
@@ -596,7 +618,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static string QueryEnvironment(string type) => Environment.ExpandEnvironmentVariables(type);
 
-        #endregion
+        #endregion 获取环境变量
 
         #region 获取磁盘空间
 
@@ -638,7 +660,7 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion
+        #endregion 获取磁盘空间
 
         private static float GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
         {
@@ -648,9 +670,10 @@ namespace Masuit.Tools.Hardware
             return pc.NextValue();
         }
 
-        #region Win32API声明 
+        #region Win32API声明
 
 #pragma warning disable 1591
+
         [DllImport("User32")]
         public static extern int GetWindow(int hWnd, int wCmd);
 
@@ -662,8 +685,9 @@ namespace Masuit.Tools.Hardware
 
         [DllImport("user32", CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
+
 #pragma warning restore 1591
 
-        #endregion
+        #endregion Win32API声明
     }
 }

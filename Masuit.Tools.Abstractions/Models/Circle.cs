@@ -1,5 +1,5 @@
-﻿using System;
-using Masuit.Tools.Maths;
+﻿using Masuit.Tools.Maths;
+using System;
 
 namespace Masuit.Tools.Models
 {

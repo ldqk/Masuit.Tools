@@ -95,6 +95,7 @@ namespace Masuit.Tools.Win32
                 proc.Start();
 
                 using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
+
                 //上面标记的是原文，下面是我自己调试错误后自行修改的
                 Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行
                 if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行
@@ -131,6 +132,31 @@ namespace Masuit.Tools.Win32
             {
                 return Environment.OSVersion.VersionString;
             }
+        }
+
+        /// <summary>
+        /// 获取当前进程的CPU使用率
+        /// </summary>
+        /// <returns></returns>
+        public static float GetCpuUsageForProcess()
+        {
+            using var process = Process.GetCurrentProcess();
+            var currentProcessName = process.ProcessName;
+            using var cpuCounter = new PerformanceCounter("Process", "% Processor Time", currentProcessName);
+            cpuCounter.NextValue();
+            return cpuCounter.NextValue();
+        }
+
+        /// <summary>
+        /// 获取进程的CPU使用率
+        /// </summary>
+        /// <param name="processName">进程名字</param>
+        /// <returns></returns>
+        public static float GetCpuUsageForProcess(string processName)
+        {
+            using var cpuCounter = new PerformanceCounter("Process", "% Processor Time", processName);
+            cpuCounter.NextValue();
+            return cpuCounter.NextValue();
         }
     }
 
