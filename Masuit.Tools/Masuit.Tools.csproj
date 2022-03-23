@@ -118,6 +118,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyJsonPropertyAttribute.cs">
       <Link>Systems\DeserializeOnlyJsonPropertyAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DisposeableDictionary.cs">
+      <Link>Systems\DisposeableDictionary.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonProperty.cs">
       <Link>Systems\FallbackJsonProperty.cs</Link>
     </Compile>

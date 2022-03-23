@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Files
 {
@@ -40,6 +41,37 @@ namespace Masuit.Tools.Files
         }
 
         /// <summary>
+        /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// </summary>
+        /// <param name="streams">多个文件流</param>
+        /// <param name="archiveType"></param>
+        /// <param name="disposeAllStreams">是否需要释放所有流</param>
+        /// <returns>文件流</returns>
+        public static MemoryStream ZipStream(DisposeableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        {
+            using var archive = ArchiveFactory.Create(archiveType);
+            foreach (var pair in streams)
+            {
+                archive.AddEntry(pair.Key, pair.Value, true);
+            }
+
+            var ms = new MemoryStream();
+            archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
+            {
+                LeaveStreamOpen = true,
+                ArchiveEncoding = new ArchiveEncoding()
+                {
+                    Default = Encoding.UTF8
+                }
+            });
+            if (disposeAllStreams)
+            {
+                streams.Dispose();
+            }
+            return ms;
+        }
+
+        /// <summary>
         /// 压缩多个文件
         /// </summary>
         /// <param name="files">多个文件路径，文件或文件夹</param>
@@ -57,6 +89,35 @@ namespace Masuit.Tools.Files
                     Default = Encoding.UTF8
                 }
             });
+        }
+
+        /// <summary>
+        /// 压缩多个文件
+        /// </summary>
+        /// <param name="streams">多个文件流</param>
+        /// <param name="zipFile">压缩到...</param>
+        /// <param name="archiveType"></param>
+        /// <param name="disposeAllStreams">是否需要释放所有流</param>
+        public static void Zip(DisposeableDictionary<string, Stream> streams, string zipFile, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        {
+            using var archive = ArchiveFactory.Create(archiveType);
+            foreach (var pair in streams)
+            {
+                archive.AddEntry(pair.Key, pair.Value, true);
+            }
+
+            archive.SaveTo(zipFile, new WriterOptions(CompressionType.LZMA)
+            {
+                LeaveStreamOpen = true,
+                ArchiveEncoding = new ArchiveEncoding()
+                {
+                    Default = Encoding.UTF8
+                }
+            });
+            if (disposeAllStreams)
+            {
+                streams.Dispose();
+            }
         }
 
         /// <summary>

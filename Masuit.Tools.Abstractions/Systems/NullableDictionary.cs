@@ -34,6 +34,10 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
     {
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="key"></param>
     public new TValue this[NullObject<TKey> key]
     {
         get => TryGetValue(key, out var value) ? value : default;
