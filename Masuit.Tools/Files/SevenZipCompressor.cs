@@ -132,7 +132,7 @@ namespace Masuit.Tools.Files
                 dir = Path.GetDirectoryName(compressedFile);
             }
 
-            ArchiveFactory.WriteToDirectory(compressedFile, dir, new ExtractionOptions()
+            ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName, new ExtractionOptions()
             {
                 ExtractFullPath = true,
                 Overwrite = true
