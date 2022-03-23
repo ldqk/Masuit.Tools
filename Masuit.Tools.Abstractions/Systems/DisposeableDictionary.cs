@@ -36,6 +36,14 @@ public class DisposeableDictionary<TKey, TValue> : NullableDictionary<TKey, TVal
         GC.SuppressFinalize(this);
     }
 
+    public DisposeableDictionary() : base()
+    {
+    }
+
+    public DisposeableDictionary(int capacity) : base(capacity)
+    {
+    }
+
     public DisposeableDictionary(IDictionary<NullObject<TKey>, TValue> dictionary) : base(dictionary)
     {
     }
