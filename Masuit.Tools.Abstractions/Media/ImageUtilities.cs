@@ -762,6 +762,14 @@ namespace Masuit.Tools.Media
                     towidth = originalImage.Width * height / originalImage.Height;
                     break;
 
+                case ThumbnailCutMode.LockHeightAndWidth: //指定高，宽按比例
+                    towidth = originalImage.Width * height / originalImage.Height;
+                    towidth = towidth > width ? width : towidth;
+                    toheight = originalImage.Height * towidth / originalImage.Width;
+                    toheight = toheight > height ? height : toheight;
+                    towidth = originalImage.Width * toheight / originalImage.Height;
+                    break;
+
                 case ThumbnailCutMode.Cut: //指定高宽裁减（不变形）
                     if (originalImage.Width / (double)originalImage.Height > towidth / (double)toheight)
                     {

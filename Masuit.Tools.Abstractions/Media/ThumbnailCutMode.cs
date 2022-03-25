@@ -16,6 +16,11 @@
         LockWidth,
 
         /// <summary>
+        /// 锁定最大宽高等比缩放
+        /// </summary>
+        LockHeightAndWidth,
+
+        /// <summary>
         /// 固定宽高
         /// </summary>
         Fixed,
