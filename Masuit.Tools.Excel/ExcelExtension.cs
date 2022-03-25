@@ -148,11 +148,12 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
+
                                 sheet.SetValue(i + startRow + 1, j + startColumn, "");
 
                                 break;
@@ -165,11 +166,12 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
                                 }
+
                                 sheet.SetValue(i + startRow + 1, j + startColumn, "");
 
                                 break;
@@ -184,7 +186,7 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
@@ -203,7 +205,7 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
@@ -223,7 +225,7 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp, new Uri(kv.Key));
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
@@ -243,7 +245,7 @@ namespace Masuit.Tools.Excel
                                     bmp.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp, new Uri(kv.Key));
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = 11000f / bmp.Height;
+                                    var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
@@ -262,7 +264,7 @@ namespace Masuit.Tools.Excel
                                     kv.Value.SetResolution(96, 96);
                                     var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = 11000f / kv.Value.Height;
+                                    var percent = Math.Min(11000f / kv.Value.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += kv.Value.Width * 1.0 * percent / 100 + 5;
