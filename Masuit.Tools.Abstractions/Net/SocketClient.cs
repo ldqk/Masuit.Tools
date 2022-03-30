@@ -21,7 +21,7 @@ namespace Masuit.Tools.Net
         /// </summary>
         private static readonly int m_maxpacket = 1024 * 4;
 
-        #endregion
+        #endregion 私有字段
 
         #region 服务器侦听
 
@@ -31,14 +31,7 @@ namespace Masuit.Tools.Net
         /// <returns>返回一个套接字(Socket)</returns>
         public static Socket ListenerSocket(this TcpListener listener)
         {
-            try
-            {
-                return listener.AcceptSocket();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return listener.AcceptSocket();
         }
 
         /// <summary>
@@ -48,17 +41,10 @@ namespace Masuit.Tools.Net
         /// <returns>返回一个网络流</returns>
         public static NetworkStream ListenerStream(this TcpListener listener)
         {
-            try
-            {
-                return listener.AcceptTcpClient().GetStream();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return listener.AcceptTcpClient().GetStream();
         }
 
-        #endregion
+        #endregion 服务器侦听
 
         #region 客户端连接
 
@@ -70,15 +56,8 @@ namespace Masuit.Tools.Net
         /// <returns>客户端socket</returns>
         public static Socket ConnectSocket(this TcpClient tcpclient, IPEndPoint ipendpoint)
         {
-            try
-            {
-                tcpclient.Connect(ipendpoint);
-                return tcpclient.Client;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            tcpclient.Connect(ipendpoint);
+            return tcpclient.Client;
         }
 
         /// <summary>
@@ -90,15 +69,8 @@ namespace Masuit.Tools.Net
         /// <returns>客户端socket</returns>
         public static Socket ConnectSocket(this TcpClient tcpclient, IPAddress ipadd, int port)
         {
-            try
-            {
-                tcpclient.Connect(ipadd, port);
-                return tcpclient.Client;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            tcpclient.Connect(ipadd, port);
+            return tcpclient.Client;
         }
 
         /// <summary>
@@ -109,15 +81,8 @@ namespace Masuit.Tools.Net
         /// <returns>客户端的网络流</returns>
         public static NetworkStream ConnectStream(this TcpClient tcpclient, IPEndPoint ipendpoint)
         {
-            try
-            {
-                tcpclient.Connect(ipendpoint);
-                return tcpclient.GetStream();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            tcpclient.Connect(ipendpoint);
+            return tcpclient.GetStream();
         }
 
         /// <summary>
@@ -129,18 +94,11 @@ namespace Masuit.Tools.Net
         /// <returns>客户端网络流对象</returns>
         public static NetworkStream ConnectStream(this TcpClient tcpclient, IPAddress ipadd, int port)
         {
-            try
-            {
-                tcpclient.Connect(ipadd, port);
-                return tcpclient.GetStream();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            tcpclient.Connect(ipadd, port);
+            return tcpclient.GetStream();
         }
 
-        #endregion
+        #endregion 客户端连接
 
         #region Socket接收数据
 
@@ -182,8 +140,10 @@ namespace Masuit.Tools.Net
         {
             //每次接受数据时,接收固定长度的包头,包头长度为8
             byte[] lengthbyte = ReceiveFixData(socket, 8);
+
             //length得到字符长度 然后加工处理得到数字
             int length = GetPacketLength(lengthbyte);
+
             //得到正文
             return ReceiveFixData(socket, length);
         }
@@ -198,6 +158,7 @@ namespace Masuit.Tools.Net
         {
             //先接收包头长度 固定8个字节
             byte[] lengthbyte = ReceiveFixData(socket, 8);
+
             //得到字节长度
             int length = GetPacketLength(lengthbyte);
             byte[] bytecoll = new byte[m_maxpacket];
@@ -206,6 +167,7 @@ namespace Masuit.Tools.Net
             int offset = 0; //接收字节个数
             int lastdata = length; //还剩下多少没有接收,初始大小等于实际大小
             int receivedata = m_maxpacket; //每次接收大小
+
             //循环接收
             int mark = 0; //标记几次接收到的数据为0长度
             while (true)
@@ -262,6 +224,7 @@ namespace Masuit.Tools.Net
 
             //主要是防止有重名文件
             string savepath = GetPath(path, filename); //得到文件路径
+
             //缓冲区
             byte[] file = new byte[m_maxpacket];
             int receivedata = m_maxpacket; //每次要接收的长度
@@ -301,6 +264,7 @@ namespace Masuit.Tools.Net
 
                 //接收进度
                 progress(Convert.ToInt32(Convert.ToDouble(offset) / Convert.ToDouble(size) * 100));
+
                 //接收完毕
                 if (offset == size)
                 {
@@ -336,15 +300,19 @@ namespace Masuit.Tools.Net
             //得到包头信息字节数组 (文件名 + 文件大小 的字符串长度)
             //取前8位
             byte[] info_bt = ReceiveFixData(socket, 8);
+
             //得到包头信息字符长度
             int info_length = GetPacketLength(info_bt);
+
             //提取包头信息,(文件名 + 文件大小 的字符串长度)
             byte[] info = ReceiveFixData(socket, info_length);
+
             //得到文件信息字符串 (文件名 + 文件大小)
             string info_str = Encoding.UTF8.GetString(info);
             string[] strs = info_str.Split('|');
             string filename = strs[0]; //文件名
             long length = Convert.ToInt64(strs[1]); //文件大小
+
             //开始接收文件
             ReceiveFile(socket, path, filename, length);
         }
@@ -388,7 +356,7 @@ namespace Masuit.Tools.Net
             return path;
         }
 
-        #endregion
+        #endregion Socket接收数据
 
         #region Socket发送数据
 
@@ -435,10 +403,13 @@ namespace Masuit.Tools.Net
         {
             //得到字符长度
             int size = Encoding.UTF8.GetBytes(contact).Length;
+
             //包头字符
             string length = GetSendPacketLengthStr(size);
+
             //包头 + 正文
             byte[] sendbyte = Encoding.UTF8.GetBytes(length + contact);
+
             //发送
             return SendFixData(socket, sendbyte);
         }
@@ -455,8 +426,10 @@ namespace Masuit.Tools.Net
             int size = bytes.Length;
             string length = GetSendPacketLengthStr(size);
             byte[] lengthbyte = Encoding.UTF8.GetBytes(length);
+
             //发送包头
             SendFixData(socket, lengthbyte); //因为不知道正文是什么编码所以没有合并
+
             //发送正文
             return SendFixData(socket, bytes);
         }
@@ -492,6 +465,7 @@ namespace Masuit.Tools.Net
             var fileinfo = new FileInfo(path);
             string filename = fileinfo.Name;
             long length = fileinfo.Length;
+
             //发送文件信息
             if (issend)
             {
@@ -504,6 +478,7 @@ namespace Masuit.Tools.Net
             int mark = 0;
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             int senddata = b.Length;
+
             //循环读取发送
             while (true)
             {
@@ -572,6 +547,6 @@ namespace Masuit.Tools.Net
             return length.Substring(0, 8); //截取前前8位
         }
 
-        #endregion
+        #endregion Socket发送数据
     }
 }
