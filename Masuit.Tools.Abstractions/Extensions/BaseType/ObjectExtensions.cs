@@ -136,6 +136,17 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 转成非null
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="value">为空时的替换值</param>
+        /// <returns></returns>
+        public static T IfNull<T>(this T s, T value)
+        {
+            return s is { } ? s : value;
+        }
+
+        /// <summary>
         /// 转换成json字符串
         /// </summary>
         /// <param name="obj"></param>

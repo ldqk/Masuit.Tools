@@ -199,6 +199,17 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 转成非null
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="value">为空时的替换值</param>
+        /// <returns></returns>
+        public static string IfNullOrEmpty(this string s, string value)
+        {
+            return string.IsNullOrEmpty(s) ? value : s;
+        }
+
+        /// <summary>
         /// 字符串掩码
         /// </summary>
         /// <param name="s">字符串</param>
