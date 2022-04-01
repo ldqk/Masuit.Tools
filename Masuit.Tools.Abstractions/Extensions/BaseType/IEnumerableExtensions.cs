@@ -821,5 +821,15 @@ namespace Masuit.Tools
             var updates = first.IntersectBy(second, condition).Select(t1 => (t1, second.FirstOrDefault(t2 => condition(t1, t2)))).ToList();
             return (add, remove, updates);
         }
+
+        public static List<T> AsNotNull<T>(this List<T> list)
+        {
+            return list ?? new List<T>();
+        }
+
+        public static IEnumerable<T> AsNotNull<T>(this IEnumerable<T> list)
+        {
+            return list ?? new List<T>();
+        }
     }
 }

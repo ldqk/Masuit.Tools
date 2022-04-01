@@ -62,7 +62,6 @@ namespace Masuit.Tools
                     Array clonedArray = (Array)cloneObject;
                     clonedArray.ForEach((array, indices) => array.SetValue(InternalCopy(clonedArray.GetValue(indices), visited), indices));
                 }
-
             }
 
             visited.Add(originalObject, cloneObject);
@@ -200,19 +199,22 @@ namespace Masuit.Tools
             return action(source);
         }
     }
-    class ReferenceEqualityComparer : EqualityComparer<object>
+
+    internal class ReferenceEqualityComparer : EqualityComparer<object>
     {
         public override bool Equals(object x, object y)
         {
             return ReferenceEquals(x, y);
         }
+
         public override int GetHashCode(object obj)
         {
             if (obj is null) return 0;
             return obj.GetHashCode();
         }
     }
-    static class ArrayExtensions
+
+    internal static class ArrayExtensions
     {
         public static void ForEach(this Array array, Action<Array, int[]> action)
         {
@@ -225,6 +227,7 @@ namespace Masuit.Tools
             do action(array, walker.Position);
             while (walker.Step());
         }
+
         internal class ArrayTraverse
         {
             public int[] Position;

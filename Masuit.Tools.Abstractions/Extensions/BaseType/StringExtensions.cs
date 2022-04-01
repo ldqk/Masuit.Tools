@@ -189,6 +189,16 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 转成非null
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string AsnotNull(this string s)
+        {
+            return string.IsNullOrEmpty(s) ? "" : s;
+        }
+
+        /// <summary>
         /// 字符串掩码
         /// </summary>
         /// <param name="s">字符串</param>
