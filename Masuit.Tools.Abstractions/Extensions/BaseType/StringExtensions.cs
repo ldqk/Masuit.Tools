@@ -193,7 +193,7 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static string AsnotNull(this string s)
+        public static string AsNotNull(this string s)
         {
             return string.IsNullOrEmpty(s) ? "" : s;
         }
