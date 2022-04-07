@@ -12,9 +12,8 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
     public class MongoDbClient
     {
         public MongoClient Client { get; set; }
+
         public IMongoDatabase Database { get; set; }
-        private static ConcurrentDictionary<string, MongoDbClient> InstancePool { get; set; } = new ConcurrentDictionary<string, MongoDbClient>();
-        private static ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>> InstanceQueue { get; set; } = new ConcurrentDictionary<string, ConcurrentLimitedQueue<MongoDbClient>>();
 
         private MongoDbClient(string url, string database)
         {
@@ -36,14 +35,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public static MongoDbClient GetInstance(string url, string database)
         {
-            InstancePool.TryGetValue(url + database, out var instance);
-            if (instance is null)
-            {
-                instance = new MongoDbClient(url, database);
-                InstancePool.TryAdd(url + database, instance);
-            }
-
-            return instance;
+            return new MongoDbClient(url, database);
         }
 
         /// <summary>
@@ -54,19 +46,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <returns></returns>
         public static MongoDbClient ThreadLocalInstance(string url, string database)
         {
-            var queue = InstanceQueue.GetOrAdd(url + database, new ConcurrentLimitedQueue<MongoDbClient>(32));
-            if (queue.IsEmpty)
-            {
-                Parallel.For(0, queue.Limit, i =>
-                {
-                    queue.Enqueue(new MongoDbClient(url, database));
-                });
-            }
-
             MongoDbClient instance;
             if (CallContext<MongoDbClient>.GetData(url + database) == null)
             {
-                queue.TryDequeue(out instance);
+                instance = new MongoDbClient(url, database);
                 CallContext<MongoDbClient>.SetData(url + database, instance);
             }
 
@@ -221,7 +204,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             return result.ProcessedRequests.ToList();
         }
 
-        #endregion
+        #endregion 插入
 
         #region 更新
 
@@ -418,7 +401,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             return result;
         }
 
-        #endregion
+        #endregion 更新
 
         #region 删除
 
@@ -864,9 +847,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             return result;
         }
 
-        #endregion
+        #endregion 删除
 
-        #region 查询 
+        #region 查询
 
         /// <summary>
         /// 查询，复杂查询直接用Linq处理
@@ -1037,7 +1020,7 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             return await find.AnyAsync();
         }
 
-        #endregion
+        #endregion 查询
 
         #region 索引
 
@@ -1205,6 +1188,6 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
             return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
         }
 
-        #endregion
+        #endregion 索引
     }
 }

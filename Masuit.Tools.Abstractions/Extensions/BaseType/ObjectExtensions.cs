@@ -143,7 +143,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static T IfNull<T>(this T s, T value)
         {
-            return s is { } ? s : value;
+            return s ?? value;
         }
 
         /// <summary>

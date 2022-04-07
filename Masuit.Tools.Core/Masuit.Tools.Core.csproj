@@ -34,7 +34,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="HtmlSanitizer" Version="7.1.488" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.30.1" />
+        <PackageReference Include="SharpCompress" Version="0.31.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
