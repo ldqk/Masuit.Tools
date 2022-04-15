@@ -84,25 +84,25 @@
       <Version>4.4.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
-      <Version>5.2.7</Version>
+      <Version>5.2.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Razor">
-      <Version>3.2.7</Version>
+      <Version>3.2.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.WebPages">
-      <Version>3.2.7</Version>
+      <Version>3.2.8</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.Infrastructure">
-      <Version>1.0.0</Version>
+      <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Moq">
       <Version>4.17.2</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>2.2.8</Version>
+      <Version>2.2.9</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>2.2.8</Version>
+      <Version>2.2.9</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.13.3</Version>

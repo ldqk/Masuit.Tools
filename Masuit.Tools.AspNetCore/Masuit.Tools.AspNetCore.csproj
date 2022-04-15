@@ -18,7 +18,7 @@
         <LangVersion>latest</LangVersion>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>1.0.5.2</Version>
+        <Version>1.0.5.3</Version>
         <FileVersion>1.0</FileVersion>
         <Company>masuit.com</Company>
         <AssemblyVersion>1.0</AssemblyVersion>
@@ -29,6 +29,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

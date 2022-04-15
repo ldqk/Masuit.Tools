@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Masuit.Tools.Models
@@ -7,7 +8,7 @@ namespace Masuit.Tools.Models
     /// 分页集合
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class PagedList<T>
+    public class PagedList<T> : IReadOnlyList<T>
     {
         /// <summary>
         /// 数据集
@@ -64,5 +65,19 @@ namespace Masuit.Tools.Models
             TotalPages = (int)Math.Ceiling(count * 1.0 / size);
             Data = items;
         }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Data.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        int IReadOnlyCollection<T>.Count => Data.Count;
+
+        public T this[int index] => Data[index];
     }
 }
