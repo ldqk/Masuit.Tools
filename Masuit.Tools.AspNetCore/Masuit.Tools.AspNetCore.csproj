@@ -18,7 +18,7 @@
         <LangVersion>latest</LangVersion>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>1.0.5.3</Version>
+        <Version>1.0.5.4</Version>
         <FileVersion>1.0</FileVersion>
         <Company>masuit.com</Company>
         <AssemblyVersion>1.0</AssemblyVersion>
