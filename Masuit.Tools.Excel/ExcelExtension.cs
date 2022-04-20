@@ -1,8 +1,9 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -144,27 +145,9 @@ namespace Masuit.Tools.Excel
                             {
                                 if (s.Length > 2)
                                 {
-                                    using var bmp = new Bitmap(s);
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-                                    var percent = Math.Min(11000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 600 > 32 ? bmp.Width * percent / 600 : 32);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-
-                                break;
-                            }
-
-                        case Bitmap bmp:
-                            {
-                                if (bmp.Width + bmp.Height > 4)
-                                {
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    var (pictureType, ms) = Detect(s);
+                                    var bmp = new ExcelImage(ms, pictureType).Bounds;
+                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), ms, pictureType);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
                                     var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
@@ -182,28 +165,9 @@ namespace Masuit.Tools.Excel
                                 double sumWidth = 0;
                                 foreach (var stream in streams.Where(stream => stream.Length > 2))
                                 {
-                                    using var bmp = new Bitmap(stream);
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(11000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IEnumerable<Bitmap> bmps:
-                            {
-                                double sumWidth = 0;
-                                foreach (var bmp in bmps.Where(stream => stream.Width + stream.Height > 4))
-                                {
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp);
+                                    var (pictureType, ms) = Detect(stream);
+                                    var bmp = new ExcelImage(ms, pictureType).Bounds;
+                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), ms, pictureType);
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
                                     var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
@@ -221,9 +185,9 @@ namespace Masuit.Tools.Excel
                                 double sumWidth = 0;
                                 foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
                                 {
-                                    using var bmp = new Bitmap(kv.Value);
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp, new Uri(kv.Key));
+                                    var (pictureType, ms) = Detect(kv.Value);
+                                    var bmp = new ExcelImage(ms, pictureType).Bounds;
+                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), ms, pictureType, new Uri(kv.Key));
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
                                     var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
@@ -241,33 +205,14 @@ namespace Masuit.Tools.Excel
                                 double sumWidth = 0;
                                 foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
                                 {
-                                    using var bmp = new Bitmap(kv.Value);
-                                    bmp.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), bmp, new Uri(kv.Key));
+                                    var (pictureType, ms) = Detect(kv.Value);
+                                    var bmp = new ExcelImage(ms, pictureType).Bounds;
+                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), ms, pictureType, new Uri(kv.Key));
                                     picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
                                     var percent = Math.Min(11000f / bmp.Height, 100);
                                     picture.SetSize((int)percent);
                                     sheet.Row(i + startRow + 1).Height = 90;
                                     sumWidth += bmp.Width * 1.0 * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IDictionary<string, Bitmap> bmps:
-                            {
-                                double sumWidth = 0;
-                                foreach (var kv in bmps.Where(kv => kv.Value.Width + kv.Value.Height > 4))
-                                {
-                                    kv.Value.SetResolution(96, 96);
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(11000f / kv.Value.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sumWidth += kv.Value.Width * 1.0 * percent / 100 + 5;
                                     sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 6 > 32 ? sumWidth / 6 : 32);
                                 }
 
@@ -300,6 +245,38 @@ namespace Masuit.Tools.Excel
         }
 
         private static readonly NumberFormater NumberFormater = new("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1);
+
+        /// <summary>
+        /// 检测图片格式
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        private static (ePictureType type, Stream stream) Detect(Stream stream)
+        {
+            try
+            {
+                var pictureType = Image.DetectFormat(stream).Name switch
+                {
+                    "JPEG" => ePictureType.Jpg,
+                    "PNG" => ePictureType.Png,
+                    "GIF" => ePictureType.Gif,
+                    "BMP" => ePictureType.Bmp,
+                    "SVG" => ePictureType.Svg,
+                    "TIF" => ePictureType.Tif,
+                    "WEBP" => ePictureType.WebP,
+                    _ => default
+                };
+                return (pictureType, stream);
+            }
+            catch
+            {
+                var ms = new MemoryStream();
+                using var image = Image.Load(stream);
+                image.SaveAsWebp(ms);
+                stream.Dispose();
+                return (ePictureType.WebP, ms);
+            }
+        }
 
         /// <summary>
         /// 获取字母列
