@@ -4,9 +4,12 @@ using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Masuit.Tools.Excel
 {
@@ -270,11 +273,22 @@ namespace Masuit.Tools.Excel
             }
             catch
             {
-                var ms = new MemoryStream();
-                using var image = Image.Load(stream);
-                image.SaveAsWebp(ms);
-                stream.Dispose();
-                return (ePictureType.WebP, ms);
+                try
+                {
+                    using var image = Image.Load(stream);
+                    var ms = new MemoryStream();
+                    image.SaveAsWebp(ms);
+                    stream.Dispose();
+                    return (ePictureType.WebP, ms);
+                }
+                catch
+                {
+                    using var bmp = new Bitmap(stream);
+                    var ms = new MemoryStream();
+                    bmp.Save(ms, ImageFormat.Jpeg);
+                    stream.Dispose();
+                    return (ePictureType.Jpg, ms);
+                }
             }
         }
 
