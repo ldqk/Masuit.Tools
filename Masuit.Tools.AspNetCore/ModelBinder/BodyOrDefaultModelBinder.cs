@@ -1,10 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
@@ -44,7 +44,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
                 }
                 catch
                 {
-                    value = text;
+                    value = text.Trim('"');
                 }
             }
             else if (request.HasFormContentType)

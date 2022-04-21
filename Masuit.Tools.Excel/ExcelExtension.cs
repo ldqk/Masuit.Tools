@@ -278,7 +278,6 @@ namespace Masuit.Tools.Excel
                     using var image = Image.Load(stream);
                     var ms = new MemoryStream();
                     image.SaveAsWebp(ms);
-                    stream.Dispose();
                     return (ePictureType.WebP, ms);
                 }
                 catch
@@ -286,7 +285,6 @@ namespace Masuit.Tools.Excel
                     using var bmp = new Bitmap(stream);
                     var ms = new MemoryStream();
                     bmp.Save(ms, ImageFormat.Jpeg);
-                    stream.Dispose();
                     return (ePictureType.Jpg, ms);
                 }
             }
