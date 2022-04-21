@@ -202,9 +202,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Net\PartialDownloader.cs">
       <Link>Net\PartialDownloader.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Net\SocketClient.cs">
-      <Link>Net\SocketClient.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\Extensions.cs">
       <Link>RandomSelector\Extensions.cs</Link>
     </Compile>
