@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Masuit.Tools.Systems;
@@ -13,7 +14,7 @@ public class FallbackJsonPropertyResolver : CamelCasePropertyNamesContractResolv
 {
     protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
     {
-        var typeMembers = GetSerializableMembers(type);
+        var typeMembers = GetSerializableMembers(type).DistinctBy(m => m.Name);
         var properties = new List<JsonProperty>();
 
         foreach (var member in typeMembers)
