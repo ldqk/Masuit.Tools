@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Version>1.8.7</Version>
+    <Version>1.8.7.2</Version>
     <Authors>懒得勤快</Authors>
     <Company>masuit.com</Company>
     <Description>包含MongoDB的所有的增删查改。
