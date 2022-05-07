@@ -28,7 +28,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
         var text = Encoding.UTF8.GetString(buffer);
         request.Body.Position = 0;
 
-        if (bindingContext.ModelType.IsPrimitive || bindingContext.ModelType == typeof(string) || bindingContext.ModelType.IsEnum || bindingContext.ModelType == typeof(DateTime) || bindingContext.ModelType == typeof(Guid))
+        if (bindingContext.ModelType.IsPrimitive || bindingContext.ModelType == typeof(string) || bindingContext.ModelType.IsEnum || bindingContext.ModelType == typeof(DateTime) || bindingContext.ModelType == typeof(Guid) || (bindingContext.ModelType.IsGenericType && bindingContext.ModelType.GetGenericTypeDefinition() == typeof(Nullable<>)))
         {
             var parameter = bindingContext.ModelMetadata.ParameterName;
             var value = "";
@@ -36,7 +36,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
             {
                 value = request.Query[parameter] + "";
             }
-            else if (request.ContentType.StartsWith("application/json"))
+            else if (request.ContentType is not null && request.ContentType.StartsWith("application/json"))
             {
                 try
                 {

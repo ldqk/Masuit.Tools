@@ -33,7 +33,7 @@ namespace Masuit.Tools.Files
         /// <param name="fs">源</param>
         /// <param name="dest">目标地址</param>
         /// <param name="bufferSize">缓冲区大小，默认8MB</param>
-        public static async void CopyToFileAsync(this Stream fs, string dest, int bufferSize = 1024 * 1024 * 8)
+        public static async Task CopyToFileAsync(this Stream fs, string dest, int bufferSize = 1024 * 1024 * 8)
         {
             using var fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             byte[] buf = new byte[bufferSize];

@@ -20,6 +20,8 @@ namespace Masuit.Tools
     {
         public static string Join(this IEnumerable<string> strs, string separate = ", ") => string.Join(separate, strs);
 
+        public static string Join<T>(this IEnumerable<T> strs, string separate = ", ") => string.Join(separate, strs);
+
         /// <summary>
         /// 字符串转时间
         /// </summary>
