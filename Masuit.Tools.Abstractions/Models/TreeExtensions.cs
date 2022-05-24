@@ -298,7 +298,51 @@ namespace Masuit.Tools.Models
             return temp;
         }
 
+        /// <summary>
+        /// 平行集合转换成树形结构
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="idSelector"></param>
+        /// <param name="pidSelector"></param>
+        /// <param name="topValue">根对象parentId的值</param>
+        /// <returns></returns>
+        public static List<T> ToTree<T, TKey>(this IEnumerable<T> source, Expression<Func<T, TKey>> idSelector, Expression<Func<T, TKey?>> pidSelector, TKey? topValue = default) where T : ITreeParent<T>, ITreeChildren<T> where TKey : struct
+        {
+            if (idSelector.Body.ToString() == pidSelector.Body.ToString())
+            {
+                throw new ArgumentException("idSelector和pidSelector不应该为同一字段！");
+            }
+
+            var pidFunc = pidSelector.Compile();
+            var idFunc = idSelector.Compile();
+            source = source.Where(t => t != null);
+            var temp = new List<T>();
+            foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
+            {
+                item.Parent = default;
+                TransData(source, item, idFunc, pidFunc);
+                temp.Add(item);
+            }
+
+            return temp;
+        }
+
         private static void TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where T : ITreeParent<T>, ITreeChildren<T> where TKey : IComparable
+        {
+            var temp = new List<T>();
+            foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent)) == true))
+            {
+                TransData(source, item, idSelector, pidSelector);
+                item.Parent = parent;
+                temp.Add(item);
+            }
+
+            parent.Children = temp;
+        }
+
+        private static void TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey?> pidSelector) where T : ITreeParent<T>, ITreeChildren<T> where TKey : struct
         {
             var temp = new List<T>();
             foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent)) == true))
