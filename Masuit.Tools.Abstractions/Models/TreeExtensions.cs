@@ -471,11 +471,28 @@ namespace Masuit.Tools.Models
         public static string Path<T>(this T tree, Func<T, string> selector) where T : ITreeParent<T> => GetFullPath(tree, selector);
 
         /// <summary>
+        /// 节点路径
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="separator">分隔符</param>
+        public static string Path<T>(this T tree, string separator) where T : ITree<T> => GetFullPath(tree, t => t.Name, separator);
+
+        /// <summary>
+        /// 节点路径
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tree"></param>
+        /// <param name="selector">选择字段</param>
+        /// <param name="separator">分隔符</param>
+        /// <returns></returns>
+        public static string Path<T>(this T tree, Func<T, string> selector, string separator) where T : ITreeParent<T> => GetFullPath(tree, selector, separator);
+
+        /// <summary>
         /// 根节点
         /// </summary>
         public static T Root<T>(this T tree) where T : ITreeParent<T> => GetRoot(tree, t => t.Parent);
 
-        private static string GetFullPath<T>(T c, Func<T, string> selector) where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector) + "/" + selector(c) : selector(c);
+        private static string GetFullPath<T>(T c, Func<T, string> selector, string separator = "/") where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector) + separator + selector(c) : selector(c);
 
         /// <summary>
         /// 根节点

@@ -15,10 +15,14 @@ public class CompositeContractResolver : FallbackJsonPropertyResolver
         var property = base.CreateProperty(member, memberSerialization);
         if (property is { Writable: true })
         {
-            var attributes = property.AttributeProvider.GetAttributes(typeof(DeserializeOnlyJsonPropertyAttribute), true).Union(property.AttributeProvider.GetAttributes(typeof(SerializeIgnoreAttribute), true));
-            if (attributes.Any())
+            if (property.AttributeProvider.GetAttributes(typeof(DeserializeOnlyJsonPropertyAttribute), true).Union(property.AttributeProvider.GetAttributes(typeof(SerializeIgnoreAttribute), true)).Any())
             {
                 property.ShouldSerialize = _ => false;
+            }
+
+            if (property.AttributeProvider.GetAttributes(typeof(SerializeOnlyJsonPropertyAttribute), true).Union(property.AttributeProvider.GetAttributes(typeof(DeserializeIgnoreAttribute), true)).Any())
+            {
+                property.ShouldDeserialize = _ => false;
             }
         }
 

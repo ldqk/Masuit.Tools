@@ -3,7 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 
 namespace Masuit.Tools.Core
 {
@@ -191,6 +193,23 @@ namespace Masuit.Tools.Core
         public static IEnumerable<ChangeEntry> GetAllChanges(this DbContext db)
         {
             return GetChanges(db).Union(GetAdded(db)).Union(GetRemoved(db));
+        }
+
+        public static IQueryable<TEntity> IncludeRecursive<TEntity>(this IQueryable<TEntity> source,
+          int levelIndex, Expression<Func<TEntity, ICollection<TEntity>>> expression) where TEntity : class
+        {
+            if (levelIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(levelIndex));
+            var member = (MemberExpression)expression.Body;
+            var property = member.Member.Name;
+            var sb = new StringBuilder();
+            for (int i = 0; i < levelIndex; i++)
+            {
+                if (i > 0)
+                    sb.Append(Type.Delimiter);
+                sb.Append(property);
+            }
+            return source.Include(sb.ToString());
         }
     }
 
