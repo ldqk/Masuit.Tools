@@ -328,7 +328,27 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static NullableDictionary<TKey, TSource> ToDictionarySafety<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
-            var dic = new Dictionary<TKey, TSource>();
+            var dic = new NullableDictionary<TKey, TSource>();
+            foreach (var item in source)
+            {
+                dic[keySelector(item)] = item;
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static NullableDictionary<TKey, TSource> ToDictionarySafety<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, TSource defaultValue)
+        {
+            var dic = new NullableDictionary<TKey, TSource>() { FallbackValue = defaultValue };
             foreach (var item in source)
             {
                 dic[keySelector(item)] = item;
@@ -367,6 +387,28 @@ namespace Masuit.Tools
         /// <param name="source"></param>
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static NullableDictionary<TKey, TElement> ToDictionarySafety<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, TElement defaultValue)
+        {
+            var dic = new NullableDictionary<TKey, TElement>() { FallbackValue = defaultValue };
+            foreach (var item in source)
+            {
+                dic[keySelector(item)] = elementSelector(item);
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
         public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
         {
@@ -383,10 +425,48 @@ namespace Masuit.Tools
         /// <typeparam name="TElement"></typeparam>
         /// <param name="source"></param>
         /// <param name="keySelector">键选择器</param>
+        /// <param name="elementSelector">值选择器</param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue)
+        {
+            var dic = new NullableConcurrentDictionary<TKey, TElement>() { FallbackValue = defaultValue };
+            await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
         /// <returns></returns>
         public static NullableConcurrentDictionary<TKey, TSource> ToConcurrentDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
         {
             var dic = new NullableConcurrentDictionary<TKey, TSource>();
+            foreach (var item in source)
+            {
+                dic[keySelector(item)] = item;
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static NullableConcurrentDictionary<TKey, TSource> ToConcurrentDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, TSource defaultValue)
+        {
+            var dic = new NullableConcurrentDictionary<TKey, TSource>() { FallbackValue = defaultValue };
             foreach (var item in source)
             {
                 dic[keySelector(item)] = item;
@@ -426,9 +506,48 @@ namespace Masuit.Tools
         /// <param name="keySelector">键选择器</param>
         /// <param name="elementSelector">值选择器</param>
         /// <returns></returns>
+        public static NullableConcurrentDictionary<TKey, TElement> ToConcurrentDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, TElement defaultValue)
+        {
+            var dic = new NullableConcurrentDictionary<TKey, TElement>() { FallbackValue = defaultValue };
+            foreach (var item in source)
+            {
+                dic[keySelector(item)] = elementSelector(item);
+            }
+
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <param name="elementSelector">值选择器</param>
+        /// <returns></returns>
         public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
         {
             var dic = new ConcurrentDictionary<TKey, TElement>();
+            await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+            return dic;
+        }
+
+        /// <summary>
+        /// 安全的转换成字典集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector">键选择器</param>
+        /// <param name="elementSelector">值选择器</param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue)
+        {
+            var dic = new NullableConcurrentDictionary<TKey, TElement>() { FallbackValue = defaultValue };
             await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
             return dic;
         }
@@ -443,6 +562,24 @@ namespace Masuit.Tools
         public static NullableConcurrentDictionary<TKey, TValue> AsConcurrentDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dic) => dic;
 
         /// <summary>
+        /// 转换成并发字典集合
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dic"></param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static NullableConcurrentDictionary<TKey, TValue> AsConcurrentDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dic, TValue defaultValue)
+        {
+            var nullableDictionary = new NullableConcurrentDictionary<TKey, TValue>() { FallbackValue = defaultValue };
+            foreach (var p in dic)
+            {
+                nullableDictionary[p.Key] = p.Value;
+            }
+            return nullableDictionary;
+        }
+
+        /// <summary>
         /// 转换成普通字典集合
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
@@ -450,5 +587,23 @@ namespace Masuit.Tools
         /// <param name="dic"></param>
         /// <returns></returns>
         public static NullableDictionary<TKey, TValue> AsDictionary<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dic) => dic;
+
+        /// <summary>
+        /// 转换成普通字典集合
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="dic"></param>
+        /// <param name="defaultValue">键未找到时的默认值</param>
+        /// <returns></returns>
+        public static NullableDictionary<TKey, TValue> AsDictionary<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dic, TValue defaultValue)
+        {
+            var nullableDictionary = new NullableDictionary<TKey, TValue>() { FallbackValue = defaultValue };
+            foreach (var p in dic)
+            {
+                nullableDictionary[p.Key] = p.Value;
+            }
+            return nullableDictionary;
+        }
     }
 }

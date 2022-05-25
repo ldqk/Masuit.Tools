@@ -34,13 +34,15 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
     {
     }
 
+    internal TValue FallbackValue { get; set; }
+
     /// <summary>
     ///
     /// </summary>
     /// <param name="key"></param>
     public new TValue this[NullObject<TKey> key]
     {
-        get => TryGetValue(key, out var value) ? value : default;
+        get => TryGetValue(key, out var value) ? value : FallbackValue;
         set => base[key] = value;
     }
 

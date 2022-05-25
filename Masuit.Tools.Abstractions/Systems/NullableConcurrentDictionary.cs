@@ -22,9 +22,11 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
     {
     }
 
+    internal TValue FallbackValue { get; set; }
+
     public new TValue this[NullObject<TKey> key]
     {
-        get => TryGetValue(key, out var value) ? value : default;
+        get => TryGetValue(key, out var value) ? value : FallbackValue;
         set => base[key] = value;
     }
 
