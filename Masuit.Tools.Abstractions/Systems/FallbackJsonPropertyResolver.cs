@@ -70,28 +70,6 @@ public class FallbackJsonPropertyResolver : CamelCasePropertyNamesContractResolv
         return DeserializeIgnores[type].Contains(propertyName, StringComparer.CurrentCultureIgnoreCase);
     }
 
-    /// <summary>
-    /// The decision logic goes here
-    /// </summary>
-    /// <param name="member"></param>
-    /// <param name="memberSerialization"></param>
-    /// <returns></returns>
-    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-    {
-        var property = base.CreateProperty(member, memberSerialization);
-        if (IsSerializeIgnored(property.DeclaringType, property.PropertyName))
-        {
-            property.ShouldSerialize = _ => false;
-        }
-
-        if (IsDeserializeIgnored(property.DeclaringType, property.PropertyName))
-        {
-            property.ShouldDeserialize = _ => false;
-        }
-
-        return property;
-    }
-
     protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
     {
         var typeMembers = GetSerializableMembers(type).DistinctBy(m => m.Name);
@@ -100,23 +78,32 @@ public class FallbackJsonPropertyResolver : CamelCasePropertyNamesContractResolv
         foreach (var member in typeMembers)
         {
             var property = CreateProperty(member, memberSerialization);
+            if (IsSerializeIgnored(property.DeclaringType, property.PropertyName))
+            {
+                property.ShouldSerialize = _ => false;
+            }
+
+            if (IsDeserializeIgnored(property.DeclaringType, property.PropertyName))
+            {
+                property.ShouldDeserialize = _ => false;
+            }
+
+            properties.RemoveAll(p => p.PropertyName == property.PropertyName);
             properties.Add(property);
-
             var fallbackAttribute = member.GetCustomAttribute<FallbackJsonProperty>();
-
             if (fallbackAttribute == null)
             {
                 continue;
             }
 
             property.PropertyName = fallbackAttribute.PreferredName;
-
             foreach (var alternateName in fallbackAttribute.FallbackReadNames)
             {
                 properties.RemoveAll(p => p.PropertyName == alternateName);
                 var fallbackProperty = CreateProperty(member, memberSerialization);
                 fallbackProperty.PropertyName = alternateName;
-                fallbackProperty.ShouldSerialize = (x) => false;
+                fallbackProperty.ShouldSerialize = _ => false;
+                fallbackProperty.ShouldDeserialize = _ => true;
                 properties.Add(fallbackProperty);
             }
         }

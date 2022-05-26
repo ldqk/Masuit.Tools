@@ -492,7 +492,7 @@ namespace Masuit.Tools.Models
         /// </summary>
         public static T Root<T>(this T tree) where T : ITreeParent<T> => GetRoot(tree, t => t.Parent);
 
-        private static string GetFullPath<T>(T c, Func<T, string> selector, string separator = "/") where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector) + separator + selector(c) : selector(c);
+        private static string GetFullPath<T>(T c, Func<T, string> selector, string separator = "/") where T : ITreeParent<T> => c.Parent != null ? GetFullPath(c.Parent, selector, separator) + separator + selector(c) : selector(c);
 
         /// <summary>
         /// 根节点
