@@ -18,7 +18,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.9.1</Version>
+        <Version>2.4.9.2</Version>
         <FileVersion>2.4.5.6</FileVersion>
         <Company>masuit.com</Company>
         <AssemblyVersion>2.4.5.6</AssemblyVersion>

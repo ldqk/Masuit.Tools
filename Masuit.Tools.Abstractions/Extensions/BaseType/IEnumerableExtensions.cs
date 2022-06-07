@@ -474,6 +474,7 @@ namespace Masuit.Tools
                 }
             }
 
+            results.AddRange(await Task.WhenAll(tasks));
             return results;
         }
 
@@ -502,6 +503,7 @@ namespace Masuit.Tools
                 }
             }
 
+            results.AddRange(await Task.WhenAll(tasks));
             return results;
         }
 
