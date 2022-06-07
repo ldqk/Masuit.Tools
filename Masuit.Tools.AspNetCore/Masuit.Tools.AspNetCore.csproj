@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
         <Description>
             包含一些AspNetCore常用的工具类。ModelBinder等
             官网教程：https://ldqk.org/55
@@ -18,7 +18,7 @@
         <LangVersion>latest</LangVersion>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>1.0.5.10</Version>
+        <Version>1.0.6</Version>
         <FileVersion>1.0</FileVersion>
         <Company>masuit.com</Company>
         <AssemblyVersion>1.0</AssemblyVersion>

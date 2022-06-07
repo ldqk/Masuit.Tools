@@ -212,6 +212,17 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 转成非null
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="valueFactory">为空时的替换值函数</param>
+        /// <returns></returns>
+        public static string IfNullOrEmpty(this string s, Func<string> valueFactory)
+        {
+            return string.IsNullOrEmpty(s) ? valueFactory() : s;
+        }
+
+        /// <summary>
         /// 字符串掩码
         /// </summary>
         /// <param name="s">字符串</param>

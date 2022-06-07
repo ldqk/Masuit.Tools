@@ -32,7 +32,7 @@
         <PackageReference Include="EPPlus" Version="6.0.4" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.1" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.2" />
     </ItemGroup>
 
 </Project>

@@ -18,7 +18,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.4.8.10</Version>
+        <Version>2.4.9</Version>
         <FileVersion>2.4.5.6</FileVersion>
         <Company>masuit.com</Company>
         <AssemblyVersion>2.4.5.6</AssemblyVersion>
@@ -32,7 +32,7 @@ github：https://github.com/ldqk/Masuit.Tools
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.6.0" />
-        <PackageReference Include="HtmlSanitizer" Version="7.1.488" />
+        <PackageReference Include="HtmlSanitizer" Version="7.1.512" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.31.0" />

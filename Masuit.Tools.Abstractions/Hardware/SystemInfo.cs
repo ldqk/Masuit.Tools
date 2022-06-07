@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -524,7 +525,16 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IPAddress GetLocalUsedIP()
         {
-            return NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).SelectMany(n => n.GetIPProperties().UnicastAddresses.Select(u => u.Address)).FirstOrDefault();
+            return GetLocalUsedIP(AddressFamily.InterNetwork);
+        }
+
+        /// <summary>
+        /// 获取当前使用的IP
+        /// </summary>
+        /// <returns></returns>
+        public static IPAddress GetLocalUsedIP(AddressFamily family)
+        {
+            return NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).Select(t => t.GetIPProperties()).Where(p => p.DhcpServerAddresses.Count > 0).SelectMany(p => p.UnicastAddresses).Select(p => p.Address).FirstOrDefault(p => !(p.IsIPv6Teredo || p.IsIPv6LinkLocal || p.IsIPv6Multicast || p.IsIPv6SiteLocal) && p.AddressFamily == family);
         }
 
         /// <summary>
