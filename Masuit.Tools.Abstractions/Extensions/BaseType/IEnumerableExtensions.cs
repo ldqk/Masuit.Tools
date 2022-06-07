@@ -451,6 +451,61 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 异步Select
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="maxParallelCount">最大并行数</param>
+        /// <returns></returns>
+        public static async Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector, int maxParallelCount)
+        {
+            var results = new List<TResult>();
+            var tasks = new List<Task<TResult>>();
+            foreach (var item in source)
+            {
+                var task = selector(item);
+                tasks.Add(task);
+                if (tasks.Count >= maxParallelCount)
+                {
+                    results.AddRange(await Task.WhenAll(tasks));
+                    tasks.Clear();
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// 异步Select
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="selector"></param>
+        /// <param name="maxParallelCount">最大并行数</param>
+        /// <returns></returns>
+        public static async Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<TResult>> selector, int maxParallelCount)
+        {
+            var results = new List<TResult>();
+            var tasks = new List<Task<TResult>>();
+            int index = 0;
+            foreach (var item in source)
+            {
+                var task = selector(item, index++);
+                tasks.Add(task);
+                if (tasks.Count >= maxParallelCount)
+                {
+                    results.AddRange(await Task.WhenAll(tasks));
+                    tasks.Clear();
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
         /// 异步For
         /// </summary>
         /// <typeparam name="T"></typeparam>
