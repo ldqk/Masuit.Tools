@@ -24,6 +24,7 @@ namespace Masuit.Tools.Media
         /// <param name="fileSaveUrl">缩略图存放地址</param>
         /// <param name="side">指定的边长（正方型）</param>
         /// <param name="quality">质量（范围0-100）</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CutForSquare) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static void CutForSquare(this Stream fromFile, string fileSaveUrl, int side, int quality)
         {
             //创建目录
@@ -154,6 +155,7 @@ namespace Masuit.Tools.Media
         /// <param name="maxWidth">最大宽(单位:px)</param>
         /// <param name="maxHeight">最大高(单位:px)</param>
         /// <param name="quality">质量（范围0-100）</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CutForCustom) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static void CutForCustom(this Stream fromFile, string fileSaveUrl, int maxWidth, int maxHeight, int quality)
         {
             //从文件获取原始图片，并使用流中嵌入的颜色管理信息
@@ -282,6 +284,7 @@ namespace Masuit.Tools.Media
         /// <param name="targetHeight">指定的最大高度</param>
         /// <param name="watermarkText">水印文字(为""表示不使用水印)</param>
         /// <param name="watermarkImage">水印图片路径(为""表示不使用水印)</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(ZoomAuto) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static void ZoomAuto(this Stream fromFile, string savePath, double targetWidth, double targetHeight, string watermarkText, string watermarkImage)
         {
             //创建目录
@@ -472,6 +475,7 @@ namespace Masuit.Tools.Media
         /// <param name="b">原始Bitmap</param>
         /// <param name="rec">裁剪区域</param>
         /// <returns>剪裁后的Bitmap</returns>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CutImage) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap CutImage(this Bitmap b, Rectangle rec)
         {
             int w = b.Width;
@@ -515,6 +519,7 @@ namespace Masuit.Tools.Media
         /// <param name="newWidth">新的宽度</param>
         /// <param name="newHeight">新的高度</param>
         /// <returns>处理以后的图片</returns>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(ResizeImage) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap ResizeImage(this Bitmap bmpp, int newWidth, int newHeight)
         {
             try
@@ -545,6 +550,7 @@ namespace Masuit.Tools.Media
         /// <param name="newWidth">新的宽度</param>
         /// <param name="newHeight">新的高度</param>
         /// <returns>处理以后的图片</returns>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CutAndResize) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap CutAndResize(this Bitmap bmpp, Rectangle rec, int newWidth, int newHeight) => bmpp.CutImage(rec).ResizeImage(newWidth, newHeight);
 
         #endregion 裁剪并缩放
@@ -560,6 +566,7 @@ namespace Masuit.Tools.Media
         /// <param name="size">压缩后图片的最大大小</param>
         /// <param name="sfsc">是否是第一次调用</param>
         /// <returns></returns>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CompressImage) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static bool CompressImage(string sFile, string dFile, byte quality = 90, int size = 1024, bool sfsc = true)
         {
             //如果是第一次调用，原始图像的大小小于要压缩的大小，则直接复制文件，并且返回true
@@ -643,6 +650,7 @@ namespace Masuit.Tools.Media
         /// <param name="size">压缩后图片的最大大小</param>
         /// <param name="sfsc">是否是第一次调用</param>
         /// <returns></returns>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(CompressImage) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static bool CompressImage(Stream src, Stream dest, byte quality = 90, int size = 1024, bool sfsc = true)
         {
             //如果是第一次调用，原始图像的大小小于要压缩的大小，则直接复制文件，并且返回true
@@ -727,6 +735,7 @@ namespace Masuit.Tools.Media
         /// <param name="width">缩略图宽度</param>
         /// <param name="height">缩略图高度</param>
         /// <param name="mode">生成缩略图的方式</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(MakeThumbnail) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, ThumbnailCutMode mode)
         {
             using var bitmap = MakeThumbnail(originalImage, width, height, mode);
@@ -740,6 +749,7 @@ namespace Masuit.Tools.Media
         /// <param name="width">缩略图宽度</param>
         /// <param name="height">缩略图高度</param>
         /// <param name="mode">生成缩略图的方式</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(MakeThumbnail) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Image MakeThumbnail(this Image originalImage, int width, int height, ThumbnailCutMode mode)
         {
             int towidth = width;
@@ -823,6 +833,7 @@ namespace Masuit.Tools.Media
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
         /// <param name="val">增加或减少的光暗值</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(LDPic) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap LDPic(this Bitmap source, int width, int height, int val)
         {
             Bitmap bmp = new Bitmap(width, height); //初始化一个记录经过处理后的图片对象
@@ -851,6 +862,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">原始图片</param>
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(RePic) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap RePic(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height); //初始化一个记录处理后的图片的对象
@@ -879,6 +891,7 @@ namespace Masuit.Tools.Media
         /// <param name="oldBitmap">原始图片</param>
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(Relief) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap Relief(this Bitmap oldBitmap, int width, int height)
         {
             var newBitmap = new Bitmap(width, height);
@@ -914,6 +927,7 @@ namespace Masuit.Tools.Media
         /// <param name="bmpp">原始图片</param>
         /// <param name="newW">新的宽度</param>
         /// <param name="newH">新的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(ResizeImageAsync) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static async Task<Bitmap> ResizeImageAsync(this Bitmap bmpp, int newW, int newH)
         {
             try
@@ -943,6 +957,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">原始图片</param>
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(FilPic) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap FilPic(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height);
@@ -969,6 +984,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">原始图片</param>
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(RevPicLR) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap RevPicLR(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height);
@@ -998,6 +1014,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">原始图片</param>
         /// <param name="width">原始图片的长度</param>
         /// <param name="height">原始图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(RevPicUD) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap RevPicUD(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height);
@@ -1040,6 +1057,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">要进行处理的图片</param>
         /// <param name="width">图片的长度</param>
         /// <param name="height">图片的高度</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(BWPic) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap BWPic(this Bitmap source, int width, int height)
         {
             var bmp = new Bitmap(width, height);
@@ -1065,6 +1083,7 @@ namespace Masuit.Tools.Media
         /// </summary>
         /// <param name="gif">源gif</param>
         /// <param name="pSavedPath">保存路径</param>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(GetFrames) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static void GetFrames(this Image gif, string pSavedPath)
         {
             var fd = new FrameDimension(gif.FrameDimensionsList[0]);
@@ -1084,6 +1103,7 @@ namespace Masuit.Tools.Media
         /// <param name="source">dataUri数据源</param>
         /// <returns></returns>
         /// <exception cref="Exception">操作失败。</exception>
+        [Obsolete(nameof(ImageUtilities) + "." + nameof(SaveDataUriAsImageFile) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public static Bitmap SaveDataUriAsImageFile(this string source)
         {
             string strbase64 = source.Substring(source.IndexOf(',') + 1).Trim('\0');

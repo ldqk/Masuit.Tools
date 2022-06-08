@@ -19,6 +19,7 @@ namespace Masuit.Tools.Media
 
         private readonly Stream _stream;
 
+        [Obsolete(nameof(ImageWatermarker) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public ImageWatermarker(Stream originStream)
         {
             _stream = originStream;
@@ -37,6 +38,7 @@ namespace Masuit.Tools.Media
         ///    由于抗锯齿质量就越好。
         ///    因为关闭了提示，词干宽度之间的差异可能非常明显。</param>
         /// <returns></returns>
+        [Obsolete(nameof(ImageWatermarker) + "." + nameof(AddWatermark) + "是基于System.Drawing实现的，System.Drawing将在.NET7开始只支持Windows下运行，如果您的项目需要在Linux下部署，请考虑使用ImageSharp或SkiaSharp之类的替代类库重新实现")]
         public MemoryStream AddWatermark(string watermarkText, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10, int fontSize = 20, Font font = null, bool textAntiAlias = true)
         {
             using var img = Image.FromStream(_stream);
@@ -67,18 +69,22 @@ namespace Masuit.Tools.Media
                     x = textPadding;
                     y = textPadding;
                     break;
+
                 case WatermarkPosition.TopRight:
                     x = img.Width - (int)textSize.Width - textPadding;
                     y = textPadding;
                     break;
+
                 case WatermarkPosition.BottomLeft:
                     x = textPadding;
                     y = img.Height - (int)textSize.Height - textPadding;
                     break;
+
                 case WatermarkPosition.BottomRight:
                     x = img.Width - (int)textSize.Width - textPadding;
                     y = img.Height - (int)textSize.Height - textPadding;
                     break;
+
                 default:
                     x = textPadding;
                     y = textPadding;
