@@ -47,6 +47,16 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
     }
 
     /// <summary>
+    ///
+    /// </summary>
+    /// <param name="key"></param>
+    public virtual TValue this[TKey key]
+    {
+        get => TryGetValue(key, out var value) ? value : FallbackValue;
+        set => base[key] = value;
+    }
+
+    /// <summary>
     /// 隐式转换
     /// </summary>
     /// <param name="dic"></param>

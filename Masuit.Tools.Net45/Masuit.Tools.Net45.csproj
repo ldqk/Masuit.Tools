@@ -259,53 +259,8 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
       <Link>Strings\Template.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\CompositeContractResolver.cs">
-      <Link>Systems\CompositeContractResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\ConcurrentLimitedQueue.cs">
-      <Link>Systems\ConcurrentLimitedQueue.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyContractResolver.cs">
-      <Link>Systems\DeserializeOnlyContractResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyJsonPropertyAttribute.cs">
-      <Link>Systems\DeserializeOnlyJsonPropertyAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\Disposable.cs">
-      <Link>Systems\Disposable.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\EnumExt.cs">
-      <Link>Systems\EnumExt.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonProperty.cs">
-      <Link>Systems\FallbackJsonProperty.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonPropertyResolver.cs">
-      <Link>Systems\FallbackJsonPropertyResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\HiPerfTimer.cs">
-      <Link>Systems\HiPerfTimer.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\LimitedQueue.cs">
-      <Link>Systems\LimitedQueue.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableConcurrentDictionary.cs">
-      <Link>Systems\NullableConcurrentDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableDictionary.cs">
-      <Link>Systems\NullableDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullObject.cs">
-      <Link>Systems\NullObject.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SerializeIgnoreAttribute.cs">
-      <Link>Systems\SerializeIgnoreAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlake.cs">
-      <Link>Systems\SnowFlake.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\StopwatchHelper.cs">
-      <Link>Systems\StopwatchHelper.cs</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
+      <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Validator\ComplexPassword.cs">
       <Link>Validator\ComplexPassword.cs</Link>
@@ -386,7 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DnsClient">
-      <Version>1.6.0</Version>
+      <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.9</Version>

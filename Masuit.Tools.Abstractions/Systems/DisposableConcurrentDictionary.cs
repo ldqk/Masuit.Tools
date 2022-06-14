@@ -9,16 +9,28 @@ namespace Masuit.Tools.Systems;
 /// </summary>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TValue"></typeparam>
-public class DisposeableDictionary<TKey, TValue> : NullableDictionary<TKey, TValue>, IDisposable where TValue : IDisposable
+public class DisposableConcurrentDictionary<TKey, TValue> : NullableConcurrentDictionary<TKey, TValue>, IDisposable where TValue : IDisposable
 {
     private bool _isDisposed;
 
     /// <summary>
     /// 终结器
     /// </summary>
-    ~DisposeableDictionary()
+    ~DisposableConcurrentDictionary()
     {
         Dispose(false);
+    }
+
+    public DisposableConcurrentDictionary() : base()
+    {
+    }
+
+    public DisposableConcurrentDictionary(int concurrencyLevel, int capacity) : base(concurrencyLevel, capacity)
+    {
+    }
+
+    public DisposableConcurrentDictionary(IEqualityComparer<NullObject<TKey>> comparer) : base(comparer)
+    {
     }
 
     /// <summary>
@@ -34,18 +46,6 @@ public class DisposeableDictionary<TKey, TValue> : NullableDictionary<TKey, TVal
         Dispose(true);
         _isDisposed = true;
         GC.SuppressFinalize(this);
-    }
-
-    public DisposeableDictionary() : base()
-    {
-    }
-
-    public DisposeableDictionary(int capacity) : base(capacity)
-    {
-    }
-
-    public DisposeableDictionary(IDictionary<NullObject<TKey>, TValue> dictionary) : base(dictionary)
-    {
     }
 
     /// <summary>

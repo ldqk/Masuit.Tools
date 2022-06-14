@@ -59,7 +59,7 @@ namespace Masuit.Tools.Files
         /// <param name="archiveType"></param>
         /// <param name="disposeAllStreams">是否需要释放所有流</param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(DisposeableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        public MemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
         {
             using var archive = ArchiveFactory.Create(archiveType);
             foreach (var pair in streams)
@@ -110,7 +110,7 @@ namespace Masuit.Tools.Files
         /// <param name="zipFile">压缩到...</param>
         /// <param name="archiveType"></param>
         /// <param name="disposeAllStreams">是否需要释放所有流</param>
-        public void Zip(DisposeableDictionary<string, Stream> streams, string zipFile, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        public void Zip(DisposableDictionary<string, Stream> streams, string zipFile, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
         {
             using var archive = ArchiveFactory.Create(archiveType);
             foreach (var pair in streams)

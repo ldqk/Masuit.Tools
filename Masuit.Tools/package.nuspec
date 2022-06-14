@@ -1,25 +1,19 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <!--*-->
     <id>Masuit.Tools.Net</id>
-    <!--*-->
-    <version>2.4.9.2</version>
+    <version>2.4.9.3</version>
     <title>Masuit.Tools</title>
-    <!--*-->
     <authors>懒得勤快</authors>
     <owners>masuit.com</owners>
     <licenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/ldqk/Masuit.Tools</projectUrl>
-    <!--<iconUrl></iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <!--*-->
     <description>包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。
 官网教程：https://ldqk.org/55
 
 
 github：https://github.com/ldqk/Masuit.Tools</description>
-    <!--*-->
     <releaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</releaseNotes>
     <copyright>Copyright ©  懒得勤快</copyright>
     <tags>Masuit.Tools,工具库,Utility,Crypt,Extensions</tags>

@@ -30,6 +30,12 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
         set => base[key] = value;
     }
 
+    public virtual TValue this[TKey key]
+    {
+        get => TryGetValue(key, out var value) ? value : FallbackValue;
+        set => base[key] = value;
+    }
+
     /// <summary>
     /// 隐式转换
     /// </summary>
