@@ -831,16 +831,16 @@ Startup配置：
              options.ModelBinderProviders.InsertBodyOrDefaultBinding();
         })
 ```
-在action的参数模型前打上标记：`[FromBody]`即可，当然也可以省略，示例代码如下：
+在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，当然也可以省略，示例代码如下：
 ```csharp
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([FromBody]QueryModel query)
+        public IActionResult Query([FromBodyOrDefault]QueryModel query)
         {
             return Ok(...);
         }
 	
         [HttpGet("query"),HttpPost("query")]
-        public IActionResult Query([FromBody]int id,[FromBody]string name)
+        public IActionResult Query([FromBodyOrDefault]int id,[FromBodyOrDefault]string name)
         {
             return Ok(...);
         }
