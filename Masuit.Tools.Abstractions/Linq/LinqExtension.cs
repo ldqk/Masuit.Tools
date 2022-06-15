@@ -22,6 +22,32 @@ namespace Masuit.Tools.Linq
         }
 
         /// <summary>
+        /// 与连接
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="left">左条件</param>
+        /// <param name="condition">符合什么条件</param>
+        /// <param name="right">右条件</param>
+        /// <returns>新表达式</returns>
+        public static Expression<Func<T, bool>> AndIf<T>(this Expression<Func<T, bool>> left, bool condition, Expression<Func<T, bool>> right)
+        {
+            return condition ? CombineLambdas(left, right, ExpressionType.AndAlso) : left;
+        }
+
+        /// <summary>
+        /// 与连接
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="left">左条件</param>
+        /// <param name="condition">符合什么条件</param>
+        /// <param name="right">右条件</param>
+        /// <returns>新表达式</returns>
+        public static Expression<Func<T, bool>> AndIf<T>(this Expression<Func<T, bool>> left, Func<bool> condition, Expression<Func<T, bool>> right)
+        {
+            return condition() ? CombineLambdas(left, right, ExpressionType.AndAlso) : left;
+        }
+
+        /// <summary>
         /// 或连接
         /// </summary>
         /// <typeparam name="T">类型</typeparam>
@@ -31,6 +57,32 @@ namespace Masuit.Tools.Linq
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right)
         {
             return CombineLambdas(left, right, ExpressionType.OrElse);
+        }
+
+        /// <summary>
+        /// 或连接
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="left">左条件</param>
+        /// <param name="condition">符合什么条件</param>
+        /// <param name="right">右条件</param>
+        /// <returns>新表达式</returns>
+        public static Expression<Func<T, bool>> OrIf<T>(this Expression<Func<T, bool>> left, bool condition, Expression<Func<T, bool>> right)
+        {
+            return condition ? CombineLambdas(left, right, ExpressionType.OrElse) : left;
+        }
+
+        /// <summary>
+        /// 或连接
+        /// </summary>
+        /// <typeparam name="T">类型</typeparam>
+        /// <param name="left">左条件</param>
+        /// <param name="condition">符合什么条件</param>
+        /// <param name="right">右条件</param>
+        /// <returns>新表达式</returns>
+        public static Expression<Func<T, bool>> OrIf<T>(this Expression<Func<T, bool>> left, Func<bool> condition, Expression<Func<T, bool>> right)
+        {
+            return condition() ? CombineLambdas(left, right, ExpressionType.OrElse) : left;
         }
 
         private static Expression<Func<T, bool>> CombineLambdas<T>(this Expression<Func<T, bool>> left, Expression<Func<T, bool>> right, ExpressionType expressionType)
