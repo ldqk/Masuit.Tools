@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,10 +35,11 @@ namespace Masuit.Tools.Net
         /// 获取一个匿名登录的ftp客户端
         /// </summary>
         /// <param name="serverIp">服务器IP地址</param>
+        /// <param name="matchInetAddress">是否验证IP地址</param>
         /// <returns></returns>
-        public static FtpClient GetAnonymousClient(string serverIp)
+        public static FtpClient GetAnonymousClient(string serverIp,bool matchInetAddress=true)
         {
-            if (!serverIp.MatchInetAddress())
+            if (!serverIp.MatchInetAddress()&&matchInetAddress)
             {
                 throw new ArgumentException("IP地址格式不正确");
             }
@@ -55,10 +56,11 @@ namespace Masuit.Tools.Net
         /// <param name="serverIp">服务器ip</param>
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
+        /// <param name="matchInetAddress">是否验证IP地址</param>
         /// <returns></returns>
-        public static FtpClient GetClient(string serverIp, string username, string password)
+        public static FtpClient GetClient(string serverIp, string username, string password,bool matchInetAddress=true)
         {
-            if (!serverIp.MatchInetAddress())
+            if (!serverIp.MatchInetAddress()&&matchInetAddress)
             {
                 throw new ArgumentException("IP地址格式不正确");
             }
