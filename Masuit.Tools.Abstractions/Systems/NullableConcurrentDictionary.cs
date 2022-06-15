@@ -14,6 +14,11 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
     {
     }
 
+    public NullableConcurrentDictionary(TValue fallbackValue) : base()
+    {
+        FallbackValue = fallbackValue;
+    }
+
     public NullableConcurrentDictionary(int concurrencyLevel, int capacity) : base(concurrencyLevel, capacity)
     {
     }
@@ -30,11 +35,11 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
         set => base[key] = value;
     }
 
-    public virtual TValue this[TKey key]
-    {
-        get => TryGetValue(key, out var value) ? value : FallbackValue;
-        set => base[key] = value;
-    }
+    //public virtual TValue this[TKey key]
+    //{
+    //    get => TryGetValue(key, out var value) ? value : FallbackValue;
+    //    set => base[key] = value;
+    //}
 
     /// <summary>
     /// 隐式转换

@@ -14,6 +14,11 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
     {
     }
 
+    public NullableDictionary(TValue fallbackValue) : base()
+    {
+        FallbackValue = fallbackValue;
+    }
+
     public NullableDictionary(int capacity) : base(capacity)
     {
     }
@@ -46,15 +51,15 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
         set => base[key] = value;
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="key"></param>
-    public virtual TValue this[TKey key]
-    {
-        get => TryGetValue(key, out var value) ? value : FallbackValue;
-        set => base[key] = value;
-    }
+    ///// <summary>
+    /////
+    ///// </summary>
+    ///// <param name="key"></param>
+    //public virtual TValue this[TKey key]
+    //{
+    //    get => TryGetValue(key, out var value) ? value : FallbackValue;
+    //    set => base[key] = value;
+    //}
 
     /// <summary>
     /// 隐式转换

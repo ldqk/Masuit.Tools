@@ -25,6 +25,11 @@ public class DisposableConcurrentDictionary<TKey, TValue> : NullableConcurrentDi
     {
     }
 
+    public DisposableConcurrentDictionary(TValue fallbackValue) : base()
+    {
+        FallbackValue = fallbackValue;
+    }
+
     public DisposableConcurrentDictionary(int concurrencyLevel, int capacity) : base(concurrencyLevel, capacity)
     {
     }

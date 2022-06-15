@@ -40,6 +40,11 @@ public class DisposableDictionary<TKey, TValue> : NullableDictionary<TKey, TValu
     {
     }
 
+    public DisposableDictionary(TValue fallbackValue) : base()
+    {
+        FallbackValue = fallbackValue;
+    }
+
     public DisposableDictionary(int capacity) : base(capacity)
     {
     }
