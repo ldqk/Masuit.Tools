@@ -18,9 +18,9 @@ namespace Masuit.Tools
 {
     public static partial class StringExtensions
     {
-        public static string Join(this IEnumerable<string> strs, string separate = ", ") => string.Join(separate, strs);
+        public static string Join(this IEnumerable<string> strs, string separate = ", ", bool removeEmptyEntry = false) => string.Join(separate, removeEmptyEntry ? strs.Where(s => !string.IsNullOrEmpty(s)) : strs);
 
-        public static string Join<T>(this IEnumerable<T> strs, string separate = ", ") => string.Join(separate, strs);
+        public static string Join<T>(this IEnumerable<T> strs, string separate = ", ", bool removeEmptyEntry = false) => string.Join(separate, removeEmptyEntry ? strs.Where(t => t != null) : strs);
 
         /// <summary>
         /// 字符串转时间
