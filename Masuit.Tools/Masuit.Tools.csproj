@@ -175,10 +175,10 @@
       <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="SharpCompress">
-      <Version>0.32.0</Version>
+      <Version>0.32.1</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.5.61</Version>
+      <Version>2.6.45</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>

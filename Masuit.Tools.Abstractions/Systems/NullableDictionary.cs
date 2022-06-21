@@ -23,7 +23,7 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
     {
     }
 
-    public NullableDictionary(IEqualityComparer<NullObject<TKey>>? comparer) : base(comparer)
+    public NullableDictionary(IEqualityComparer<NullObject<TKey>> comparer) : base(comparer)
     {
     }
 
