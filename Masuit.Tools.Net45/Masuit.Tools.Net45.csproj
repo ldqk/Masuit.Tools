@@ -139,12 +139,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Maths\Vector2D.cs">
       <Link>Maths\Vector2D.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageUtilities.cs">
-      <Link>Media\ImageUtilities.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageWatermarker.cs">
-      <Link>Media\ImageWatermarker.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Media\ThumbnailCutMode.cs">
       <Link>Media\ThumbnailCutMode.cs</Link>
     </Compile>
@@ -256,6 +250,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
       <Link>Strings\NumberFormater.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\SimHash.cs">
+      <Link>Strings\SimHash.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
       <Link>Strings\Template.cs</Link>
     </Compile>
@@ -337,6 +334,8 @@
     <Compile Include="..\Masuit.Tools\Strings\ValidateCode.cs">
       <Link>Strings\ValidateCode.cs</Link>
     </Compile>
+    <Compile Include="Media\ImageUtilities.cs" />
+    <Compile Include="Media\ImageWatermarker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

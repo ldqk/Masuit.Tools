@@ -720,6 +720,8 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
             return isPatnumTrue;
         }
 
+        #endregion 权威校验中国专利申请号/专利号
+
         /// <summary>
         /// 取字符串前{length}个字
         /// </summary>
@@ -730,7 +732,13 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
         {
             return s.Length > length ? s.Substring(0, length) : s;
         }
-    }
 
-    #endregion 权威校验中国专利申请号/专利号
+        /// <summary>
+        /// 对比字符串的汉明距离
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static int HammingDistance(this string @this, string that) => new SimHash(@this).HammingDistance(new SimHash(that));
+    }
 }

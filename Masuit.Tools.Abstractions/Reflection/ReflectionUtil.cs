@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -229,19 +228,6 @@ namespace Masuit.Tools.Reflection
         {
             Assembly asm = Assembly.GetExecutingAssembly();
             return asm.GetManifestResourceStream(resourceName);
-        }
-
-        /// <summary>
-        /// 获取程序集资源的位图资源
-        /// </summary>
-        /// <param name="assemblyType">程序集中的某一对象类型</param>
-        /// <param name="resourceHolder">资源的根名称。例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
-        /// <param name="imageName">资源项名称</param>
-        public static Bitmap LoadBitmap(this Type assemblyType, string resourceHolder, string imageName)
-        {
-            Assembly thisAssembly = Assembly.GetAssembly(assemblyType);
-            ResourceManager rm = new ResourceManager(resourceHolder, thisAssembly);
-            return (Bitmap)rm.GetObject(imageName);
         }
 
         /// <summary>

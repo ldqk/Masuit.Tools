@@ -1,17 +1,23 @@
 ﻿#if NET461
 using System.Web;
 #else
+
 using Microsoft.AspNetCore.Http;
+
 #endif
 
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Drawing.Imaging;
 using Masuit.Tools.AspNetCore.Mime;
+using SixLabors.Fonts;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Formats.Webp;
 
 namespace Masuit.Tools.Strings
 {
@@ -29,7 +35,7 @@ namespace Masuit.Tools.Strings
         {
             string ch = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890@#$%&?";
             byte[] b = new byte[4];
-            using var cpt = new RNGCryptoServiceProvider();
+            using var cpt = RandomNumberGenerator.Create();
             cpt.GetBytes(b);
             var r = new Random(BitConverter.ToInt32(b, 0));
             var sb = new StringBuilder();
@@ -46,52 +52,54 @@ namespace Masuit.Tools.Strings
         /// </summary>
         /// <param name="validateCode">验证码序列</param>
         /// <param name="context">当前的HttpContext上下文对象</param>
-        /// <param name="fontSize">字体大小，默认值22px</param>
-        /// <param name="lineHeight">行高，默认36px</param>
+        /// <param name="fontSize">字体大小，默认值28px</param>
         /// <exception cref="Exception">The operation failed.</exception>
-        public static byte[] CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 22, int lineHeight = 36)
+        public static byte[] CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 28)
         {
-            using Bitmap image = new Bitmap((int)Math.Ceiling(validateCode.Length * (fontSize + 2.0)), lineHeight + 2);
-            using Graphics g = Graphics.FromImage(image);
+            var font = SystemFonts.Families.Where(f => new[] { "Consolas", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault().CreateFont(fontSize);
+            var measure = TextMeasurer.Measure(validateCode, new TextOptions(font));
+            var width = (int)Math.Ceiling(measure.Width * 1.5);
+            var height = (int)Math.Ceiling(measure.Height + 5);
+            using var image = new Image<Rgba32>(width, height);
+
             //生成随机生成器
             Random random = new Random();
-            //清空图片背景色
-            g.Clear(Color.White);
-            //画图片的干扰线
-            for (int i = 0; i < 75; i++)
-            {
-                int x1 = random.StrictNext(image.Width);
-                int x2 = random.StrictNext(image.Width);
-                int y1 = random.StrictNext(image.Height);
-                int y2 = random.StrictNext(image.Height);
-                g.DrawLine(new Pen(Color.FromArgb(random.StrictNext(255), random.StrictNext(255), random.StrictNext(255))), x1, y1, x2, y2);
-            }
 
-            Font[] fonts =
+            //清空图片背景色
+            image.Mutate(g =>
             {
-                new Font("Arial", fontSize, FontStyle.Bold | FontStyle.Italic),
-                new Font("微软雅黑", fontSize, FontStyle.Bold | FontStyle.Italic),
-                new Font("黑体", fontSize, FontStyle.Bold | FontStyle.Italic),
-                new Font("宋体", fontSize, FontStyle.Bold | FontStyle.Italic),
-                new Font("楷体", fontSize, FontStyle.Bold | FontStyle.Italic)
-            };
-            //渐变.
-            using var brush = new LinearGradientBrush(new Rectangle(0, 0, image.Width, image.Height), Color.Blue, Color.DarkRed, 1.2f, true);
-            g.DrawString(validateCode, fonts[random.StrictNext(fonts.Length)], brush, 3, 2);
+                g.BackgroundColor(Color.White);
+
+                //画图片的干扰线
+                for (int i = 0; i < 75; i++)
+                {
+                    int x1 = random.StrictNext(width);
+                    int x2 = random.StrictNext(width);
+                    int y1 = random.StrictNext(height);
+                    int y2 = random.StrictNext(height);
+                    g.DrawLines(new Pen(new Color(new Rgba32((byte)random.StrictNext(255), (byte)random.StrictNext(255), (byte)random.StrictNext(255))), 1), new PointF(x1, y1), new PointF(x2, y2));
+                }
+
+                //渐变.
+                var brush = new LinearGradientBrush(new PointF(0, 0), new PointF(width, height), GradientRepetitionMode.Repeat, new ColorStop(0.5f, Color.Blue), new ColorStop(0.5f, Color.DarkRed));
+                g.DrawText(validateCode, font, brush, new PointF(3, 2));
+
+                //画图片的边框线
+                g.DrawLines(new Pen(Color.Silver, 1), new PointF(0, 0), new PointF(width - 1, height - 1));
+            });
 
             //画图片的前景干扰点
             for (int i = 0; i < 350; i++)
             {
                 int x = random.StrictNext(image.Width);
                 int y = random.StrictNext(image.Height);
-                image.SetPixel(x, y, Color.FromArgb(random.StrictNext(255), random.StrictNext(255), random.StrictNext(255)));
+                image[x, y] = new Rgba32(random.StrictNext(255), random.StrictNext(255), random.StrictNext(255));
             }
 
-            //画图片的边框线
-            g.DrawRectangle(new Pen(Color.Silver), 0, 0, image.Width - 1, image.Height - 1);
             //保存图片数据
             using MemoryStream stream = new MemoryStream();
-            image.Save(stream, ImageFormat.Jpeg);
+            image.Save(stream, WebpFormat.Instance);
+
             //输出图片流
             context.Response.Clear();
             context.Response.ContentType = ContentType.Jpeg;
