@@ -550,15 +550,15 @@ stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体);
 
 // 图像相似度对比
 var hasher = new ImageHasher();
-var hash1 = hasher.CalculateDifferenceHash256("图片1"); // 使用差分哈希算法计算图像的256位哈希
-var hash2 = hasher.CalculateDifferenceHash256("图片2"); // 使用差分哈希算法计算图像的256位哈希
-//var hash1 = hasher.CalculateAverageHash64("图片1"); // 使用平均值算法计算图像的64位哈希
-//var hash2 = hasher.CalculateAverageHash64("图片2"); // 使用平均值算法计算图像的64位哈希
-//var hash1 = hasher.CalculateDctHash("图片1"); // 使用DCT算法计算图像的64位哈希
-//var hash2 = hasher.CalculateDctHash("图片2"); // 使用DCT算法计算图像的64位哈希
-//var hash1 = hasher.CalculateMedianHash64("图片1"); // 使用中值算法计算给定图像的64位哈希
-//var hash2 = hasher.CalculateMedianHash64("图片2"); // 使用中值算法计算给定图像的64位哈希
-var sim=ImageHasher.CompareHashes(hash1,hash2); // 图片的相似度，范围：[0,1]
+var hash1 = hasher.DifferenceHash256("图片1"); // 使用差分哈希算法计算图像的256位哈希
+var hash2 = hasher.DifferenceHash256("图片2"); // 使用差分哈希算法计算图像的256位哈希
+//var hash1 = hasher.AverageHash64("图片1"); // 使用平均值算法计算图像的64位哈希
+//var hash2 = hasher.AverageHash64("图片2"); // 使用平均值算法计算图像的64位哈希
+//var hash1 = hasher.DctHash("图片1"); // 使用DCT算法计算图像的64位哈希
+//var hash2 = hasher.DctHash("图片2"); // 使用DCT算法计算图像的64位哈希
+//var hash1 = hasher.MedianHash64("图片1"); // 使用中值算法计算给定图像的64位哈希
+//var hash2 = hasher.MedianHash64("图片2"); // 使用中值算法计算给定图像的64位哈希
+var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 ```
 ### 32.随机数
 ```csharp
