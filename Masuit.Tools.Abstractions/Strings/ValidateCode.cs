@@ -105,5 +105,16 @@ namespace Masuit.Tools.Strings
             context.Response.ContentType = ContentType.Jpeg;
             return stream.ToArray();
         }
+
+        /// <summary>
+        /// 字符串宽度
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="fontSize"></param>
+        /// <returns></returns>
+        public static float StringWidth(this string s, int fontSize = 1)
+        {
+            return TextMeasurer.Measure(s, new TextOptions(SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI").CreateFont(fontSize))).Width;
+        }
     }
 }

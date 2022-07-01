@@ -35,10 +35,10 @@ public class ImageHasher
     /// </summary>
     /// <param name="pathToImage">图片的文件路径</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateAverageHash64(string pathToImage)
+    public ulong AverageHash64(string pathToImage)
     {
         using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return CalculateAverageHash64(stream);
+        return AverageHash64(stream);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class ImageHasher
     /// </summary>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateAverageHash64(Stream sourceStream)
+    public ulong AverageHash64(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 8, 8);
         var average = pixels.Sum(b => b) / 64;
@@ -70,10 +70,10 @@ public class ImageHasher
     /// </summary>
     /// <param name="pathToImage">图片的文件路径</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateMedianHash64(string pathToImage)
+    public ulong MedianHash64(string pathToImage)
     {
         using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return CalculateMedianHash64(stream);
+        return MedianHash64(stream);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class ImageHasher
     /// </summary>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateMedianHash64(Stream sourceStream)
+    public ulong MedianHash64(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 8, 8);
 
@@ -112,10 +112,10 @@ public class ImageHasher
     /// </summary>
     /// <param name="pathToImage">图片的文件路径</param>
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
-    public ulong[] CalculateMedianHash256(string pathToImage)
+    public ulong[] MedianHash256(string pathToImage)
     {
         using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return CalculateMedianHash256(stream);
+        return MedianHash256(stream);
     }
 
     /// <summary>
@@ -124,7 +124,7 @@ public class ImageHasher
     /// </summary>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
-    public ulong[] CalculateMedianHash256(Stream sourceStream)
+    public ulong[] MedianHash256(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 16, 16);
 
@@ -160,10 +160,10 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="pathToImage">图片的文件路径</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateDifferenceHash64(string pathToImage)
+    public ulong DifferenceHash64(string pathToImage)
     {
         using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return CalculateDifferenceHash64(stream);
+        return DifferenceHash64(stream);
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateDifferenceHash64(Stream sourceStream)
+    public ulong DifferenceHash64(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 9, 8);
 
@@ -202,10 +202,10 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="pathToImage">图片的文件路径</param>
     /// <returns>256位hash值</returns>
-    public ulong[] CalculateDifferenceHash256(string pathToImage)
+    public ulong[] DifferenceHash256(string pathToImage)
     {
         using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return CalculateDifferenceHash256(stream);
+        return DifferenceHash256(stream);
     }
 
     /// <summary>
@@ -214,7 +214,7 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>256位hash值</returns>
-    public ulong[] CalculateDifferenceHash256(Stream sourceStream)
+    public ulong[] DifferenceHash256(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 17, 16);
 
@@ -253,7 +253,7 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="sourceStream">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateDctHash(Stream sourceStream)
+    public ulong DctHash(Stream sourceStream)
     {
         lock (_dctMatrixLockObject)
         {
@@ -311,10 +311,10 @@ public class ImageHasher
     /// </summary>
     /// <param name="path">图片的文件路径</param>
     /// <returns>64位hash值</returns>
-    public ulong CalculateDctHash(string path)
+    public ulong DctHash(string path)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        return CalculateDctHash(stream);
+        return DctHash(stream);
     }
 
     /// <summary>
@@ -360,7 +360,6 @@ public class ImageHasher
         }
 
         var c1 = Math.Sqrt(2.0f / size);
-
         for (var j = 0; j < size; j++)
         {
             matrix[0][j] = (float)Math.Sqrt(1.0d / size);
@@ -408,13 +407,15 @@ public class ImageHasher
     {
         var size = mat[0].Length;
         var transpose = new float[size][];
-
         for (var i = 0; i < size; i++)
         {
             transpose[i] = new float[size];
             for (var j = 0; j < size; j++)
+            {
                 transpose[i][j] = mat[j][i];
+            }
         }
+
         return transpose;
     }
 
@@ -424,7 +425,7 @@ public class ImageHasher
     /// <param name="hash1">图像1的hash</param>
     /// <param name="hash2">图像2的hash</param>
     /// <returns>相似度范围：[0,1]</returns>
-    public static float CompareHashes(ulong hash1, ulong hash2)
+    public static float Compare(ulong hash1, ulong hash2)
     {
         // hash异或运算
         var hashDifference = hash1 ^ hash2;
@@ -442,7 +443,7 @@ public class ImageHasher
     /// <param name="hash1">图像1的hash</param>
     /// <param name="hash2">图像2的hash</param>
     /// <returns>相似度范围：[0,1]</returns>
-    public static float CompareHashes(ulong[] hash1, ulong[] hash2)
+    public static float Compare(ulong[] hash1, ulong[] hash2)
     {
         // 检查两个图像的hash长度是否一致
         if (hash1.Length != hash2.Length)

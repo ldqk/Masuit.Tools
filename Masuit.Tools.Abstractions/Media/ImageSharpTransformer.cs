@@ -8,7 +8,7 @@ using Size = SixLabors.ImageSharp.Size;
 namespace Masuit.Tools.Media;
 
 /// <summary>
-/// 使用ImageSharp实现IImageTransformer接口进行图像变换
+/// 使用ImageSharp进行图像变换
 /// </summary>
 public class ImageSharpTransformer : IImageTransformer
 {
