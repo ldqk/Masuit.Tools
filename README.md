@@ -545,7 +545,20 @@ bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
 bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
 
 var marker=ImageWatermarker(stream);
-stream=maker.AddWatermark("水印文字",color,水印位置,边距,字体大小,字体,抗锯齿); // 给图片添加水印
+stream=maker.AddWatermark("水印文字","字体文件",字体大小,color,水印位置,边距); // 给图片添加水印
+stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体); // 给图片添加水印
+
+// 图像相似度对比
+var hasher = new ImageHasher();
+var hash1 = hasher.DifferenceHash256("图片1"); // 使用差分哈希算法计算图像的256位哈希
+var hash2 = hasher.DifferenceHash256("图片2"); // 使用差分哈希算法计算图像的256位哈希
+//var hash1 = hasher.AverageHash64("图片1"); // 使用平均值算法计算图像的64位哈希
+//var hash2 = hasher.AverageHash64("图片2"); // 使用平均值算法计算图像的64位哈希
+//var hash1 = hasher.DctHash("图片1"); // 使用DCT算法计算图像的64位哈希
+//var hash2 = hasher.DctHash("图片2"); // 使用DCT算法计算图像的64位哈希
+//var hash1 = hasher.MedianHash64("图片1"); // 使用中值算法计算给定图像的64位哈希
+//var hash2 = hasher.MedianHash64("图片2"); // 使用中值算法计算给定图像的64位哈希
+var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 ```
 ### 32.随机数
 ```csharp
@@ -846,10 +859,12 @@ Startup配置：
         }
 ```
 	
-### 50. 可空key的字典类型
-NullableConcurrentDictionary和NullableDictionary  
-用法和普通的字典类型保持一致，相比于普通的字典类型，其key是可以为null的，并且索引器获取时，如果key不存在，是不会报错的，会get到value类型的默认值。
-	
+### 50. 字符串SimHash相似度算法
+```csharp
+var dis="12345678".HammingDistance("1234567");
+var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
+```
+
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
 在ASP.NET Core中通过MVC/WebAPI应用程序传输文件数据时使用断点续传以及多线程下载支持。
