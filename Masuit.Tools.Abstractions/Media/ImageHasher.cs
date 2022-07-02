@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Masuit.Tools.Media;
 
@@ -65,6 +67,29 @@ public class ImageHasher
     }
 
     /// <summary>
+    /// 使用平均值算法计算图像的64位哈希
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong AverageHash64(Image<Rgba32> image)
+    {
+        var pixels = _transformer.TransformImage(image, 8, 8);
+        var average = pixels.Sum(b => b) / 64;
+
+        // 遍历所有像素，如果超过平均值，则将其设置为1，如果低于平均值，则将其设置为0。
+        var hash = 0UL;
+        for (var i = 0; i < 64; i++)
+        {
+            if (pixels[i] > average)
+            {
+                hash |= 1UL << i;
+            }
+        }
+
+        return hash;
+    }
+
+    /// <summary>
     /// 使用中值算法计算给定图像的64位哈希
     /// 将图像转换为8x8灰度图像，从中查找中值像素值，然后在结果哈希中将值大于中值的所有像素标记为1。与基于平均值的实现相比，更能抵抗非线性图像编辑。
     /// </summary>
@@ -85,6 +110,36 @@ public class ImageHasher
     public ulong MedianHash64(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 8, 8);
+
+        // 计算中值
+        var pixelList = new List<byte>(pixels);
+        pixelList.Sort();
+
+        // 中间像素中值
+        var median = (byte)((pixelList[31] + pixelList[32]) / 2);
+
+        // 遍历所有像素，如果超过中值，则将其设置为1，如果低于中值，则将其设置为0。
+        var hash = 0UL;
+        for (var i = 0; i < 64; i++)
+        {
+            if (pixels[i] > median)
+            {
+                hash |= 1UL << i;
+            }
+        }
+
+        return hash;
+    }
+
+    /// <summary>
+    /// 使用中值算法计算给定图像的64位哈希
+    /// 将图像转换为8x8灰度图像，从中查找中值像素值，然后在结果哈希中将值大于中值的所有像素标记为1。与基于平均值的实现相比，更能抵抗非线性图像编辑。
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong MedianHash64(Image<Rgba32> image)
+    {
+        var pixels = _transformer.TransformImage(image, 8, 8);
 
         // 计算中值
         var pixelList = new List<byte>(pixels);
@@ -155,6 +210,42 @@ public class ImageHasher
     }
 
     /// <summary>
+    /// 使用中值算法计算给定图像的256位哈希
+    /// 将图像转换为16x16的灰度图像，从中查找中值像素值，然后在结果哈希中将值大于中值的所有像素标记为1。与基于平均值的实现相比，更能抵抗非线性图像编辑。
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>256位hash值，生成一个4长度的数组返回</returns>
+    public ulong[] MedianHash256(Image<Rgba32> image)
+    {
+        var pixels = _transformer.TransformImage(image, 16, 16);
+
+        // 计算中值
+        var pixelList = new List<byte>(pixels);
+        pixelList.Sort();
+
+        // 中间像素中值
+        var median = (byte)((pixelList[127] + pixelList[128]) / 2);
+
+        // 遍历所有像素，如果超过中值，则将其设置为1，如果低于中值，则将其设置为0。
+        var hash64 = 0UL;
+        var hash = new ulong[4];
+        for (var i = 0; i < 4; i++)
+        {
+            for (var j = 0; j < 64; j++)
+            {
+                if (pixels[64 * i + j] > median)
+                {
+                    hash64 |= 1UL << j;
+                }
+            }
+            hash[i] = hash64;
+            hash64 = 0UL;
+        }
+
+        return hash;
+    }
+
+    /// <summary>
     /// 使用差分哈希算法计算图像的64位哈希。
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
@@ -175,6 +266,36 @@ public class ImageHasher
     public ulong DifferenceHash64(Stream sourceStream)
     {
         var pixels = _transformer.TransformImage(sourceStream, 9, 8);
+
+        // 遍历像素，如果左侧像素比右侧像素亮，则将哈希设置为1。
+        var hash = 0UL;
+        var hashPos = 0;
+        for (var i = 0; i < 8; i++)
+        {
+            var rowStart = i * 9;
+            for (var j = 0; j < 8; j++)
+            {
+                if (pixels[rowStart + j] > pixels[rowStart + j + 1])
+                {
+                    hash |= 1UL << hashPos;
+                }
+
+                hashPos++;
+            }
+        }
+
+        return hash;
+    }
+
+    /// <summary>
+    /// 使用差分哈希算法计算图像的64位哈希。
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong DifferenceHash64(Image<Rgba32> image)
+    {
+        var pixels = _transformer.TransformImage(image, 9, 8);
 
         // 遍历像素，如果左侧像素比右侧像素亮，则将哈希设置为1。
         var hash = 0UL;
@@ -248,6 +369,45 @@ public class ImageHasher
     }
 
     /// <summary>
+    /// 使用差分哈希算法计算图像的64位哈希。
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>256位hash值</returns>
+    public ulong[] DifferenceHash256(Image<Rgba32> image)
+    {
+        var pixels = _transformer.TransformImage(image, 17, 16);
+
+        // 遍历像素，如果左侧像素比右侧像素亮，则将哈希设置为1。
+        var hash = new ulong[4];
+        var hashPos = 0;
+        var hashPart = 0;
+        for (var i = 0; i < 16; i++)
+        {
+            var rowStart = i * 17;
+            for (var j = 0; j < 16; j++)
+            {
+                if (pixels[rowStart + j] > pixels[rowStart + j + 1])
+                {
+                    hash[hashPart] |= 1UL << hashPos;
+                }
+
+                if (hashPos == 63)
+                {
+                    hashPos = 0;
+                    hashPart++;
+                }
+                else
+                {
+                    hashPos++;
+                }
+            }
+        }
+
+        return hash;
+    }
+
+    /// <summary>
     /// 使用DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
@@ -265,6 +425,65 @@ public class ImageHasher
         }
 
         var pixels = _transformer.TransformImage(sourceStream, 32, 32);
+
+        // 将像素转换成float类型数组
+        var fPixels = new float[1024];
+        for (var i = 0; i < 1024; i++)
+        {
+            fPixels[i] = pixels[i] / 255.0f;
+        }
+
+        // 计算 dct 矩阵
+        var dctPixels = ComputeDct(fPixels, _dctMatrix);
+
+        // 从矩阵中1,1到8,8获得8x8的区域，忽略最低频率以提高检测
+        var dctHashPixels = new float[64];
+        for (var x = 0; x < 8; x++)
+        {
+            for (var y = 0; y < 8; y++)
+            {
+                dctHashPixels[x + y * 8] = dctPixels[x + 1][y + 1];
+            }
+        }
+
+        // 计算中值
+        var pixelList = new List<float>(dctHashPixels);
+        pixelList.Sort();
+
+        // 中间像素的平均值
+        var median = (pixelList[31] + pixelList[32]) / 2;
+
+        // 遍历所有像素，如果超过中值，则将其设置为1，如果低于中值，则将其设置为0。
+        var hash = 0UL;
+        for (var i = 0; i < 64; i++)
+        {
+            if (dctHashPixels[i] > median)
+            {
+                hash |= 1UL << i;
+            }
+        }
+
+        return hash;
+    }
+
+    /// <summary>
+    /// 使用DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash(Image<Rgba32> image)
+    {
+        lock (_dctMatrixLockObject)
+        {
+            if (!_isDctMatrixInitialized)
+            {
+                _dctMatrix = GenerateDctMatrix(32);
+                _isDctMatrixInitialized = true;
+            }
+        }
+
+        var pixels = _transformer.TransformImage(image, 32, 32);
 
         // 将像素转换成float类型数组
         var fPixels = new float[1024];
