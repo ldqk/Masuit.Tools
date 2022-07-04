@@ -139,6 +139,12 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Maths\Vector2D.cs">
       <Link>Maths\Vector2D.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageDetector.cs">
+      <Link>Media\ImageDetector.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageFormat.cs">
+      <Link>Media\ImageFormat.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Media\ThumbnailCutMode.cs">
       <Link>Media\ThumbnailCutMode.cs</Link>
     </Compile>

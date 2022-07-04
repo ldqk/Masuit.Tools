@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using OfficeOpenXml.Drawing;
-using OfficeOpenXml.Packaging.Ionic.Zlib;
 
-namespace Masuit.Tools.Excel;
+namespace Masuit.Tools.Media;
 
-public static class ImageDetector
+public static class ImageDetectExt
 {
     private const float MToInch = 39.3700787F;
     private const float CmToInch = MToInch * 0.01F;
-    public const float MmToInch = CmToInch * 0.1F;
+    private const float MmToInch = CmToInch * 0.1F;
     private const float HundredthThMmToInch = MmToInch * 0.01F;
     internal const float StandardDPI = 96f;
 
@@ -25,59 +24,74 @@ public static class ImageDetector
         public int ValueOffset;
     }
 
+    public static bool IsImage(this Stream s)
+    {
+        return GetImageType(s) != null;
+    }
+
     /// <summary>
     /// 获取图像格式
     /// </summary>
     /// <param name="ms"></param>
     /// <returns></returns>
-    public static ePictureType? GetPictureType(Stream ms)
+    public static ImageFormat? GetImageType(this Stream ms)
     {
-        var br = new BinaryReader(ms);
+        using var br = new BinaryReader(ms);
         if (IsJpg(br))
         {
-            return ePictureType.Jpg;
+            return ImageFormat.Jpg;
         }
         if (IsBmp(br, out _))
         {
-            return ePictureType.Bmp;
+            return ImageFormat.Bmp;
         }
-        else if (IsGif(br))
+
+        if (IsGif(br))
         {
-            return ePictureType.Gif;
+            return ImageFormat.Gif;
         }
-        else if (IsPng(br))
+
+        if (IsPng(br))
         {
-            return ePictureType.Png;
+            return ImageFormat.Png;
         }
-        else if (IsTif(br, out _))
+
+        if (IsTif(br, out _))
         {
-            return ePictureType.Tif;
+            return ImageFormat.Tif;
         }
-        else if (IsIco(br))
+
+        if (IsIco(br))
         {
-            return ePictureType.Ico;
+            return ImageFormat.Ico;
         }
-        else if (IsWebP(br))
+
+        if (IsWebP(br))
         {
-            return ePictureType.WebP;
+            return ImageFormat.WebP;
         }
-        else if (IsEmf(br))
+
+        if (IsEmf(br))
         {
-            return ePictureType.Emf;
+            return ImageFormat.Emf;
         }
-        else if (IsWmf(br))
+
+        if (IsWmf(br))
         {
-            return ePictureType.Wmf;
+            return ImageFormat.Wmf;
         }
-        else if (IsSvg(ms))
+
+        if (IsSvg(ms))
         {
-            return ePictureType.Svg;
+            return ImageFormat.Svg;
         }
-        else if (IsGZip(br))
+
+        if (IsGZip(br))
         {
-            _ = ExtractImage(ToArray(ms), out ePictureType? pt);
+            _ = ExtractImage(ToArray(ms), out ImageFormat? pt);
             return pt;
         }
+
         return null;
     }
 
@@ -109,7 +123,7 @@ public static class ImageDetector
         return sign.Length >= 2 && sign[0] == 0x1F && sign[1] == 0x8B;
     }
 
-    internal static bool TryGetImageBounds(ePictureType pictureType, MemoryStream ms, ref double width, ref double height, out double horizontalResolution, out double verticalResolution)
+    internal static bool TryGetImageBounds(ImageFormat imageFormat, MemoryStream ms, ref double width, ref double height, out double horizontalResolution, out double verticalResolution)
     {
         width = 0;
         height = 0;
@@ -117,43 +131,43 @@ public static class ImageDetector
         try
         {
             ms.Seek(0, SeekOrigin.Begin);
-            if (pictureType == ePictureType.Bmp && IsBmp(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            if (imageFormat == ImageFormat.Bmp && IsBmp(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            if (pictureType == ePictureType.Jpg && IsJpg(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            if (imageFormat == ImageFormat.Jpg && IsJpg(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            if (pictureType == ePictureType.Gif && IsGif(ms, ref width, ref height))
+            if (imageFormat == ImageFormat.Gif && IsGif(ms, ref width, ref height))
             {
                 return true;
             }
-            if (pictureType == ePictureType.Png && IsPng(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            if (imageFormat == ImageFormat.Png && IsPng(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            if (pictureType == ePictureType.Emf && IsEmf(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            if (imageFormat == ImageFormat.Emf && IsEmf(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            if (pictureType == ePictureType.Wmf && IsWmf(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            if (imageFormat == ImageFormat.Wmf && IsWmf(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            else if (pictureType == ePictureType.Svg && IsSvg(ms, ref width, ref height))
+            else if (imageFormat == ImageFormat.Svg && IsSvg(ms, ref width, ref height))
             {
                 return true;
             }
-            else if (pictureType == ePictureType.Tif && IsTif(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            else if (imageFormat == ImageFormat.Tif && IsTif(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            else if (pictureType == ePictureType.WebP && IsWebP(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
+            else if (imageFormat == ImageFormat.WebP && IsWebP(ms, ref width, ref height, ref horizontalResolution, ref verticalResolution))
             {
                 return true;
             }
-            else if (pictureType == ePictureType.Ico && IsIcon(ms, ref width, ref height))
+            else if (imageFormat == ImageFormat.Ico && IsIcon(ms, ref width, ref height))
             {
                 return true;
             }
@@ -165,7 +179,7 @@ public static class ImageDetector
         }
     }
 
-    internal static byte[] ExtractImage(byte[] img, out ePictureType? type)
+    internal static byte[] ExtractImage(byte[] img, out ImageFormat? type)
     {
         if (IsGZip(img))
         {
@@ -175,35 +189,33 @@ public static class ImageDetector
                 var msOut = new MemoryStream();
                 const int bufferSize = 4096;
                 var buffer = new byte[bufferSize];
-                using (var z = new GZipStream(ms, CompressionMode.Decompress))
+                using var z = new GZipStream(ms, CompressionMode.Decompress);
+                int size = 0;
+                do
                 {
-                    int size = 0;
-                    do
+                    size = z.Read(buffer, 0, bufferSize);
+                    if (size > 0)
                     {
-                        size = z.Read(buffer, 0, bufferSize);
-                        if (size > 0)
-                        {
-                            msOut.Write(buffer, 0, size);
-                        }
+                        msOut.Write(buffer, 0, size);
                     }
-                    while (size == bufferSize);
-                    msOut.Position = 0;
-                    var br = new BinaryReader(msOut);
-                    if (IsEmf(br))
-                    {
-                        type = ePictureType.Emf;
-                    }
-                    else if (IsWmf(br))
-                    {
-                        type = ePictureType.Wmf;
-                    }
-                    else
-                    {
-                        type = null;
-                    }
-                    msOut.Position = 0;
-                    return msOut.ToArray();
                 }
+                while (size == bufferSize);
+                msOut.Position = 0;
+                var br = new BinaryReader(msOut);
+                if (IsEmf(br))
+                {
+                    type = ImageFormat.Emf;
+                }
+                else if (IsWmf(br))
+                {
+                    type = ImageFormat.Wmf;
+                }
+                else
+                {
+                    type = null;
+                }
+                msOut.Position = 0;
+                return msOut.ToArray();
             }
             catch
             {
