@@ -300,21 +300,5 @@ namespace Masuit.Tools.Excel
         {
             return sheet.Column((int)NumberFormater.FromString(index));
         }
-
-        /// <summary>
-        /// 获取字母列
-        /// </summary>
-        /// <param name="sheet"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public static ExcelColumn Column(this ExcelWorksheet sheet, char index)
-        {
-            if (index is < 'A' or > 'Z')
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
-
-            return sheet.Column(index - 64);
-        }
     }
 }

@@ -10,7 +10,7 @@ namespace Masuit.Tools.Media
     /// <summary>
     /// 图片处理
     /// </summary>
-    public static class ImageUtilities2
+    public static class ImageUtilities
     {
         #region 判断文件类型是否为WEB格式图片
 
