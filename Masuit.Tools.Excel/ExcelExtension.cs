@@ -3,6 +3,7 @@ using OfficeOpenXml.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -88,8 +89,8 @@ public static class ExcelExtension
             table.TableName = "Sheet1";
         }
 
-        pkg.Workbook.Worksheets.Add(table.TableName);
-        var sheet = pkg.Workbook.Worksheets[table.TableName];
+        var sheet = pkg.Workbook.Worksheets.Add(table.TableName);
+        sheet.Cells.Style.Font.Name = "微软雅黑";
 
         FillWorksheet(sheet, table, settings);
 
@@ -234,11 +235,11 @@ public static class ExcelExtension
                             else
                             {
                                 // 根据单元格内容长度来自适应调整列宽
-                                sheet.Column(j + startColumn).Width = Math.Max(Encoding.UTF8.GetBytes(table.Rows[i][j].ToString() ?? string.Empty).Length + 2, sheet.Column(j + startColumn).Width);
-                                if (sheet.Column(j + startColumn).Width > 110)
-                                {
-                                    sheet.Column(j + startColumn).AutoFit(100, 110);
-                                }
+                                using var bitmap = new Bitmap(1, 1);
+                                using var graphics = Graphics.FromImage(bitmap);
+                                using var font = new Font(sheet.Cells[i + startRow + 1, j + startColumn].Style.Font.Name, 1.66f);
+                                var measureText = graphics.MeasureString(table.Rows[i][j].ToString(), font);
+                                sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(measureText.Width, sheet.Column(j + startColumn).Width));
                             }
 
                             break;
