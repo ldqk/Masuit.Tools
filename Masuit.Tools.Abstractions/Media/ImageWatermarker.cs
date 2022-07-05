@@ -48,7 +48,8 @@ namespace Masuit.Tools.Media
         public MemoryStream AddWatermark(string watermarkText, Font font, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10)
         {
             using var img = Image.Load(_stream);
-            if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold)))
+            var textMeasure = TextMeasurer.Measure(watermarkText, new TextOptions(font));
+            if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold) || img.Width <= textMeasure.Width))
             {
                 return _stream as MemoryStream ?? _stream.SaveAsMemoryStream();
             }
@@ -58,24 +59,28 @@ namespace Masuit.Tools.Media
                 font = font.Family.CreateFont(img.Width * 1f / 50);
             }
 
-            var measure = TextMeasurer.Measure(watermarkText, new TextOptions(font));
             float x, y;
             textPadding += (img.Width - 1000) / 100;
             switch (watermarkPosition)
             {
                 case WatermarkPosition.TopRight:
-                    x = img.Width - measure.Width - textPadding;
+                    x = img.Width - textMeasure.Width - textPadding;
                     y = textPadding;
                     break;
 
                 case WatermarkPosition.BottomLeft:
                     x = textPadding;
-                    y = img.Height - measure.Height - textPadding;
+                    y = img.Height - textMeasure.Height - textPadding;
                     break;
 
                 case WatermarkPosition.BottomRight:
-                    x = img.Width - measure.Width - textPadding;
-                    y = img.Height - measure.Height - textPadding;
+                    x = img.Width - textMeasure.Width - textPadding;
+                    y = img.Height - textMeasure.Height - textPadding;
+                    break;
+
+                case WatermarkPosition.Center:
+                    x = (img.Width - textMeasure.Width) / 2;
+                    y = (img.Height - textMeasure.Height) / 2;
                     break;
 
                 default:
@@ -137,6 +142,11 @@ namespace Masuit.Tools.Media
                 case WatermarkPosition.BottomRight:
                     x = width - watermark.Width - padding;
                     y = height - watermark.Height - padding;
+                    break;
+
+                case WatermarkPosition.Center:
+                    x = (img.Width - watermark.Width) / 2;
+                    y = (img.Height - watermark.Height) / 2;
                     break;
 
                 default:
