@@ -109,5 +109,59 @@ namespace Masuit.Tools
         {
             return new decimal(num);
         }
+
+        /// <summary>
+        /// 保留小数
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="decimals"></param>
+        /// <returns></returns>
+        public static decimal Round(this ref decimal num, int decimals)
+        {
+            num = Math.Round(num, decimals);
+            return num;
+        }
+
+        /// <summary>
+        /// 保留小数
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="decimals"></param>
+        /// <returns></returns>
+        public static double Round(this ref double num, int decimals)
+        {
+            num = Math.Round(num, decimals);
+            return num;
+        }
+
+        /// <summary>
+        /// 保留小数
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="decimals"></param>
+        /// <returns></returns>
+        public static decimal? Round(this ref decimal? num, int decimals)
+        {
+            if (num.HasValue)
+            {
+                num = Math.Round(num.Value, decimals);
+            }
+            return num;
+        }
+
+        /// <summary>
+        /// 保留小数
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="decimals"></param>
+        /// <returns></returns>
+        public static double? Round(this ref double? num, int decimals)
+        {
+            if (num.HasValue)
+            {
+                num = Math.Round(num.Value, decimals);
+            }
+            return num;
+        }
     }
 }

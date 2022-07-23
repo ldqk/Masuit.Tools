@@ -187,7 +187,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool IsNullOrEmpty(this string s)
         {
-            return string.IsNullOrEmpty(s) || s.Equals("null", StringComparison.CurrentCultureIgnoreCase);
+            return string.IsNullOrWhiteSpace(s) || s.Equals("null", StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>

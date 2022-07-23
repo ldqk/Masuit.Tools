@@ -80,6 +80,7 @@ namespace Masuit.Tools.Core.AspNetCore
                     string idName = dataType.Name + "Id";
                     keyIgnoreFields = dataType.GetProperties().Where(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || p.Name.Equals(idName, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
+
                 // 更新所有非主键属性
                 foreach (var p in typeof(T).GetProperties().Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
                 {
@@ -116,5 +117,19 @@ namespace Masuit.Tools.Core.AspNetCore
                 _ => throw new NotSupportedException("不支持的表达式类型：" + oldExpression.NodeType)
             };
         }
+
+#if NET6_0_OR_GREATER
+
+        /// <summary>
+        /// 随机排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static IOrderedQueryable<T> OrderByRandom<T>(this IQueryable<T> query)
+        {
+            return query.OrderBy(_ => EF.Functions.Random());
+        }
+#endif
     }
 }

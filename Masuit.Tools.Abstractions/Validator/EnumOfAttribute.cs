@@ -29,3 +29,19 @@ public class EnumOfAttribute : ValidationAttribute
         return Enum.IsDefined(Type, value);
     }
 }
+
+/// <summary>
+/// 非空值校验
+/// </summary>
+public class NotNullOrEmptyAttribute : ValidationAttribute
+{
+    public override bool IsValid(object value)
+    {
+        if (value is null)
+        {
+            return false;
+        }
+
+        return !value.IsNullOrEmpty();
+    }
+}
