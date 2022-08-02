@@ -139,16 +139,6 @@ namespace Masuit.Tools.Reflection
         #region 获取Description
 
         /// <summary>
-        /// 获取枚举成员的Description信息
-        /// </summary>
-        /// <param name="value">枚举值</param>
-        /// <returns>返回枚举的Description或ToString</returns>
-        public static string GetDescription(this Enum value)
-        {
-            return GetDescription(value, null);
-        }
-
-        /// <summary>
         /// 获取枚举值的Description信息
         /// </summary>
         /// <param name ="value">枚举值</param>
@@ -172,7 +162,7 @@ namespace Masuit.Tools.Reflection
             var text = attributes.Length > 0 ? attributes[0].Description : value.ToString();
             if (args is { Length: > 0 })
             {
-                return string.Format(null, text, args);
+                return string.Format(text, args);
             }
 
             return text;
