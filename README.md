@@ -560,6 +560,8 @@ var hash2 = hasher.DifferenceHash256("图片2"); // 使用差分哈希算法计�
 //var hash1 = hasher.MedianHash64("图片1"); // 使用中值算法计算给定图像的64位哈希
 //var hash2 = hasher.MedianHash64("图片2"); // 使用中值算法计算给定图像的64位哈希
 var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
+
+var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
 ### 32.随机数
 ```csharp
@@ -763,7 +765,7 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 3. 默认字段名作为列名导出；
 4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
 5. ToExcel方法支持DataTable、List<DataTable>、Dictionary<string, DataTable>类型的直接调用
-    
+   
 
 ### 46.EFCore实体对比功能
 获取指定实体的变更
@@ -859,12 +861,27 @@ Startup配置：
             return Ok(...);
         }
 ```
-	
+
 ### 50. 字符串SimHash相似度算法
 ```csharp
 var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
+
+### 51. 真实文件类型探测
+
+```csharp
+// 多种方式，任君调用
+var detector=new FileInfo(filepath).DetectFiletype();
+//var detector=File.OpenRead(filepath).DetectFiletype();
+//var detector=FileSignatureDetector.DetectFiletype(filepath);
+detector.Precondition;//基础文件类型
+detector.Extension;//真实扩展名
+detector.MimeType;//MimeType
+detector.FormatCategories;//格式类别
+```
+
+
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 

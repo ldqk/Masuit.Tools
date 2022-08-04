@@ -5,14 +5,26 @@ namespace Masuit.Tools.Files.FileDetector;
 
 public interface IDetector
 {
+    /// <summary>
+    /// 基础文件类型
+    /// </summary>
     string Precondition { get; }
 
+    /// <summary>
+    /// 真实扩展名
+    /// </summary>
     string Extension { get; }
 
     bool Detect(Stream stream);
 
+    /// <summary>
+    /// MimeType
+    /// </summary>
     string MimeType { get; }
 
+    /// <summary>
+    /// 格式类别
+    /// </summary>
     List<FormatCategory> FormatCategories { get; }
 }
 
