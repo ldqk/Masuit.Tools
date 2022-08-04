@@ -902,5 +902,25 @@ namespace Masuit.Tools
         {
             return list ?? new List<T>();
         }
+
+        public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, bool condition, Func<T, bool> where)
+        {
+            return condition ? source.Where(where) : source;
+        }
+
+        public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, Func<bool> condition, Func<T, bool> where)
+        {
+            return condition() ? source.Where(where) : source;
+        }
+
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, bool condition, Expression<Func<T, bool>> where)
+        {
+            return condition ? source.Where(where) : source;
+        }
+
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, Func<bool> condition, Expression<Func<T, bool>> where)
+        {
+            return condition() ? source.Where(where) : source;
+        }
     }
 }

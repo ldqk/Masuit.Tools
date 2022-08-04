@@ -67,47 +67,8 @@
     <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\WeekHolidayStruct.cs">
       <Link>DateTimeExt\WeekHolidayStruct.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\BigIntegerExtensions.cs">
-      <Link>Extensions\BaseType\BigIntegerExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\DoubleExtensions.cs">
-      <Link>Extensions\BaseType\DoubleExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IConvertibleExtensions.cs">
-      <Link>Extensions\BaseType\IConvertibleExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IDictionaryExtensions.cs">
-      <Link>Extensions\BaseType\IDictionaryExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IEnumerableExtensions.cs">
-      <Link>Extensions\BaseType\IEnumerableExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IntExtensions.cs">
-      <Link>Extensions\BaseType\IntExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\IPAddressExtensions.cs">
-      <Link>Extensions\BaseType\IPAddressExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\LongExtensions.cs">
-      <Link>Extensions\BaseType\LongExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ObjectExtensions.cs">
-      <Link>Extensions\BaseType\ObjectExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\RandomExtensions.cs">
-      <Link>Extensions\BaseType\RandomExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ShortExtensions.cs">
-      <Link>Extensions\BaseType\ShortExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\StreamExtensions.cs">
-      <Link>Extensions\BaseType\StreamExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\StringExtensions.cs">
-      <Link>Extensions\BaseType\StringExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\BaseType\ValueTypeConvertExtensions.cs">
-      <Link>Extensions\BaseType\ValueTypeConvertExtensions.cs</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\*\*.*">
+      <Link>Extensions\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\FileExt.cs">
       <Link>Files\FileExt.cs</Link>
@@ -138,9 +99,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Maths\Vector2D.cs">
       <Link>Maths\Vector2D.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageDetector.cs">
-      <Link>Media\ImageDetector.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Media\ImageFormat.cs">
       <Link>Media\ImageFormat.cs</Link>

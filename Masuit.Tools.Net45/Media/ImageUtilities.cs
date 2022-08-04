@@ -1072,7 +1072,7 @@ namespace Masuit.Tools.Media
             for (int i = 0; i < count; i++) //以Jpeg格式保存各帧
             {
                 gif.SelectActiveFrame(fd, i);
-                gif.Save(pSavedPath + "\\frame_" + i + ".jpg", ImageFormat.Jpeg);
+                gif.Save(pSavedPath + "\\frame_" + i + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
             }
         }
 
