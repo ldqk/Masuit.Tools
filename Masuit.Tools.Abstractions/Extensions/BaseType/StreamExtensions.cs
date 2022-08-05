@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 #if NET5_0_OR_GREATER
 using System;
 using System.Buffers;
@@ -38,6 +41,25 @@ namespace Masuit.Tools
             // 设置当前流的位置为流的开始
             stream.Seek(0, SeekOrigin.Begin);
             return bytes;
+        }
+
+        /// <summary>
+        /// 流洗码，在流的末端随即增加几个空字节，重要数据请谨慎使用，可能造成流损坏
+        /// </summary>
+        /// <param name="stream"></param>
+        public static void ShuffleCode(this Stream stream)
+        {
+            if (stream.CanWrite && stream.CanSeek)
+            {
+                var position = stream.Position;
+                stream.Position = stream.Length;
+                for (int i = 0; i < new Random().Next(1, 20); i++)
+                {
+                    stream.WriteByte(0);
+                }
+                stream.Flush();
+                stream.Position = position;
+            }
         }
 
         /// <summary>
@@ -218,7 +240,7 @@ namespace Masuit.Tools
                 sr.Dispose();
                 stream.Close();
 #if NET5_0_OR_GREATER
-                await stream.DisposeAsync().ConfigureAwait(false); 
+                await stream.DisposeAsync().ConfigureAwait(false);
 #else
                 stream.Dispose();
 #endif
@@ -244,7 +266,7 @@ namespace Masuit.Tools
                 sr.Dispose();
                 stream.Close();
 #if NET5_0_OR_GREATER
-                await stream.DisposeAsync().ConfigureAwait(false); 
+                await stream.DisposeAsync().ConfigureAwait(false);
 #else
                 stream.Dispose();
 #endif
@@ -273,7 +295,7 @@ namespace Masuit.Tools
                 stream.Close();
 #if NET5_0_OR_GREATER
                 await sw.DisposeAsync().ConfigureAwait(false);
-                await stream.DisposeAsync().ConfigureAwait(false); 
+                await stream.DisposeAsync().ConfigureAwait(false);
 #else
                 sw.Dispose();
                 stream.Dispose();
@@ -305,7 +327,7 @@ namespace Masuit.Tools
                 stream.Close();
 #if NET5_0_OR_GREATER
                 await sw.DisposeAsync().ConfigureAwait(false);
-                await stream.DisposeAsync().ConfigureAwait(false); 
+                await stream.DisposeAsync().ConfigureAwait(false);
 #else
                 sw.Dispose();
                 stream.Dispose();
@@ -314,8 +336,9 @@ namespace Masuit.Tools
         }
 
 #if NET5_0_OR_GREATER
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="cancellationToken"></param>
