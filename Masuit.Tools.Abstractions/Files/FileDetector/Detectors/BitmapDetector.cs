@@ -8,14 +8,14 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 [FormatCategory(FormatCategory.Image)]
 internal class BitmapDetector : AbstractSignatureDetector
 {
-    private static SignatureInformation[] BMP_SignatureInfo = {
+    private static readonly SignatureInformation[] BmpSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x42, 0x4D } },
         new() { Position = 6, Signature = new byte [] { 0x00, 0x00, 0x00, 0x00 }, Presignature = new byte [] { 0x42, 0x4D } },
     };
 
     public override string Extension => "bmp";
 
-    protected override SignatureInformation[] SignatureInformations => BMP_SignatureInfo;
+    protected override SignatureInformation[] SignatureInformations => BmpSignatureInfo;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

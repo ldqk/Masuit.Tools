@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 [FormatCategory(FormatCategory.Document)]
 internal class CertDetector : AbstractSignatureDetector
 {
-    private static SignatureInformation[] CRT_SignatureInfo = {
+    private static readonly SignatureInformation[] CrtSignatureInfo = {
         new() { Position = 0, Signature = Encoding.GetEncoding ( "ascii" ).GetBytes ( "-----BEGIN CERTIFICATE-----" ) },
     };
 
@@ -17,7 +17,7 @@ internal class CertDetector : AbstractSignatureDetector
 
     public override string Extension => "crt";
 
-    protected override SignatureInformation[] SignatureInformations => CRT_SignatureInfo;
+    protected override SignatureInformation[] SignatureInformations => CrtSignatureInfo;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

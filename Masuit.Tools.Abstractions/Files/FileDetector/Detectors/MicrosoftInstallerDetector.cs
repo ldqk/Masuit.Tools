@@ -26,7 +26,7 @@ internal class MicrosoftInstallerDetector : AbstractCompoundFileDetailDetector
 
     protected override bool IsValidChunk(string chunkName, byte[] chunkData)
     {
-        return chunkName == "SummaryInformation" && Encoding.GetEncoding("ascii").GetString(chunkData, 0, chunkData.Length).IndexOf("Installation Database") != -1;
+        return chunkName == "SummaryInformation" && Encoding.ASCII.GetString(chunkData, 0, chunkData.Length).IndexOf("Installation Database") != -1;
     }
 
     public override string ToString() => "Microsoft Installer Setup File Detector";
