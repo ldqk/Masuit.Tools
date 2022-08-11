@@ -85,7 +85,6 @@ public class BodyOrDefaultModelBinder : IModelBinder
     private async Task DefaultBindModel(ModelBindingContext bindingContext)
     {
         await _bodyBinder.BindModelAsync(bindingContext);
-
         if (bindingContext.Result.IsModelSet)
         {
             return;
