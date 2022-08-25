@@ -869,7 +869,7 @@ var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
 
-### 51. 真实文件类型探测(preview)
+### 51. 真实文件类型探测
 
 ```csharp
 // 多种方式，任君调用
