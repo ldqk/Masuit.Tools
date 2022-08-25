@@ -677,8 +677,8 @@ var nums=Enumerable.Range(1, 10).OrderByRandom(); // 随机排序
 ### 37.Mime类型
 ```csharp
 var mimeMapper = new MimeMapper();
-var mime = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
-var ext = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
+var ext = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
+var mime = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ```
 ### 38.日期时间扩展
 ```csharp
