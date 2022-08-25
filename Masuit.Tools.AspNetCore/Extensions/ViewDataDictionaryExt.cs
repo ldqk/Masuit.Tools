@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

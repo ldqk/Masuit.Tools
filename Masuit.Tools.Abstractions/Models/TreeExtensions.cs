@@ -19,17 +19,15 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<T> Filter<T>(this IEnumerable<T> items, Func<T, bool> func) where T : class, ITreeChildren<T>
         {
-            var results = new List<T>();
             foreach (var item in items.Where(i => i != null))
             {
                 item.Children ??= new List<T>();
                 item.Children = item.Children.Filter(func).ToList();
                 if (item.Children.Any() || func(item))
                 {
-                    results.Add(item);
+                    yield return item;
                 }
             }
-            return results;
         }
 
         /// <summary>
@@ -41,18 +39,15 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<Tree<T>> Filter<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, bool> func) where T : class
         {
-            var results = new List<Tree<T>>();
             foreach (var item in items.Where(i => i != null))
             {
                 item.Children ??= new List<Tree<T>>();
                 item.Children = item.Children.Filter(func).ToList();
                 if (item.Children.Any() || func(item))
                 {
-                    results.Add(item);
+                    yield return item;
                 }
             }
-
-            return results;
         }
 
         /// <summary>
@@ -88,16 +83,16 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Action<T, T> optionAction = null) where T : class, ITreeChildren<T>
         {
-            var result = new List<T>();
             foreach (var item in items)
             {
-                result.Add(item);
+                yield return item;
                 item.Children ??= new List<T>();
                 item.Children.ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(item.Children.Flatten(optionAction));
+                foreach (var children in item.Children.Flatten(optionAction))
+                {
+                    yield return children;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -109,19 +104,17 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<T> Flatten<T>(this T p, Action<T, T> optionAction = null) where T : class, ITreeChildren<T>
         {
-            var result = new List<T>()
-            {
-                p
-            };
+            yield return p;
             foreach (var item in p.Children)
             {
-                result.Add(item);
+                yield return item;
                 item.Children ??= new List<T>();
                 item.Children.ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(item.Children.Flatten());
+                foreach (var children in item.Children.Flatten())
+                {
+                    yield return children;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -134,15 +127,15 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<T> Flatten<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector, Action<T, T> optionAction = null)
         {
-            var result = new List<T>();
             foreach (var item in items)
             {
-                result.Add(item);
+                yield return item;
                 selector(item).ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(selector(item).Flatten(selector));
+                foreach (var children in selector(item).Flatten(selector))
+                {
+                    yield return children;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -154,16 +147,16 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Action<Tree<T>, Tree<T>> optionAction = null) where T : class
         {
-            var result = new List<Tree<T>>();
             foreach (var item in items)
             {
-                result.Add(item);
+                yield return item;
                 item.Children ??= new List<Tree<T>>();
                 item.Children.ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(item.Children.Flatten());
+                foreach (var tree in item.Children.Flatten())
+                {
+                    yield return tree;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -175,19 +168,17 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<Tree<T>> Flatten<T>(this Tree<T> p, Action<Tree<T>, Tree<T>> optionAction = null) where T : class
         {
-            var result = new List<Tree<T>>()
-            {
-                p
-            };
+            yield return p;
             foreach (var item in p.Children)
             {
-                result.Add(item);
+                yield return item;
                 item.Children ??= new List<Tree<T>>();
                 item.Children.ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(item.Children.Flatten());
+                foreach (var tree in item.Children.Flatten())
+                {
+                    yield return tree;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
@@ -200,15 +191,15 @@ namespace Masuit.Tools.Models
         /// <returns></returns>
         public static IEnumerable<Tree<T>> Flatten<T>(this IEnumerable<Tree<T>> items, Func<Tree<T>, IEnumerable<Tree<T>>> selector, Action<Tree<T>, Tree<T>> optionAction = null)
         {
-            var result = new List<Tree<T>>();
             foreach (var item in items)
             {
-                result.Add(item);
+                yield return item;
                 item.Children.ForEach(c => optionAction?.Invoke(c, item));
-                result.AddRange(selector(item).Flatten(selector));
+                foreach (var tree in selector(item).Flatten(selector))
+                {
+                    yield return tree;
+                }
             }
-
-            return result;
         }
 
         /// <summary>
