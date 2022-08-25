@@ -61,7 +61,7 @@ public Startup(IConfiguration configuration)
 ```
 ## 特色功能示例代码
 ### 在线体验
-https://dotnetfiddle.net/jclU4y
+https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 ### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号等
 ```csharp
 bool isEmail="337845818@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单，逗号分隔，如"EmailDomainBlockList": "^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com",
