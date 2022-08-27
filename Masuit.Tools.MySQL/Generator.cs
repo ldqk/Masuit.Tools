@@ -120,12 +120,9 @@ public class EFLogger : ILogger
             code.Append($"    public {data_type}{nullable} {column.COLUMN_NAME} {{ get; set; }}");
             if (column.COLUMN_DEFAULT != null && !column.COLUMN_DEFAULT.Equals(""))
             {
-                code.AppendLine(" = " + column.COLUMN_DEFAULT + ";");
+                code.Append(" = ").Append(column.COLUMN_DEFAULT).Append(";");
             }
-            else
-            {
-                code.AppendLine();
-            }
+            code.AppendLine();
         }
         code.AppendLine("}");
 
@@ -137,7 +134,15 @@ public class EFLogger : ILogger
         code.AppendLine($"        builder.ToTable(nameof({table}));");
         if (columns.Any(o => o.COLUMN_KEY == "PRI"))
         {
-            code.AppendLine("        builder.HasKey(x => new { " + string.Join(", ", columns.Where(o => o.COLUMN_KEY == "PRI").Select(o => "x." + o.COLUMN_NAME)) + " });");
+            code.Append("        builder.HasKey(x => new { ");
+            foreach (var o in columns)
+            {
+                if (o.COLUMN_KEY == "PRI")
+                {
+                    code.Append("x.").Append(o.COLUMN_NAME).Append(", ");
+                }
+            }
+            code.AppendLine("});");
         }
         foreach (var column in columns)
         {
