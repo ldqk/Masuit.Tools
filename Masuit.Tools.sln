@@ -29,8 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Net45", "Masui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore", "Masuit.Tools.AspNetCore\Masuit.Tools.AspNetCore.csproj", "{73BA93B7-C6AE-4B39-892E-3596D91BF96C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.MySQL", "Masuit.Tools.MySQL\Masuit.Tools.MySQL.csproj", "{CE7BA8E8-8A80-40BE-A9C4-1F9A6CA92E0B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,10 +83,6 @@ Global
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE7BA8E8-8A80-40BE-A9C4-1F9A6CA92E0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE7BA8E8-8A80-40BE-A9C4-1F9A6CA92E0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE7BA8E8-8A80-40BE-A9C4-1F9A6CA92E0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE7BA8E8-8A80-40BE-A9C4-1F9A6CA92E0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
