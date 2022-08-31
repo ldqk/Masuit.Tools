@@ -590,7 +590,7 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static byte[] ToByteArray(this string @this)
         {
-            return Encoding.ASCII.GetBytes(@this);
+            return Encoding.UTF8.GetBytes(@this);
         }
 
         #region Crc32
