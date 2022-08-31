@@ -33,6 +33,22 @@ namespace Masuit.Tools
         /// <param name="this"></param>
         /// <param name="that">另一个字典集</param>
         /// <returns></returns>
+        public static void AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
+        {
+            foreach (var item in that)
+            {
+                @this[item.Key] = item.Value;
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <returns></returns>
         public static void AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
         {
             foreach (var item in that)
@@ -50,6 +66,38 @@ namespace Masuit.Tools
         /// <param name="that">另一个字典集</param>
         /// <returns></returns>
         public static void AddOrUpdateTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
+        {
+            foreach (var item in @this)
+            {
+                that[item.Key] = item.Value;
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <returns></returns>
+        public static void AddOrUpdateTo<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
+        {
+            foreach (var item in @this)
+            {
+                that[item.Key] = item.Value;
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <returns></returns>
+        public static void AddOrUpdateTo<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that)
         {
             foreach (var item in @this)
             {
@@ -91,11 +139,107 @@ namespace Masuit.Tools
         /// <param name="addValue">添加时的值</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValue);
+            }
+            else
+            {
+                @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.TryAdd(key, addValue);
+            }
+            else
+            {
+                @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
         public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, Task<TValue>> updateValueFactory)
         {
             if (!@this.ContainsKey(key))
             {
                 @this.Add(key, addValue);
+            }
+            else
+            {
+                @this[key] = await updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValue);
+            }
+            else
+            {
+                @this[key] = await updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, TValue addValue, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.TryAdd(key, addValue);
             }
             else
             {
@@ -135,10 +279,92 @@ namespace Masuit.Tools
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
         /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValue">更新时的值</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, TValue addValue, TValue updateValue)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValue);
+            }
+            else
+            {
+                @this[key] = updateValue;
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValue">添加时的值</param>
+        /// <param name="updateValue">更新时的值</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, TValue addValue, TValue updateValue)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.TryAdd(key, addValue);
+            }
+            else
+            {
+                @this[key] = updateValue;
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
         /// <param name="that">另一个字典集</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
         public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            foreach (var item in that)
+            {
+                AddOrUpdate(@this, item.Key, item.Value, updateValueFactory);
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static void AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            foreach (var item in that)
+            {
+                AddOrUpdate(@this, item.Key, item.Value, updateValueFactory);
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static void AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
         {
             foreach (var item in that)
             {
@@ -169,6 +395,34 @@ namespace Masuit.Tools
         /// <param name="that">另一个字典集</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
+        public static Task AddOrUpdateAsync<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static Task AddOrUpdateAsync<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
         public static void AddOrUpdateTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
         {
             foreach (var item in @this)
@@ -186,7 +440,69 @@ namespace Masuit.Tools
         /// <param name="that">另一个字典集</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
+        public static void AddOrUpdateTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            foreach (var item in @this)
+            {
+                AddOrUpdate(that, item.Key, item.Value, updateValueFactory);
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static void AddOrUpdateTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableConcurrentDictionary<TKey, TValue> that, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            foreach (var item in @this)
+            {
+                AddOrUpdate(that, item.Key, item.Value, updateValueFactory);
+            }
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
         public static Task AddOrUpdateAsyncTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static Task AddOrUpdateAsyncTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="that">另一个字典集</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static Task AddOrUpdateAsyncTo<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableConcurrentDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
         {
             return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
         }
@@ -225,11 +541,107 @@ namespace Masuit.Tools
         /// <param name="addValueFactory">添加时的操作</param>
         /// <param name="updateValueFactory">更新时的操作</param>
         /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, addValueFactory(key));
+            }
+            else
+            {
+                @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValueFactory">添加时的操作</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static TValue AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.TryAdd(key, addValueFactory(key));
+            }
+            else
+            {
+                @this[key] = updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValueFactory">添加时的操作</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
         public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, Task<TValue>> addValueFactory, Func<TKey, TValue, Task<TValue>> updateValueFactory)
         {
             if (!@this.ContainsKey(key))
             {
                 @this.Add(key, await addValueFactory(key));
+            }
+            else
+            {
+                @this[key] = await updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValueFactory">添加时的操作</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, Func<TKey, Task<TValue>> addValueFactory, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.Add(key, await addValueFactory(key));
+            }
+            else
+            {
+                @this[key] = await updateValueFactory(key, @this[key]);
+            }
+
+            return @this[key];
+        }
+
+        /// <summary>
+        /// 添加或更新键值对
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="key">键</param>
+        /// <param name="addValueFactory">添加时的操作</param>
+        /// <param name="updateValueFactory">更新时的操作</param>
+        /// <returns></returns>
+        public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, Func<TKey, Task<TValue>> addValueFactory, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+        {
+            if (!@this.ContainsKey(key))
+            {
+                @this.TryAdd(key, await addValueFactory(key));
             }
             else
             {
