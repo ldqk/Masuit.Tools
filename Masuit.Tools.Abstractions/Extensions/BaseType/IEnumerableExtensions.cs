@@ -973,7 +973,7 @@ namespace Masuit.Tools
         /// <param name="item">元素</param>
         /// <param name="index">索引值</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void ChangeIndex<T>(this IList<T> list, T item, int index)
+        public static IList<T> ChangeIndex<T>(this IList<T> list, T item, int index)
         {
             if (item is null)
             {
@@ -981,6 +981,7 @@ namespace Masuit.Tools
             }
 
             ChangeIndexInternal(list, item, index);
+            return list;
         }
 
         /// <summary>
@@ -990,13 +991,14 @@ namespace Masuit.Tools
         /// <param name="list">集合</param>
         /// <param name="condition">元素定位条件</param>
         /// <param name="index">索引值</param>
-        public static void ChangeIndex<T>(IList<T> list, Func<T, bool> condition, int index)
+        public static IList<T> ChangeIndex<T>(this IList<T> list, Func<T, bool> condition, int index)
         {
             var item = list.FirstOrDefault(condition);
             if (item != null)
             {
                 ChangeIndexInternal(list, item, index);
             }
+            return list;
         }
 
         private static void ChangeIndexInternal<T>(IList<T> list, T item, int index)
