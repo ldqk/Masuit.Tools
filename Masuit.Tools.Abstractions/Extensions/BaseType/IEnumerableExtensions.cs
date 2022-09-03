@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Masuit.Tools
 {
-    public static partial class IEnumerableExtensions
+    public static class IEnumerableExtensions
     {
         /// <summary>
         /// 按字段属性判等取交集
@@ -41,7 +39,7 @@ namespace Masuit.Tools
             return first.Where(f => !second.Any(s => condition(f, s)));
         }
 
-#if NET6_0
+#if NET6_0_OR_GREATER
 #else
 
         /// <summary>
@@ -893,34 +891,120 @@ namespace Masuit.Tools
             return (add, remove, updates);
         }
 
+        /// <summary>
+        /// 将集合声明为非null集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static List<T> AsNotNull<T>(this List<T> list)
         {
             return list ?? new List<T>();
         }
 
+        /// <summary>
+        /// 将集合声明为非null集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static IEnumerable<T> AsNotNull<T>(this IEnumerable<T> list)
         {
             return list ?? new List<T>();
         }
 
+        /// <summary>
+        /// 满足条件时执行筛选条件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="condition"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, bool condition, Func<T, bool> where)
         {
             return condition ? source.Where(where) : source;
         }
 
+        /// <summary>
+        /// 满足条件时执行筛选条件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="condition"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, Func<bool> condition, Func<T, bool> where)
         {
             return condition() ? source.Where(where) : source;
         }
 
+        /// <summary>
+        /// 满足条件时执行筛选条件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="condition"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, bool condition, Expression<Func<T, bool>> where)
         {
             return condition ? source.Where(where) : source;
         }
 
+        /// <summary>
+        /// 满足条件时执行筛选条件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="condition"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, Func<bool> condition, Expression<Func<T, bool>> where)
         {
             return condition() ? source.Where(where) : source;
+        }
+
+        /// <summary>
+        /// 改变元素的索引位置
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="item">元素</param>
+        /// <param name="index">索引值</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void ChangeIndex<T>(this IList<T> list, T item, int index)
+        {
+            if (item is null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            ChangeIndexInternal(list, item, index);
+        }
+
+        /// <summary>
+        /// 改变元素的索引位置
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">集合</param>
+        /// <param name="condition">元素定位条件</param>
+        /// <param name="index">索引值</param>
+        public static void ChangeIndex<T>(IList<T> list, Func<T, bool> condition, int index)
+        {
+            var item = list.FirstOrDefault(condition);
+            if (item != null)
+            {
+                ChangeIndexInternal(list, item, index);
+            }
+        }
+
+        private static void ChangeIndexInternal<T>(IList<T> list, T item, int index)
+        {
+            index = Math.Max(0, index);
+            index = Math.Min(list.Count - 1, index);
+            list.Remove(item);
+            list.Insert(index, item);
         }
     }
 }
