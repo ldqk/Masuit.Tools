@@ -31,7 +31,28 @@ public class MinItemsCountAttribute : ValidationAttribute
             return false;
         }
 
-        var list = value as IList;
-        return list.Count >= MinItems;
+        if (value is ICollection sources)
+        {
+            return sources.Count >= MinItems;
+        }
+
+        int num = 0;
+        if (value is IEnumerable source)
+        {
+            var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                checked
+                {
+                    ++num;
+                    if (num >= MinItems)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
