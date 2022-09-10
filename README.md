@@ -29,10 +29,12 @@ SDK：.Net Core 2.1.0及以上所有版本
 PM> Install-Package Masuit.Tools.Net
 ```
 #### .NET Standard ≥ 2.1 或只想使用一些基本功能
+`通用项目推荐首选包`
 ```shell
 PM> Install-Package Masuit.Tools.Abstraction
 ```
 #### .NET Core ≥ 2.1
+`.NET Core项目推荐首选包`
 ```shell
 PM> Install-Package Masuit.Tools.Core
 ```
@@ -43,6 +45,7 @@ PM> Install-Package Masuit.Tools.Net45
 ```
 ### 增值包
 #### Masuit.Tools.AspNetCore
+`AspNetCore项目推荐首选包`  
 ASP.NET Core Web专用包，包含Masuit.Tools.Core的全部功能，并且增加了一些对ASP.NET Core Web功能的额外支持。
 #### Masuit.Tools.Excel
 Excel导入导出的专用独立包
