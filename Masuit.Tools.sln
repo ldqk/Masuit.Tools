@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试", "测试", "{E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.NoSQL.MongoDBClient", "Masuit.Tools.NoSQL.MongoDBClient\Masuit.Tools.NoSQL.MongoDBClient.csproj", "{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Abstractions", "Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj", "{74E7C0A2-499D-408F-A2E4-08878700C2DE}"
@@ -29,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Net45", "Masui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore", "Masuit.Tools.AspNetCore\Masuit.Tools.AspNetCore.csproj", "{73BA93B7-C6AE-4B39-892E-3596D91BF96C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{144D7A0C-002D-48E4-8814-EA14011CFFFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +43,6 @@ Global
 		{149E6872-CE95-493B-B136-535E64C65A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{149E6872-CE95-493B-B136-535E64C65A49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABEC3F65-6556-44FD-BECE-33F7927FB3AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C4FF8E9-2662-4618-ABA4-BA55AA5EA9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -83,6 +79,10 @@ Global
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73BA93B7-C6AE-4B39-892E-3596D91BF96C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,45 +12,6 @@ namespace Masuit.Tools.Security
     public static class Encrypt
     {
         #region DES对称加密解密
-
-        /// <summary>
-        /// 加密密钥，默认取“masuit”的MD5值
-        /// </summary>
-        public static string DefaultEncryptKey = "masuit".MDString2();
-
-        /// <summary>
-        /// 使用默认加密
-        /// </summary>
-        /// <param name="strText">被加密的字符串</param>
-        /// <returns>加密后的数据</returns>
-        public static string DesEncrypt(this string strText)
-        {
-            try
-            {
-                return DesEncrypt(strText, DefaultEncryptKey);
-            }
-            catch
-            {
-                return "";
-            }
-        }
-
-        /// <summary>
-        /// 使用默认解密
-        /// </summary>
-        /// <param name="strText">需要解密的 字符串</param>
-        /// <returns>解密后的数据</returns>
-        public static string DesDecrypt(this string strText)
-        {
-            try
-            {
-                return DesDecrypt(strText, DefaultEncryptKey);
-            }
-            catch
-            {
-                return "";
-            }
-        }
 
         /// <summary> 
         /// 加密字符串
@@ -291,8 +251,6 @@ namespace Masuit.Tools.Security
 
         #region 对称加密算法AES RijndaelManaged加密解密
 
-        private static readonly string Default_AES_Key = "@#kim123";
-
         private static byte[] Keys =
         {
             0x41,
@@ -327,17 +285,6 @@ namespace Masuit.Tools.Security
             };
             crypto.GenerateKey();
             return Convert.ToBase64String(crypto.Key);
-        }
-
-        /// <summary>
-        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
-        /// </summary>
-        /// <param name="encryptString">待加密字符串</param>
-        /// <param name="mode">加密模式</param>
-        /// <returns>加密结果字符串</returns>
-        public static string AESEncrypt(this string encryptString, CipherMode mode = CipherMode.CBC)
-        {
-            return AESEncrypt(encryptString, Default_AES_Key, mode);
         }
 
         /// <summary>
@@ -396,17 +343,6 @@ namespace Masuit.Tools.Security
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
             byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
             return Convert.ToBase64String(encryptedData);
-        }
-
-        /// <summary>
-        /// 对称加密算法AES RijndaelManaged解密字符串
-        /// </summary>
-        /// <param name="decryptString">待解密的字符串</param>
-        /// <param name="mode">加密模式</param>
-        /// <returns>解密成功返回解密后的字符串,失败返源串</returns>
-        public static string AESDecrypt(this string decryptString, CipherMode mode = CipherMode.CBC)
-        {
-            return AESDecrypt(decryptString, Default_AES_Key, mode);
         }
 
         /// <summary>
@@ -668,14 +604,15 @@ namespace Masuit.Tools.Security
         /// 对指定文件AES加密
         /// </summary>
         /// <param name="input">源文件流</param>
+        /// <param name="key">加密密钥</param>
         /// <param name="mode">加密模式</param>
         /// <param name="outputPath">输出文件路径</param>
-        public static void AESEncryptFile(this FileStream input, string outputPath, CipherMode mode = CipherMode.CBC)
+        public static void AESEncryptFile(this FileStream input, string outputPath, string key, CipherMode mode = CipherMode.CBC)
         {
             using var fren = new FileStream(outputPath, FileMode.Create);
-            using var enfr = AESEncryptStrream(fren, Default_AES_Key, mode);
+            using var enfr = AESEncryptStrream(fren, key, mode);
             byte[] bytearrayinput = new byte[input.Length];
-            input.Read(bytearrayinput, 0, bytearrayinput.Length);
+            _ = input.Read(bytearrayinput, 0, bytearrayinput.Length);
             enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
         }
 
@@ -683,12 +620,13 @@ namespace Masuit.Tools.Security
         /// 对指定的文件AES解密
         /// </summary>
         /// <param name="input">源文件流</param>
+        /// <param name="key">解密密钥</param>
         /// <param name="mode">加密模式</param>
         /// <param name="outputPath">输出文件路径</param>
-        public static void AESDecryptFile(this FileStream input, string outputPath, CipherMode mode = CipherMode.CBC)
+        public static void AESDecryptFile(this FileStream input, string outputPath, string key, CipherMode mode = CipherMode.CBC)
         {
             using FileStream frde = new FileStream(outputPath, FileMode.Create);
-            using CryptoStream defr = AESDecryptStream(input, Default_AES_Key, mode);
+            using CryptoStream defr = AESDecryptStream(input, key, mode);
             byte[] bytearrayoutput = new byte[1024];
             while (true)
             {

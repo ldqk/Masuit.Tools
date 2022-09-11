@@ -1,20 +1,22 @@
-﻿using Masuit.Tools.Security;
+﻿using Masuit.Tools.AspNetCore.ModelBinder;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Threading.Tasks;
 
-namespace NetCoreTest.Controllers
+namespace NetCoreTest.Controllers;
+
+[ApiController]
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    [HttpPost("test")]
+    [ProducesResponseType(typeof(MyClass), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult> Test([FromBodyOrDefault] MyClass mc)
     {
-        [HttpGet("rsaenc")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Rsa(string str)
-        {
-            var rsaKey = RsaCrypt.GenerateRsaKeys();
-            var enc = str.RSAEncrypt();
-            var dec = enc.RSADecrypt();
-            return Ok(dec);
-        }
+        return Ok(mc);
     }
+}
+
+public class MyClass
+{
+    public string MyProperty { get; set; }
+    public List<string> List { get; set; }
 }

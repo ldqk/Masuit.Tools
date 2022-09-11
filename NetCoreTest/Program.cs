@@ -1,26 +1,29 @@
-ï»¿using System;
-using Masuit.Tools.Systems;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using NetCoreTest;
-using Newtonsoft.Json;
+using Masuit.Tools.AspNetCore.ModelBinder;
+using Masuit.Tools.Files;
+using Masuit.Tools.Media;
 
-string json1 = "{\"a\":\"aa\"}";
-string json2 = "{\"b\":\"bb\"}";
-string json3 = "{\"MyProperty\":\"mm\"}";
-JsonConvert.DefaultSettings = () => new JsonSerializerSettings() { ContractResolver = new CompositeContractResolver() };
-var m1 = JsonConvert.DeserializeObject<MyClass>(json1);
-var m2 = JsonConvert.DeserializeObject<MyClass>(json2);
-var m3 = JsonConvert.DeserializeObject<MyClass>(json3);
+var stream = File.Open(@"D:\images\QQ½ØÍ¼20190923195408.jpg", FileMode.Open, FileAccess.ReadWrite);
+var watermarker = new ImageWatermarker(stream);
+var ms = watermarker.AddWatermark(File.OpenRead(@"D:\images\QQ½ØÍ¼20190923195408_¿´Í¼Íõ.png"), 0.5f);
+ms.SaveFile(@"Y:\1.jpg");
+Console.WriteLine(1);
 Console.ReadKey();
 
-//CreateWebHostBuilder(args).Build().Run();
-static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-    WebHost.CreateDefaultBuilder(args)
-        .UseStartup<Startup>();
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers(options => options.ModelBinderProviders.InsertBodyOrDefaultBinding());
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-public class MyClass
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    [SerializeIgnore, FallbackJsonProperty(nameof(MyProperty), "a", "b")]
-    public string MyProperty { get; set; }
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
