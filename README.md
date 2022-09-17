@@ -223,6 +223,10 @@ Expression<Func<string, bool>> where2 = s => s.Length > 10;
 Func<string, bool> func = where1.Or(where2).Compile();
 bool b=func("abc");// true
 ```
+```csharp
+queryable.WhereIf(!string.IsNullOrEmpty(name),e=>e.Name==name)
+    .WhereIf(()=> age.HasValue,e=>e.Age>=age); // IQueryable的WhereIf扩展函数，满足条件再执行Where
+```
 ### 12.模版引擎
 ```csharp
 var tmp = new Template("{{name}}，你好！");
@@ -676,6 +680,37 @@ var nums=Enumerable.Range(1, 10).ExceptBy(Enumerable.Range(5, 10), i => i); // �
 var nums=Enumerable.Range(1, 10).IntersectBy(Enumerable.Range(5, 10), i => i); // 按字段取交集
 var nums=Enumerable.Range(1, 10).SequenceEqual(Enumerable.Range(5, 10), i => i); // 判断序列相等
 var nums=Enumerable.Range(1, 10).OrderByRandom(); // 随机排序
+
+// 多个集合取交集
+var list=new List<List<MyClass>>(){
+    new List<MyClass>(){
+        new MyClass(){Name="aa",Age=11},
+        new MyClass(){Name="bb",Age=12},
+        new MyClass(){Name="cc",Age=13},
+    },
+    new List<MyClass>(){
+        new MyClass(){Name="bb",Age=12},
+        new MyClass(){Name="cc",Age=13},
+        new MyClass(){Name="dd",Age=14},
+    },
+    new List<MyClass>(){
+        new MyClass(){Name="cc",Age=13},
+        new MyClass(){Name="dd",Age=14},
+        new MyClass(){Name="ee",Age=15},
+    },
+};
+var sect=list.IntersectAll(m=>m.Name); // new MyClass(){Name="cc",Age=13}
+
+var list=new List<List<int>>(){
+    new(){1,2,3},
+    new(){2,3,4},
+    new(){3,4,5}
+};
+var sect=list.IntersectAll();// [3]
+
+// 集合元素改变其索引位置
+list.ChangeIndex(item,3); // 将元素item的索引位置变为第3个
+list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为第2个
 ```
 ### 37.Mime类型
 ```csharp
