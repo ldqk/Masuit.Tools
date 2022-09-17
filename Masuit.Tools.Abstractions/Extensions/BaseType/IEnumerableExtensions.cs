@@ -26,6 +26,95 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector)
+        {
+            return first.IntersectBy(second, keySelector, null);
+        }
+
+        /// <summary>
+        /// 按字段属性判等取交集
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="keySelector"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
+        {
+            if (first == null)
+                throw new ArgumentNullException(nameof(first));
+            if (second == null)
+                throw new ArgumentNullException(nameof(second));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            return IntersectByIterator(first, second, keySelector, comparer);
+        }
+
+        private static IEnumerable<TSource> IntersectByIterator<TSource, TKey>(IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+        {
+            var set = new HashSet<TKey>(second.Select(keySelector), comparer);
+            foreach (var source in first)
+            {
+                if (set.Remove(keySelector(source)))
+                    yield return source;
+            }
+        }
+
+
+        /// <summary>
+        /// 多个集合取交集元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> IntersectAll<T>(this IEnumerable<IEnumerable<T>> source)
+        {
+            return source.Aggregate((current, item) => current.Intersect(item));
+        }
+
+        /// <summary>
+        /// 多个集合取交集元素
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectAll<TSource, TKey>(this IEnumerable<IEnumerable<TSource>> source, Func<TSource, TKey> keySelector)
+        {
+            return source.Aggregate((current, item) => current.IntersectBy(item, keySelector));
+        }
+
+        /// <summary>
+        /// 多个集合取交集元素
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<TSource> IntersectAll<TSource, TKey>(this IEnumerable<IEnumerable<TSource>> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+        {
+            return source.Aggregate((current, item) => current.IntersectBy(item, keySelector, comparer));
+        }
+
+        /// <summary>
+        /// 多个集合取交集元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> IntersectAll<T>(this IEnumerable<IEnumerable<T>> source, IEqualityComparer<T> comparer)
+        {
+            return source.Aggregate((current, item) => current.Intersect(item, comparer));
+        }
+
+        /// <summary>
         /// 按字段属性判等取差集
         /// </summary>
         /// <typeparam name="TFirst"></typeparam>

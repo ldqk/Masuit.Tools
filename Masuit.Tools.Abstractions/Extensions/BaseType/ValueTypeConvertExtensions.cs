@@ -63,11 +63,11 @@ namespace Masuit.Tools
         /// <summary>
         /// 转double
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="num"></param>
         /// <returns>double类型的数据</returns>
-        public static double ToDouble(this decimal s)
+        public static double ToDouble(this decimal num)
         {
-            return (double)s;
+            return (double)num;
         }
 
         /// <summary>
