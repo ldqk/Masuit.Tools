@@ -205,7 +205,7 @@ public static class IConvertibleExtensions
                 return converter.ConvertFrom(value);
             }
         }
+        return Convert.ChangeType(value, type);
 
-        return value;
     }
 }

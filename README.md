@@ -214,13 +214,18 @@ Console.WriteLine(today.DateHoliday);// 获取按公历计算的节假日
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
-Func<string, bool> func = where1.And(where2).Compile();
+Func<string, bool> func = where1.And(where2)
+    .AndIf(!string.IsNullOrEmpty(name),s=>s==name)
+    .Compile(); // And和AndIf可供选择，满足条件再执行And
 bool b=func("abcd12345678");//true
 ```
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
-Func<string, bool> func = where1.Or(where2).Compile();
+Func<string, bool> func = where1
+    .Or(where2)
+    .OrIf(!string.IsNullOrEmpty(name),s=>s==name)
+    .Compile(); // Or和OrIf可供选择，满足条件再执行Or
 bool b=func("abc");// true
 ```
 ```csharp
