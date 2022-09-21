@@ -10,13 +10,14 @@
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,ModelBinder</PackageTags>
-        <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+        <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，
+详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <RepositoryType>Github</RepositoryType>
+        <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Version>1.1.5</Version>
         <FileVersion>1.0</FileVersion>
@@ -30,7 +31,17 @@
         <OutputType>Library</OutputType>
         <IsPackable>true</IsPackable>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Title>Masuit.Tools</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />

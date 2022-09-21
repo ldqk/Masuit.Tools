@@ -13,7 +13,7 @@
         <PackageReleaseNotes>Masuit.Tools基础公共库，如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
         <Product>Masuit.Tools.Abstractions</Product>
         <PackageId>Masuit.Tools.Abstractions</PackageId>
-        <RepositoryType>Github</RepositoryType>
+        <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
         <FileVersion>2.4.6</FileVersion>
@@ -24,6 +24,9 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Title>Masuit.Tools</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
@@ -93,5 +96,12 @@
 
     <ItemGroup>
         <Folder Include="Files\FileDetector\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 </Project>

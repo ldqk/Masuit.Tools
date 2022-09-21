@@ -9,7 +9,8 @@ github：https://github.com/ldqk/Masuit.Tools
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
-        <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+        <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，
+详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <Product>Masuit.Tools.Core</Product>
@@ -17,11 +18,11 @@ github：https://github.com/ldqk/Masuit.Tools
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>latest</LangVersion>
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
-        <RepositoryType>Github</RepositoryType>
+        <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Version>2.5.5</Version>
         <FileVersion>2.4.5.6</FileVersion>
-        <Company>masuit.com</Company>
+        <Company>masuit.org</Company>
         <AssemblyVersion>2.4.5.6</AssemblyVersion>
         <Authors>懒得勤快</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
@@ -29,6 +30,8 @@ github：https://github.com/ldqk/Masuit.Tools
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <Title>Masuit.Tools</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -101,6 +104,12 @@ github：https://github.com/ldqk/Masuit.Tools
       <Compile Remove="..\Masuit.Tools.Abstractions\Models\TaobaoIP.cs" />
       <Compile Remove="..\Masuit.Tools.Abstractions\Reflection\ClassHelper.cs" />
       <Compile Remove="..\Masuit.Tools.Abstractions\Systems\DisposeableDictionary.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
