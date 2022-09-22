@@ -753,12 +753,7 @@ stream.ToArray(); // 任意流转换成二进制数组
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
 ```
-### 41.简繁转换
-```csharp
-var str="个体".ToTraditional(); // 转繁体
-var str="個體".ToSimplified(); // 转简体
-```
-### 42.INI配置文件操作
+### 41.INI配置文件操作
 ```csharp
 INIFile ini=new INIFile("filename.ini");
 ini.IniWriteValue(section,key,value); // 写值
@@ -766,13 +761,13 @@ ini.IniReadValue(section,key); // 读值
 ini.ClearAllSection(); // 清空所有配置节
 ini.ClearSection(section); // 清空配置节
 ```
-### 43.雷达图计算引擎
+### 42.雷达图计算引擎
 应用场景：计算两个多边形的相似度，用户画像之类的
 ```csharp
 var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个多边形的相交区域
 points.ComputeArea(); //计算多边形面积
 ```
-### 44.树形结构实现
+### 43.树形结构实现
 基本接口类：  
 ITreeChildren：带Children属性的接口  
 ITreeParent：带Parent属性的接口  
@@ -792,7 +787,7 @@ tree.Path(); // 全路径
 var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
-### 45.简单的Excel导出
+### 44.简单的Excel导出
 需要额外依赖包：`Masuit.Tools.Excel`
 ```csharp
 var stream=list.Select(item=>new{
@@ -811,7 +806,7 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 5. ToExcel方法支持DataTable、List<DataTable>、Dictionary<string, DataTable>类型的直接调用
    
 
-### 46.EFCore实体对比功能
+### 45.EFCore实体对比功能
 获取指定实体的变更
 ```csharp
 var changes=dbContext.GetChanges<Post>();//获取变更字段信息
@@ -827,12 +822,12 @@ var removed=dbContext.GetRemoved();//获取被移除的实体字段信息
 var allchanges=dbContext.GetAllChanges();//获取增删改的实体字段信息  
 ```
 对比信息包含属性信息、旧值、新值、实体信息、键信息、变更状态等
-### 47.任何类型支持链式调用
+### 46.任何类型支持链式调用
 ```csharp
 a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
-### 48.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 47.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
 #### DeserializeOnlyContractResolver
 该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
 ```csharp
@@ -878,7 +873,7 @@ public class ClassDto
 #### CompositeContractResolver
 该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
 
-### 49. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
+### 48. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
 用法：  
 引入包：`Masuit.Tools.AspNetCore`  
 ```shell
@@ -906,13 +901,13 @@ Startup配置：
         }
 ```
 
-### 50. 字符串SimHash相似度算法
+### 49. 字符串SimHash相似度算法
 ```csharp
 var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
 
-### 51. 真实文件类型探测
+### 50. 真实文件类型探测
 
 ```csharp
 // 多种方式，任君调用
