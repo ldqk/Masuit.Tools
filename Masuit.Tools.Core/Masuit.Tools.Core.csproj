@@ -37,44 +37,29 @@ github：https://github.com/ldqk/Masuit.Tools
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.6.1" />
         <PackageReference Include="HtmlSanitizer" Version="7.1.542" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="6.0.1" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta14" />
+        <PackageReference Include="System.Management" Version="6.0.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.32.2" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="2.1.1" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
-        <PackageReference Include="System.Management" Version="4.7.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.9" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
-        <PackageReference Include="System.Management" Version="4.7.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
-        <PackageReference Include="System.Management" Version="5.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="6.0.1" />
-        <PackageReference Include="System.Management" Version="6.0" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="..\Masuit.Tools.Abstractions\*\*.cs">
