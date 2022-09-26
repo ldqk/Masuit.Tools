@@ -360,7 +360,7 @@ socket.SendFile("D:\\test\\1.txt",false,i =>
     Console.WriteLine("已发送"+i+"%");
 });
 ```
-### 19.加密解密
+### 19.加密解密/hash
 ```csharp
 var enc="123456".MDString();// MD5
 var enc="123456".MDString("abc");// MD5加盐
@@ -385,6 +385,7 @@ string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
 
 string s = "123".Crc32();// 生成crc32摘要
 string s = "123".Crc64();// 生成crc64摘要
+string s = "123".SHA256();// 生成SHA256摘要
 ```
 ### 20.实体校验
 ```csharp
