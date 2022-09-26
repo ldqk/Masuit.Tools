@@ -29,7 +29,7 @@
         <DocumentationFile>.\Masuit.Tools.Excel.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="EPPlus" Version="6.0.7" />
+        <PackageReference Include="EPPlus" Version="6.0.8" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
