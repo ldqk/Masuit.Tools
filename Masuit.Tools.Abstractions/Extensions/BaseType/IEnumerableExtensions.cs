@@ -489,10 +489,10 @@ public static class IEnumerableExtensions
             }
 
             list.Add(action(item));
-            if (list.Count >= maxParallelCount)
+            if (list.Count(t => !t.IsCompleted) >= maxParallelCount)
             {
-                await Task.WhenAll(list);
-                list.Clear();
+                await Task.WhenAny(list);
+                list.RemoveAll(t => t.IsCompleted);
             }
         }
 
