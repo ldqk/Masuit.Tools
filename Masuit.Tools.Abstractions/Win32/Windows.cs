@@ -94,22 +94,23 @@ namespace Masuit.Tools.Win32
                 };
                 proc.Start();
 
-                using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
-
-                //上面标记的是原文，下面是我自己调试错误后自行修改的
-                Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行
-                if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行
-                {
-                    proc.Kill();
-                }
-
-                string txt = sr.ReadToEnd();
                 if (recordLog)
                 {
+                    using var sr = new System.IO.StreamReader(proc.StandardOutput.BaseStream, Encoding.Default);
+
+                    //上面标记的是原文，下面是我自己调试错误后自行修改的
+                    Thread.Sleep(100); //貌似调用系统的nslookup还未返回数据或者数据未编码完成，程序就已经跳过直接执行
+                    if (!proc.HasExited) //在无参数调用nslookup后，可以继续输入命令继续操作，如果进程未停止就直接执行
+                    {
+                        proc.Kill();
+                    }
+
+                    string txt = sr.ReadToEnd();
                     Trace.WriteLine(txt);
+                    return txt;
                 }
 
-                return txt;
+                return "";
             }
             catch (Exception ex)
             {
