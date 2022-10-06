@@ -19,10 +19,11 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="num"></param>
         /// <param name="precision">小数位数</param>
+        /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static decimal ToDecimal(this double num, int precision)
+        public static decimal ToDecimal(this double num, int precision, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
-            return Math.Round((decimal)num, precision);
+            return Math.Round((decimal)num, precision, mode);
         }
 
         /// <summary>
@@ -40,10 +41,11 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="num"></param>
         /// <param name="precision">小数位数</param>
+        /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static decimal ToDecimal(this float num, int precision)
+        public static decimal ToDecimal(this float num, int precision, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
-            return Math.Round((decimal)num, precision);
+            return Math.Round((decimal)num, precision, mode);
         }
     }
 }
