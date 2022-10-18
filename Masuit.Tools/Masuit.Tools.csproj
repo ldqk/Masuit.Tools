@@ -159,6 +159,7 @@
     <None Include="package.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -176,7 +177,7 @@
       <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>7.1.542</Version>
+      <Version>8.0.601</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.9</Version>
@@ -194,7 +195,7 @@
       <Version>1.0.0-beta14</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.6.66</Version>
+      <Version>2.6.70</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>

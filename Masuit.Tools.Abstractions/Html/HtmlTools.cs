@@ -1,6 +1,6 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
-using Ganss.XSS;
+using Ganss.Xss;
 using Masuit.Tools.RandomSelector;
 using System;
 using System.Collections.Generic;

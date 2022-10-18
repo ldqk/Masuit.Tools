@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Masuit.Tools.AspNetCore\Masuit.Tools.AspNetCore.csproj" />
+    <ProjectReference Include="..\Masuit.Tools.Excel\Masuit.Tools.Excel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,5 @@
 ﻿using Masuit.Tools.Logging;
 using Masuit.Tools.NoSQL;
-using Masuit.Tools.Security;
 using System;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -76,7 +75,7 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (string.IsNullOrEmpty(sessionKey))
             {
-                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+                sessionKey = Guid.NewGuid().ToString();
                 HttpCookie cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }
@@ -119,7 +118,7 @@ namespace Masuit.Tools.Net
             var sessionKey = HttpContext.Current.Request.Cookies["SessionID"]?.Value;
             if (string.IsNullOrEmpty(sessionKey))
             {
-                sessionKey = Guid.NewGuid().ToString().AESEncrypt();
+                sessionKey = Guid.NewGuid().ToString();
                 var cookie = new HttpCookie("SessionID", sessionKey);
                 HttpContext.Current.Response.Cookies.Add(cookie);
             }

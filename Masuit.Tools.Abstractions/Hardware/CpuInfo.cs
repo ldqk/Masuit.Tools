@@ -1,10 +1,29 @@
-﻿namespace Masuit.Tools.Hardware
+﻿using System.Collections.Generic;
+
+namespace Masuit.Tools.Hardware
 {
     /// <summary>
     /// CPU模型
     /// </summary>
     public class CpuInfo
     {
+        private static readonly List<CpuInfo> _locals = SystemInfo.GetCpuInfo();
+
+        /// <summary>
+        /// 本地实例
+        /// </summary>
+        public static List<CpuInfo> Locals => _locals;
+
+        /// <summary>
+        /// 获取CPU核心数
+        /// </summary>
+        public static int ProcessorCount => SystemInfo.ProcessorCount;
+
+        /// <summary>
+        /// 获取CPU占用率 %
+        /// </summary>
+        public static float CpuLoad => SystemInfo.CpuLoad;
+
         /// <summary>
         /// 设备ID
         /// </summary>
@@ -41,11 +60,6 @@
         public int NumberOfLogicalProcessors { get; set; }
 
         /// <summary>
-        /// CPU使用率
-        /// </summary>
-        public double CpuLoad { get; set; }
-
-        /// <summary>
         /// CPU位宽
         /// </summary>
         public string DataWidth { get; set; }
@@ -53,12 +67,11 @@
         /// <summary>
         /// 核心温度
         /// </summary>
-        public double Temperature { get; set; }
+        public double Temperature => SystemInfo.GetCPUTemperature();
 
         /// <summary>
         /// 序列号
         /// </summary>
         public string SerialNumber { get; set; }
     }
-#pragma warning restore 1591
 }

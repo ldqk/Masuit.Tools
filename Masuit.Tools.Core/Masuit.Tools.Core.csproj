@@ -20,7 +20,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.5.5.1</Version>
+        <Version>2.5.6</Version>
         <FileVersion>$(Version)</FileVersion>
         <Company>masuit.org</Company>
         <AssemblyVersion>$(Version)</AssemblyVersion>
@@ -36,14 +36,14 @@ github：https://github.com/ldqk/Masuit.Tools
 
     <ItemGroup>
         <PackageReference Include="DnsClient" Version="1.6.1" />
-        <PackageReference Include="HtmlSanitizer" Version="7.1.542" />
+        <PackageReference Include="HtmlSanitizer" Version="8.0.601" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="6.0.1" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta14" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
         <PackageReference Include="System.Management" Version="6.0.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.32.2" />
@@ -60,20 +60,6 @@ github：https://github.com/ldqk/Masuit.Tools
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="..\Masuit.Tools.Abstractions\*\*.cs">
-            <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
-        </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Extensions\*\*.cs">
-            <Link>Extensions\%(RecursiveDir)%(FileName)%(Extension)</Link>
-        </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*.*">
-          <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
-        </Compile>
-        <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*\*.*">
-          <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
-        </Compile>
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />
@@ -95,6 +81,9 @@ github：https://github.com/ldqk/Masuit.Tools
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -5,6 +5,8 @@
     /// </summary>
     public class RamInfo
     {
+        public static RamInfo Local => SystemInfo.GetRamInfo();
+
         /// <summary>
         /// 可用物理内存
         /// </summary>
