@@ -270,7 +270,8 @@ public static class ExcelExtension
         }
         else
         {
-            sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light1).AutoFitColumns();
+            sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light1).AutoFitColumns(12, 110);
+            sheet.Cells.Style.WrapText = true;
         }
     }
 

@@ -3,7 +3,7 @@
         <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5;net6</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>1.2.3-beta</Version>
+        <Version>1.2.3-beta2</Version>
         <Authors>懒得勤快</Authors>
         <Description>Masuit.Tools.Excel导出库，支持一些简单数据的导出，支持图片列</Description>
         <Copyright>懒得勤快</Copyright>
@@ -24,10 +24,19 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <Title>Masuit.Tools.Excel</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <NeutralLanguage>zh-CN</NeutralLanguage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|AnyCPU'">
         <DocumentationFile>.\Masuit.Tools.Excel.xml</DocumentationFile>
     </PropertyGroup>
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="EPPlus" Version="6.0.8" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
