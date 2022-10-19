@@ -321,7 +321,7 @@ public static class ExcelExtension
         }
         else
         {
-            sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light15).AutoFitColumns(12, 110);
+            sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
             sheet.Cells.Style.WrapText = true;
         }
     }
@@ -493,7 +493,7 @@ public static class ExcelExtension
         }
         else
         {
-            sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 110);
+            sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
             sheet.Cells.Style.WrapText = true;
         }
     }
