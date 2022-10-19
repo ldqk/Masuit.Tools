@@ -90,6 +90,12 @@ string osVersion = SystemInfo.GetOsVersion();// 获取操作系统版本
 RamInfo ramInfo = SystemInfo.GetRamInfo();// 获取内存信息
 var cpuSN=SystemInfo.GetCpuInfo()[0].SerialNumber; // CPU序列号
 var driveSN=SystemInfo.GetDiskInfo()[0].SerialNumber; // 硬盘序列号
+
+// 快速方法
+var cpuInfos = CpuInfo.Locals; // 快速获取CPU的信息
+var ramInfo = RamInfo.Local; // 快速获取内存的信息
+var diskInfos = DiskInfo.Locals; // 快速获取硬盘的信息
+var biosInfo = BiosInfo.Local; // 快速获取主板的信息
 ```
 ### 3.大文件操作
 ```csharp
