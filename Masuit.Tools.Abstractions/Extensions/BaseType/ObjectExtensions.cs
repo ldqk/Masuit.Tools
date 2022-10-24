@@ -88,7 +88,7 @@ namespace Masuit.Tools
                     continue;
                 }
 
-                if (IsPrimitive(fieldInfo.FieldType))
+                if (IsPrimitive(fieldInfo.FieldType) || fieldInfo.IsInitOnly)
                 {
                     continue;
                 }
@@ -156,17 +156,6 @@ namespace Masuit.Tools
         {
             if (obj == null) return string.Empty;
             return JsonConvert.SerializeObject(obj, setting);
-        }
-
-        /// <summary>
-        /// 严格比较两个对象是否是同一对象(判断引用)
-        /// </summary>
-        /// <param name="this">自己</param>
-        /// <param name="o">需要比较的对象</param>
-        /// <returns>是否同一对象</returns>
-        public new static bool ReferenceEquals(this object @this, object o)
-        {
-            return object.ReferenceEquals(@this, o);
         }
 
         /// <summary>
