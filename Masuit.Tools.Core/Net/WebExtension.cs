@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FastExpressionCompiler;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
 
@@ -34,7 +35,7 @@ namespace Masuit.Tools.Core.Net
             {
                 return typeof(T).Namespace switch
                 {
-                    "System.Collections.Generic" => (T)(Expression.Lambda(Expression.New(typeof(T))).Compile().DynamicInvoke()),
+                    "System.Collections.Generic" => (T)(Expression.Lambda(Expression.New(typeof(T))).CompileFast().DynamicInvoke()),
                     _ => default
                 };
             }

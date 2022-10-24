@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using FastExpressionCompiler;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-
 namespace Masuit.Tools.Core.AspNetCore
 {
     public static class DbSetExtensions
@@ -20,10 +17,7 @@ namespace Masuit.Tools.Core.AspNetCore
         /// <param name="entities"></param>
         public static void AddOrUpdate<T, TKey>(this DbSet<T> dbSet, Expression<Func<T, TKey>> keySelector, params T[] entities) where T : class
         {
-            foreach (var entity in entities)
-            {
-                AddOrUpdate(dbSet, keySelector, entity);
-            }
+            AddOrUpdate(dbSet, keySelector, entities.AsEnumerable());
         }
 
         /// <summary>
@@ -36,9 +30,71 @@ namespace Masuit.Tools.Core.AspNetCore
         /// <param name="entities"></param>
         public static void AddOrUpdate<T, TKey>(this DbSet<T> dbSet, Expression<Func<T, TKey>> keySelector, IEnumerable<T> entities) where T : class
         {
-            foreach (var entity in entities)
+            if (keySelector == null)
             {
-                AddOrUpdate(dbSet, keySelector, entity);
+                throw new ArgumentNullException(nameof(keySelector));
+            }
+
+            if (entities == null)
+            {
+                throw new ArgumentNullException(nameof(entities));
+            }
+
+            if (entities is not ICollection<T> collection)
+            {
+                collection = entities.ToList();
+            }
+
+            var func = keySelector.CompileFast();
+            var keyObjects = collection.Select(s => func(s)).ToList();
+            var parameter = keySelector.Parameters[0];
+            var array = Expression.Constant(keyObjects);
+            var call = Expression.Call(array, typeof(List<TKey>).GetMethod(nameof(List<TKey>.Contains)), keySelector.Body);
+            var lambda = Expression.Lambda<Func<T, bool>>(call, parameter);
+            var items = dbSet.Where(lambda).ToDictionary(t => func(t));
+            foreach (var entity in collection)
+            {
+                var key = func(entity);
+                if (items.ContainsKey(key))
+                {
+                    // 获取主键字段
+                    var dataType = typeof(T);
+                    var keyIgnoreFields = dataType.GetProperties().Where(p => p.GetCustomAttribute<KeyAttribute>() != null || p.GetCustomAttribute<UpdateIgnoreAttribute>() != null).ToList();
+                    if (!keyIgnoreFields.Any())
+                    {
+                        string idName = dataType.Name + "Id";
+                        keyIgnoreFields = dataType.GetProperties().Where(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || p.Name.Equals(idName, StringComparison.OrdinalIgnoreCase)).ToList();
+                    }
+
+                    // 更新所有非主键属性
+                    foreach (var p in typeof(T).GetProperties().Where(p => p.GetSetMethod() != null && p.GetGetMethod() != null))
+                    {
+                        // 忽略主键和被忽略的字段
+                        if (keyIgnoreFields.Any(x => x.Name == p.Name))
+                        {
+                            continue;
+                        }
+
+                        var existingValue = p.GetValue(items[key]);
+                        if (p.GetValue(items[key]) != existingValue)
+                        {
+                            p.SetValue(items[key], existingValue);
+                        }
+                    }
+
+                    foreach (var idField in keyIgnoreFields.Where(p => p.SetMethod != null && p.GetMethod != null))
+                    {
+                        var existingValue = idField.GetValue(items[key]);
+                        if (idField.GetValue(items[key]) != existingValue)
+                        {
+                            idField.SetValue(items[key], existingValue);
+                        }
+                    }
+                }
+                else
+                {
+                    dbSet.Add(entity);
+                }
             }
         }
 
@@ -62,8 +118,8 @@ namespace Masuit.Tools.Core.AspNetCore
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            var keyObject = keySelector.Compile()(entity);
-            var parameter = Expression.Parameter(typeof(T), "p");
+            var keyObject = keySelector.CompileFast()(entity);
+            var parameter = keySelector.Parameters[0];
             var lambda = Expression.Lambda<Func<T, bool>>(Expression.Equal(ReplaceParameter(keySelector.Body, parameter), Expression.Constant(keyObject)), parameter);
             var item = dbSet.FirstOrDefault(lambda);
             if (item == null)
