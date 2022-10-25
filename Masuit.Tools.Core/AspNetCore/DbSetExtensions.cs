@@ -75,7 +75,7 @@ namespace Masuit.Tools.Core.AspNetCore
                             continue;
                         }
 
-                        var existingValue = p.GetValue(items[key]);
+                        var existingValue = p.GetValue(entity);
                         if (p.GetValue(items[key]) != existingValue)
                         {
                             p.SetValue(items[key], existingValue);
@@ -85,9 +85,9 @@ namespace Masuit.Tools.Core.AspNetCore
                     foreach (var idField in keyIgnoreFields.Where(p => p.SetMethod != null && p.GetMethod != null))
                     {
                         var existingValue = idField.GetValue(items[key]);
-                        if (idField.GetValue(items[key]) != existingValue)
+                        if (idField.GetValue(entity) != existingValue)
                         {
-                            idField.SetValue(items[key], existingValue);
+                            idField.SetValue(entity, existingValue);
                         }
                     }
                 }
