@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -63,14 +63,21 @@ namespace Masuit.Tools.Logging
 
         private static AutoResetEvent Pause => new AutoResetEvent(false);
 
+        private static string logDirectory;
         /// <summary>
         /// 日志存放目录，默认日志放在当前应用程序运行目录下的logs文件夹中
         /// </summary>
         public static string LogDirectory
         {
-            get => Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            get => logDirectory ?? Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             set
             {
+                //自定义目录
+                if (!Directory.Exists(value))
+                {
+                    Directory.CreateDirectory(value);
+                }
+                logDirectory = value;
             }
         }
 
