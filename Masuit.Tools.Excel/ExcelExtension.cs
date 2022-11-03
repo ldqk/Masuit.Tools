@@ -2,6 +2,7 @@
 using OfficeOpenXml.Drawing;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Masuit.Tools.Excel;
 
@@ -389,7 +391,7 @@ public static class ExcelExtension
                                     if (s.Length > 2)
                                     {
                                         var pictureType = ImageDetector.GetPictureType(s) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
-                                        var bmp = new ExcelImage(s, pictureType).Bounds;
+                                        using var bmp = Image.Load<Rgba32>(s);
                                         var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s, pictureType);
                                         picture.SetPosition(current + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
                                         var percent = Math.Round(Math.Min(12000f / bmp.Height, 100));

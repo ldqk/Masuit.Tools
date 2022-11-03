@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Tiff;
+using SixLabors.ImageSharp.Formats.Webp;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
 namespace Masuit.Tools.Media;
 
 public static class ImageDetectExt
 {
-    private const float MToInch = 39.3700787F;
-    private const float CmToInch = MToInch * 0.01F;
-
-    internal struct TifIfd
-    {
-        public short Tag;
-        public short Type;
-        public int Count;
-        public int ValueOffset;
-    }
-
     public static bool IsImage(this Stream s)
     {
         return GetImageType(s) != null;
@@ -33,59 +25,52 @@ public static class ImageDetectExt
     /// <returns></returns>
     public static ImageFormat? GetImageType(this Stream ms)
     {
+        ms.Seek(0, SeekOrigin.Begin);
+        var pictureType = Image.DetectFormat(ms) switch
+        {
+            BmpFormat => ImageFormat.Bmp,
+            GifFormat => ImageFormat.Gif,
+            JpegFormat => ImageFormat.Jpg,
+            PngFormat => ImageFormat.Png,
+            TiffFormat => ImageFormat.Tif,
+            WebpFormat => ImageFormat.WebP,
+            _ => new ImageFormat?()
+        };
+        if (pictureType.HasValue)
+        {
+            ms.Seek(0, SeekOrigin.Begin);
+            return pictureType;
+        }
+
         var br = new BinaryReader(ms);
-        if (IsJpg(br))
-        {
-            return ImageFormat.Jpg;
-        }
-        if (IsBmp(br, out _))
-        {
-            return ImageFormat.Bmp;
-        }
-
-        if (IsGif(br))
-        {
-            return ImageFormat.Gif;
-        }
-
-        if (IsPng(br))
-        {
-            return ImageFormat.Png;
-        }
-
-        if (IsTif(br, out _))
-        {
-            return ImageFormat.Tif;
-        }
-
         if (IsIco(br))
         {
+            ms.Seek(0, SeekOrigin.Begin);
             return ImageFormat.Ico;
-        }
-
-        if (IsWebP(br))
-        {
-            return ImageFormat.WebP;
         }
 
         if (IsEmf(br))
         {
+            ms.Seek(0, SeekOrigin.Begin);
             return ImageFormat.Emf;
         }
 
         if (IsWmf(br))
         {
+            ms.Seek(0, SeekOrigin.Begin);
             return ImageFormat.Wmf;
         }
 
         if (IsSvg(ms))
         {
+            ms.Seek(0, SeekOrigin.Begin);
             return ImageFormat.Svg;
         }
 
         if (IsGZip(br))
         {
             _ = ExtractImage(ToArray(ms), out ImageFormat? pt);
+            ms.Seek(0, SeekOrigin.Begin);
             return pt;
         }
 
@@ -168,35 +153,6 @@ public static class ImageDetectExt
         return img;
     }
 
-    private static bool IsJpg(BinaryReader br)
-    {
-        br.BaseStream.Position = 0;
-        var sign = br.ReadBytes(2);    //FF D8
-        return sign.Length >= 2 && sign[0] == 0xFF && sign[1] == 0xD8;
-    }
-
-    private static bool IsGif(BinaryReader br)
-    {
-        br.BaseStream.Seek(0, SeekOrigin.Begin);
-        var b = br.ReadBytes(6);
-        return b[0] == 0x47 && b[1] == 0x49 && b[2] == 0x46;    //byte 4-6 contains the version, but we don't check them here.
-    }
-
-    internal static bool IsBmp(BinaryReader br, out string sign)
-    {
-        try
-        {
-            br.BaseStream.Seek(0, SeekOrigin.Begin);
-            sign = Encoding.ASCII.GetString(br.ReadBytes(2));    //BM for a Windows bitmap
-            return (sign == "BM" || sign == "BA" || sign == "CI" || sign == "CP" || sign == "IC" || sign == "PT");
-        }
-        catch
-        {
-            sign = null;
-            return false;
-        }
-    }
-
     #region Ico
 
     internal static bool IsIco(BinaryReader br)
@@ -208,151 +164,6 @@ public static class ImageDetectExt
     }
 
     #endregion Ico
-
-    #region WebP
-
-    internal static bool IsWebP(BinaryReader br)
-    {
-        try
-        {
-            br.BaseStream.Seek(0, SeekOrigin.Begin);
-            var riff = Encoding.ASCII.GetString(br.ReadBytes(4));
-            var length = GetInt32BigEndian(br);
-            var webP = Encoding.ASCII.GetString(br.ReadBytes(4));
-
-            return riff == "RIFF" && webP == "WEBP";
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    #endregion WebP
-
-    #region Tiff
-
-    private static bool ReadTiffHeader(BinaryReader br, ref double width, ref double height, ref double horizontalResolution, ref double verticalResolution)
-    {
-        var ms = br.BaseStream;
-        var pos = ms.Position;
-        if (IsTif(br, out bool isBigEndian, false))
-        {
-            var offset = GetTifInt32(br, isBigEndian);
-            ms.Position = pos + offset;
-            var numberOfIdf = GetTifInt16(br, isBigEndian);
-            var ifds = new List<TifIfd>();
-            for (int i = 0; i < numberOfIdf; i++)
-            {
-                var ifd = new TifIfd()
-                {
-                    Tag = GetTifInt16(br, isBigEndian),
-                    Type = GetTifInt16(br, isBigEndian),
-                    Count = GetTifInt32(br, isBigEndian),
-                };
-                if (ifd.Type == 1 || ifd.Type == 2 || ifd.Type == 6 || ifd.Type == 7)
-                {
-                    ifd.ValueOffset = br.ReadByte();
-                    br.ReadBytes(3);
-                }
-                else if (ifd.Type == 3 || ifd.Type == 8)
-                {
-                    ifd.ValueOffset = GetTifInt16(br, isBigEndian);
-                    br.ReadBytes(2);
-                }
-                else
-                {
-                    ifd.ValueOffset = GetTifInt32(br, isBigEndian);
-                }
-                ifds.Add(ifd);
-            }
-
-            int resolutionUnit = 2;
-            foreach (var ifd in ifds)
-            {
-                switch (ifd.Tag)
-                {
-                    case 0x100:
-                        width = ifd.ValueOffset;
-                        break;
-
-                    case 0x101:
-                        height = ifd.ValueOffset;
-                        break;
-
-                    case 0x11A:
-                        ms.Position = ifd.ValueOffset + pos;
-                        var l1 = GetTifInt32(br, isBigEndian);
-                        var l2 = GetTifInt32(br, isBigEndian);
-                        horizontalResolution = l1 / l2;
-                        break;
-
-                    case 0x11B:
-                        ms.Position = ifd.ValueOffset + pos;
-                        l1 = GetTifInt32(br, isBigEndian);
-                        l2 = GetTifInt32(br, isBigEndian);
-                        verticalResolution = l1 / l2;
-                        break;
-
-                    case 0x128:
-                        resolutionUnit = ifd.ValueOffset;
-                        break;
-                }
-            }
-            if (resolutionUnit == 1)
-            {
-                horizontalResolution *= CmToInch;
-                verticalResolution *= CmToInch;
-            }
-        }
-        return width != 0 && height != 0;
-    }
-
-    private static bool IsTif(BinaryReader br, out bool isBigEndian, bool resetPos = false)
-    {
-        try
-        {
-            if (resetPos)
-            {
-                br.BaseStream.Position = 0;
-            }
-            var b = br.ReadBytes(2);
-            isBigEndian = Encoding.ASCII.GetString(b) == "MM";
-            var identifier = GetTifInt16(br, isBigEndian);
-            if (identifier == 42)
-            {
-                return true;
-            }
-        }
-        catch
-        {
-            isBigEndian = false;
-            return false;
-        }
-        return false;
-    }
-
-    private static short GetTifInt16(BinaryReader br, bool isBigEndian)
-    {
-        if (isBigEndian)
-        {
-            return GetInt16BigEndian(br);
-        }
-
-        return br.ReadInt16();
-    }
-
-    private static int GetTifInt32(BinaryReader br, bool isBigEndian)
-    {
-        if (isBigEndian)
-        {
-            return GetInt32BigEndian(br);
-        }
-
-        return br.ReadInt32();
-    }
-
-    #endregion Tiff
 
     #region Emf
 
@@ -375,17 +186,6 @@ public static class ImageDetectExt
     }
 
     #endregion Wmf
-
-    #region Png
-
-    private static bool IsPng(BinaryReader br)
-    {
-        br.BaseStream.Position = 0;
-        var signature = br.ReadBytes(8);
-        return signature.SequenceEqual(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 });
-    }
-
-    #endregion Png
 
     #region Svg
 
@@ -412,22 +212,4 @@ public static class ImageDetectExt
     }
 
     #endregion Svg
-
-    private static ushort GetUInt16BigEndian(BinaryReader br)
-    {
-        var b = br.ReadBytes(2);
-        return BitConverter.ToUInt16(new byte[] { b[1], b[0] }, 0);
-    }
-
-    private static short GetInt16BigEndian(BinaryReader br)
-    {
-        var b = br.ReadBytes(2);
-        return BitConverter.ToInt16(new byte[] { b[1], b[0] }, 0);
-    }
-
-    private static int GetInt32BigEndian(BinaryReader br)
-    {
-        var b = br.ReadBytes(4);
-        return BitConverter.ToInt32(new byte[] { b[3], b[2], b[1], b[0] }, 0);
-    }
 }
