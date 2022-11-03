@@ -183,146 +183,146 @@ public static class ExcelExtension
                         break;
                 }
             }
-        }
 
-        if (hasPicColumn)
-        {
-            // 填充表头
-            var maxWidth = new int[table.Columns.Count];
-            for (var j = 0; j < table.Columns.Count; j++)
+            if (hasPicColumn)
             {
-                sheet.SetValue(startRow, j + startColumn, table.Columns[j].ColumnName);
-                maxWidth[j] = Encoding.UTF8.GetBytes(table.Columns[j].ColumnName).Length;
-            }
-
-            sheet.Row(startRow).Style.Font.Bold = true; // 表头设置为粗体
-            sheet.Row(startRow).Style.Font.Size = sheet.Row(startRow).Style.Font.Size * 1.11f; // 表头字号放大1.11倍
-            sheet.Row(startRow).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            sheet.Row(startRow).CustomHeight = true; // 自动调整行高
-            if (settings != null)
-            {
-                foreach (var x in settings.ColumnTypes)
+                // 填充表头
+                var maxWidth = new int[table.Columns.Count];
+                for (var j = 0; j < table.Columns.Count; j++)
                 {
-                    sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
+                    sheet.SetValue(startRow, j + startColumn, table.Columns[j].ColumnName);
+                    maxWidth[j] = Encoding.UTF8.GetBytes(table.Columns[j].ColumnName).Length;
                 }
-            }
 
-            // 填充内容
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                sheet.Row(i + startRow + 1).CustomHeight = true; // 自动调整行高
-                for (int j = 0; j < table.Columns.Count; j++)
+                sheet.Row(startRow).Style.Font.Bold = true; // 表头设置为粗体
+                sheet.Row(startRow).Style.Font.Size = sheet.Row(startRow).Style.Font.Size * 1.11f; // 表头字号放大1.11倍
+                sheet.Row(startRow).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                sheet.Row(startRow).CustomHeight = true; // 自动调整行高
+                if (settings != null)
                 {
-                    switch (table.Rows[i][j])
+                    foreach (var x in settings.ColumnTypes)
                     {
-                        case Stream s:
-                            {
-                                if (s.Length > 2)
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(s) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(s, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s, pictureType);
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-                                    var percent = Math.Round(Math.Min(12000f / bmp.Height, 100));
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 400);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-
-                                break;
-                            }
-
-                        case IEnumerable<Stream> streams:
-                            {
-                                double sumWidth = 0;
-                                foreach (var stream in streams.Where(stream => stream.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(stream) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(stream, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream, pictureType);
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IDictionary<string, Stream> dic:
-                            {
-                                double sumWidth = 0;
-                                foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IDictionary<string, MemoryStream> dic:
-                            {
-                                double sumWidth = 0;
-                                foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
-                                    picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(i + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(i + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        default:
-                            {
-                                sheet.SetValue(i + startRow + 1, j + startColumn, table.Rows[i][j] ?? "");
-                                if (table.Rows[i][j] is ValueType)
-                                {
-                                    sheet.Column(j + startColumn).AutoFit();
-                                }
-                                else
-                                {
-                                    // 根据单元格内容长度来自适应调整列宽
-                                    using var bitmap = new Bitmap(1, 1);
-                                    using var graphics = Graphics.FromImage(bitmap);
-                                    using var font = new Font(sheet.Cells[i + startRow + 1, j + startColumn].Style.Font.Name, 1.66f);
-                                    var measureText = graphics.MeasureString(table.Rows[i][j].ToString(), font);
-                                    sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(measureText.Width, sheet.Column(j + startColumn).Width));
-                                }
-
-                                break;
-                            }
+                        sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
                     }
                 }
+
+                // 填充内容
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    sheet.Row(i + startRow + 1).CustomHeight = true; // 自动调整行高
+                    for (int j = 0; j < table.Columns.Count; j++)
+                    {
+                        switch (table.Rows[i][j])
+                        {
+                            case Stream s:
+                                {
+                                    if (s.Length > 2)
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(s) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(s, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s, pictureType);
+                                        picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
+                                        var percent = Math.Round(Math.Min(12000f / bmp.Height, 100));
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(i + startRow + 1).Height = 90;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 400);
+                                    }
+
+                                    sheet.SetValue(i + startRow + 1, j + startColumn, "");
+
+                                    break;
+                                }
+
+                            case IEnumerable<Stream> streams:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var stream in streams.Where(stream => stream.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(stream) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(stream, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream, pictureType);
+                                        picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(i + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(i + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            case IDictionary<string, Stream> dic:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
+                                        picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(i + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(i + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            case IDictionary<string, MemoryStream> dic:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{i}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
+                                        picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(i + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(i + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    sheet.SetValue(i + startRow + 1, j + startColumn, table.Rows[i][j] ?? "");
+                                    if (table.Rows[i][j] is ValueType)
+                                    {
+                                        sheet.Column(j + startColumn).AutoFit();
+                                    }
+                                    else
+                                    {
+                                        // 根据单元格内容长度来自适应调整列宽
+                                        using var bitmap = new Bitmap(1, 1);
+                                        using var graphics = Graphics.FromImage(bitmap);
+                                        using var font = new Font(sheet.Cells[i + startRow + 1, j + startColumn].Style.Font.Name, 1.66f);
+                                        var measureText = graphics.MeasureString(table.Rows[i][j].ToString(), font);
+                                        sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(measureText.Width, sheet.Column(j + startColumn).Width));
+                                    }
+
+                                    break;
+                                }
+                        }
+                    }
+                }
+                sheet.Cells.AutoFitColumns(); // 表头自适应列宽
+                sheet.Cells.Style.WrapText = true;
             }
-            sheet.Cells.AutoFitColumns(); // 表头自适应列宽
-            sheet.Cells.Style.WrapText = true;
-        }
-        else
-        {
-            sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
-            sheet.Cells.Style.WrapText = true;
+            else
+            {
+                sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
+                sheet.Cells.Style.WrapText = true;
+            }
         }
     }
 
@@ -352,149 +352,149 @@ public static class ExcelExtension
             {
                 hasPicColumn = true;
             }
-        }
 
-        if (hasPicColumn)
-        {
-            // 填充表头
-            var maxWidth = new int[properties.Length];
-            for (var j = 0; j < properties.Length; j++)
+            if (hasPicColumn)
             {
-                sheet.SetValue(startRow, j + startColumn, properties[j].Name);
-                maxWidth[j] = Encoding.UTF8.GetBytes(properties[j].Name).Length;
-            }
-
-            sheet.Row(startRow).Style.Font.Bold = true; // 表头设置为粗体
-            sheet.Row(startRow).Style.Font.Size = sheet.Row(startRow).Style.Font.Size * 1.11f; // 表头字号放大1.11倍
-            sheet.Row(startRow).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            sheet.Row(startRow).CustomHeight = true; // 自动调整行高
-            if (settings != null)
-            {
-                foreach (var x in settings.ColumnTypes)
+                // 填充表头
+                var maxWidth = new int[properties.Length];
+                for (var j = 0; j < properties.Length; j++)
                 {
-                    sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
+                    sheet.SetValue(startRow, j + startColumn, properties[j].Name);
+                    maxWidth[j] = Encoding.UTF8.GetBytes(properties[j].Name).Length;
                 }
-            }
 
-            // 填充内容
-            int current = 0;
-            foreach (var item in table)
-            {
-                sheet.Row(current + startRow + 1).CustomHeight = true; // 自动调整行高
-                for (int j = 0; j < properties.Length; j++)
+                sheet.Row(startRow).Style.Font.Bold = true; // 表头设置为粗体
+                sheet.Row(startRow).Style.Font.Size = sheet.Row(startRow).Style.Font.Size * 1.11f; // 表头字号放大1.11倍
+                sheet.Row(startRow).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                sheet.Row(startRow).CustomHeight = true; // 自动调整行高
+                if (settings != null)
                 {
-                    switch (properties[j].GetValue(item))
+                    foreach (var x in settings.ColumnTypes)
                     {
-                        case Stream s:
-                            {
-                                if (s.Length > 2)
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(s) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(s, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s, pictureType);
-                                    picture.SetPosition(current + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-                                    var percent = Math.Round(Math.Min(12000f / bmp.Height, 100));
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(current + startRow + 1).Height = 90;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 400);
-                                }
-
-                                sheet.SetValue(current + startRow + 1, j + startColumn, "");
-
-                                break;
-                            }
-
-                        case IEnumerable<Stream> streams:
-                            {
-                                double sumWidth = 0;
-                                foreach (var stream in streams.Where(stream => stream.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(stream) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(stream, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream, pictureType);
-                                    picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(current + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(current + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IDictionary<string, Stream> dic:
-                            {
-                                double sumWidth = 0;
-                                foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
-                                    picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(current + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(current + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        case IDictionary<string, MemoryStream> dic:
-                            {
-                                double sumWidth = 0;
-                                foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
-                                {
-                                    var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
-                                    var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
-                                    var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
-                                    picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
-                                    var percent = Math.Min(12000f / bmp.Height, 100);
-                                    picture.SetSize((int)percent);
-                                    sheet.Row(current + startRow + 1).Height = 90;
-                                    sumWidth += bmp.Width * percent / 100 + 5;
-                                    sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
-                                }
-
-                                sheet.SetValue(current + startRow + 1, j + startColumn, "");
-                                break;
-                            }
-
-                        default:
-                            {
-                                sheet.SetValue(current + startRow + 1, j + startColumn, properties[j].GetValue(item) ?? "");
-                                if (properties[j].GetValue(item) is ValueType)
-                                {
-                                    sheet.Column(j + startColumn).AutoFit();
-                                }
-                                else
-                                {
-                                    // 根据单元格内容长度来自适应调整列宽
-                                    using var bitmap = new Bitmap(1, 1);
-                                    using var graphics = Graphics.FromImage(bitmap);
-                                    using var font = new Font(sheet.Cells[current + startRow + 1, j + startColumn].Style.Font.Name, 1.66f);
-                                    var measureText = graphics.MeasureString(properties[j].GetValue(item).ToString(), font);
-                                    sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(measureText.Width, sheet.Column(j + startColumn).Width));
-                                }
-
-                                break;
-                            }
+                        sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
                     }
                 }
-                current++;
-            }
 
-            sheet.Cells.AutoFitColumns(); // 表头自适应列宽
-            sheet.Cells.Style.WrapText = true;
-        }
-        else
-        {
-            sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
-            sheet.Cells.Style.WrapText = true;
+                // 填充内容
+                int current = 0;
+                foreach (var item in table)
+                {
+                    sheet.Row(current + startRow + 1).CustomHeight = true; // 自动调整行高
+                    for (int j = 0; j < properties.Length; j++)
+                    {
+                        switch (properties[j].GetValue(item))
+                        {
+                            case Stream s:
+                                {
+                                    if (s.Length > 2)
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(s) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(s, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s, pictureType);
+                                        picture.SetPosition(current + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
+                                        var percent = Math.Round(Math.Min(12000f / bmp.Height, 100));
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(current + startRow + 1).Height = 90;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, bmp.Width * percent / 400);
+                                    }
+
+                                    sheet.SetValue(current + startRow + 1, j + startColumn, "");
+
+                                    break;
+                                }
+
+                            case IEnumerable<Stream> streams:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var stream in streams.Where(stream => stream.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(stream) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(stream, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream, pictureType);
+                                        picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(current + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(current + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            case IDictionary<string, Stream> dic:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
+                                        picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(current + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(current + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            case IDictionary<string, MemoryStream> dic:
+                                {
+                                    double sumWidth = 0;
+                                    foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
+                                    {
+                                        var pictureType = ImageDetector.GetPictureType(kv.Value) ?? throw new ArgumentException($"{current}行{j}列图像格式不受支持");
+                                        var bmp = new ExcelImage(kv.Value, pictureType).Bounds;
+                                        var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, pictureType, new Uri(kv.Key));
+                                        picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(5 + sumWidth)); //设置图片显示位置
+                                        var percent = Math.Min(12000f / bmp.Height, 100);
+                                        picture.SetSize((int)percent);
+                                        sheet.Row(current + startRow + 1).Height = 90;
+                                        sumWidth += bmp.Width * percent / 100 + 5;
+                                        sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth / 5);
+                                    }
+
+                                    sheet.SetValue(current + startRow + 1, j + startColumn, "");
+                                    break;
+                                }
+
+                            default:
+                                {
+                                    sheet.SetValue(current + startRow + 1, j + startColumn, properties[j].GetValue(item) ?? "");
+                                    if (properties[j].GetValue(item) is ValueType)
+                                    {
+                                        sheet.Column(j + startColumn).AutoFit();
+                                    }
+                                    else
+                                    {
+                                        // 根据单元格内容长度来自适应调整列宽
+                                        using var bitmap = new Bitmap(1, 1);
+                                        using var graphics = Graphics.FromImage(bitmap);
+                                        using var font = new Font(sheet.Cells[current + startRow + 1, j + startColumn].Style.Font.Name, 1.66f);
+                                        var measureText = graphics.MeasureString(properties[j].GetValue(item).ToString(), font);
+                                        sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(measureText.Width, sheet.Column(j + startColumn).Width));
+                                    }
+
+                                    break;
+                                }
+                        }
+                    }
+                    current++;
+                }
+
+                sheet.Cells.AutoFitColumns(); // 表头自适应列宽
+                sheet.Cells.Style.WrapText = true;
+            }
+            else
+            {
+                sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
+                sheet.Cells.Style.WrapText = true;
+            }
         }
     }
 

@@ -15,7 +15,7 @@ namespace Masuit.Tools.Logging
     /// </summary>
     public class LogManager
     {
-        static readonly ConcurrentQueue<Tuple<string, string>> LogQueue = new ConcurrentQueue<Tuple<string, string>>();
+        private static readonly ConcurrentQueue<Tuple<string, string>> LogQueue = new ConcurrentQueue<Tuple<string, string>>();
 
         /// <summary>
         /// 自定义事件
@@ -69,7 +69,7 @@ namespace Masuit.Tools.Logging
         /// </summary>
         public static string LogDirectory
         {
-            get => logDirectory ?? Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            get => logDirectory ?? (Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory).Any(s => s.Contains("Web.config")) ? AppDomain.CurrentDomain.BaseDirectory + @"App_Data\Logs\" : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
             set
             {
                 //自定义目录
