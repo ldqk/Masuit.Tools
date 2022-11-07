@@ -117,7 +117,7 @@ namespace Masuit.Tools
         /// <param name="decimals"></param>
         /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static decimal Round(this ref decimal num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
+        public static decimal Round(this decimal num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
             num = Math.Round(num, decimals, mode);
             return num;
@@ -130,7 +130,7 @@ namespace Masuit.Tools
         /// <param name="decimals"></param>
         /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static double Round(this ref double num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
+        public static double Round(this double num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
             num = Math.Round(num, decimals, mode);
             return num;
@@ -143,7 +143,7 @@ namespace Masuit.Tools
         /// <param name="decimals"></param>
         /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static decimal? Round(this ref decimal? num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
+        public static decimal? Round(this decimal? num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
             if (num.HasValue)
             {
@@ -159,7 +159,7 @@ namespace Masuit.Tools
         /// <param name="decimals"></param>
         /// <param name="mode">四舍五入策略</param>
         /// <returns></returns>
-        public static double? Round(this ref double? num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
+        public static double? Round(this double? num, int decimals, MidpointRounding mode = MidpointRounding.AwayFromZero)
         {
             if (num.HasValue)
             {
