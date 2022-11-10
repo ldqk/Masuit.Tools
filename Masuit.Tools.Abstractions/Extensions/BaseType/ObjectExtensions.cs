@@ -175,15 +175,23 @@ namespace Masuit.Tools
             {
                 return (bool)value == false;
             }
+
             if (type.IsEnum)
             {
                 return (int)value == 0;
             }
+
             if (type == typeof(DateTime))
             {
                 return (DateTime)value == default;
             }
-            return double.Parse(value.ToString()) == 0;
+
+            if (type.IsNumeric())
+            {
+                return (double)value == 0;
+            }
+
+            return false;
         }
 
         /// <summary>
