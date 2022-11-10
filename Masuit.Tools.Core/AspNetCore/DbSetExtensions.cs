@@ -127,7 +127,7 @@ public static class DbSetExtensions
 
         var keyObject = keySelector.CompileFast()(entity);
         var parameter = keySelector.Parameters[0];
-        var lambda = Expression.Lambda<Func<T, bool>>(Expression.Equal(ReplaceParameter(keySelector.Body, parameter), Expression.Constant(keyObject)), parameter);
+        var lambda = Expression.Lambda<Func<T, bool>>(Expression.Equal(keySelector.Body, Expression.Constant(keyObject)), parameter);
         var item = dbSet.FirstOrDefault(lambda);
         if (item == null)
         {
@@ -176,27 +176,17 @@ public static class DbSetExtensions
         }
     }
 
-    private static Expression ReplaceParameter(Expression oldExpression, ParameterExpression newParameter)
-    {
-        return oldExpression.NodeType switch
-        {
-            ExpressionType.MemberAccess => Expression.MakeMemberAccess(newParameter, ((MemberExpression)oldExpression).Member),
-            ExpressionType.New => Expression.New(((NewExpression)oldExpression).Constructor, ((NewExpression)oldExpression).Arguments.Select(a => ReplaceParameter(a, newParameter)).ToArray()),
-            _ => throw new NotSupportedException("不支持的表达式类型：" + oldExpression.NodeType)
-        };
-    }
-
 #if NET6_0_OR_GREATER
 
-        /// <summary>
-        /// 随机排序
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public static IOrderedQueryable<T> OrderByRandom<T>(this IQueryable<T> query)
-        {
-            return query.OrderBy(_ => EF.Functions.Random());
-        }
+    /// <summary>
+    /// 随机排序
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="query"></param>
+    /// <returns></returns>
+    public static IOrderedQueryable<T> OrderByRandom<T>(this IQueryable<T> query)
+    {
+        return query.OrderBy(_ => EF.Functions.Random());
+    }
 #endif
 }

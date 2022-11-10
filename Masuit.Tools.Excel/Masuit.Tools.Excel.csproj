@@ -3,7 +3,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>1.2.3.4</Version>
+        <Version>1.2.3.5</Version>
         <Authors>懒得勤快</Authors>
         <Description>Masuit.Tools.Excel导出库，支持一些简单数据的导出，支持图片列</Description>
         <Copyright>懒得勤快</Copyright>
@@ -16,7 +16,7 @@
         <RepositoryType>Github</RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <FileVersion>1.2.3.1</FileVersion>
+        <FileVersion>1.2.3.2</FileVersion>
         <Company>masuit.org</Company>
         <AssemblyVersion>1.2.3</AssemblyVersion>
         <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
@@ -38,7 +38,7 @@
       </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="EPPlus" Version="6.0.8" />
+        <PackageReference Include="EPPlus" Version="6.1.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
