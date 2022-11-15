@@ -28,7 +28,7 @@ namespace Masuit.Tools.Security
             }
 
             StringBuilder ret = new StringBuilder();
-            using var des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             byte[] inputByteArray = Encoding.Default.GetBytes(strText);
             des.Key = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
             des.IV = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
@@ -55,7 +55,7 @@ namespace Masuit.Tools.Security
         public static string DesEncrypt(this string strText, byte[] desKey, byte[] desIV)
         {
             StringBuilder ret = new StringBuilder();
-            using var des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             byte[] inputByteArray = Encoding.Default.GetBytes(strText);
             des.Key = desKey;
             des.IV = desIV;
@@ -96,7 +96,7 @@ namespace Masuit.Tools.Security
             byte[] bin = new byte[100];
             long rdlen = 0;
             long totlen = fin.Length;
-            DES des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var encStream = new CryptoStream(fout, des.CreateEncryptor(byKey, iv), CryptoStreamMode.Write);
             while (rdlen < totlen)
             {
@@ -120,7 +120,7 @@ namespace Masuit.Tools.Security
             byte[] bin = new byte[100];
             long rdlen = 0;
             long totlen = fin.Length;
-            DES des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var encStream = new CryptoStream(fout, des.CreateEncryptor(desKey, desIV), CryptoStreamMode.Write);
             while (rdlen < totlen)
             {
@@ -155,7 +155,7 @@ namespace Masuit.Tools.Security
             byte[] bin = new byte[100];
             long rdlen = 0;
             long totlen = fin.Length;
-            using DES des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var encStream = new CryptoStream(fout, des.CreateDecryptor(byKey, iv), CryptoStreamMode.Write);
             while (rdlen < totlen)
             {
@@ -179,7 +179,7 @@ namespace Masuit.Tools.Security
             byte[] bin = new byte[100];
             long rdlen = 0;
             long totlen = fin.Length;
-            using DES des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var encStream = new CryptoStream(fout, des.CreateDecryptor(desKey, desIV), CryptoStreamMode.Write);
             while (rdlen < totlen)
             {
@@ -204,7 +204,7 @@ namespace Masuit.Tools.Security
             }
 
             var ms = new MemoryStream();
-            using var des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var inputByteArray = new byte[pToDecrypt.Length / 2];
             for (int x = 0; x < pToDecrypt.Length / 2; x++)
             {
@@ -231,7 +231,7 @@ namespace Masuit.Tools.Security
         public static string DesDecrypt(this string pToDecrypt, byte[] desKey, byte[] desIV)
         {
             var ms = new MemoryStream();
-            using var des = new DESCryptoServiceProvider();
+            using var des = DES.Create();
             var inputByteArray = new byte[pToDecrypt.Length / 2];
             for (int x = 0; x < pToDecrypt.Length / 2; x++)
             {
@@ -249,27 +249,9 @@ namespace Masuit.Tools.Security
 
         #endregion
 
-        #region 对称加密算法AES RijndaelManaged加密解密
+        #region 对称加密算法AES加密解密
 
-        private static byte[] Keys =
-        {
-            0x41,
-            0x72,
-            0x65,
-            0x79,
-            0x6F,
-            0x75,
-            0x6D,
-            0x79,
-            0x53,
-            0x6E,
-            0x6F,
-            0x77,
-            0x6D,
-            0x61,
-            0x6E,
-            0x3F
-        };
+        private static byte[] Keys = { 0x41, 0x72, 0x65, 0x79, 0x6F, 0x75, 0x6D, 0x79, 0x53, 0x6E, 0x6F, 0x77, 0x6D, 0x61, 0x6E, 0x3F };
 
         /// <summary>
         /// 生成符合AES加密规则的密钥
@@ -278,17 +260,15 @@ namespace Masuit.Tools.Security
         /// <returns></returns>
         public static string GenerateAesKey(int length)
         {
-            var crypto = new AesCryptoServiceProvider
-            {
-                KeySize = length,
-                BlockSize = 128
-            };
-            crypto.GenerateKey();
-            return Convert.ToBase64String(crypto.Key);
+            using var aes = Aes.Create();
+            aes.KeySize = length;
+            aes.BlockSize = 128;
+            aes.GenerateKey();
+            return Convert.ToBase64String(aes.Key);
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+        /// 对称加密算法AES(块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
         /// <param name="encryptKey">加密密钥，须半角字符</param>
@@ -298,25 +278,23 @@ namespace Masuit.Tools.Security
         {
             encryptKey = GetSubString(encryptKey, 32, "");
             encryptKey = encryptKey.PadRight(32, ' ');
-            using var rijndaelProvider = new RijndaelManaged
-            {
-                Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32)),
-                IV = Keys,
-                Mode = mode
-            };
-            using ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32));
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using ICryptoTransform rijndaelEncrypt = aes.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
             byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
             return Convert.ToBase64String(encryptedData);
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+        /// 对称加密算法AES加密(块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
         /// <param name="options">加密选项</param>
         /// <returns>加密结果字符串</returns>
-        public static string AESEncrypt(this string encryptString, RijndaelManaged options)
+        public static string AESEncrypt(this string encryptString, Aes options)
         {
             using ICryptoTransform rijndaelEncrypt = options.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
@@ -325,7 +303,7 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged加密(RijndaelManaged（AES）算法是块式加密算法)
+        /// 对称加密算法AES加密(块式加密算法)
         /// </summary>
         /// <param name="encryptString">待加密字符串</param>
         /// <param name="encryptKey">加密密钥，须半角字符</param>
@@ -333,20 +311,18 @@ namespace Masuit.Tools.Security
         /// <returns>加密结果字符串</returns>
         public static string AESEncrypt(this string encryptString, byte[] encryptKey, CipherMode mode = CipherMode.CBC)
         {
-            using var rijndaelProvider = new RijndaelManaged
-            {
-                Key = encryptKey,
-                IV = Keys,
-                Mode = mode
-            };
-            using ICryptoTransform rijndaelEncrypt = rijndaelProvider.CreateEncryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = encryptKey;
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using ICryptoTransform rijndaelEncrypt = aes.CreateEncryptor();
             byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
             byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
             return Convert.ToBase64String(encryptedData);
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged解密字符串
+        /// 对称加密算法AES解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
         /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
@@ -358,13 +334,11 @@ namespace Masuit.Tools.Security
             {
                 decryptKey = GetSubString(decryptKey, 32, "");
                 decryptKey = decryptKey.PadRight(32, ' ');
-                using var rijndaelProvider = new RijndaelManaged()
-                {
-                    Key = Encoding.UTF8.GetBytes(decryptKey),
-                    IV = Keys,
-                    Mode = mode
-                };
-                using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
+                using var aes = Aes.Create("AesManaged");
+                aes.Key = Encoding.UTF8.GetBytes(decryptKey);
+                aes.IV = Keys;
+                aes.Mode = mode;
+                using ICryptoTransform rijndaelDecrypt = aes.CreateDecryptor();
                 byte[] inputData = Convert.FromBase64String(decryptString);
                 byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
                 return Encoding.UTF8.GetString(decryptedData);
@@ -376,12 +350,12 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged解密字符串
+        /// 对称加密算法AES解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
         /// <param name="options">加密选项</param>
         /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
-        public static string AESDecrypt(this string decryptString, RijndaelManaged options)
+        public static string AESDecrypt(this string decryptString, Aes options)
         {
             try
             {
@@ -397,7 +371,7 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
-        /// 对称加密算法AES RijndaelManaged解密字符串
+        /// 对称加密算法AES解密字符串
         /// </summary>
         /// <param name="decryptString">待解密的字符串</param>
         /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
@@ -407,13 +381,11 @@ namespace Masuit.Tools.Security
         {
             try
             {
-                using var rijndaelProvider = new RijndaelManaged()
-                {
-                    Key = decryptKey,
-                    IV = Keys,
-                    Mode = mode
-                };
-                using ICryptoTransform rijndaelDecrypt = rijndaelProvider.CreateDecryptor();
+                using var aes = Aes.Create("AesManaged");
+                aes.Key = decryptKey;
+                aes.IV = Keys;
+                aes.Mode = mode;
+                using ICryptoTransform rijndaelDecrypt = aes.CreateDecryptor();
                 byte[] inputData = Convert.FromBase64String(decryptString);
                 byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
                 return Encoding.UTF8.GetString(decryptedData);
@@ -531,13 +503,11 @@ namespace Masuit.Tools.Security
         {
             decryptKey = GetSubString(decryptKey, 32, "");
             decryptKey = decryptKey.PadRight(32, ' ');
-            using var rijndaelProvider = new RijndaelManaged()
-            {
-                Key = Encoding.UTF8.GetBytes(decryptKey),
-                IV = Keys,
-                Mode = mode
-            };
-            using var encrypto = rijndaelProvider.CreateEncryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(decryptKey);
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using var encrypto = aes.CreateEncryptor();
             return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
         }
 
@@ -550,13 +520,11 @@ namespace Masuit.Tools.Security
         /// <returns>加密流</returns>
         public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
         {
-            using var rijndaelProvider = new RijndaelManaged()
-            {
-                Key = decryptKey,
-                IV = Keys,
-                Mode = mode
-            };
-            using var encrypto = rijndaelProvider.CreateEncryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = decryptKey;
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using var encrypto = aes.CreateEncryptor();
             return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
         }
 
@@ -571,13 +539,11 @@ namespace Masuit.Tools.Security
         {
             decryptKey = GetSubString(decryptKey, 32, "");
             decryptKey = decryptKey.PadRight(32, ' ');
-            using var rijndaelProvider = new RijndaelManaged()
-            {
-                Key = Encoding.UTF8.GetBytes(decryptKey),
-                IV = Keys,
-                Mode = mode
-            };
-            using var decrypto = rijndaelProvider.CreateDecryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(decryptKey);
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using var decrypto = aes.CreateDecryptor();
             return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
         }
 
@@ -590,13 +556,11 @@ namespace Masuit.Tools.Security
         /// <returns>加密流</returns>
         public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
         {
-            using var rijndaelProvider = new RijndaelManaged()
-            {
-                Key = decryptKey,
-                IV = Keys,
-                Mode = mode
-            };
-            using var decrypto = rijndaelProvider.CreateDecryptor();
+            using var aes = Aes.Create("AesManaged");
+            aes.Key = decryptKey;
+            aes.IV = Keys;
+            aes.Mode = mode;
+            using var decrypto = aes.CreateDecryptor();
             return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
         }
 
@@ -682,7 +646,7 @@ namespace Masuit.Tools.Security
         public static string SHA256(this string str)
         {
             byte[] sha256Data = Encoding.UTF8.GetBytes(str);
-            using var sha256 = new SHA256Managed();
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
             byte[] result = sha256.ComputeHash(sha256Data);
             return Convert.ToBase64String(result); //返回长度为44字节的字符串
         }
@@ -783,7 +747,7 @@ namespace Masuit.Tools.Security
         public static string SHA256(this Stream stream)
         {
             using var fs = new BufferedStream(stream, 1048576);
-            SHA256Managed sha = new SHA256Managed();
+            using var sha = System.Security.Cryptography.SHA256.Create();
             byte[] checksum = sha.ComputeHash(fs);
             return BitConverter.ToString(checksum).Replace("-", string.Empty);
         }
@@ -832,15 +796,15 @@ namespace Masuit.Tools.Security
     /// <summary>
     ///     RC2加密解密算法
     /// </summary>
-    public static class RC2
+    public static class RC2Crypt
     {
         private static ASCIIEncoding _asciiEncoding;
         private static byte[] _iv;
         private static byte[] _key;
-        private static RC2CryptoServiceProvider _rc2Csp;
+        private static RC2 _rc2Csp;
         private static UnicodeEncoding _textConverter;
 
-        static RC2()
+        static RC2Crypt()
         {
             InitializeComponent();
         }
@@ -879,7 +843,7 @@ namespace Masuit.Tools.Security
             };
             _asciiEncoding = new ASCIIEncoding();
             _textConverter = new UnicodeEncoding();
-            _rc2Csp = new RC2CryptoServiceProvider();
+            _rc2Csp = RC2.Create();
         }
 
         #region 将文本数据加密后写入一个文件
@@ -909,10 +873,10 @@ namespace Masuit.Tools.Security
             tmpFileStream.Read(index, 0, 10261);
             tmpFileStream.Close();
             //定义基本的加密转换运算
-            using var Encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
+            using var encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
             var msEncrypt = new MemoryStream();
             //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
-            using var csEncrypt = new CryptoStream(msEncrypt, Encryptor, CryptoStreamMode.Write);
+            using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
             //将要加密的文本转换成UTF-16 编码，保存在tmp数组。
             var tmp = _textConverter.GetBytes(toEncryptText);
             //将tmp输入csEncrypt,将通过Encryptor来加密。
@@ -1216,103 +1180,5 @@ namespace Masuit.Tools.Security
         }
 
         #endregion
-    }
-
-    /// <summary>
-    ///     对称加密解密算法类
-    /// </summary>
-    public static class Rijndael
-    {
-        private static string _key;
-        private static SymmetricAlgorithm _mobjCryptoService;
-
-        /// <summary>
-        ///     对称加密类的构造函数
-        /// </summary>
-        public static void SymmetricMethod()
-        {
-            _mobjCryptoService = new RijndaelManaged();
-            _key = "Guz(%&hj7x89H$yuBI0456FtmaT5&fvHUFCy76*h%(HilJ$lhj!y6&(*jkP87jH7";
-        }
-
-        /// <summary>
-        ///     获得密钥
-        /// </summary>
-        /// <returns>密钥</returns>
-        private static byte[] GetLegalKey()
-        {
-            var sTemp = _key;
-            _mobjCryptoService.GenerateKey();
-            var bytTemp = _mobjCryptoService.Key;
-            var keyLength = bytTemp.Length;
-            if (sTemp.Length > keyLength)
-            {
-                sTemp = sTemp.Substring(0, keyLength);
-            }
-            else if (sTemp.Length < keyLength)
-            {
-                sTemp = sTemp.PadRight(keyLength, ' ');
-            }
-
-            return Encoding.ASCII.GetBytes(sTemp);
-        }
-
-        /// <summary>
-        ///     获得初始向量IV
-        /// </summary>
-        /// <returns>初试向量IV</returns>
-        private static byte[] GetLegalIV()
-        {
-            var sTemp = "E4ghj*Ghg7!rNIfb&95GUY86GfghUber57HBh(u%g6HJ($jhWk7&!hg4ui%$hjk";
-            _mobjCryptoService.GenerateIV();
-            var bytTemp = _mobjCryptoService.IV;
-            var ivLength = bytTemp.Length;
-            if (sTemp.Length > ivLength)
-            {
-                sTemp = sTemp.Substring(0, ivLength);
-            }
-            else if (sTemp.Length < ivLength)
-            {
-                sTemp = sTemp.PadRight(ivLength, ' ');
-            }
-
-            return Encoding.ASCII.GetBytes(sTemp);
-        }
-
-        /// <summary>
-        ///     加密方法
-        /// </summary>
-        /// <param name="source">待加密的串</param>
-        /// <returns>经过加密的串</returns>
-        public static string Encrypto(this string source)
-        {
-            var bytIn = Encoding.UTF8.GetBytes(source);
-            var ms = new MemoryStream();
-            _mobjCryptoService.Key = GetLegalKey();
-            _mobjCryptoService.IV = GetLegalIV();
-            using var encrypto = _mobjCryptoService.CreateEncryptor();
-            using var cs = new CryptoStream(ms, encrypto, CryptoStreamMode.Write);
-            cs.Write(bytIn, 0, bytIn.Length);
-            cs.FlushFinalBlock();
-            var bytOut = ms.ToArray();
-            return Convert.ToBase64String(bytOut);
-        }
-
-        /// <summary>
-        ///     解密方法
-        /// </summary>
-        /// <param name="source">待解密的串</param>
-        /// <returns>经过解密的串</returns>
-        public static string Decrypto(this string source)
-        {
-            var bytIn = Convert.FromBase64String(source);
-            var ms = new MemoryStream(bytIn, 0, bytIn.Length);
-            _mobjCryptoService.Key = GetLegalKey();
-            _mobjCryptoService.IV = GetLegalIV();
-            using var encrypto = _mobjCryptoService.CreateDecryptor();
-            using var cs = new CryptoStream(ms, encrypto, CryptoStreamMode.Read);
-            using var sr = new StreamReader(cs);
-            return sr.ReadToEnd();
-        }
     }
 }

@@ -38,13 +38,10 @@ namespace Masuit.Tools.Files
             using var fsWrite = new FileStream(dest, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             byte[] buf = new byte[bufferSize];
             int len;
-            await Task.Run(() =>
+            while ((len = await fs.ReadAsync(buf, 0, buf.Length)) != 0)
             {
-                while ((len = fs.Read(buf, 0, buf.Length)) != 0)
-                {
-                    fsWrite.Write(buf, 0, len);
-                }
-            }).ConfigureAwait(true);
+                await fsWrite.WriteAsync(buf, 0, len);
+            }
         }
 
         /// <summary>
@@ -75,6 +72,20 @@ namespace Masuit.Tools.Files
         public static string GetFileSha1(this Stream fs) => HashFile(fs, "sha1");
 
         /// <summary>
+        /// 计算文件的 sha256 值
+        /// </summary>
+        /// <param name="fs">源文件流</param>
+        /// <returns>sha256 值16进制字符串</returns>
+        public static string GetFileSha256(this Stream fs) => HashFile(fs, "sha256");
+
+        /// <summary>
+        /// 计算文件的 sha512 值
+        /// </summary>
+        /// <param name="fs">源文件流</param>
+        /// <returns>sha512 值16进制字符串</returns>
+        public static string GetFileSha512(this Stream fs) => HashFile(fs, "sha512");
+
+        /// <summary>
         /// 计算文件的哈希值
         /// </summary>
         /// <param name="fs">被操作的源数据流</param>
@@ -82,14 +93,15 @@ namespace Masuit.Tools.Files
         /// <returns>哈希值16进制字符串</returns>
         private static string HashFile(Stream fs, string algo)
         {
-            HashAlgorithm crypto = algo switch
+            using HashAlgorithm crypto = algo switch
             {
-                "sha1" => new SHA1CryptoServiceProvider(),
-                _ => new MD5CryptoServiceProvider(),
+                "sha1" => SHA1.Create(),
+                "sha256" => SHA256.Create(),
+                "sha512" => SHA512.Create(),
+                _ => MD5.Create(),
             };
             byte[] retVal = crypto.ComputeHash(fs);
-
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (var t in retVal)
             {
                 sb.Append(t.ToString("x2"));

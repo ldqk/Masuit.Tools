@@ -48,7 +48,7 @@ public static class IEnumerableExtensions
     /// <param name="second"></param>
     /// <param name="keySelector"></param>
     /// <returns></returns>
-    public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
+    public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
     {
         if (first == null)
             throw new ArgumentNullException(nameof(first));

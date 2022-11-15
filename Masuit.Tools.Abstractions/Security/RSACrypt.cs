@@ -166,7 +166,7 @@ namespace Masuit.Tools.Security
         public static byte[] GetHashBytes(this string mStrSource)
         {
             //从字符串中取得Hash描述
-            using var md5 = HashAlgorithm.Create("MD5");
+            using var md5 = MD5.Create();
             var buffer = Encoding.UTF8.GetBytes(mStrSource);
             return md5.ComputeHash(buffer);
         }
@@ -179,9 +179,9 @@ namespace Masuit.Tools.Security
         public static string GetHashString(this string mStrSource)
         {
             //从字符串中取得Hash描述
-            using var md5 = HashAlgorithm.Create("MD5");
+            using var md5 = MD5.Create();
             var buffer = Encoding.UTF8.GetBytes(mStrSource);
-            var hashData = md5?.ComputeHash(buffer);
+            var hashData = md5.ComputeHash(buffer);
             return Convert.ToBase64String(hashData);
         }
 
@@ -193,8 +193,8 @@ namespace Masuit.Tools.Security
         public static byte[] GetHashBytes(this FileStream objFile)
         {
             //从文件中取得Hash描述
-            using var md5 = HashAlgorithm.Create("MD5");
-            return md5?.ComputeHash(objFile);
+            using var md5 = MD5.Create();
+            return md5.ComputeHash(objFile);
         }
 
         /// <summary>
@@ -205,8 +205,8 @@ namespace Masuit.Tools.Security
         public static string GetHashString(this FileStream objFile)
         {
             //从文件中取得Hash描述
-            using var md5 = HashAlgorithm.Create("MD5");
-            var hashData = md5?.ComputeHash(objFile);
+            using var md5 = MD5.Create();
+            var hashData = md5.ComputeHash(objFile);
             return Convert.ToBase64String(hashData);
         }
 
