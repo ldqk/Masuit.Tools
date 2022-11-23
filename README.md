@@ -367,6 +367,15 @@ string s = encrypt.RSADecrypt(rsaKey.PrivateKey);// 私钥解密
 string s = "123".Crc32();// 生成crc32摘要
 string s = "123".Crc64();// 生成crc64摘要
 string s = "123".SHA256();// 生成SHA256摘要
+
+string pub="hello,world!";
+string hidden="ldqk";
+var str = pub.InjectZeroWidthString(hidden); // 扩展函数调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
+var str = ZeroWidthCodec.Encrypt(pub,hidden); // 类调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
+var dec = str.DecodeZeroWidthString(); // 扩展函数调用：将包含零宽字符串的密文解密出隐藏字符串"ldqk"
+var dec = ZeroWidthCodec.Decrypt(str); // 类调用：将包含零宽字符串的密文解密出隐藏字符串"ldqk"
+var enc = hidden.EncodeToZeroWidthText(); // 扩展函数调用：将字符串编码成零宽字符串
+var enc = ZeroWidthCodec.Encode(); // 类调用：将字符串编码成零宽字符串
 ```
 ### 18.实体校验
 ```csharp
