@@ -147,10 +147,13 @@ var num="7clzi".FromBinary(36);//12345678
 ```
 ```csharp
 //超大数字的进制转换
-var num = "E6186159D38CD50E0463A55E596336BD".FromBinaryBig(16);
+var num = "e6186159d38cd50e0463a55e596336bd".FromBinaryBig(16);
 Console.WriteLine(num); // 十进制：305849028665645097422198928560410015421
 Console.WriteLine(num.ToBinary(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
 Console.WriteLine(num.ToBinary(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
+Console.WriteLine(num.ToBinary(7)); // 7进制：2600240311641665565300424545154525131265221035，46位长度
+Console.WriteLine(num.ToBinary(12)); // 12进制：5217744842749978a756b22135b16a5998a5，36位长度
+Console.WriteLine(num.ToBinary(41)); // 41进制：opzeBda2aytcEeudEquuesbk，24位长度
 ```
 ### 7.纳秒级性能计时器
 ```csharp
