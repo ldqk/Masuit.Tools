@@ -282,7 +282,7 @@ public static class ExcelExtension
 										}
 										catch
 										{
-											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持");
+											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持，图片链接：{kv.Key}");
 										}
 									}
 
@@ -308,7 +308,7 @@ public static class ExcelExtension
 										}
 										catch
 										{
-											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持");
+											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持，图片链接：{kv.Key}");
 										}
 									}
 
@@ -473,7 +473,7 @@ public static class ExcelExtension
 										}
 										catch
 										{
-											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持");
+											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持，图片链接：{kv.Key}");
 										}
 									}
 
@@ -499,7 +499,7 @@ public static class ExcelExtension
 										}
 										catch
 										{
-											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持");
+											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持，图片链接： {kv.Key}");
 										}
 									}
 
