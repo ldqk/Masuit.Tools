@@ -218,12 +218,19 @@ public static class ExcelExtension
 								{
 									if (s.Length > 2)
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s);
-										picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										sheet.Row(i + startRow + 1).Height = 90;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s);
+											picture.SetPosition(i + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											sheet.Row(i + startRow + 1).Height = 90;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{i + startRow}行{j}列图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(i + startRow + 1, j + startColumn, "");
@@ -237,13 +244,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var stream in streams.Where(stream => stream.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream);
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(i + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream);
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(i + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(i + startRow + 1, j + startColumn, "");
@@ -256,13 +270,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(i + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(i + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(i + startRow + 1, j + startColumn, "");
@@ -275,13 +296,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(i + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(i + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(i + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{i + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(i + startRow + 1, j + startColumn, "");
@@ -381,12 +409,19 @@ public static class ExcelExtension
 								{
 									if (s.Length > 2)
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s);
-										picture.SetPosition(current + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										sheet.Row(current + startRow + 1).Height = 90;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), s);
+											picture.SetPosition(current + startRow, 3, j + startColumn - 1, 5); //设置图片显示位置
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											sheet.Row(current + startRow + 1).Height = 90;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{current + startRow}行{j}列图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(current + startRow + 1, j + startColumn, "");
@@ -400,13 +435,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var stream in streams.Where(stream => stream.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream);
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(current + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), stream);
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(current + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(current + startRow + 1, j + startColumn, "");
@@ -419,13 +461,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(current + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(current + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(current + startRow + 1, j + startColumn, "");
@@ -438,13 +487,20 @@ public static class ExcelExtension
 									int index = 0;
 									foreach (var kv in dic.Where(kv => kv.Value.Length > 2))
 									{
-										var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
-										var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
-										picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
-										sheet.Row(current + startRow + 1).Height = 90;
-										sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
-										sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
-										picture.SetSize((int)percent);
+										try
+										{
+											var picture = sheet.Drawings.AddPicture(Guid.NewGuid().ToString(), kv.Value, new Uri(kv.Key));
+											var percent = Math.Round(Math.Min(120f / picture.Image.Bounds.Height * picture.Image.Bounds.VerticalResolution, 100));
+											picture.SetPosition(current + startRow, 3, j + startColumn - 1, (int)Math.Ceiling(picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent * index++)); //设置图片显示位置
+											sheet.Row(current + startRow + 1).Height = 90;
+											sumWidth += picture.Image.Bounds.Width / picture.Image.Bounds.HorizontalResolution * percent / 6.4;
+											sheet.Column(j + startColumn).Width = Math.Max(sheet.Column(j + startColumn).Width, sumWidth);
+											picture.SetSize((int)percent);
+										}
+										catch
+										{
+											throw new ArgumentException($"{current + startRow}行{j}列第{index}张图像格式不受支持");
+										}
 									}
 
 									sheet.SetValue(current + startRow + 1, j + startColumn, "");
