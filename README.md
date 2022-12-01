@@ -747,7 +747,7 @@ stream.ToArray(); // 任意流转换成二进制数组
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
 ```
-### 39.INI配置文件操作
+### 39.INI配置文件操作(仅支持Windows)
 ```csharp
 INIFile ini=new INIFile("filename.ini");
 ini.IniWriteValue(section,key,value); // 写值
