@@ -56,7 +56,13 @@ namespace Masuit.Tools.Strings
         /// <exception cref="Exception">The operation failed.</exception>
         public static byte[] CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 28)
         {
-            var font = SystemFonts.Families.Where(f => new[] { "Consolas", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault().CreateFont(fontSize);
+            var fontFamily = SystemFonts.Families.Where(f => new[] { "Consolas", "DejaVu Sans", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault();
+            if (fontFamily == default)
+            {
+                fontFamily = SystemFonts.Families.OrderByRandom().FirstOrDefault();
+            }
+
+            var font = fontFamily.CreateFont(fontSize);
             var measure = TextMeasurer.Measure(validateCode, new TextOptions(font));
             var width = (int)Math.Ceiling(measure.Width * 1.5);
             var height = (int)Math.Ceiling(measure.Height + 5);
@@ -114,7 +120,31 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public static float StringWidth(this string s, int fontSize = 1)
         {
-            return TextMeasurer.Measure(s, new TextOptions(SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI").CreateFont(fontSize))).Width;
+            var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI");
+            if (fontFamily == default)
+            {
+                fontFamily = SystemFonts.Families.FirstOrDefault();
+            }
+
+            return TextMeasurer.Measure(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
+        }
+
+        /// <summary>
+        /// 字符串宽度
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="fontName">字体名字，如：Microsoft YaHei UI</param>
+        /// <param name="fontSize"></param>
+        /// <returns></returns>
+        public static float StringWidth(this string s, string fontName, int fontSize = 1)
+        {
+            var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == fontName);
+            if (fontFamily == default)
+            {
+                throw new ArgumentException($"字体 {fontName} 不存在，请尝试其它字体！");
+            }
+
+            return TextMeasurer.Measure(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
         }
     }
 }

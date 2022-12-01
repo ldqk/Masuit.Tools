@@ -326,7 +326,15 @@ public static class ExcelExtension
 									else
 									{
 										// 根据单元格内容长度来自适应调整列宽
-										var width = TextMeasurer.Measure(table.Rows[i][j].ToString(), new TextOptions(SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI").CreateFont(1))).Width;
+										var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == sheet.Cells[i + startRow + 1, j + startColumn].Style.Font.Name);
+										int measureSize = 1;
+										if (fontFamily == default)
+										{
+											fontFamily = SystemFonts.Families.FirstOrDefault();
+											measureSize++;
+										}
+
+										var width = TextMeasurer.Measure(table.Rows[i][j].ToString(), new TextOptions(fontFamily.CreateFont(measureSize))).Width;
 										sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(width, sheet.Column(j + startColumn).Width));
 									}
 
@@ -517,7 +525,15 @@ public static class ExcelExtension
 									else
 									{
 										// 根据单元格内容长度来自适应调整列宽
-										var width = TextMeasurer.Measure(properties[j].GetValue(item).ToString(), new TextOptions(SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI").CreateFont(1))).Width;
+										var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == sheet.Cells[current + startRow + 1, j + startColumn].Style.Font.Name);
+										int measureSize = 1;
+										if (fontFamily == default)
+										{
+											fontFamily = SystemFonts.Families.FirstOrDefault();
+											measureSize++;
+										}
+
+										var width = TextMeasurer.Measure(properties[j].GetValue(item).ToString(), new TextOptions(fontFamily.CreateFont(measureSize))).Width;
 										sheet.Column(j + startColumn).Width = Math.Min(110, Math.Max(width, sheet.Column(j + startColumn).Width));
 									}
 

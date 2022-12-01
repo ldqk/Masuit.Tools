@@ -6,6 +6,7 @@
 官网教程：https://ldqk.org/55
 github：https://github.com/ldqk/Masuit.Tools
         </Description>
+        <Version>2.5.8.1</Version>
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
@@ -20,7 +21,6 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Version>2.5.8</Version>
         <FileVersion>$(Version)</FileVersion>
         <Company>masuit.org</Company>
         <AssemblyVersion>$(Version)</AssemblyVersion>
