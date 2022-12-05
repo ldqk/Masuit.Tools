@@ -497,6 +497,22 @@ namespace Masuit.Tools
         }
 
         /// <summary>
+        /// IP地址转换成数字
+        /// </summary>
+        /// <param name="ip">IP地址</param>
+        /// <returns>数字,输入无效IP地址返回0</returns>
+        public static uint ToUInt32(this IPAddress ip)
+        {
+            byte[] bInt = ip.GetAddressBytes();
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bInt);
+            }
+
+            return BitConverter.ToUInt32(bInt, 0);
+        }
+
+        /// <summary>
         /// 判断IP是否是私有地址
         /// </summary>
         /// <param name="ip"></param>
@@ -518,6 +534,19 @@ namespace Masuit.Tools
         {
             uint current = input.IPToID();
             return current >= begin.IPToID() && current <= ends.IPToID();
+        }
+
+        /// <summary>
+        /// 判断IP地址在不在某个IP地址段
+        /// </summary>
+        /// <param name="input">需要判断的IP地址</param>
+        /// <param name="begin">起始地址</param>
+        /// <param name="ends">结束地址</param>
+        /// <returns></returns>
+        public static bool IpAddressInRange(this IPAddress input, IPAddress begin, IPAddress ends)
+        {
+            uint current = input.ToUInt32();
+            return current >= begin.ToUInt32() && current <= ends.ToUInt32();
         }
 
         #endregion IP地址

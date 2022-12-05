@@ -376,7 +376,7 @@ public static class ExcelExtension
 
 		if (table.Any())
 		{
-			if (properties.Any(t => t.PropertyType.IsSubclassOf(typeof(Stream)) || typeof(IEnumerable).IsAssignableFrom(t.PropertyType) || typeof(IDictionary).IsAssignableFrom(t.PropertyType)))
+			if (properties.Any(t => t.PropertyType.IsSubclassOf(typeof(Stream)) || typeof(IEnumerable<Stream>).IsAssignableFrom(t.PropertyType) || (typeof(IDictionary).IsAssignableFrom(t.PropertyType) && t.PropertyType.GenericTypeArguments[1].IsSubclassOf(typeof(Stream)))))
 			{
 				hasPicColumn = true;
 			}
