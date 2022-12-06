@@ -94,7 +94,7 @@ namespace Masuit.Tools
         #region 检测字符串中是否包含列表中的关键词
 
         /// <summary>
-        /// 检测字符串中是否包含列表中的关键词
+        /// 检测字符串中是否包含列表中的关键词(快速匹配)
         /// </summary>
         /// <param name="s">源字符串</param>
         /// <param name="keys">关键词列表</param>
@@ -102,17 +102,61 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static bool Contains(this string s, IEnumerable<string> keys, bool ignoreCase = true)
         {
-            if (!keys.Any() || string.IsNullOrEmpty(s))
+            if (keys is not ICollection<string> array)
+            {
+                array = keys.ToArray();
+            }
+
+            if (array.Count == 0 || string.IsNullOrEmpty(s))
             {
                 return false;
             }
 
-            if (ignoreCase)
+            return ignoreCase ? array.Any(item => s.IndexOf(item, StringComparison.InvariantCultureIgnoreCase) >= 0) : array.Any(s.Contains);
+        }
+
+        /// <summary>
+        /// 检测字符串中是否包含列表中的关键词(安全匹配)
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="keys">关键词列表</param>
+        /// <param name="ignoreCase">忽略大小写</param>
+        /// <returns></returns>
+        public static bool ContainsSafety(this string s, IEnumerable<string> keys, bool ignoreCase = true)
+        {
+            if (keys is not ICollection<string> array)
             {
-                return Regex.IsMatch(s, string.Join("|", keys.Select(Regex.Escape)), RegexOptions.IgnoreCase);
+                array = keys.ToArray();
             }
 
-            return Regex.IsMatch(s, string.Join("|", keys.Select(Regex.Escape)));
+            if (array.Count == 0 || string.IsNullOrEmpty(s))
+            {
+                return false;
+            }
+
+            bool flag = false;
+            if (ignoreCase)
+            {
+                foreach (var item in array)
+                {
+                    if (s.Contains(item))
+                    {
+                        flag = true;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in array)
+                {
+                    if (s.IndexOf(item, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                    {
+                        flag = true;
+                    }
+                }
+            }
+
+            return flag;
         }
 
         /// <summary>
@@ -122,14 +166,43 @@ namespace Masuit.Tools
         /// <param name="keys">关键词列表</param>
         /// <param name="ignoreCase">忽略大小写</param>
         /// <returns></returns>
-        public static bool EndsWith(this string s, string[] keys, bool ignoreCase = true)
+        public static bool EndsWith(this string s, IEnumerable<string> keys, bool ignoreCase = true)
         {
-            if (keys.Length == 0 || string.IsNullOrEmpty(s))
+            if (keys is not ICollection<string> array)
+            {
+                array = keys.ToArray();
+            }
+
+            if (array.Count == 0 || string.IsNullOrEmpty(s))
             {
                 return false;
             }
 
-            return ignoreCase ? keys.Any(key => s.EndsWith(key, StringComparison.CurrentCultureIgnoreCase)) : keys.Any(s.EndsWith);
+            var pattern = $"({array.Select(Regex.Escape).Join("|")})$";
+            return ignoreCase ? Regex.IsMatch(s, pattern, RegexOptions.IgnoreCase) : Regex.IsMatch(s, pattern);
+        }
+
+        /// <summary>
+        /// 检测字符串中是否以列表中的关键词开始
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <param name="keys">关键词列表</param>
+        /// <param name="ignoreCase">忽略大小写</param>
+        /// <returns></returns>
+        public static bool StartsWith(this string s, IEnumerable<string> keys, bool ignoreCase = true)
+        {
+            if (keys is not ICollection<string> array)
+            {
+                array = keys.ToArray();
+            }
+
+            if (array.Count == 0 || string.IsNullOrEmpty(s))
+            {
+                return false;
+            }
+
+            var pattern = $"^({array.Select(Regex.Escape).Join("|")})";
+            return ignoreCase ? Regex.IsMatch(s, pattern, RegexOptions.IgnoreCase) : Regex.IsMatch(s, pattern);
         }
 
         /// <summary>
@@ -161,22 +234,6 @@ namespace Masuit.Tools
         /// <param name="regex">关键词列表</param>
         /// <returns></returns>
         public static bool RegexMatch(this string s, Regex regex) => !string.IsNullOrEmpty(s) && regex.IsMatch(s);
-
-        /// <summary>
-        /// 判断是否包含符号
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="symbols"></param>
-        /// <returns></returns>
-        public static bool ContainsSymbol(this string str, params string[] symbols)
-        {
-            return str switch
-            {
-                null => false,
-                "" => false,
-                _ => symbols.Any(str.Contains)
-            };
-        }
 
         #endregion 检测字符串中是否包含列表中的关键词
 
@@ -666,7 +723,7 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
             patnum = patnum.ToUpper().Replace(".", "");
             if (patnum.Length == 9 || patnum.Length == 8)
             {
-                byte[] factors8 = new byte[8] { 2, 3, 4, 5, 6, 7, 8, 9 };
+                byte[] factors8 = new byte[] { 2, 3, 4, 5, 6, 7, 8, 9 };
                 int year = Convert.ToUInt16(patnum.Substring(0, 2));
                 year += (year >= 85) ? (ushort)1900u : (ushort)2000u;
                 if (year >= 1985 || year <= 2003)

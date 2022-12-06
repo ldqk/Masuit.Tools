@@ -481,7 +481,7 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static async Task ForeachAsync<T>(this IEnumerable<T> source, Func<T, Task> action, int maxParallelCount, CancellationToken cancellationToken = default)
     {
-		if (Debugger.IsAttached)
+        if (Debugger.IsAttached)
         {
             foreach (var item in source)
             {
