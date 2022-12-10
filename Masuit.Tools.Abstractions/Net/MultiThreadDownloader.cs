@@ -194,16 +194,16 @@ namespace Masuit.Tools.Net
                 return;
             }
 
-            PartialDownloaderList.Sort((x, y) => y.RemainingBytes - x.RemainingBytes);
-            int rem = PartialDownloaderList[0].RemainingBytes;
+            PartialDownloaderList.Sort((x, y) => (int)(y.RemainingBytes - x.RemainingBytes));
+            var rem = PartialDownloaderList[0].RemainingBytes;
             if (rem < 50 * 1024)
             {
                 WaitOrResumeAll(PartialDownloaderList, false);
                 return;
             }
 
-            int from = PartialDownloaderList[0].CurrentPosition + rem / 2;
-            int to = PartialDownloaderList[0].To;
+            var from = PartialDownloaderList[0].CurrentPosition + rem / 2;
+            var to = PartialDownloaderList[0].To;
             if (from > to)
             {
                 WaitOrResumeAll(PartialDownloaderList, false);
@@ -314,10 +314,10 @@ namespace Masuit.Tools.Net
 
         private PartialDownloader CreateNew(int order, int parts, long contentLength)
         {
-            int division = (int)contentLength / parts;
-            int remaining = (int)contentLength % parts;
-            int start = division * order;
-            int end = start + division - 1;
+            var division = contentLength / parts;
+            var remaining = contentLength % parts;
+            var start = division * order;
+            var end = start + division - 1;
             end += order == parts - 1 ? remaining : 0;
             return new PartialDownloader(_url, TempFileDirectory, SnowFlake.NewId, start, end, true);
         }
@@ -413,8 +413,8 @@ namespace Masuit.Tools.Net
             {
                 if (PartialDownloaderList[i].Stopped)
                 {
-                    int from = PartialDownloaderList[i].CurrentPosition + 1;
-                    int to = PartialDownloaderList[i].To;
+                    var from = PartialDownloaderList[i].CurrentPosition + 1;
+                    var to = PartialDownloaderList[i].To;
                     if (from > to)
                     {
                         continue;
