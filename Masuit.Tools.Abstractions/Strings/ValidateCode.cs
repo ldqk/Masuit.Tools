@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Http;
 #endif
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Masuit.Tools.AspNetCore.Mime;
+using Masuit.Tools.Systems;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -103,7 +103,7 @@ namespace Masuit.Tools.Strings
             }
 
             //保存图片数据
-            using MemoryStream stream = new MemoryStream();
+            using var stream = new PooledMemoryStream();
             image.Save(stream, WebpFormat.Instance);
 
             //输出图片流

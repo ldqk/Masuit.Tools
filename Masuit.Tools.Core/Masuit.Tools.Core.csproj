@@ -6,7 +6,7 @@
 官网教程：https://ldqk.org/55
 github：https://github.com/ldqk/Masuit.Tools
         </Description>
-        <Version>2.5.8.3</Version>
+        <Version>2.5.9-beta</Version>
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
@@ -21,9 +21,9 @@ github：https://github.com/ldqk/Masuit.Tools
         <UserSecretsId>830c282f-f7c1-42be-8651-4cd06ac8e73f</UserSecretsId>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <FileVersion>$(Version)</FileVersion>
+        <FileVersion>2.5.9</FileVersion>
         <Company>masuit.org</Company>
-        <AssemblyVersion>$(Version)</AssemblyVersion>
+        <AssemblyVersion>2.5.9</AssemblyVersion>
         <Authors>懒得勤快</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -54,7 +54,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.1" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />

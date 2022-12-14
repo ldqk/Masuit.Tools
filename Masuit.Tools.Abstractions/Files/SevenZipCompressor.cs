@@ -1,4 +1,5 @@
-﻿using SharpCompress.Archives;
+﻿using Masuit.Tools.Systems;
+using SharpCompress.Archives;
 using SharpCompress.Common;
 using SharpCompress.Writers;
 using System;
@@ -10,7 +11,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Files
 {
@@ -37,10 +37,10 @@ namespace Masuit.Tools.Files
         /// <param name="rootdir"></param>
         /// <param name="archiveType"></param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+        public PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
         {
             using var archive = CreateZipArchive(files, rootdir, archiveType);
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
@@ -59,7 +59,7 @@ namespace Masuit.Tools.Files
         /// <param name="archiveType"></param>
         /// <param name="disposeAllStreams">是否需要释放所有流</param>
         /// <returns>文件流</returns>
-        public MemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        public PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
         {
             using var archive = ArchiveFactory.Create(archiveType);
             foreach (var pair in streams)
@@ -67,7 +67,7 @@ namespace Masuit.Tools.Files
                 archive.AddEntry(pair.Key, pair.Value, true);
             }
 
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,

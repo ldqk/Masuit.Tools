@@ -17,12 +17,12 @@
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <Version>1.1.8.3</Version>
+        <Version>1.1.9-beta</Version>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <FileVersion>$(Version)</FileVersion>
+        <FileVersion>1.1.9</FileVersion>
         <Company>masuit.com</Company>
-        <AssemblyVersion>$(Version)</AssemblyVersion>
+        <AssemblyVersion>1.1.9</AssemblyVersion>
         <Authors>懒得勤快</Authors>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>

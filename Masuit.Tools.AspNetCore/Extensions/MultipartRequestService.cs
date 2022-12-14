@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Masuit.Tools.Core.AspNetCore;
+using Masuit.Tools.Systems;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Masuit.Tools.Core.AspNetCore;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Net.Http.Headers;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 
@@ -34,10 +35,8 @@ public class MultipartRequestService : IMultipartRequestService
             }
             else if (contentDisposition.IsFileDisposition())
             {
-                // you will want to replace all of this because it copies the file into a memory stream. We don't want that.
-                await using var memoryStream = new MemoryStream();
+                await using var memoryStream = new PooledMemoryStream();
                 await section.Body.CopyToAsync(memoryStream, cancellationToken);
-
                 file = memoryStream.ToArray();
             }
         }
@@ -48,9 +47,6 @@ public class MultipartRequestService : IMultipartRequestService
     private Encoding GetEncoding(MultipartSection section)
     {
         var hasMediaTypeHeader = MediaTypeHeaderValue.TryParse(section.ContentType, out var mediaType);
-
-        // UTF-7 is insecure and shouldn't be honored. UTF-8 succeeds in
-        // most cases.
         if (!hasMediaTypeHeader || Encoding.UTF7.Equals(mediaType.Encoding))
         {
             return Encoding.UTF8;

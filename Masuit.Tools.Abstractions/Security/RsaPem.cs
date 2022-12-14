@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Systems;
+using System;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -431,7 +432,7 @@ namespace Masuit.Tools.Security
         /// </summary>
         public string ToPEM(bool convertToPublic, bool usePKCS8)
         {
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             //写入一个长度字节码
             Action<int> writeLenByte = len =>
             {
@@ -478,7 +479,7 @@ namespace Masuit.Tools.Security
 
                 return ms.ToArray();
             };
-            Action<MemoryStream, byte[]> writeAll = (stream, byts) =>
+            Action<Stream, byte[]> writeAll = (stream, byts) =>
             {
                 stream.Write(byts, 0, byts.Length);
             };

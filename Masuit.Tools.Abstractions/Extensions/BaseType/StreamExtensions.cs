@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Systems;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -20,10 +21,12 @@ namespace Masuit.Tools
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public static MemoryStream SaveAsMemoryStream(this Stream stream)
+        public static PooledMemoryStream SaveAsMemoryStream(this Stream stream)
         {
-            stream.Position = 0;
-            return new MemoryStream(stream.ToArray());
+            stream.Seek(0, SeekOrigin.Begin);
+            var ms = new PooledMemoryStream();
+            stream.CopyTo(ms);
+            return ms;
         }
 
         /// <summary>

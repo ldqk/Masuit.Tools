@@ -43,7 +43,7 @@ namespace Masuit.Tools.Files
         /// <param name="rootdir"></param>
         /// <param name="archiveType"></param>
         /// <returns>文件流</returns>
-        MemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
+        PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
 
         /// <summary>
         /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
@@ -52,6 +52,6 @@ namespace Masuit.Tools.Files
         /// <param name="archiveType"></param>
         /// <param name="disposeAllStreams">是否需要释放所有流</param>
         /// <returns>文件流</returns>
-        MemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false);
+        PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false);
     }
 }

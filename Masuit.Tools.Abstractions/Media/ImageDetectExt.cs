@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp;
+﻿using Masuit.Tools.Systems;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -111,8 +112,8 @@ public static class ImageDetectExt
         {
             try
             {
-                var ms = new MemoryStream(img);
-                var msOut = new MemoryStream();
+                using var ms = new PooledMemoryStream(img);
+                using var msOut = new PooledMemoryStream();
                 const int bufferSize = 4096;
                 var buffer = new byte[bufferSize];
                 using var z = new GZipStream(ms, CompressionMode.Decompress);

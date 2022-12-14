@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Masuit.Tools.Systems;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,7 +33,7 @@ namespace Masuit.Tools.Security
             byte[] inputByteArray = Encoding.Default.GetBytes(strText);
             des.Key = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
             des.IV = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
-            MemoryStream ms = new MemoryStream();
+            using var ms = new PooledMemoryStream();
             using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
@@ -59,7 +60,7 @@ namespace Masuit.Tools.Security
             byte[] inputByteArray = Encoding.Default.GetBytes(strText);
             des.Key = desKey;
             des.IV = desIV;
-            MemoryStream ms = new MemoryStream();
+            using var ms = new PooledMemoryStream();
             using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
@@ -203,7 +204,7 @@ namespace Masuit.Tools.Security
                 throw new Exception("密钥长度无效，密钥必须是8位！");
             }
 
-            var ms = new MemoryStream();
+            using var ms = new PooledMemoryStream();
             using var des = DES.Create();
             var inputByteArray = new byte[pToDecrypt.Length / 2];
             for (int x = 0; x < pToDecrypt.Length / 2; x++)
@@ -230,7 +231,7 @@ namespace Masuit.Tools.Security
         /// <returns>解密后的数据</returns>
         public static string DesDecrypt(this string pToDecrypt, byte[] desKey, byte[] desIV)
         {
-            var ms = new MemoryStream();
+            using var ms = new PooledMemoryStream();
             using var des = DES.Create();
             var inputByteArray = new byte[pToDecrypt.Length / 2];
             for (int x = 0; x < pToDecrypt.Length / 2; x++)
@@ -874,7 +875,7 @@ namespace Masuit.Tools.Security
             tmpFileStream.Close();
             //定义基本的加密转换运算
             using var encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
-            var msEncrypt = new MemoryStream();
+            using var msEncrypt = new PooledMemoryStream();
             //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
             using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
             //将要加密的文本转换成UTF-16 编码，保存在tmp数组。
@@ -922,7 +923,7 @@ namespace Masuit.Tools.Security
 
             using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
             using var decryptor = _rc2Csp.CreateDecryptor(_key, _iv);
-            var msDecrypt = new MemoryStream();
+            using var msDecrypt = new PooledMemoryStream();
             using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
             var index = new byte[10261];
             tmpFileStream.Read(index, 0, 10261);
@@ -949,7 +950,7 @@ namespace Masuit.Tools.Security
         {
             using var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true);
             using var encryptor = _rc2Csp.CreateEncryptor(_key, _iv);
-            var msEncrypt = new MemoryStream();
+            using var msEncrypt = new PooledMemoryStream();
             using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
             var tmp = _textConverter.GetBytes(toEncryptText);
             csEncrypt.Write(tmp, 0, tmp.Length);
@@ -971,7 +972,7 @@ namespace Masuit.Tools.Security
         {
             using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
             using var decryptor = _rc2Csp.CreateDecryptor(_key, _iv);
-            var msDecrypt = new MemoryStream();
+            using var msDecrypt = new PooledMemoryStream();
             using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
             var tmp = new byte[tmpFileStream.Length];
             tmpFileStream.Read(tmp, 0, tmp.Length);
@@ -1011,7 +1012,7 @@ namespace Masuit.Tools.Security
 
             //定义基本的加密转换运算
             using var encryptor = _rc2Csp.CreateEncryptor(Key, IV);
-            var msEncrypt = new MemoryStream();
+            using var msEncrypt = new PooledMemoryStream();
             //在此加密转换流中，加密将从csEncrypt，加密后，结果在msEncrypt流中。
             using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
             var tmp = _textConverter.GetBytes(toEncryptText);
@@ -1063,7 +1064,7 @@ namespace Masuit.Tools.Security
 
             using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
             using var decryptor = _rc2Csp.CreateDecryptor(key, iv);
-            var msDecrypt = new MemoryStream();
+            using var msDecrypt = new PooledMemoryStream();
             using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
             var index = new byte[10261];
             tmpFileStream.Read(index, 0, 10261);
@@ -1092,7 +1093,7 @@ namespace Masuit.Tools.Security
         {
             using var tmpFileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1024, true);
             using var encryptor = _rc2Csp.CreateEncryptor(key, iv);
-            var msEncrypt = new MemoryStream();
+            using var msEncrypt = new PooledMemoryStream();
             using var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write);
             var tmp = _textConverter.GetBytes(toEncryptText);
             csEncrypt.Write(tmp, 0, tmp.Length);
@@ -1117,7 +1118,7 @@ namespace Masuit.Tools.Security
         {
             using var tmpFileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None, 1024, true);
             using var decryptor = _rc2Csp.CreateDecryptor(key, iv);
-            var msDecrypt = new MemoryStream();
+            using var msDecrypt = new PooledMemoryStream();
             using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
             var tmp = new byte[tmpFileStream.Length];
             tmpFileStream.Read(tmp, 0, tmp.Length);

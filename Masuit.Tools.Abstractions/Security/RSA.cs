@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using Masuit.Tools.Systems;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -62,8 +62,8 @@ namespace Masuit.Tools.Security
                 return RSAObject.Encrypt(data, false);
             }
 
-            using var dataStream = new MemoryStream(data);
-            using var enStream = new MemoryStream();
+            using var dataStream = new PooledMemoryStream(data);
+            using var enStream = new PooledMemoryStream();
             var buffer = new byte[blockLen];
             int len = dataStream.Read(buffer, 0, blockLen);
 
@@ -120,8 +120,8 @@ namespace Masuit.Tools.Security
                     return RSAObject.Decrypt(data, false);
                 }
 
-                using var dataStream = new MemoryStream(data);
-                using var deStream = new MemoryStream();
+                using var dataStream = new PooledMemoryStream(data);
+                using var deStream = new PooledMemoryStream();
                 byte[] buffer = new byte[blockLen];
                 int len = dataStream.Read(buffer, 0, blockLen);
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using Masuit.Tools.Systems;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using System;
 
 namespace Masuit.Tools.Media
 {
@@ -337,7 +337,7 @@ namespace Masuit.Tools.Media
         {
             string strbase64 = source.Substring(source.IndexOf(',') + 1).Trim('\0');
             byte[] arr = Convert.FromBase64String(strbase64);
-            using var ms = new MemoryStream(arr);
+            var ms = new PooledMemoryStream(arr);
             return Image.Load(ms);
         }
     }
