@@ -24,6 +24,7 @@ SDK：.Net Core 2.1.0及以上所有版本
 
 ## 安装程序包
 ### 基础功能包
+`.NET Framework版本的包因打包环境异常，无法正常发布更新，目前暂时停更~`
 #### .NET Framework ≥ 4.6.1
 ```shell
 PM> Install-Package Masuit.Tools.Net
