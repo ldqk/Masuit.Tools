@@ -159,42 +159,6 @@ namespace Masuit.Tools
         }
 
         /// <summary>
-        /// 是否是默认值
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static bool IsDefaultValue(this object value)
-        {
-            if (value == null)
-            {
-                return true;
-            }
-
-            var type = value.GetType();
-            if (type == typeof(bool))
-            {
-                return (bool)value == false;
-            }
-
-            if (type.IsEnum)
-            {
-                return (int)value == 0;
-            }
-
-            if (type == typeof(DateTime))
-            {
-                return (DateTime)value == default;
-            }
-
-            if (type.IsNumeric())
-            {
-                return (double)value == 0;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// 链式操作
         /// </summary>
         /// <typeparam name="T1"></typeparam>
