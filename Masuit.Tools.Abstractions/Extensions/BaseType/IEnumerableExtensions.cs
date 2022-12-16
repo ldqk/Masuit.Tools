@@ -151,8 +151,16 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
-        var hash = new HashSet<TKey>();
-        return source.Where(p => hash.Add(keySelector(p)));
+        if (source == null) throw new ArgumentNullException(nameof(source));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+        var set = new HashSet<TKey>();
+        foreach (var item in source)
+        {
+            if (set.Add(keySelector(item)))
+            {
+                yield return item;
+            }
+        }
     }
 
     /// <summary>
@@ -181,12 +189,9 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static IEnumerable<TSource> IntersectBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
     {
-        if (first == null)
-            throw new ArgumentNullException(nameof(first));
-        if (second == null)
-            throw new ArgumentNullException(nameof(second));
-        if (keySelector == null)
-            throw new ArgumentNullException(nameof(keySelector));
+        if (first == null) throw new ArgumentNullException(nameof(first));
+        if (second == null) throw new ArgumentNullException(nameof(second));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
         return IntersectByIterator(first, second, keySelector, comparer);
     }
 
@@ -227,12 +232,9 @@ public static class IEnumerableExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IEnumerable<TSource> ExceptBy<TSource, TKey>(this IEnumerable<TSource> first, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
     {
-        if (first == null)
-            throw new ArgumentNullException(nameof(first));
-        if (second == null)
-            throw new ArgumentNullException(nameof(second));
-        if (keySelector == null)
-            throw new ArgumentNullException(nameof(keySelector));
+        if (first == null) throw new ArgumentNullException(nameof(first));
+        if (second == null) throw new ArgumentNullException(nameof(second));
+        if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
         return ExceptByIterator(first, second, keySelector, comparer);
     }
 
