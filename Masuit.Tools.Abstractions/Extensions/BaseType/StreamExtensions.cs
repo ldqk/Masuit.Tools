@@ -23,6 +23,11 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static PooledMemoryStream SaveAsMemoryStream(this Stream stream)
         {
+            if (stream is PooledMemoryStream pooledMemoryStream)
+            {
+                return pooledMemoryStream;
+            }
+
             stream.Seek(0, SeekOrigin.Begin);
             var ms = new PooledMemoryStream();
             stream.CopyTo(ms);

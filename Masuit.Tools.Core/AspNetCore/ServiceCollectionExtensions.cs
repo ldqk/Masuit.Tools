@@ -1,17 +1,11 @@
 ﻿using Masuit.Tools.AspNetCore.ResumeFileResults.Executor;
 using Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult;
-using Masuit.Tools.Core.Net;
 using Masuit.Tools.Files;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
 using System.Reflection;
-using System;
-using System.Linq;
 
 namespace Masuit.Tools.Core.AspNetCore;
 
@@ -43,27 +37,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddHttpClient<ISevenZipCompressor, SevenZipCompressor>();
         return services;
-    }
-
-    /// <summary>
-    /// 注入HttpContext静态对象，方便在任意地方获取HttpContext，services.AddHttpContextAccessor();
-    /// </summary>
-    /// <param name="services"></param>
-    public static void AddStaticHttpContext(this IServiceCollection services)
-    {
-        services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-    }
-
-    /// <summary>
-    /// 注入HttpContext静态对象，方便在任意地方获取HttpContext，app.UseStaticHttpContext();
-    /// </summary>
-    /// <param name="app"></param>
-    /// <returns></returns>
-    public static IApplicationBuilder UseStaticHttpContext(this IApplicationBuilder app)
-    {
-        var httpContextAccessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
-        HttpContext2.Configure(httpContextAccessor);
-        return app;
     }
 
     /// <summary>

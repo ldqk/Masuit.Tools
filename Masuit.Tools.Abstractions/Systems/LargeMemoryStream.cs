@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Masuit.Tools.Systems;
 
 /// <summary>
-/// 大型内存流，最大可支持1TB数据
+/// 大型内存流，最大可支持1TB数据，推荐当数据流大于2GB时使用
 /// </summary>
 public class LargeMemoryStream : Stream
 {

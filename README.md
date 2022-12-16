@@ -98,18 +98,7 @@ var ramInfo = RamInfo.Local; // 快速获取内存的信息
 var diskInfos = DiskInfo.Locals; // 快速获取硬盘的信息
 var biosInfo = BiosInfo.Local; // 快速获取主板的信息
 ```
-### 3.大文件操作
-```csharp
-FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-{
-        //fs.CopyToFile(@"D:\1.bak");//同步复制大文件
-        fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
-        string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
-        string sha1 = fs.GetFileSha1();//异步获取文件的SHA1
-}
-memoryStream.SaveFile("filename"); // 将内存流转储成文件
-```
-### 4.html的防XSS处理：
+### 3.html的防XSS处理：
 ```csharp
 string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         <!--[if IE 7]>
@@ -125,12 +114,12 @@ string html = @"<link href='/Content/font-awesome/css' rel='stylesheet'/>
         </div>";
 string s = html.HtmlSantinizerStandard();//清理后：<div><span><a href="/users/account/LogOff">退出</a></span></div>
 ```
-### 5.整理Windows系统的内存：
+### 4.整理Windows系统的内存：
 类似于各大系统优化软件的加速球功能
 ```csharp
 Windows.ClearMemorySilent();
 ```
-### 6.任意进制转换
+### 5.任意进制转换
 可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 ```csharp
 NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
@@ -156,7 +145,7 @@ Console.WriteLine(num.ToBinary(7)); // 7进制：2600240311641665565300424545154
 Console.WriteLine(num.ToBinary(12)); // 12进制：5217744842749978a756b22135b16a5998a5，36位长度
 Console.WriteLine(num.ToBinary(41)); // 41进制：opzeBda2aytcEeudEquuesbk，24位长度
 ```
-### 7.纳秒级性能计时器
+### 6.纳秒级性能计时器
 ```csharp
 HiPerfTimer timer = HiPerfTimer.StartNew();
 for (int i = 0; i < 100000; i++)
@@ -176,7 +165,7 @@ double time = HiPerfTimer.Execute(() =>
 });
 Console.WriteLine("执行for循环100000次耗时"+time+"s");
 ```
-### 8.产生分布式唯一有序短id(雪花id)
+### 7.产生分布式唯一有序短id(雪花id)
 ```csharp
 var sf = SnowFlake.GetInstance();
 string token = sf.GetUniqueId();// rcofqodori0w
@@ -194,7 +183,7 @@ double time = HiPerfTimer.Execute(() =>
 Console.WriteLine(set.Count == 1000000); //True
 Console.WriteLine("产生100w个id耗时" + time + "s"); //2.6891495s
 ```
-### 9.农历转换
+### 8.农历转换
 ```csharp
 ChineseCalendar.CustomHolidays.Add(DateTime.Parse("2018-12-31"),"元旦节");//自定义节假日
 ChineseCalendar today = new ChineseCalendar(DateTime.Parse("2018-12-31"));
@@ -204,7 +193,7 @@ Console.WriteLine(today.GanZhiDateString);// 干支：戊戌年甲子月丁酉�
 Console.WriteLine(today.DateHoliday);// 获取按公历计算的节假日
 ...
 ```
-### 10.Linq表达式树扩展
+### 9.Linq表达式树扩展
 ```csharp
 Expression<Func<string, bool>> where1 = s => s.StartsWith("a");
 Expression<Func<string, bool>> where2 = s => s.Length > 10;
@@ -226,7 +215,7 @@ bool b=func("abc");// true
 queryable.WhereIf(!string.IsNullOrEmpty(name),e=>e.Name==name)
     .WhereIf(()=> age.HasValue,e=>e.Age>=age); // IQueryable的WhereIf扩展函数，满足条件再执行Where
 ```
-### 11.模版引擎
+### 10.模版引擎
 ```csharp
 var tmp = new Template("{{name}}，你好！");
 tmp.Set("name", "万金油");
@@ -241,7 +230,7 @@ var tmp = new Template("{{name}}，{{greet}}！");
 tmp.Set("name", "万金油");
 string s = tmp.Render();// throw 模版变量{{greet}}未被使用
 ```
-### 12.List转Datatable
+### 11.List转Datatable
 ```csharp
 var list = new List<MyClass>()
 {
@@ -263,7 +252,7 @@ var list = new List<MyClass>()
 };
 var table = list.Select(c => new{姓名=c.Name,年龄=c.Age}).ToDataTable();// 将自动填充列姓名和年龄
 ```
-### 13.文件压缩解压
+### 12.文件压缩解压
 .NET Framework
 ```csharp
 MemoryStream ms = SevenZipCompressor.ZipStream(new List<string>()
@@ -297,7 +286,7 @@ public Test(ISevenZipCompressor sevenZipCompressor)
 }
 ```
 使用方式同.NET Framework版本
-### 14.日志组件
+### 13.简易日志组件(又不是不能用.jpg)
 ```csharp
 LogManager.LogDirectory=AppDomain.CurrentDomain.BaseDirectory+"/logs";
 LogManager.Event+=info =>
@@ -307,7 +296,7 @@ LogManager.Event+=info =>
 LogManager.Info("记录一次消息");
 LogManager.Error(new Exception("异常消息"));
 ```
-### 15.FTP客户端
+### 14.FTP客户端
 ```csharp
 FtpClient ftpClient = FtpClient.GetAnonymousClient("192.168.2.2");//创建一个匿名访问的客户端
 //FtpClient ftpClient = FtpClient.GetClient("192.168.2.3","admin","123456");// 创建一个带用户名密码的客户端
@@ -320,7 +309,7 @@ ftpClient.UploadFile("/test/22.txt","D:\\test\\22.txt",(sum, progress) =>
 List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
 ...
 ```
-### 16.多线程后台下载
+### 15.多线程后台下载
 ```csharp
 var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
 mtd.Configure(req =>
@@ -345,7 +334,7 @@ mtd.Start();//开始下载
 //mtd.Pause(); // 暂停下载
 //mtd.Resume(); // 继续下载
 ```
-### 17.加密解密/hash
+### 16.加密解密/hash
 ```csharp
 var enc="123456".MDString();// MD5
 var enc="123456".MDString("abc");// MD5加盐
@@ -381,7 +370,7 @@ var dec = ZeroWidthCodec.Decrypt(str); // 类调用：将包含零宽字符串�
 var enc = hidden.EncodeToZeroWidthText(); // 扩展函数调用：将字符串编码成零宽字符串
 var enc = ZeroWidthCodec.Encode(); // 类调用：将字符串编码成零宽字符串
 ```
-### 18.实体校验
+### 17.实体校验
 ```csharp
 public class MyClass
 {
@@ -407,14 +396,14 @@ public class MyClass
     public List<string> Strs { get; set; }
 }
 ```
-### 19.HTML操作
+### 18.HTML操作
 ```csharp
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
 var imgTags = "html".MatchImgTags();//获取html字符串里的所有的img标签
 var str="html".RemoveHtmlTag(); // 去除html标签
 ...
 ```
-### 20.DateTime扩展
+### 19.DateTime扩展
 ```csharp
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
 double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
@@ -423,7 +412,7 @@ double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
 double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 ...
 ```
-### 21.IP地址和URL
+### 20.IP地址和URL
 ```csharp
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
 bool isPrivateIp = "172.16.23.25".IsPrivateIP();// 判断是否是私有地址
@@ -434,7 +423,7 @@ string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
 PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
 ```
-### 22.元素去重
+### 21.元素去重
 ```csharp
 var list = new List<MyClass>()
 {
@@ -455,7 +444,7 @@ List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
 
-### 23.枚举扩展
+### 22.枚举扩展
 ```csharp
 public enum MyEnum
 {
@@ -476,7 +465,7 @@ string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
-### 24.定长队列和ConcurrentHashSet实现
+### 23.定长队列和ConcurrentHashSet实现
 `如果是.NET5及以上，推荐使用框架自带的Channel实现该功能`
 ```csharp
 LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量为32个元素的定长队列
@@ -485,43 +474,19 @@ ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);//
 ```csharp
 var set = new ConcurrentHashSet<string>(); // 用法和hashset保持一致
 ```
-### 25.反射操作
+### 24.反射操作
 ```csharp
 MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
 myClass.SetProperty("Email","1@1.cn");//给对象设置值
 myClass.DeepClone(); // 对象深拷贝，带嵌套层级的
 ```
-### 26.获取线程内唯一对象
+### 25.获取线程内唯一对象
 ```csharp
 CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
 CallContext<T>.GetData("db");//获取线程内唯一对象
 ```
-### 27.asp.net core 获取静态的HttpContext对象
-Startup.cs
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    // ...
-    services.AddStaticHttpContext();
-    // ...
-}
-
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    // ...
-    app.UseStaticHttpContext();
-    // ...
-}
-```
-
-```csharp
-public async Task<IActionResult> Index()
-{
-    HttpContext context = HttpContext2.Current;
-}
-```
-### 28.邮件发送
+### 26.邮件发送
 ```csharp
 new Email()
 {
@@ -538,7 +503,7 @@ new Email()
     Console.WriteLine(s);// 发送成功后的回调
 });// 异步发送邮件
 ```
-### 29.图像的简单处理
+### 27.图像的简单处理
 ```csharp
 ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
 
@@ -571,14 +536,14 @@ var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 
 var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
-### 30.随机数
+### 28.随机数
 ```csharp
 Random rnd = new Random();
 int num = rnd.StrictNext();//产生真随机数
 double gauss = rnd.NextGauss(20,5);//产生正态高斯分布的随机数
 var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue));//生成随机字符串
 ```
-### 31.权重筛选功能
+### 29.权重筛选功能
 ```csharp
 var data=new List<WeightedItem<string>>()
 {
@@ -601,7 +566,7 @@ var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
 ```
-### 32.EF Core支持AddOrUpdate方法
+### 30.EF Core支持AddOrUpdate方法
 ```csharp
 /// <summary>
 /// 按Id添加或更新文章实体
@@ -612,12 +577,12 @@ public override Post SavePost(Post t)
     return t;
 }
 ```
-### 33.敏感信息掩码
+### 31.敏感信息掩码
 ```csharp
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
-### 34.集合扩展
+### 32.集合扩展
 ```csharp
 var list = new List<string>()
 {
@@ -712,13 +677,13 @@ var sect=list.IntersectAll();// [3]
 list.ChangeIndex(item,3); // 将元素item的索引位置变为第3个
 list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为第2个
 ```
-### 35.Mime类型
+### 33.Mime类型
 ```csharp
 var mimeMapper = new MimeMapper();
 var ext = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var mime = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ```
-### 36.日期时间扩展
+### 34.日期时间扩展
 ```csharp
 DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
 DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00:00的毫秒数
@@ -735,12 +700,30 @@ var (intersected,range2) = range.Intersect(DateTime.Parse("2020-8-4"), DateTime.
 range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断是否包含某个时间段，true
 ...
 ```
-### 37.流转换
+### 35.流相关
 ```csharp
 stream.SaveAsMemoryStream(); // 任意流转换成内存流
 stream.ToArray(); // 任意流转换成二进制数组
+stream.ToArrayAsync(); // 任意流转换成二进制数组
+stream.ShuffleCode(); // 流洗码，在流的末端随即增加几个空字节，重要数据请谨慎使用，可能造成流损坏
+
+// 池化内存流，用法与MemorySteam保持一致
+using var ms=PooledMemoryStream();
+
+// 大型内存流,最大可支持1TB内存数据，推荐当数据流大于2GB时使用，用法与MemorySteam保持一致
+using var ms=LargeMemoryStream();
+
+//文件流快速复制
+FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+{
+        //fs.CopyToFile(@"D:\1.bak");//同步复制大文件
+        fs.CopyToFileAsync(@"D:\1.bak");//异步复制大文件
+        string md5 = fs.GetFileMD5Async().Result;//异步获取文件的MD5
+        string sha1 = fs.GetFileSha1();//异步获取文件的SHA1
+}
+memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
-### 38.数值转换
+### 36.数值转换
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
 1.23.ConvertTo<int>(); // 小数转int
@@ -748,7 +731,7 @@ stream.ToArray(); // 任意流转换成二进制数组
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
 ```
-### 39.INI配置文件操作(仅支持Windows)
+### 37.INI配置文件操作(仅支持Windows)
 ```csharp
 INIFile ini=new INIFile("filename.ini");
 ini.IniWriteValue(section,key,value); // 写值
@@ -756,13 +739,13 @@ ini.IniReadValue(section,key); // 读值
 ini.ClearAllSection(); // 清空所有配置节
 ini.ClearSection(section); // 清空配置节
 ```
-### 40.雷达图计算引擎
+### 38.雷达图计算引擎
 应用场景：计算两个多边形的相似度，用户画像之类的
 ```csharp
 var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个多边形的相交区域
 points.ComputeArea(); //计算多边形面积
 ```
-### 41.树形结构实现
+### 39.树形结构实现
 基本接口类：  
 ITreeChildren：带Children属性的接口  
 ITreeParent：带Parent属性的接口  
@@ -782,7 +765,7 @@ tree.Path(); // 全路径
 var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
-### 42.简单的Excel导出
+### 40.简单的Excel导出
 需要额外依赖包：`Masuit.Tools.Excel`
 ```csharp
 var stream=list.Select(item=>new{
@@ -801,7 +784,7 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 5. ToExcel方法支持DataTable、List<DataTable>、Dictionary<string, DataTable>类型的直接调用
    
 
-### 43.EFCore实体对比功能
+### 41.EFCore实体对比功能
 获取指定实体的变更
 ```csharp
 var changes=dbContext.GetChanges<Post>();//获取变更字段信息
@@ -817,12 +800,12 @@ var removed=dbContext.GetRemoved();//获取被移除的实体字段信息
 var allchanges=dbContext.GetAllChanges();//获取增删改的实体字段信息  
 ```
 对比信息包含属性信息、旧值、新值、实体信息、键信息、变更状态等
-### 44.任何类型支持链式调用
+### 42.任何类型支持链式调用
 ```csharp
 a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
-### 45.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 43.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
 #### DeserializeOnlyContractResolver
 该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
 ```csharp
@@ -868,7 +851,7 @@ public class ClassDto
 #### CompositeContractResolver
 该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
 
-### 46. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
+### 44. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
 用法：  
 引入包：`Masuit.Tools.AspNetCore`  
 ```shell
@@ -896,13 +879,13 @@ Startup配置：
         }
 ```
 
-### 47. 字符串SimHash相似度算法
+### 45. 字符串SimHash相似度算法
 ```csharp
 var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
 
-### 48. 真实文件类型探测
+### 46. 真实文件类型探测
 ```csharp
 // 多种方式，任君调用
 var detector=new FileInfo(filepath).DetectFiletype();
