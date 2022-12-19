@@ -84,10 +84,10 @@ long memoryAvailable = SystemInfo.MemoryAvailable;// 获取物理内存可用率
 double freePhysicalMemory = SystemInfo.GetFreePhysicalMemory();// 获取可用物理内存
 double temperature = SystemInfo.GetCPUTemperature();// 获取CPU温度
 int cpuCount = SystemInfo.GetCpuCount();// 获取CPU核心数
-IList<string> ipAddress = SystemInfo.GetIPAddress();// 获取本机所有IP地址
-string localUsedIp = SystemInfo.GetLocalUsedIP();// 获取本机当前正在使用的IP地址
+var ipAddress = SystemInfo.GetLocalIPs();// 获取本机所有IP地址
+var localUsedIp = SystemInfo.GetLocalUsedIP();// 获取本机当前正在使用的IP地址
 IList<string> macAddress = SystemInfo.GetMacAddress();// 获取本机所有网卡mac地址
-string osVersion = SystemInfo.GetOsVersion();// 获取操作系统版本
+string osVersion = Windows.GetOsVersion();// 获取操作系统版本
 RamInfo ramInfo = SystemInfo.GetRamInfo();// 获取内存信息
 var cpuSN=SystemInfo.GetCpuInfo()[0].SerialNumber; // CPU序列号
 var driveSN=SystemInfo.GetDiskInfo()[0].SerialNumber; // 硬盘序列号
@@ -267,10 +267,12 @@ SevenZipCompressor.Zip(new List<string>()
     @"D:\1.txt",
     "http://ww3.sinaimg.cn/large/87c01ec7gy1fsq6rywto2j20je0d3td0.jpg",
 }, zip);//压缩成zip
-SevenZipCompressor.UnRar(@"D:\Download\test.rar", @"D:\Download\");//解压rar
+//SevenZipCompressor.UnRar(@"D:\Download\test.rar", @"D:\Download\");//解压rar
 SevenZipCompressor.Decompress(@"D:\Download\test.tar", @"D:\Download\");//自动识别解压压缩包
 SevenZipCompressor.Decompress(@"D:\Download\test.7z", @"D:\Download\");
 ```
+
+
 ASP.NET Core
 
 Startup.cs
