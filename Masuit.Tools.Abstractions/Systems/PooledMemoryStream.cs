@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +8,7 @@ namespace Masuit.Tools.Systems;
 /// <summary>
 /// 池化内存流
 /// </summary>
-public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
+public sealed class PooledMemoryStream : Stream
 {
     /// <summary>
     /// 终结器
@@ -33,7 +31,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
 
     public PooledMemoryStream(byte[] buffer) : this(ArrayPool<byte>.Shared, buffer.Length)
     {
-        Buffer.BlockCopy(buffer, 0, _data, 0, buffer.Length);
+        Array.Copy(buffer, 0, _data, 0, buffer.Length);
     }
 
     public PooledMemoryStream(ArrayPool<byte> arrayPool, int capacity = 0)
@@ -78,16 +76,10 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         AssertNotDisposed();
     }
 
-    /// <summary>
-    /// 读取到字节数组
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="offset"></param>
-    /// <param name="count"></param>
-    /// <returns></returns>
     public override int Read(byte[] buffer, int offset, int count)
     {
         AssertNotDisposed();
+
         if (count == 0)
         {
             return 0;
@@ -99,17 +91,11 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         return (int)available;
     }
 
-    /// <summary>
-    /// 改变游标位置
-    /// </summary>
-    /// <param name="offset"></param>
-    /// <param name="origin"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override long Seek(long offset, SeekOrigin origin)
     {
         AssertNotDisposed();
+
         switch (origin)
         {
             case SeekOrigin.Current:
@@ -152,14 +138,10 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         }
     }
 
-    /// <summary>
-    /// 设置内容长度
-    /// </summary>
-    /// <param name="value"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
     public override void SetLength(long value)
     {
         AssertNotDisposed();
+
         if (value < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(value));
@@ -177,16 +159,11 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         }
     }
 
-    /// <summary>
-    /// 写入到字节数组
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="offset"></param>
-    /// <param name="count"></param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override void Write(byte[] buffer, int offset, int count)
     {
         AssertNotDisposed();
+
         if (count == 0)
         {
             return;
@@ -197,16 +174,11 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
             SetCapacity((int)(OverExpansionFactor * (Position + count)));
         }
 
-        Array.Copy(buffer, offset, _data, Position, count);
+        Buffer.BlockCopy(buffer, offset, _data, (int)Position, count);
         Position += count;
         _length = (int)Math.Max(Position, _length);
     }
 
-    /// <summary>
-    /// 写入到另一个流
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <exception cref="ArgumentNullException"></exception>
     public void WriteTo(Stream stream)
     {
         if (stream == null)
@@ -218,36 +190,6 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         stream.Write(_data, 0, (int)Length);
     }
 
-    /// <summary>
-    /// 获取流的字节数组
-    /// </summary>
-    /// <returns></returns>
-    public byte[] GetBuffer()
-    {
-        AssertNotDisposed();
-        if (_data.Length == Length)
-        {
-            return _data;
-        }
-
-        var buffer = new byte[Length];
-        Buffer.BlockCopy(_data, 0, buffer, 0, buffer.Length);
-        return buffer;
-    }
-
-    /// <summary>
-    /// 获取流的字节数组
-    /// </summary>
-    /// <returns></returns>
-    public byte[] ToArray()
-    {
-        return GetBuffer();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="disposing"></param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected override void Dispose(bool disposing)
     {
@@ -270,9 +212,10 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     private void SetCapacity(int newCapacity)
     {
         var newData = _pool.Rent(newCapacity);
+
         if (_data != null)
         {
-            Array.Copy(_data, 0, newData, 0, Position);
+            Buffer.BlockCopy(_data, 0, newData, 0, (int)Position);
             _pool.Return(_data);
         }
 
@@ -285,25 +228,6 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
         if (_isDisposed)
         {
             throw new ObjectDisposedException(nameof(PooledMemoryStream));
-        }
-    }
-
-    /// <summary>Returns an enumerator that iterates through a collection.</summary>
-    /// <returns>An <see cref="T:System.Collections.IEnumerator"></see> object that can be used to iterate through the collection.</returns>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public IEnumerator<byte> GetEnumerator()
-    {
-        for (var i = 0; i < Length; i++)
-        {
-            yield return _data[i];
         }
     }
 }

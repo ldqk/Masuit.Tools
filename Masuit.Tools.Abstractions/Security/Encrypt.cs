@@ -37,7 +37,7 @@ namespace Masuit.Tools.Security
             using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
-            foreach (var b in ms)
+            foreach (byte b in ms.ToArray())
             {
                 ret.AppendFormat($"{b:X2}");
             }
