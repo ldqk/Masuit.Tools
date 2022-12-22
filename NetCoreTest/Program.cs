@@ -1,29 +1,8 @@
-using Masuit.Tools.AspNetCore.ModelBinder;
-using Masuit.Tools.Files;
-using Masuit.Tools.Media;
+using Masuit.Tools.Systems;
 
-var stream = File.Open(@"D:\images\QQ½ØÍ¼20190923195408.jpg", FileMode.Open, FileAccess.ReadWrite);
-var watermarker = new ImageWatermarker(stream);
-var ms = watermarker.AddWatermark(File.OpenRead(@"D:\images\QQ½ØÍ¼20190923195408_¿´Í¼Íõ.png"), 0.5f);
-ms.SaveFile(@"Y:\1.jpg");
-Console.WriteLine(1);
-Console.ReadKey();
-
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers(options => options.ModelBinderProviders.InsertBodyOrDefaultBinding());
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+var ms = new PooledMemoryStream();
+ms.Write(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }, 0, 9);
+foreach (var b in ms)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Console.WriteLine(b);
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

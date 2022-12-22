@@ -33,9 +33,10 @@ public class LargeMemoryStream : Stream
     private int GetPageCount(long length)
     {
         int pageCount = (int)(length / PageSize) + 1;
-
-        if ((length % PageSize) == 0)
+        if (length % PageSize == 0)
+        {
             pageCount--;
+        }
 
         return pageCount;
     }
@@ -49,7 +50,7 @@ public class LargeMemoryStream : Stream
         else
         {
             var streamBuffers = new byte[_streamBuffers.Length + AllocStep][];
-            Array.Copy(_streamBuffers, streamBuffers, _streamBuffers.Length);
+            Buffer.BlockCopy(_streamBuffers, 0, streamBuffers, 0, _streamBuffers.Length);
             _streamBuffers = streamBuffers;
         }
 
@@ -58,15 +59,16 @@ public class LargeMemoryStream : Stream
 
     private void AllocSpaceIfNeeded(long value)
     {
-        if (value < 0)
-            throw new InvalidOperationException("AllocSpaceIfNeeded < 0");
-
-        if (value == 0)
-            return;
+        switch (value)
+        {
+            case < 0:
+                throw new InvalidOperationException("AllocSpaceIfNeeded < 0");
+            case 0:
+                return;
+        }
 
         int currentPageCount = GetPageCount(_allocatedBytes);
         int neededPageCount = GetPageCount(value);
-
         while (currentPageCount < neededPageCount)
         {
             if (currentPageCount == _pageCount)
@@ -138,7 +140,6 @@ public class LargeMemoryStream : Stream
         int currentOffset = (int)(_position % PageSize);
         int currentLength = PageSize - currentOffset;
         long startPosition = _position;
-
         if (startPosition + count > _length)
         {
             count = (int)(_length - startPosition);
@@ -151,7 +152,7 @@ public class LargeMemoryStream : Stream
                 currentLength = count;
             }
 
-            Array.Copy(_streamBuffers[currentPage++], currentOffset, buffer, offset, currentLength);
+            Buffer.BlockCopy(_streamBuffers[currentPage++], currentOffset, buffer, offset, currentLength);
             offset += currentLength;
             _position += currentLength;
             count -= currentLength;
@@ -200,7 +201,6 @@ public class LargeMemoryStream : Stream
 
         int currentPageCount = GetPageCount(_allocatedBytes);
         int neededPageCount = GetPageCount(value);
-
         while (currentPageCount > neededPageCount)
         {
             ArrayPool<byte>.Shared.Return(_streamBuffers[--currentPageCount], true);
@@ -228,7 +228,7 @@ public class LargeMemoryStream : Stream
                 currentLength = count;
             }
 
-            Array.Copy(buffer, offset, _streamBuffers[currentPage++], currentOffset, currentLength);
+            Buffer.BlockCopy(buffer, offset, _streamBuffers[currentPage++], currentOffset, currentLength);
             offset += currentLength;
             _position += currentLength;
             count -= currentLength;
@@ -245,7 +245,6 @@ public class LargeMemoryStream : Stream
             _isDisposed = true;
             Position = 0;
             _length = 0;
-
             if (_streamBuffers != null)
             {
                 foreach (var bytes in _streamBuffers)
