@@ -73,7 +73,7 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="base">进制</param>
         /// <returns></returns>
-        public static long FromBinary(this string str, byte @base)
+        public static long FromBase(this string str, byte @base)
         {
             var nf = new NumberFormater(@base);
             return nf.FromString(str);
@@ -85,7 +85,7 @@ namespace Masuit.Tools
         /// <param name="str"></param>
         /// <param name="base">进制</param>
         /// <returns></returns>
-        public static BigInteger FromBinaryBig(this string str, byte @base)
+        public static BigInteger FromBaseBig(this string str, byte @base)
         {
             var nf = new NumberFormater(@base);
             return nf.FromStringBig(str);

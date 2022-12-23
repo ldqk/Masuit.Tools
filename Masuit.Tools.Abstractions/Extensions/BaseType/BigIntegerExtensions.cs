@@ -11,7 +11,7 @@ namespace Masuit.Tools
         /// <param name="num"></param>
         /// <param name="base">进制</param>
         /// <returns></returns>
-        public static string ToBinary(this BigInteger num, byte @base)
+        public static string ToBase(this BigInteger num, byte @base)
         {
             var nf = new NumberFormater(@base);
             return nf.ToString(num);

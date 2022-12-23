@@ -132,18 +132,18 @@ var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue))
 ```
 ```csharp
 //扩展方法形式调用
-var bin=12345678.ToBinary(36);//7clzi
-var num="7clzi".FromBinary(36);//12345678
+var bin=12345678.ToBase(36);//7clzi
+var num="7clzi".FromBase(36);//12345678
 ```
 ```csharp
 //超大数字的进制转换
-var num = "e6186159d38cd50e0463a55e596336bd".FromBinaryBig(16);
+var num = "e6186159d38cd50e0463a55e596336bd".FromBaseBig(16);
 Console.WriteLine(num); // 十进制：305849028665645097422198928560410015421
-Console.WriteLine(num.ToBinary(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
-Console.WriteLine(num.ToBinary(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
-Console.WriteLine(num.ToBinary(7)); // 7进制：2600240311641665565300424545154525131265221035，46位长度
-Console.WriteLine(num.ToBinary(12)); // 12进制：5217744842749978a756b22135b16a5998a5，36位长度
-Console.WriteLine(num.ToBinary(41)); // 41进制：opzeBda2aytcEeudEquuesbk，24位长度
+Console.WriteLine(num.ToBase(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
+Console.WriteLine(num.ToBase(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
+Console.WriteLine(num.ToBase(7)); // 7进制：2600240311641665565300424545154525131265221035，46位长度
+Console.WriteLine(num.ToBase(12)); // 12进制：5217744842749978a756b22135b16a5998a5，36位长度
+Console.WriteLine(num.ToBase(41)); // 41进制：opzeBda2aytcEeudEquuesbk，24位长度
 ```
 ### 6.纳秒级性能计时器
 ```csharp
@@ -818,14 +818,14 @@ public class ClassDto
     }
     
     JsonConvert.SerializeObject(new MyClass(),new JsonSerializerSettings()
-	{
-		ContractResolver = new DeserializeOnlyContractResolver() // 配置使用DeserializeOnlyContractResolver解释器
-	});
+    {
+        ContractResolver = new DeserializeOnlyContractResolver() // 配置使用DeserializeOnlyContractResolver解释器
+    });
 ```
 如果是WebAPI全局使用：
 ```csharp
-		//在Startup.ConfigureServices中
-		services.AddMvc().AddNewtonsoftJson(options =>
+        //在Startup.ConfigureServices中
+        services.AddMvc().AddNewtonsoftJson(options =>
              {
                  var resolver = new DeserializeOnlyContractResolver();
                  resolver.NamingStrategy = new CamelCaseNamingStrategy();
@@ -844,9 +844,9 @@ public class ClassDto
     }
     
     JsonConvert.SerializeObject(new MyClass(),new JsonSerializerSettings()
-	{
-		ContractResolver = new FallbackJsonPropertyResolver() // 配置使用FallbackJsonPropertyResolver解释器
-	});
+    {
+        ContractResolver = new FallbackJsonPropertyResolver() // 配置使用FallbackJsonPropertyResolver解释器
+    });
 ```
 #### CompositeContractResolver
 该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
@@ -859,7 +859,7 @@ PM> Install-Package Masuit.Tools.AspNetCore
 ```
 Startup配置：
 ```csharp
-	services.AddMvc(options =>
+    services.AddMvc(options =>
         {
              options.ModelBinderProviders.InsertBodyOrDefaultBinding();
         })
@@ -871,7 +871,7 @@ Startup配置：
         {
             return Ok(...);
         }
-	
+    
         [HttpGet("query"),HttpPost("query")]
         public IActionResult Query([FromBodyOrDefault]int id,[FromBodyOrDefault]string name)
         {
