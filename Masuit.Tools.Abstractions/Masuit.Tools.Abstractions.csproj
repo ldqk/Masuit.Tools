@@ -69,19 +69,16 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
         <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 

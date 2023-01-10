@@ -282,7 +282,7 @@ namespace Masuit.Tools.Net
             foreach (var item in mergeOrderedList)
             {
                 using var pdi = File.OpenRead(item.FullPath);
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[4096*1024];
                 int read;
                 while ((read = pdi.Read(buffer, 0, buffer.Length)) > 0)
                 {
