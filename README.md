@@ -132,12 +132,12 @@ var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue))
 ```
 ```csharp
 //扩展方法形式调用
-var bin=12345678.ToBase(36);//7clzi
-var num="7clzi".FromBase(36);//12345678
+var bin=12345678.ToBase(36);// 10进制转36进制：7clzi
+var num="7clzi".FromBase(36);// 36进制转10进制：12345678
 ```
 ```csharp
 //超大数字的进制转换
-var num = "e6186159d38cd50e0463a55e596336bd".FromBaseBig(16);
+var num = "e6186159d38cd50e0463a55e596336bd".FromBaseBig(16); // 大数字16进制转10进制
 Console.WriteLine(num); // 十进制：305849028665645097422198928560410015421
 Console.WriteLine(num.ToBase(64)); // 64进制：3C665pQUPl3whzFlVpoPqZ，22位长度
 Console.WriteLine(num.ToBase(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25位长度
