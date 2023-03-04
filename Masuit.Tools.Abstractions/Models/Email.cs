@@ -6,6 +6,7 @@ using System.Net.Mail;
 namespace Masuit.Tools.Models
 {
 #pragma warning disable 1591
+
 	public class Email : Disposable
 	{
 		/// <summary>
@@ -62,7 +63,8 @@ namespace Masuit.Tools.Models
 		{
 			if (string.IsNullOrEmpty(Tos)) return null;
 			var mailMessage = new MailMessage();
-			//多个接收者                
+
+			//多个接收者
 			foreach (var str in Tos.Split(','))
 			{
 				mailMessage.To.Add(str);
@@ -75,7 +77,7 @@ namespace Masuit.Tools.Models
 			mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
 			mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
 			mailMessage.Priority = MailPriority.High;
-			foreach (var item in Attachments)
+			foreach (var item in Attachments.AsNotNull())
 			{
 				mailMessage.Attachments.Add(item);
 			}
@@ -104,6 +106,7 @@ namespace Masuit.Tools.Models
 		public void SendAsync(Action<string> completedCallback)
 		{
 			if (MailMessage == null) return;
+
 			//发送邮件回调方法
 			_actionSendCompletedCallback = completedCallback;
 			SmtpClient.SendCompleted += SendCompletedCallback;
@@ -160,5 +163,6 @@ namespace Masuit.Tools.Models
 			Attachments.ForEach(a => a.Dispose());
 		}
 	}
+
 #pragma warning restore 1591
 }

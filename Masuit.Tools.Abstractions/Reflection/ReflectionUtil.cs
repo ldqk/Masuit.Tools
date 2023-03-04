@@ -90,9 +90,9 @@ namespace Masuit.Tools.Reflection
             var parameter = Expression.Parameter(typeof(T), "e");
             var property = Expression.PropertyOrField(parameter, name);
             var before = Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
-            if (value.Equals(before))
+            if (value == before)
             {
-                return value.ToString();
+                return value?.ToString();
             }
 
             if (property.Type.IsGenericType && property.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -101,7 +101,7 @@ namespace Masuit.Tools.Reflection
             }
             else
             {
-                var valueExpression = Expression.Parameter(value.GetType(), "v");
+                var valueExpression = Expression.Parameter(property.Type, "v");
                 var assign = Expression.Assign(property, valueExpression);
                 Expression.Lambda(assign, parameter, valueExpression).Compile().DynamicInvoke(obj, value);
             }
