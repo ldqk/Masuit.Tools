@@ -59,6 +59,16 @@ namespace Masuit.Tools.Media
             SmallImagePixelsThreshold = smallImagePixelsThreshold;
         }
 
+        /// <summary>
+        /// 添加水印
+        /// </summary>
+        /// <param name="watermarkText">水印文字</param>
+        /// <param name="ttfFontPath">ttf字体文件路径</param>
+        /// <param name="fontSize">字体大小</param>
+        /// <param name="color">字体颜色</param>
+        /// <param name="watermarkPosition">水印位置</param>
+        /// <param name="textPadding">水印边距</param>
+        /// <returns></returns>
         public PooledMemoryStream AddWatermark(string watermarkText, string ttfFontPath, int fontSize, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10)
         {
             var fonts = new FontCollection();
