@@ -6,7 +6,7 @@
 官网教程：https://ldqk.org/55
 github：https://github.com/ldqk/Masuit.Tools
         </Description>
-        <Version>2.5.9.3</Version>
+        <Version>2.5.9.4</Version>
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
@@ -54,7 +54,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />

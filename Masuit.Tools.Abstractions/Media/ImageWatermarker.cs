@@ -6,6 +6,8 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Masuit.Tools.Media
 {
@@ -21,11 +23,40 @@ namespace Masuit.Tools.Media
         /// </summary>
         public int SmallImagePixelsThreshold { get; set; }
 
+        public IImageEncoder ImageEncoder { get; set; }
+
         private readonly Stream _stream;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="originStream">图片流</param>
         public ImageWatermarker(Stream originStream)
         {
             _stream = originStream;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="originStream">图片流</param>
+        /// <param name="encoder">指定编码器</param>
+        public ImageWatermarker(Stream originStream, IImageEncoder encoder) : this(originStream)
+        {
+            ImageEncoder = encoder;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="originStream">图片流</param>
+        /// <param name="encoder">指定编码器</param>
+        /// <param name="skipWatermarkForSmallImages">是否跳过小缩略图</param>
+        /// <param name="smallImagePixelsThreshold">小图像素大小</param>
+        public ImageWatermarker(Stream originStream, IImageEncoder encoder, bool skipWatermarkForSmallImages, int smallImagePixelsThreshold) : this(originStream, encoder)
+        {
+            SkipWatermarkForSmallImages = skipWatermarkForSmallImages;
+            SmallImagePixelsThreshold = smallImagePixelsThreshold;
         }
 
         public PooledMemoryStream AddWatermark(string watermarkText, string ttfFontPath, int fontSize, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10)
@@ -44,9 +75,10 @@ namespace Masuit.Tools.Media
         /// <param name="watermarkPosition">水印位置</param>
         /// <param name="textPadding">边距</param>
         /// <param name="font">字体</param>
-        /// <returns></returns>
         public PooledMemoryStream AddWatermark(string watermarkText, Font font, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10)
         {
+            var imageFormat = Image.DetectFormat(_stream);
+            _stream.Seek(0, SeekOrigin.Begin);
             using var img = Image.Load(_stream);
             var textMeasure = TextMeasurer.Measure(watermarkText, new TextOptions(font));
             if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold) || img.Width <= textMeasure.Width))
@@ -91,7 +123,14 @@ namespace Masuit.Tools.Media
 
             img.Mutate(c => c.DrawText(watermarkText, font, color, new PointF(x, y)));
             var ms = new PooledMemoryStream();
-            img.SaveAsWebp(ms);
+            if (ImageEncoder == null)
+            {
+                img.Save(ms, imageFormat);
+            }
+            else
+            {
+                img.Save(ms, ImageEncoder);
+            }
             ms.Position = 0;
             return ms;
         }
