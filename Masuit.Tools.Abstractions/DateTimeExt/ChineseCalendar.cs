@@ -91,9 +91,9 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         private static readonly string[] ChineseConstellationName =
         {
-            //四           五          六         日          一         二         三  
-            "角木蛟", "亢金龙", "女土蝠", "房日兔", "心月狐", "尾火虎", "箕水豹",
-            "斗木獬", "牛金牛", "氐土貉", "虚日鼠", "危月燕", "室火猪", "壁水獝",
+            //四           五          六         日          一         二         三
+            "角木蛟", "亢金龙","氐土貉" , "房日兔", "心月狐", "尾火虎", "箕水豹",
+            "斗木獬", "牛金牛", "女土蝠", "虚日鼠", "危月燕", "室火猪", "壁水獝",
             "奎木狼", "娄金狗", "胃土彘", "昴日鸡", "毕月乌", "觜火猴", "参水猿",
             "井木犴", "鬼金羊", "柳土獐", "星日马", "张月鹿", "翼火蛇", "轸水蚓"
         };
@@ -139,7 +139,7 @@ namespace Masuit.Tools.DateTimeExt
             504758
         };
 
-        #endregion
+        #endregion 节气数据
 
         #region 农历相关数据
 
@@ -154,7 +154,7 @@ namespace Masuit.Tools.DateTimeExt
             "出错", "正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"
         };
 
-        #endregion
+        #endregion 农历相关数据
 
         #region 节日数据
 
@@ -237,9 +237,9 @@ namespace Masuit.Tools.DateTimeExt
             new DateInfoStruct(12, 8, 0, "腊八节"),
             new DateInfoStruct(12, 23, 0, "北方小年(扫房)"),
             new DateInfoStruct(12, 24, 0, "南方小年(掸尘)"),
+
             //new HolidayStruct(12, 30, 0, "除夕")  //注意除夕需要其它方法进行计算
         };
-
 
         private static readonly WeekHolidayStruct[] WHolidayInfo =
         {
@@ -253,9 +253,9 @@ namespace Masuit.Tools.DateTimeExt
             new WeekHolidayStruct(11, 4, 5, "感恩节")
         };
 
-        #endregion
+        #endregion 节日数据
 
-        #endregion
+        #endregion 基础数据
 
         /// <summary>
         /// 用一个标准的公历日期来初使化
@@ -271,6 +271,7 @@ namespace Masuit.Tools.DateTimeExt
             int i;
             Date = dt.Date;
             _datetime = dt;
+
             //农历日期计算部分
             var temp = 0;
             var ts = Date - MinDay; //计算两天的基本差距
@@ -288,6 +289,7 @@ namespace Masuit.Tools.DateTimeExt
 
             ChineseYear = i;
             var leap = GetChineseLeapMonth(ChineseYear);
+
             //设定当年是否有闰月
             IsChineseLeapYear = leap > 0;
             IsChineseLeapMonth = false;
@@ -342,7 +344,7 @@ namespace Masuit.Tools.DateTimeExt
             var leap = GetChineseLeapMonth(cy);
             IsChineseLeapYear = leap != 0;
             IsChineseLeapMonth = cm == leap && leapMonthFlag;
-            if (IsChineseLeapYear == false || cm < leap) //当年没有闰月||计算月份小于闰月     
+            if (IsChineseLeapYear == false || cm < leap) //当年没有闰月||计算月份小于闰月
             {
                 for (i = 1; i < cm; i++)
                 {
@@ -441,6 +443,7 @@ namespace Masuit.Tools.DateTimeExt
             var sumDay = 348;
             var i = 0x8000;
             var info = LunarDateArray[year - MinYear] & 0x0FFFF;
+
             //计算12个月中有多少天为30天
             for (int m = 0; m < 12; m++)
             {
@@ -461,7 +464,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        /// 
+        ///
         private string GetChineseHour(DateTime dt)
         {
             //计算时辰的地支
@@ -620,7 +623,7 @@ namespace Masuit.Tools.DateTimeExt
             return result;
         }
 
-        #endregion
+        #endregion 私有函数
 
         #region 节日
 
@@ -781,7 +784,7 @@ namespace Masuit.Tools.DateTimeExt
             return Date.DayOfWeek == DayOfWeek.Saturday || Date.DayOfWeek == DayOfWeek.Sunday;
         }
 
-        #endregion
+        #endregion 节日
 
         #region 公历日期
 
@@ -838,7 +841,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         public string ChineseHour => GetChineseHour(_datetime);
 
-        #endregion
+        #endregion 公历日期
 
         #region 农历日期
 
@@ -1008,12 +1011,12 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
-        #endregion
+        #endregion 农历日期
 
         #region 星座
 
         /// <summary>
-        /// 计算指定日期的星座序号 
+        /// 计算指定日期的星座序号
         /// </summary>
         /// <returns></returns>
         public string Constellation
@@ -1081,7 +1084,7 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
-        #endregion
+        #endregion 星座
 
         #region 生肖
 
@@ -1110,7 +1113,7 @@ namespace Masuit.Tools.DateTimeExt
             }
         }
 
-        #endregion
+        #endregion 生肖
 
         #region 天干地支
 
@@ -1146,6 +1149,7 @@ namespace Masuit.Tools.DateTimeExt
                 }
 
                 var zhi = DiZhi[zhiIndex - 1].ToString();
+
                 //根据当年的干支年的干来计算月干的第一个
                 int ganIndex = 1;
                 int i = (ChineseYear - GanZhiStartYear) % 60; //计算干支
@@ -1188,7 +1192,7 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         public string GanZhiDateString => GanZhiYearString + GanZhiMonthString + GanZhiDayString;
 
-        #endregion
+        #endregion 天干地支
 
         /// <summary>
         /// 取下一天
