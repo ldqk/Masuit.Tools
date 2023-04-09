@@ -1,4 +1,5 @@
 ﻿using System;
+using Masuit.Tools.Strings;
 
 namespace Masuit.Tools
 {
@@ -166,6 +167,26 @@ namespace Masuit.Tools
                 num = Math.Round(num.Value, decimals, mode);
             }
             return num;
+        }
+
+        /// <summary>
+        /// 转换为中文数字格式
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static string ToChineseNumber(this IConvertible number)
+        {
+            return NumberFormater.ToChineseNumber(number);
+        }
+
+        /// <summary>
+        /// 数字转中文金额大写
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static string ToChineseMoney(this IConvertible number)
+        {
+            return NumberFormater.ToChineseMoney(number);
         }
     }
 }

@@ -195,7 +195,7 @@
       <Version>1.0.0-beta14</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.6.96</Version>
+      <Version>2.6.104</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>

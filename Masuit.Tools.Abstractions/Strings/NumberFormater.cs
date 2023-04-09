@@ -311,7 +311,7 @@ namespace Masuit.Tools.Strings
         /// </summary>
         /// <param name="num">123.45</param>
         /// <returns></returns>
-        public static string ToChineseNumber(double num)
+        public static string ToChineseNumber(IConvertible num)
         {
             var x = num.ToString(CultureInfo.CurrentCulture);
             if (x.Length == 0)
@@ -351,7 +351,7 @@ namespace Masuit.Tools.Strings
         /// 数字转中文金额大写
         /// </summary>
         /// <param name="number">22.22</param>
-        public static string ToChineseMoney(double number)
+        public static string ToChineseMoney(IConvertible number)
         {
             /*
             #：用数字替换字符位置，如果数字小于对应值的位数，则在左侧填充零。
@@ -369,7 +369,7 @@ namespace Masuit.Tools.Strings
             B：将数字转换为二进制格式。
             A：将数字转换为 ASCII 字符。
              */
-            var s = number.ToString("#L#E#D#C#K#E#D#C#J#E#D#C#I#E#D#C#H#E#D#C#G#E#D#C#F#E#D#C#.0B0A");
+            var s = number.ConvertTo<decimal>().ToString("#L#E#D#C#K#E#D#C#J#E#D#C#I#E#D#C#H#E#D#C#G#E#D#C#F#E#D#C#.0B0A");
 
             /*
              * ((?<=-|^)[^1-9]*)： 匹配负号（如果存在），并且匹配在小数点前面的所有非数字字符。
