@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
 using System.Text;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Reflection
 {
@@ -169,6 +171,48 @@ namespace Masuit.Tools.Reflection
         }
 
         /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static EnumDescriptionAttribute GetEnumDescription(this Enum value)
+        {
+            return GetEnumDescriptions(value).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static NullableDictionary<string, (string Description, string Display)> GetTypedEnumDescriptions(this Enum value)
+        {
+            return GetEnumDescriptions(value).ToDictionarySafety(a => a.Language, a => (Description: a.Description, Display: a.Display));
+        }
+
+        /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static IEnumerable<EnumDescriptionAttribute> GetEnumDescriptions(this Enum value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            var type = value.GetType();
+            if (!Enum.IsDefined(type, value))
+            {
+                return new List<EnumDescriptionAttribute>();
+            }
+
+            FieldInfo fi = type.GetField(value.ToString());
+            return fi.GetCustomAttributes(typeof(EnumDescriptionAttribute), false).OfType<EnumDescriptionAttribute>();
+        }
+
+        /// <summary>
         ///	根据成员信息获取Description信息
         /// </summary>
         /// <param name="member">成员信息</param>
@@ -204,6 +248,15 @@ namespace Masuit.Tools.Reflection
         {
             var attributes = provider.GetCustomAttributes(typeof(T), true);
             return attributes.Length > 0 ? attributes[0] as T : null;
+        }
+
+        /// <summary>
+        /// 获取对象的Attributes
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<T> GetAttributes<T>(this ICustomAttributeProvider provider) where T : Attribute
+        {
+            return provider.GetCustomAttributes(typeof(T), true).OfType<T>();
         }
 
         #region 资源获取

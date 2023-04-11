@@ -106,8 +106,8 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Security\*.*">
       <Link>Security\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\ReflectionUtil.cs">
-      <Link>Reflection\ReflectionUtil.cs</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\*.*">
+      <Link>Reflection\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
       <Link>Strings\NumberFormater.cs</Link>

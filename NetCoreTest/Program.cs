@@ -1,29 +1,19 @@
 using Masuit.Tools.AspNetCore.ModelBinder;
 using Masuit.Tools.Files;
 using Masuit.Tools.Media;
+using Masuit.Tools.Reflection;
 
-var stream = File.Open(@"D:\images\QQ½ØÍ¼20190923195408.jpg", FileMode.Open, FileAccess.ReadWrite);
-var watermarker = new ImageWatermarker(stream);
-var ms = watermarker.AddWatermark(File.OpenRead(@"D:\images\QQ½ØÍ¼20190923195408_¿´Í¼Íõ.png"), 0.5f);
-ms.SaveFile(@"Y:\1.jpg");
-Console.WriteLine(1);
+var attributes = MyEnum.A.GetTypedEnumDescriptions();
 Console.ReadKey();
+MyStruct<object>? a = null;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers(options => options.ModelBinderProviders.InsertBodyOrDefaultBinding());
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public enum MyEnum
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    [EnumDescription("A", "a")]
+    A
 }
 
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+internal struct MyStruct<T>
+{
+    public T Value { get; set; }
+}
