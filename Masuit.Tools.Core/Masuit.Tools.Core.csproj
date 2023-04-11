@@ -54,7 +54,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />
