@@ -17,7 +17,7 @@
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <Version>1.1.9.6</Version>
+        <Version>1.1.9.7</Version>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <FileVersion>1.1.9</FileVersion>
@@ -45,5 +45,17 @@
     <ItemGroup>
         <ProjectReference Include="..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.9" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.11" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.10" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+    </ItemGroup>
 </Project>

@@ -4,8 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
+using System.Transactions;
 
 namespace Masuit.Tools.Core
 {
@@ -195,8 +195,7 @@ namespace Masuit.Tools.Core
             return GetChanges(db).Union(GetAdded(db)).Union(GetRemoved(db));
         }
 
-        public static IQueryable<TEntity> IncludeRecursive<TEntity>(this IQueryable<TEntity> source,
-          int levelIndex, Expression<Func<TEntity, ICollection<TEntity>>> expression) where TEntity : class
+        public static IQueryable<TEntity> IncludeRecursive<TEntity>(this IQueryable<TEntity> source, int levelIndex, Expression<Func<TEntity, ICollection<TEntity>>> expression) where TEntity : class
         {
             if (levelIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(levelIndex));
@@ -209,58 +208,118 @@ namespace Masuit.Tools.Core
                     sb.Append(Type.Delimiter);
                 sb.Append(property);
             }
+
             return source.Include(sb.ToString());
         }
-    }
 
-    public class ChangePropertyInfo
-    {
-        /// <summary>
-        /// 属性
-        /// </summary>
-        public PropertyInfo PropertyInfo { get; set; }
+        public static async Task<List<T>> ToListWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.ToListAsync(cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-        /// <summary>
-        /// 原始值
-        /// </summary>
-        public object OriginalValue { get; set; }
+        public static async Task<int> CountWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.CountAsync(cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-        /// <summary>
-        /// 新值
-        /// </summary>
-        public object CurrentValue { get; set; }
+        public static async Task<int> CountWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.CountAsync(where, cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-        /// <summary>
-        /// 是否是主键
-        /// </summary>
-        public bool IsPrimaryKey { get; set; }
+        public static async Task<bool> AnyWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.AnyAsync(cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-        /// <summary>
-        /// 是否是外键
-        /// </summary>
-        public bool IsForeignKey { get; set; }
-    }
+        public static async Task<bool> AnyWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.AnyAsync(where, cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-    public class ChangeEntry
-    {
-        /// <summary>
-        /// 所属实体
-        /// </summary>
-        public object Entity { get; set; }
+        public static async Task<bool> AllWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            }, TransactionScopeAsyncFlowOption.Enabled);
+            var result = await query.AllAsync(where, cancellationToken);
+            scope.Complete();
+            return result;
+        }
 
-        /// <summary>
-        /// 实体类型
-        /// </summary>
-        public Type EntityType { get; set; }
+        public static T NoLock<T, TDbContext>(this TDbContext dbContext, Func<TDbContext, T> func) where TDbContext : DbContext
+        {
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            return strategy.Execute(() =>
+            {
+                var transactionOptions = new TransactionOptions
+                {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                };
+                using var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions);
+                var result = func(dbContext);
+                scope.Complete();
+                return result;
+            });
+        }
 
-        /// <summary>
-        /// 变更类型
-        /// </summary>
-        public EntityState EntityState { get; set; }
+        public static Task<T> NoLock<T, TDbContext>(this TDbContext dbContext, Func<TDbContext, Task<T>> func) where TDbContext : DbContext
+        {
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            return strategy.ExecuteAsync(async () =>
+            {
+                var transactionOptions = new TransactionOptions
+                {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                };
+                using var scope = new TransactionScope(TransactionScopeOption.Required, transactionOptions);
+                var result = await func(dbContext);
+                scope.Complete();
+                return result;
+            });
+        }
 
-        /// <summary>
-        /// 字段变更信息
-        /// </summary>
-        public List<ChangePropertyInfo> ChangeProperties { get; set; }
+        public static T ExecutionStrategy<T, TDbContext>(this TDbContext dbContext, Func<TDbContext, T> func) where TDbContext : DbContext
+        {
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            return strategy.Execute(() => func(dbContext));
+        }
+
+        public static Task<T> ExecutionStrategy<T, TDbContext>(this TDbContext dbContext, Func<TDbContext, Task<T>> func) where TDbContext : DbContext
+        {
+            var strategy = dbContext.Database.CreateExecutionStrategy();
+            return strategy.ExecuteAsync(() => func(dbContext));
+        }
     }
 }

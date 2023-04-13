@@ -99,6 +99,22 @@ public sealed class ConcurrentHashSet<T> : ISet<T>, IDisposable
         }
     }
 
+    public bool TryAdd(T item)
+    {
+        _lock.EnterWriteLock();
+        try
+        {
+            return _hashSet.Add(item);
+        }
+        finally
+        {
+            if (_lock.IsWriteLockHeld)
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+    }
+
     public void UnionWith(IEnumerable<T> other)
     {
         _lock.EnterWriteLock();
