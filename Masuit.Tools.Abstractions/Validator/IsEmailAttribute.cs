@@ -14,6 +14,7 @@ namespace Masuit.Tools.Core.Validator
     public class IsEmailAttribute : ValidationAttribute
     {
         private readonly bool _valid;
+        private string _customMessage;
 
         /// <summary>
         /// 域白名单
@@ -39,6 +40,7 @@ namespace Masuit.Tools.Core.Validator
             WhiteList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainWhiteList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
             BlockList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainBlockList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
             _valid = valid;
+            _customMessage = ErrorMessage;
         }
 
         /// <summary>
@@ -50,26 +52,26 @@ namespace Masuit.Tools.Core.Validator
         {
             if (value == null && !AllowEmpty)
             {
-                ErrorMessage = "邮箱不能为空！";
+                ErrorMessage = _customMessage ?? "邮箱不能为空！";
                 return false;
             }
 
             var email = (string)value;
             if (email.Length < 7)
             {
-                ErrorMessage = "您输入的邮箱格式不正确！";
+                ErrorMessage = _customMessage ?? "您输入的邮箱格式不正确！";
                 return false;
             }
 
             if (email.Length > 256)
             {
-                ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
+                ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
             }
 
             if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(new[] { '!', ';' }, StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
             {
-                ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
+                ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
             }
 
@@ -85,7 +87,7 @@ namespace Masuit.Tools.Core.Validator
                 var records = nslookup.Query(email.Split('@')[1], QueryType.MX).Answers.MxRecords().ToList();
                 if (!string.IsNullOrEmpty(BlockList) && records.Any(r => BlockList.Split('!').Any(item => Regex.IsMatch(r.Exchange.Value, item))))
                 {
-                    ErrorMessage = "您输入的邮箱无效，请使用真实有效的邮箱地址！";
+                    ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                     return false;
                 }
 
@@ -105,7 +107,7 @@ namespace Masuit.Tools.Core.Validator
                 return true;
             }
 
-            ErrorMessage = "您输入的邮箱格式不正确！";
+            ErrorMessage = _customMessage ?? "您输入的邮箱格式不正确！";
             return false;
         }
     }
