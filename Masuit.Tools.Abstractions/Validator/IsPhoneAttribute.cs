@@ -8,13 +8,18 @@ namespace Masuit.Tools.Core.Validator
     public class IsPhoneAttribute : ValidationAttribute
     {
         /// <summary>
+        /// 是否允许为空
+        /// </summary>
+        public bool AllowEmpty { get; set; }
+
+        /// <summary>
         /// 验证手机号码是否合法
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public override bool IsValid(object value)
         {
-            if (value is null)
+            if (value is null && !AllowEmpty)
             {
                 ErrorMessage = "手机号码不能为空";
                 return false;

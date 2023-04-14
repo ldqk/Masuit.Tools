@@ -26,6 +26,11 @@ namespace Masuit.Tools.Core.Validator
         private string BlockList { get; }
 
         /// <summary>
+        /// 是否允许为空
+        /// </summary>
+        public bool AllowEmpty { get; set; }
+
+        /// <summary>
         /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，EmailDomainBlockList配置邮箱域名黑名单，英文分号(;)或感叹号(!)或逗号(,)分隔，每个单独的元素支持正则表达式
         /// </summary>
         /// <param name="valid">是否检查邮箱的有效性</param>
@@ -43,7 +48,7 @@ namespace Masuit.Tools.Core.Validator
         /// <returns></returns>
         public override bool IsValid(object value)
         {
-            if (value == null)
+            if (value == null && !AllowEmpty)
             {
                 ErrorMessage = "邮箱不能为空！";
                 return false;
