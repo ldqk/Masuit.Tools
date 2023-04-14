@@ -14,9 +14,13 @@ namespace Masuit.Tools.Core.Validator
 
         private readonly string _customMessage;
 
-        public IsPhoneAttribute()
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="customMessage">自定义错误消息</param>
+        public IsPhoneAttribute(string customMessage = null)
         {
-            _customMessage = ErrorMessage;
+            _customMessage = customMessage;
         }
 
         /// <summary>

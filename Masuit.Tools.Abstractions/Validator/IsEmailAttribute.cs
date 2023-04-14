@@ -14,7 +14,7 @@ namespace Masuit.Tools.Core.Validator
     public class IsEmailAttribute : ValidationAttribute
     {
         private readonly bool _valid;
-        private string _customMessage;
+        private readonly string _customMessage;
 
         /// <summary>
         /// 域白名单
@@ -35,12 +35,13 @@ namespace Masuit.Tools.Core.Validator
         /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，EmailDomainBlockList配置邮箱域名黑名单，英文分号(;)或感叹号(!)或逗号(,)分隔，每个单独的元素支持正则表达式
         /// </summary>
         /// <param name="valid">是否检查邮箱的有效性</param>
-        public IsEmailAttribute(bool valid = true)
+        /// <param name="customMessage">自定义错误消息</param>
+        public IsEmailAttribute(bool valid = true, string customMessage = null)
         {
             WhiteList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainWhiteList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
             BlockList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainBlockList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
             _valid = valid;
-            _customMessage = ErrorMessage;
+            _customMessage = customMessage;
         }
 
         /// <summary>
