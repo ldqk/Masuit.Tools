@@ -28,9 +28,10 @@ namespace Masuit.Tools
                 return pooledMemoryStream;
             }
 
-            stream.Seek(0, SeekOrigin.Begin);
+            stream.Position = 0;
             var ms = new PooledMemoryStream();
             stream.CopyTo(ms);
+            stream.Position = 0;
             return ms;
         }
 

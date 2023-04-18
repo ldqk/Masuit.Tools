@@ -30,7 +30,17 @@ namespace Masuit.Tools.Core.Validator
         /// <returns></returns>
         public override bool IsValid(object value)
         {
-            if (value is null && !AllowEmpty)
+            if (AllowEmpty)
+            {
+                switch (value)
+                {
+                    case null:
+                    case string s when string.IsNullOrEmpty(s):
+                        return true;
+                }
+            }
+
+            if (value is null)
             {
                 ErrorMessage = _customMessage ?? "手机号码不能为空";
                 return false;

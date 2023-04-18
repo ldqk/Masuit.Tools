@@ -51,7 +51,17 @@ namespace Masuit.Tools.Core.Validator
         /// <returns></returns>
         public override bool IsValid(object value)
         {
-            if (value == null && !AllowEmpty)
+            if (AllowEmpty)
+            {
+                switch (value)
+                {
+                    case null:
+                    case string s when string.IsNullOrEmpty(s):
+                        return true;
+                }
+            }
+
+            if (value == null)
             {
                 ErrorMessage = _customMessage ?? "邮箱不能为空！";
                 return false;
