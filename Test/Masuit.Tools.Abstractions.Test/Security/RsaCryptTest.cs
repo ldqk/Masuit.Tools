@@ -9,6 +9,7 @@ namespace Masuit.Tools.Abstractions.Test.Security
         public class RsaCryptTestEntity
         {
             public string Name { get; set; }
+
             public DateTime SdTime { get; set; }
         }
 
@@ -32,6 +33,17 @@ namespace Masuit.Tools.Abstractions.Test.Security
                 Name = "asdf"
             }
             .ToJsonString());
+        }
+
+        [Fact]
+        public void 签名验证()
+        {
+            RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();
+            string data = "Hello World!".Base64Encrypt();
+            string sign = data.SignatureString(rsaKey.PrivateKey);
+
+            // 验证结果为False
+            Assert.True(data.SignatureDeformatter(rsaKey.PublicKey, sign));
         }
     }
 }

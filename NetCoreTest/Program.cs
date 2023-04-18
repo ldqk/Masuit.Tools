@@ -1,19 +1,20 @@
 using Masuit.Tools.AspNetCore.ModelBinder;
-using Masuit.Tools.Files;
-using Masuit.Tools.Media;
-using Masuit.Tools.Reflection;
 
-var attributes = MyEnum.A.GetTypedEnumDescriptions();
-Console.ReadKey();
-MyStruct<object>? a = null;
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers(options => options.ModelBinderProviders.InsertBodyOrDefaultBinding());
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-public enum MyEnum
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    [EnumDescription("A", "a")]
-    A
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-internal struct MyStruct<T>
-{
-    public T Value { get; set; }
-}
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

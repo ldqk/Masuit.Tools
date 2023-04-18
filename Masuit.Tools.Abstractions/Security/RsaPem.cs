@@ -12,7 +12,7 @@ namespace Masuit.Tools.Security
     /// <summary>
     /// RSA PEM格式密钥对的解析和导出
     /// </summary>
-    public class RsaPem
+    internal class RsaPem
     {
         /// <summary>
         /// modulus 模数n，公钥、私钥都有
@@ -89,7 +89,6 @@ namespace Masuit.Tools.Security
             KeyModulus = modulus;
             KeyExponent = exponent;
             KeyD = d;
-
             ValP = p;
             ValQ = q;
             ValDp = dp;
@@ -207,7 +206,7 @@ namespace Masuit.Tools.Security
         }
 
         /// <summary>
-        /// 由n e d 反推 P Q 
+        /// 由n e d 反推 P Q
         /// </summary>
         private static BigInteger FindFactor(BigInteger e, BigInteger d, BigInteger n)
         {
@@ -252,7 +251,6 @@ namespace Masuit.Tools.Security
             }
         }
 
-
         /// <summary>
         /// 用PEM格式密钥对创建RSA，支持PKCS#1、PKCS#8格式的PEM
         /// 出错将会抛出异常
@@ -260,18 +258,14 @@ namespace Masuit.Tools.Security
         public static RsaPem FromPEM(string pem)
         {
             RsaPem param = new RsaPem();
-
-            var base64 = PemCode.Replace(pem, "");
-            byte[] data = null;
+            var arr = pem.Split('\n');
+            var base64 = arr.Skip(1).Take(arr.Length - 2).Join("\n");
+            byte[] data;
             try
             {
                 data = Convert.FromBase64String(base64);
             }
             catch
-            {
-            }
-
-            if (data == null)
             {
                 throw new Exception("PEM内容无效");
             }
@@ -304,6 +298,7 @@ namespace Masuit.Tools.Security
 
                 throw new Exception("PEM未能提取到数据");
             };
+
             //读取块数据
             Func<byte[]> readBlock = () =>
             {
@@ -323,6 +318,7 @@ namespace Masuit.Tools.Security
                 idx += len;
                 return val;
             };
+
             //比较data从idx位置开始是否是byts内容
             Func<byte[], bool> eq = byts =>
             {
@@ -342,7 +338,6 @@ namespace Masuit.Tools.Security
                 return true;
             };
 
-
             if (pem.Contains("PUBLIC KEY"))
             {
                 //使用公钥
@@ -356,6 +351,7 @@ namespace Masuit.Tools.Security
                     //读取1长度
                     readLen(0x03);
                     idx++; //跳过0x00
+
                     //读取2长度
                     readLen(0x30);
                 }
@@ -388,6 +384,7 @@ namespace Masuit.Tools.Security
                 {
                     //读取1长度
                     readLen(0x04);
+
                     //读取2长度
                     readLen(0x30);
 
@@ -420,12 +417,9 @@ namespace Masuit.Tools.Security
             return param;
         }
 
-        private static readonly Regex PemCode = new Regex(@"--+.+?--+|\s+");
-
         private static readonly byte[] SeqOid = { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00 };
 
         private static readonly byte[] Ver = { 0x02, 0x01, 0x00 };
-
 
         /// <summary>
         /// 将RSA中的密钥对转换成PEM格式，usePKCS8=false时返回PKCS#1格式，否则返回PKCS#8格式，如果convertToPublic含私钥的RSA将只返回公钥，仅含公钥的RSA不受影响
@@ -433,6 +427,7 @@ namespace Masuit.Tools.Security
         public string ToPEM(bool convertToPublic, bool usePKCS8)
         {
             var ms = new PooledMemoryStream();
+
             //写入一个长度字节码
             Action<int> writeLenByte = len =>
             {
@@ -452,6 +447,7 @@ namespace Masuit.Tools.Security
                     ms.WriteByte((byte)(len & 0xff));
                 }
             };
+
             //写入一块数据
             Action<byte[]> writeBlock = byts =>
             {
@@ -467,6 +463,7 @@ namespace Masuit.Tools.Security
 
                 ms.Write(byts, 0, byts.Length);
             };
+
             //根据后续内容长度写入长度数据
             Func<int, byte[], byte[]> writeLen = (index, byts) =>
             {
@@ -501,7 +498,6 @@ namespace Masuit.Tools.Security
 
                 return str.ToString();
             };
-
 
             if (KeyD == null || convertToPublic)
             {
@@ -575,7 +571,6 @@ namespace Masuit.Tools.Security
                 writeBlock(ValDq);
                 writeBlock(ValInverseQ);
 
-
                 //计算空缺的长度
                 var byts = ms.ToArray();
 
@@ -587,7 +582,6 @@ namespace Masuit.Tools.Security
 
                 byts = writeLen(index1, byts);
 
-
                 var flag = " PRIVATE KEY";
                 if (!usePKCS8)
                 {
@@ -597,7 +591,6 @@ namespace Masuit.Tools.Security
                 return "-----BEGIN" + flag + "-----\n" + TextBreak(Convert.ToBase64String(byts), 64) + "\n-----END" + flag + "-----";
             }
         }
-
 
         /// <summary>
         /// 将XML格式密钥转成PEM，支持公钥xml、私钥xml
@@ -623,9 +616,11 @@ namespace Masuit.Tools.Security
                     case "Modulus":
                         rtv.KeyModulus = val;
                         break;
+
                     case "Exponent":
                         rtv.KeyExponent = val;
                         break;
+
                     case "D":
                         rtv.KeyD = val;
                         break;
@@ -633,15 +628,19 @@ namespace Masuit.Tools.Security
                     case "P":
                         rtv.ValP = val;
                         break;
+
                     case "Q":
                         rtv.ValQ = val;
                         break;
+
                     case "DP":
                         rtv.ValDp = val;
                         break;
+
                     case "DQ":
                         rtv.ValDq = val;
                         break;
+
                     case "InverseQ":
                         rtv.ValInverseQ = val;
                         break;
@@ -668,7 +667,6 @@ namespace Masuit.Tools.Security
 
         private static readonly Regex XmlExp = new Regex("\\s*<RSAKeyValue>([<>\\/\\+=\\w\\s]+)</RSAKeyValue>\\s*");
         private static readonly Regex XmlTagExp = new Regex("<(.+?)>\\s*([^<]+?)\\s*</");
-
 
         /// <summary>
         /// 将RSA中的密钥对转换成XML格式

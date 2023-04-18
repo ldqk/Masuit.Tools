@@ -8,7 +8,7 @@ namespace Masuit.Tools.Security
     /// <summary>
     /// RSA操作类
     /// </summary>
-    public class RSA
+    internal class RSA
     {
         /// <summary>
         /// 导出XML格式密钥对，如果convertToPublic含私钥的RSA将只返回公钥，仅含公钥的RSA不受影响
@@ -41,7 +41,6 @@ namespace Masuit.Tools.Security
         {
             return new RsaPem(RSAObject, convertToPublic);
         }
-
 
         /// <summary>
         /// 加密字符串（utf-8），出错抛异常
@@ -89,22 +88,16 @@ namespace Masuit.Tools.Security
                 return null;
             }
 
-            byte[] byts = null;
             try
             {
-                byts = Convert.FromBase64String(str);
+                var bytes = Convert.FromBase64String(str);
+                var val = DecryptOrNull(bytes);
+                return val == null ? null : Encoding.UTF8.GetString(val);
             }
             catch
             {
-            }
-
-            if (byts == null)
-            {
                 return null;
             }
-
-            var val = DecryptOrNull(byts);
-            return val == null ? null : Encoding.UTF8.GetString(val);
         }
 
         /// <summary>
@@ -190,7 +183,6 @@ namespace Masuit.Tools.Security
             }
         }
 
-
         /// <summary>
         /// 最底层的RSACryptoServiceProvider对象
         /// </summary>
@@ -211,10 +203,6 @@ namespace Masuit.Tools.Security
         /// </summary>
         public RSA(int keySize)
         {
-            //var rsaParams = new CspParameters()
-            //{
-            //    Flags = CspProviderFlags.UseMachineKeyStore
-            //};
             RSAObject = new RSACryptoServiceProvider(keySize);
         }
 
@@ -229,12 +217,7 @@ namespace Masuit.Tools.Security
             }
             else
             {
-                //var rsaParams = new CspParameters
-                //{
-                //    Flags = CspProviderFlags.UseMachineKeyStore
-                //};
                 RSAObject = new RSACryptoServiceProvider();
-
                 RSAObject.FromXmlString(key);
             }
         }

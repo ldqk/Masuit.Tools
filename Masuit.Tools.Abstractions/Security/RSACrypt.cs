@@ -22,7 +22,7 @@ namespace Masuit.Tools.Security
         /// <param name="type">密钥类型</param>
         /// <param name="length">密钥长度</param>
         /// <returns></returns>
-        public static RsaKey GenerateRsaKeys(RsaKeyType type = RsaKeyType.XML, int length = 1024)
+        public static RsaKey GenerateRsaKeys(RsaKeyType type = RsaKeyType.PKCS8, int length = 1024)
         {
             var rsa = new RSA(length);
             return type switch
@@ -54,48 +54,48 @@ namespace Masuit.Tools.Security
         /// RSA的加密函数 string
         /// </summary>
         /// <param name="publicKey">公钥</param>
-        /// <param name="mStrEncryptString">需要加密的字符串</param>
+        /// <param name="value">需要加密的字符串</param>
         /// <returns>加密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAEncrypt(this string mStrEncryptString, string publicKey)
+        public static string RSAEncrypt(this string value, string publicKey)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Encrypt(mStrEncryptString);
+            return rsa.Encrypt(value);
         }
 
         /// <summary>
         /// RSA的加密函数 string
         /// </summary>
-        /// <param name="mStrEncryptString">需要加密的字符串</param>
+        /// <param name="value">需要加密的字符串</param>
         /// <returns>加密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAEncrypt(this string mStrEncryptString)
+        public static string RSAEncrypt(this string value)
         {
-            return RSAEncrypt(mStrEncryptString, RsaKey.PublicKey);
+            return RSAEncrypt(value, RsaKey.PublicKey);
         }
 
         /// <summary>
         /// RSA的加密函数 byte[]
         /// </summary>
-        /// <param name="encryptString">需要加密的字节数组</param>
+        /// <param name="data">需要加密的字节数组</param>
         /// <param name="publicKey">公钥</param>
         /// <returns>加密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAEncrypt(this byte[] encryptString, string publicKey)
+        public static string RSAEncrypt(this byte[] data, string publicKey)
         {
             var rsa = new RSA(publicKey);
-            return Convert.ToBase64String(rsa.Encrypt(encryptString));
+            return Convert.ToBase64String(rsa.Encrypt(data));
         }
 
         /// <summary>
         /// RSA的加密函数 byte[]
         /// </summary>
-        /// <param name="encryptString">需要加密的字节数组</param>
+        /// <param name="data">需要加密的字节数组</param>
         /// <returns>加密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSAEncrypt(this byte[] encryptString)
+        public static string RSAEncrypt(this byte[] data)
         {
-            return RSAEncrypt(encryptString, RsaKey.PublicKey);
+            return RSAEncrypt(data, RsaKey.PublicKey);
         }
 
         #endregion RSA的加密函数
@@ -105,49 +105,49 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// RSA的解密函数  string
         /// </summary>
-        /// <param name="mStrDecryptString">需要解密的字符串</param>
+        /// <param name="value">需要解密的字符串</param>
         /// <param name="privateKey">私钥</param>
         /// <returns>解密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSADecrypt(this string mStrDecryptString, string privateKey)
+        public static string RSADecrypt(this string value, string privateKey)
         {
             var rsa = new RSA(privateKey);
-            return rsa.DecryptOrNull(mStrDecryptString);
+            return rsa.DecryptOrNull(value);
         }
 
         /// <summary>
         /// RSA的解密函数  string
         /// </summary>
-        /// <param name="mStrDecryptString">需要解密的字符串</param>
+        /// <param name="value">需要解密的字符串</param>
         /// <returns>解密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSADecrypt(this string mStrDecryptString)
+        public static string RSADecrypt(this string value)
         {
-            return RSADecrypt(mStrDecryptString, RsaKey.PrivateKey);
+            return RSADecrypt(value, RsaKey.PrivateKey);
         }
 
         /// <summary>
         /// RSA的解密函数  byte
         /// </summary>
-        /// <param name="decryptString">需要解密的字符串</param>
+        /// <param name="data">需要解密的字符串</param>
         /// <param name="privateKey">私钥</param>
         /// <returns>解密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSADecrypt(this byte[] decryptString, string privateKey)
+        public static string RSADecrypt(this byte[] data, string privateKey)
         {
             var rsa = new RSA(privateKey);
-            return new UnicodeEncoding().GetString(rsa.DecryptOrNull(decryptString));
+            return new UnicodeEncoding().GetString(rsa.DecryptOrNull(data));
         }
 
         /// <summary>
         /// RSA的解密函数  byte
         /// </summary>
-        /// <param name="decryptString">需要解密的字符串</param>
+        /// <param name="data">需要解密的字符串</param>
         /// <returns>解密后的内容</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
-        public static string RSADecrypt(this byte[] decryptString)
+        public static string RSADecrypt(this byte[] data)
         {
-            return RSADecrypt(decryptString, RsaKey.PrivateKey);
+            return RSADecrypt(data, RsaKey.PrivateKey);
         }
 
         #endregion RSA的解密函数
@@ -161,26 +161,26 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 获取Hash描述表
         /// </summary>
-        /// <param name="mStrSource">源数据</param>
+        /// <param name="value">源数据</param>
         /// <returns>Hash描述表</returns>
-        public static byte[] GetHashBytes(this string mStrSource)
+        public static byte[] GetHashBytes(this string value)
         {
             //从字符串中取得Hash描述
             using var md5 = MD5.Create();
-            var buffer = Encoding.UTF8.GetBytes(mStrSource);
+            var buffer = Encoding.UTF8.GetBytes(value);
             return md5.ComputeHash(buffer);
         }
 
         /// <summary>
         /// 获取Hash描述表
         /// </summary>
-        /// <param name="mStrSource">源数据</param>
+        /// <param name="value">源数据</param>
         /// <returns>Hash描述表</returns>
-        public static string GetHashString(this string mStrSource)
+        public static string GetHashString(this string value)
         {
             //从字符串中取得Hash描述
             using var md5 = MD5.Create();
-            var buffer = Encoding.UTF8.GetBytes(mStrSource);
+            var buffer = Encoding.UTF8.GetBytes(value);
             var hashData = md5.ComputeHash(buffer);
             return Convert.ToBase64String(hashData);
         }
@@ -188,25 +188,25 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// 从文件流获取Hash描述表
         /// </summary>
-        /// <param name="objFile">源文件</param>
+        /// <param name="file">源文件</param>
         /// <returns>Hash描述表</returns>
-        public static byte[] GetHashBytes(this FileStream objFile)
+        public static byte[] GetHashBytes(this FileStream file)
         {
             //从文件中取得Hash描述
             using var md5 = MD5.Create();
-            return md5.ComputeHash(objFile);
+            return md5.ComputeHash(file);
         }
 
         /// <summary>
         /// 从文件流获取Hash描述表
         /// </summary>
-        /// <param name="objFile">源文件</param>
+        /// <param name="file">源文件</param>
         /// <returns>Hash描述表</returns>
-        public static string GetHashString(this FileStream objFile)
+        public static string GetHashString(this FileStream file)
         {
             //从文件中取得Hash描述
             using var md5 = MD5.Create();
-            var hashData = md5.ComputeHash(objFile);
+            var hashData = md5.ComputeHash(file);
             return Convert.ToBase64String(hashData);
         }
 
@@ -217,56 +217,56 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// RSA签名
         /// </summary>
-        /// <param name="hashbyteSignature">签名字节数据</param>
+        /// <param name="data">签名字节数据</param>
         /// <param name="privateKey">私钥</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static byte[] SignatureBytes(this byte[] hashbyteSignature, string privateKey)
+        public static byte[] SignatureBytes(this byte[] data, string privateKey)
         {
             var rsa = new RSA(privateKey);
-            return rsa.Sign("MD5", hashbyteSignature);
+            return rsa.Sign("MD5", data);
         }
 
         /// <summary>
         /// RSA签名
         /// </summary>
-        /// <param name="hashbyteSignature">签名字节数据</param>
+        /// <param name="data">签名字节数据</param>
         /// <param name="privateKey">私钥</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static string SignatureString(this byte[] hashbyteSignature, string privateKey)
+        public static string SignatureString(this byte[] data, string privateKey)
         {
-            return Convert.ToBase64String(SignatureBytes(hashbyteSignature, privateKey));
+            return Convert.ToBase64String(SignatureBytes(data, privateKey));
         }
 
         /// <summary>
         /// RSA签名
         /// </summary>
-        /// <param name="mStrHashbyteSignature">签名字符串数据</param>
-        /// <param name="pStrKeyPrivate">私钥</param>
+        /// <param name="value">签名字符串数据</param>
+        /// <param name="privateKey">私钥</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static byte[] SignatureBytes(this string mStrHashbyteSignature, string pStrKeyPrivate)
+        public static byte[] SignatureBytes(this string value, string privateKey)
         {
-            var rsa = new RSA(pStrKeyPrivate);
-            return Encoding.UTF32.GetBytes(rsa.Sign("MD5", mStrHashbyteSignature));
+            var rsa = new RSA(privateKey);
+            return Encoding.UTF32.GetBytes(rsa.Sign("MD5", value));
         }
 
         /// <summary>
         /// RSA签名
         /// </summary>
-        /// <param name="mStrHashbyteSignature">签名字符串数据</param>
-        /// <param name="pStrKeyPrivate">私钥</param>
+        /// <param name="value">签名字符串数据</param>
+        /// <param name="privateKey">私钥</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static string SignatureString(this string mStrHashbyteSignature, string pStrKeyPrivate)
+        public static string SignatureString(this string value, string privateKey)
         {
-            var rsa = new RSA(pStrKeyPrivate);
-            return rsa.Sign("MD5", mStrHashbyteSignature);
+            var rsa = new RSA(privateKey);
+            return rsa.Sign("MD5", value);
         }
 
         #endregion RSA签名
@@ -276,61 +276,61 @@ namespace Masuit.Tools.Security
         /// <summary>
         /// RSA 签名验证
         /// </summary>
-        /// <param name="deformatterData">反格式化字节数据</param>
+        /// <param name="data">反格式化字节数据</param>
         /// <param name="publicKey">公钥</param>
-        /// <param name="hashbyteDeformatter">哈希字节数据</param>
+        /// <param name="sign">哈希字节数据</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this byte[] deformatterData, string publicKey, byte[] hashbyteDeformatter)
+        public static bool SignatureDeformatter(this byte[] data, string publicKey, byte[] sign)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", deformatterData, hashbyteDeformatter);
+            return rsa.Verify("MD5", sign, data);
         }
 
         /// <summary>
         /// RSA 签名验证
         /// </summary>
-        /// <param name="deformatterData">反格式化字节数据</param>
+        /// <param name="data">反格式化字节数据</param>
         /// <param name="publicKey">公钥</param>
-        /// <param name="pStrHashbyteDeformatter">哈希字符串数据</param>
+        /// <param name="sign">哈希字符串数据</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this byte[] deformatterData, string publicKey, string pStrHashbyteDeformatter)
+        public static bool SignatureDeformatter(this byte[] data, string publicKey, string sign)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", deformatterData, Convert.FromBase64String(pStrHashbyteDeformatter));
+            return rsa.Verify("MD5", Convert.FromBase64String(sign), data);
         }
 
         /// <summary>
         /// RSA 签名验证
         /// </summary>
-        /// <param name="pStrDeformatterData">反格式化字符串数据</param>
+        /// <param name="value">反格式化字符串数据</param>
         /// <param name="publicKey">公钥</param>
-        /// <param name="hashbyteDeformatter">哈希字节数据</param>
+        /// <param name="sign">哈希字节数据</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this string pStrDeformatterData, string publicKey, byte[] hashbyteDeformatter)
+        public static bool SignatureDeformatter(this string value, string publicKey, byte[] sign)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", Convert.FromBase64String(pStrDeformatterData), hashbyteDeformatter);
+            return rsa.Verify("MD5", sign, Convert.FromBase64String(value));
         }
 
         /// <summary>
         /// RSA 签名验证
         /// </summary>
-        /// <param name="pStrDeformatterData">格式字符串数据</param>
+        /// <param name="value">格式字符串数据</param>
         /// <param name="publicKey">公钥</param>
-        /// <param name="pStrHashbyteDeformatter">哈希字符串数据</param>
+        /// <param name="sign">哈希字符串数据</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this string pStrDeformatterData, string publicKey, string pStrHashbyteDeformatter)
+        public static bool SignatureDeformatter(this string value, string publicKey, string sign)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", Convert.FromBase64String(pStrDeformatterData), Convert.FromBase64String(pStrHashbyteDeformatter));
+            return rsa.Verify("MD5", sign, value);
         }
 
         #endregion RSA 签名验证
