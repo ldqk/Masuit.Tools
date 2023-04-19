@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using AngleSharp.Common;
 
 namespace Masuit.Tools.Strings
 {
@@ -38,6 +40,29 @@ namespace Masuit.Tools.Strings
         public Template Set(string key, string value)
         {
             Content = Content.Replace("{{" + key + "}}", value);
+            return this;
+        }
+
+        /// <summary>
+        /// 设置变量
+        /// </summary>
+        public Template Set(object obj)
+        {
+            var dic = obj.ToDictionary();
+            Set(dic);
+            return this;
+        }
+
+        /// <summary>
+        /// 设置变量
+        /// </summary>
+        public Template Set(Dictionary<string, string> dic)
+        {
+            foreach (var x in dic)
+            {
+                Content = Content.Replace("{{" + x.Key + "}}", x.Value);
+            }
+
             return this;
         }
 
