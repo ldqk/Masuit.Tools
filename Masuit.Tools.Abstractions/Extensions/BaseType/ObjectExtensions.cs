@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools
 {
@@ -165,10 +166,48 @@ namespace Masuit.Tools
         /// <typeparam name="T2"></typeparam>
         /// <param name="source"></param>
         /// <param name="action"></param>
-        /// <returns></returns>
         public static T2 Next<T1, T2>(this T1 source, Func<T1, T2> action)
         {
             return action(source);
+        }
+
+        /// <summary>
+        /// 将对象转换成字典
+        /// </summary>
+        /// <param name="value"></param>
+        public static Dictionary<string, string> ToDictionary(this object value)
+        {
+            var dictionary = new Dictionary<string, string>();
+            if (value != null)
+            {
+                foreach (var property in value.GetType().GetProperties())
+                {
+                    var obj = property.GetValue(value, null) ?? string.Empty;
+                    dictionary.Add(property.Name, obj + string.Empty);
+                }
+            }
+
+            return dictionary;
+        }
+
+        /// <summary>
+        /// 将对象转换成字典
+        /// </summary>
+        /// <param name="value"></param>
+        public static Dictionary<string, string> ToDictionary(this JObject value)
+        {
+            var dictionary = new Dictionary<string, string>();
+            if (value != null)
+            {
+                var enumerator = value.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    var obj = enumerator.Current.Value ?? string.Empty;
+                    dictionary.Add(enumerator.Current.Key, obj + string.Empty);
+                }
+            }
+
+            return dictionary;
         }
     }
 

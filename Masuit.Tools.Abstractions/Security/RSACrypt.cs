@@ -219,13 +219,14 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="data">签名字节数据</param>
         /// <param name="privateKey">私钥</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static byte[] SignatureBytes(this byte[] data, string privateKey)
+        public static byte[] SignatureBytes(this byte[] data, string privateKey, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(privateKey);
-            return rsa.Sign("MD5", data);
+            return rsa.Sign(halg.ToString(), data);
         }
 
         /// <summary>
@@ -246,13 +247,14 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="value">签名字符串数据</param>
         /// <param name="privateKey">私钥</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static byte[] SignatureBytes(this string value, string privateKey)
+        public static byte[] SignatureBytes(this string value, string privateKey, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(privateKey);
-            return Encoding.UTF32.GetBytes(rsa.Sign("MD5", value));
+            return Encoding.UTF32.GetBytes(rsa.Sign(halg.ToString(), value));
         }
 
         /// <summary>
@@ -260,13 +262,14 @@ namespace Masuit.Tools.Security
         /// </summary>
         /// <param name="value">签名字符串数据</param>
         /// <param name="privateKey">私钥</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static string SignatureString(this string value, string privateKey)
+        public static string SignatureString(this string value, string privateKey, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(privateKey);
-            return rsa.Sign("MD5", value);
+            return rsa.Sign(halg.ToString(), value);
         }
 
         #endregion RSA签名
@@ -279,13 +282,14 @@ namespace Masuit.Tools.Security
         /// <param name="data">反格式化字节数据</param>
         /// <param name="publicKey">公钥</param>
         /// <param name="sign">哈希字节数据</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this byte[] data, string publicKey, byte[] sign)
+        public static bool SignatureDeformatter(this byte[] data, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", sign, data);
+            return rsa.Verify(halg.ToString(), sign, data);
         }
 
         /// <summary>
@@ -294,13 +298,14 @@ namespace Masuit.Tools.Security
         /// <param name="data">反格式化字节数据</param>
         /// <param name="publicKey">公钥</param>
         /// <param name="sign">哈希字符串数据</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this byte[] data, string publicKey, string sign)
+        public static bool SignatureDeformatter(this byte[] data, string publicKey, string sign, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", Convert.FromBase64String(sign), data);
+            return rsa.Verify(halg.ToString(), Convert.FromBase64String(sign), data);
         }
 
         /// <summary>
@@ -309,13 +314,14 @@ namespace Masuit.Tools.Security
         /// <param name="value">反格式化字符串数据</param>
         /// <param name="publicKey">公钥</param>
         /// <param name="sign">哈希字节数据</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this string value, string publicKey, byte[] sign)
+        public static bool SignatureDeformatter(this string value, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", sign, Convert.FromBase64String(value));
+            return rsa.Verify(halg.ToString(), sign, Convert.FromBase64String(value));
         }
 
         /// <summary>
@@ -324,13 +330,14 @@ namespace Masuit.Tools.Security
         /// <param name="value">格式字符串数据</param>
         /// <param name="publicKey">公钥</param>
         /// <param name="sign">哈希字符串数据</param>
+        /// <param name="halg">hash算法</param>
         /// <returns>处理结果</returns>
         /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
         /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-        public static bool SignatureDeformatter(this string value, string publicKey, string sign)
+        public static bool SignatureDeformatter(this string value, string publicKey, string sign, HashAlgo halg = HashAlgo.MD5)
         {
             var rsa = new RSA(publicKey);
-            return rsa.Verify("MD5", sign, value);
+            return rsa.Verify(halg.ToString(), sign, value);
         }
 
         #endregion RSA 签名验证

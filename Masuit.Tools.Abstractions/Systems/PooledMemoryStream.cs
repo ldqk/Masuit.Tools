@@ -22,7 +22,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
 
     private const float OverExpansionFactor = 2;
 
-    private byte[] _data = Array.Empty<byte>();
+    private byte[] _data = new byte[0];
     private int _length;
     private readonly ArrayPool<byte> _pool;
     private bool _isDisposed;
@@ -245,7 +245,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="disposing"></param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -296,7 +296,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     public IEnumerator<byte> GetEnumerator()

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Media
 {
@@ -37,7 +38,7 @@ namespace Masuit.Tools.Media
         ///    由于抗锯齿质量就越好。
         ///    因为关闭了提示，词干宽度之间的差异可能非常明显。</param>
         /// <returns></returns>
-        public MemoryStream AddWatermark(string watermarkText, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10, int fontSize = 20, Font font = null, bool textAntiAlias = true)
+        public PooledMemoryStream AddWatermark(string watermarkText, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10, int fontSize = 20, Font font = null, bool textAntiAlias = true)
         {
             using var img = Image.FromStream(_stream);
             if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold)))
@@ -90,7 +91,7 @@ namespace Masuit.Tools.Media
             }
 
             graphic.DrawString(watermarkText, f, brush, new Point(x, y));
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             img.Save(ms, img.RawFormat);
             ms.Position = 0;
             return ms;

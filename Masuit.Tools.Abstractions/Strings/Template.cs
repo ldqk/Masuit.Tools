@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using AngleSharp.Common;
 
 namespace Masuit.Tools.Strings
 {

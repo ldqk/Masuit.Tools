@@ -156,16 +156,16 @@ namespace Masuit.Tools.Security
         /// </summary>
         public bool Verify(string hash, string sgin, string str)
         {
-            byte[] byts = null;
+            byte[] bytes = null;
             try
             {
-                byts = Convert.FromBase64String(sgin);
+                bytes = Convert.FromBase64String(sgin);
             }
             catch
             {
             }
 
-            return byts != null && Verify(hash, byts, Encoding.UTF8.GetBytes(str));
+            return bytes != null && Verify(hash, bytes, Encoding.UTF8.GetBytes(str));
         }
 
         /// <summary>

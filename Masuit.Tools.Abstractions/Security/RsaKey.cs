@@ -14,5 +14,11 @@
         /// 私钥
         /// </summary>
         public string PrivateKey { get; protected internal set; }
+
+        public void Deconstruct(out string publicKey, out string privateKey)
+        {
+            publicKey = PublicKey;
+            privateKey = PrivateKey;
+        }
     }
 }

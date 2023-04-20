@@ -7,7 +7,6 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
 using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Masuit.Tools.Media
 {

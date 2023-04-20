@@ -184,32 +184,8 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Reflection\*.*">
       <Link>Reflection\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\Crc32.cs">
-      <Link>Security\Crc32.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\Crc64.cs">
-      <Link>Security\Crc64.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\Encrypt.cs">
-      <Link>Security\Encrypt.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\HashEncode.cs">
-      <Link>Security\HashEncode.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\RSA.cs">
-      <Link>Security\RSA.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\RSACrypt.cs">
-      <Link>Security\RSACrypt.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaKey.cs">
-      <Link>Security\RsaKey.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaKeyType.cs">
-      <Link>Security\RsaKeyType.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\RsaPem.cs">
-      <Link>Security\RsaPem.cs</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Security\*.*">
+      <Link>Security\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
       <Link>Strings\NumberFormater.cs</Link>
