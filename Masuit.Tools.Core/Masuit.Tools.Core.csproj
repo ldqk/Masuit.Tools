@@ -42,16 +42,16 @@ github：https://github.com/ldqk/Masuit.Tools
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.1.1]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.9]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5.0.11]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.10]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
