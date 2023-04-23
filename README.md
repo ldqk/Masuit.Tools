@@ -979,7 +979,11 @@ dbcontext.ExecutionStrategy(ctx=>ctx.Users.Where(x=>x.Name=="aaa").ToListWithNoL
 #### 自动递归式Include扩展(通常用于树形表)
 
 ```csharp
-dbcontext.Category.IncludeRecursive(4, c => c.Children); // 自动尝试Include 4次，相当于：dbcontext.Category.Include(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children)
+// 如果你现在正在写类似这样的代码：
+dbcontext.Category.Include(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children);
+
+// 那么可以改成这样：
+dbcontext.Category.IncludeRecursive(4, c => c.Children); // 自动尝试Include 4次
 ```
 
 ### 42.任何类型支持链式调用
