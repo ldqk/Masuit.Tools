@@ -983,7 +983,7 @@ dbcontext.ExecutionStrategy(ctx=>ctx.Users.Where(x=>x.Name=="aaa").ToListWithNoL
 dbcontext.Category.Include(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude(c=>c.Children);
 
 // 那么可以改成这样：
-dbcontext.Category.IncludeRecursive(4, c => c.Children); // 自动尝试Include 4次
+dbcontext.Category.IncludeRecursive(4, c => c.Children); // 自动Include 4次
 ```
 
 ### 42.任何类型支持链式调用
