@@ -913,11 +913,11 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 
 #### 一些约定规则：
 
-1. 图片列支持Stream、Bitmap、IEnumerable`<Stream>`、IEnumerable`<Bitmap>`、IDictionary<string,Stream>、IDictionary<string,MemoryStream>、IDictionary<string,Bitmap>类型；
+1. 图片列支持Stream、Bitmap、IEnumerable `<Stream>`、IEnumerable `<Bitmap>`、IDictionary<string,Stream>、IDictionary<string,MemoryStream>、IDictionary<string,Bitmap>类型；
 2. 其中，如果是IDictionary类型的图片列，字典的键为图片超链接的完整url；
 3. 默认字段名作为列名导出；
 4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
-5. ToExcel方法支持DataTable、List`<DataTable>`、Dictionary<string, DataTable>类型的直接调用
+5. ToExcel方法支持DataTable、List `<DataTable>`、Dictionary<string, DataTable>类型的直接调用
 
 ### 41.EFCore实用扩展
 
@@ -926,10 +926,10 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 获取指定实体的变更
 
 ```csharp
-var changes=dbContext.GetChanges<Post>();//获取变更字段信息
-var added=dbContext.GetAdded<Post>();//获取添加的实体字段信息
-var removed=dbContext.GetRemoved<Post>();//获取被移除的实体字段信息  
-var allchanges=dbContext.GetAllChanges<Post>();//获取增删改的实体字段信息  
+var changes=dbContext.GetChanges<TEntity>();//获取变更字段信息
+var added=dbContext.GetAdded<TEntity>();//获取添加的实体字段信息
+var removed=dbContext.GetRemoved<TEntity>();//获取被移除的实体字段信息  
+var allchanges=dbContext.GetAllChanges<TEntity>();//获取增删改的实体字段信息  
 ```
 
 获取所有实体的变更
