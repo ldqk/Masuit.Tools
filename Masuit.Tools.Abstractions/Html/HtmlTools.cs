@@ -12,37 +12,33 @@ namespace Masuit.Tools.Html
     /// <summary>
     /// html工具类
     /// </summary>
-    public static partial class HtmlTools
+    public static class HtmlTools
     {
-        private static readonly HtmlSanitizer Sanitizer = new HtmlSanitizer();
-
-        static HtmlTools()
-        {
-            Sanitizer.AllowedAttributes.Remove("id");
-            Sanitizer.AllowedAttributes.Remove("alt");
-            Sanitizer.AllowedCssProperties.Remove("font-family");
-            Sanitizer.AllowedCssProperties.Remove("background-color");
-            Sanitizer.KeepChildNodes = true;
-            Sanitizer.AllowedTags.Remove("input");
-            Sanitizer.AllowedTags.Remove("button");
-            Sanitizer.AllowedTags.Remove("iframe");
-            Sanitizer.AllowedTags.Remove("frame");
-            Sanitizer.AllowedTags.Remove("textarea");
-            Sanitizer.AllowedTags.Remove("select");
-            Sanitizer.AllowedTags.Remove("form");
-            Sanitizer.AllowedAttributes.Add("src");
-            Sanitizer.AllowedAttributes.Add("class");
-            Sanitizer.AllowedAttributes.Add("style");
-        }
-
         /// <summary>
         /// 标准的防止html的xss净化器
         /// </summary>
         /// <param name="html"></param>
         /// <returns></returns>
-        public static string HtmlSantinizerStandard(this string html)
+        public static string HtmlSanitizerStandard(this string html)
         {
-            return Sanitizer.Sanitize(html);
+            var sanitizer = new HtmlSanitizer
+            {
+                KeepChildNodes = true
+            };
+            sanitizer.AllowedAttributes.Remove("id");
+            sanitizer.AllowedAttributes.Remove("alt");
+            sanitizer.AllowedCssProperties.Remove("font-family");
+            sanitizer.AllowedTags.Remove("input");
+            sanitizer.AllowedTags.Remove("button");
+            sanitizer.AllowedTags.Remove("iframe");
+            sanitizer.AllowedTags.Remove("frame");
+            sanitizer.AllowedTags.Remove("textarea");
+            sanitizer.AllowedTags.Remove("select");
+            sanitizer.AllowedTags.Remove("form");
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("style");
+            return sanitizer.Sanitize(html);
         }
 
         /// <summary>
@@ -53,13 +49,30 @@ namespace Masuit.Tools.Html
         /// <param name="attributes">需要移除的属性集合</param>
         /// <param name="styles">需要移除的样式集合</param>
         /// <returns></returns>
-        public static string HtmlSantinizerCustom(this string html, string[] labels = null, string[] attributes = null, string[] styles = null)
+        public static string HtmlSanitizerCustom(this string html, string[] labels = null, string[] attributes = null, string[] styles = null)
         {
+            var sanitizer = new HtmlSanitizer
+            {
+                KeepChildNodes = true
+            };
+            sanitizer.AllowedAttributes.Remove("id");
+            sanitizer.AllowedAttributes.Remove("alt");
+            sanitizer.AllowedCssProperties.Remove("font-family");
+            sanitizer.AllowedTags.Remove("input");
+            sanitizer.AllowedTags.Remove("button");
+            sanitizer.AllowedTags.Remove("iframe");
+            sanitizer.AllowedTags.Remove("frame");
+            sanitizer.AllowedTags.Remove("textarea");
+            sanitizer.AllowedTags.Remove("select");
+            sanitizer.AllowedTags.Remove("form");
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("style");
             if (labels != null)
             {
                 foreach (string label in labels)
                 {
-                    Sanitizer.AllowedTags.Remove(label);
+                    sanitizer.AllowedTags.Remove(label);
                 }
             }
 
@@ -67,7 +80,7 @@ namespace Masuit.Tools.Html
             {
                 foreach (string attr in attributes)
                 {
-                    Sanitizer.AllowedAttributes.Remove(attr);
+                    sanitizer.AllowedAttributes.Remove(attr);
                 }
             }
 
@@ -75,13 +88,14 @@ namespace Masuit.Tools.Html
             {
                 foreach (string p in styles)
                 {
-                    Sanitizer.AllowedCssProperties.Remove(p);
+                    sanitizer.AllowedCssProperties.Remove(p);
                 }
             }
 
-            Sanitizer.KeepChildNodes = true;
-            return Sanitizer.Sanitize(html);
+            sanitizer.KeepChildNodes = true;
+            return sanitizer.Sanitize(html);
         }
+
         /// <summary>
         /// 去除html标签后并截取字符串
         /// </summary>
@@ -172,15 +186,6 @@ namespace Masuit.Tools.Html
         {
             var srcs = MatchImgSrcs(html).ToList();
             return srcs.Count > 0 ? srcs.Select((s, i) => new WeightedItem<string>(s, srcs.Count - i)).WeightedItem() : default;
-        }
-
-        /// <summary>
-        /// 替换回车换行符为html换行符
-        /// </summary>
-        /// <param name="str">html</param>
-        public static string StrFormat(this string str)
-        {
-            return str.Replace("\r\n", "<br />").Replace("\n", "<br />");
         }
 
         /// <summary>
