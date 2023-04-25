@@ -27,6 +27,10 @@ namespace Masuit.Tools.Strings
         /// </summary>
         private readonly byte _offset;
 
+        private readonly bool _emojiMode;
+
+        private static readonly Regex EmojiRegex = new Regex(@"(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])");
+
         /// <summary>
         /// 数制格式化器
         /// </summary>
@@ -47,9 +51,10 @@ namespace Masuit.Tools.Strings
                 throw new ArgumentException("符号集不能为空");
             }
 
-            var matches = Regex.Matches(characters, @"(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])");
+            var matches = EmojiRegex.Matches(characters);
             if (matches.Count > 0)
             {
+                _emojiMode = true;
                 Characters = new List<string>();
                 foreach (Match m in matches)
                 {
@@ -257,9 +262,21 @@ namespace Masuit.Tools.Strings
             }
 
             int j = 0;
+            if (_emojiMode)
+            {
+                var emoji = new List<string>();
+                foreach (Match m in EmojiRegex.Matches(str))
+                {
+                    emoji.Add(m.Value);
+                }
+
+                emoji.Reverse();
+                return emoji.Where(Characters.Contains).Sum(ch => (Characters.IndexOf(ch) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
+            }
+
             var chars = str.ToCharArray();
             Array.Reverse(chars);
-            return new string(chars).Where(c => Characters.Contains(c.ToString())).Sum(ch => (Characters.IndexOf(ch.ToString()) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
+            return chars.Where(c => Characters.Contains(c.ToString())).Sum(ch => (Characters.IndexOf(ch.ToString()) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
         }
 
         /// <summary>
@@ -277,6 +294,17 @@ namespace Masuit.Tools.Strings
                 resultOffset = _offset - 1;
             }
             int j = 0;
+            if (_emojiMode)
+            {
+                var emoji = new List<string>();
+                foreach (Match m in EmojiRegex.Matches(str))
+                {
+                    emoji.Add(m.Value);
+                }
+                emoji.Reverse();
+                return emoji.Where(Characters.Contains).Aggregate(BigInteger.Zero, (current, c) => current + (Characters.IndexOf(c) + start) * BigInteger.Pow(Length, j++)) + resultOffset;
+            }
+
             var charArray = str.ToCharArray();
             Array.Reverse(charArray);
             var chars = charArray.Where(c => Characters.Contains(c.ToString()));

@@ -1,4 +1,4 @@
-# Masuit.Tools(码数吐司库)
+﻿# Masuit.Tools(码数吐司库)
 
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg) ![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg) `<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24">``</a>` `<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24">``<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>`
 新手友好的C#万能工具库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。**诸多功能集一身，代码量不到2MB！**
@@ -189,6 +189,14 @@ Console.WriteLine(num.ToBase(36)); // 36进制：dmed4dkd5bhcg4qdktklun0zh，25�
 Console.WriteLine(num.ToBase(7)); // 7进制：2600240311641665565300424545154525131265221035，46位长度
 Console.WriteLine(num.ToBase(12)); // 12进制：5217744842749978a756b22135b16a5998a5，36位长度
 Console.WriteLine(num.ToBase(41)); // 41进制：opzeBda2aytcEeudEquuesbk，24位长度
+```
+
+如果你想让进制符支持emoji，NumberFormater是不支持的，不过如果你确实有这么骚的需求，我还准备了UnicodeFormater类，用于支持emoji，用法和NumberFormater一模一样，并且，UnicodeFormater的功能包含NumberFormater的功能，但是，性能比NumberFormater差了许多。
+
+```csharp
+var formater = new UnicodeFormater("😀😁😂🤣😃😄😅😆😉😊😋😎😍😘🥰😗😙🥲😚🙂🤗🤩🤔🤨😑😶😶‍🌫🙄😏😣😥😮");
+var s = formater.ToString(1234567890); // 😄🌫😶😋😋
+var num = formater.FromString(s); // 1234567890
 ```
 
 ### 6.纳秒级性能计时器
