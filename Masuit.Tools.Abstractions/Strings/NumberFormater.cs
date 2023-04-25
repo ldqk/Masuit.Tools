@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Masuit.Tools.Strings
@@ -15,7 +16,7 @@ namespace Masuit.Tools.Strings
         /// <summary>
         /// 数制表示字符集
         /// </summary>
-        private string Characters { get; set; }
+        private string Characters { get; }
 
         /// <summary>
         /// 进制长度
@@ -51,6 +52,74 @@ namespace Masuit.Tools.Strings
             _offset = offset;
         }
 
+#if NET5_0_OR_GREATER
+
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(ReadOnlySpan<byte> characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
+
+            Characters = Encoding.UTF8.GetString(characters);
+            _offset = offset;
+        }
+
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(ReadOnlySpan<char> characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
+
+            Characters = new string(characters);
+            _offset = offset;
+        }
+
+#endif
+
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(byte[] characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
+
+            Characters = Encoding.UTF8.GetString(characters);
+            _offset = offset;
+        }
+
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public NumberFormater(char[] characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
+
+            Characters = new string(characters);
+            _offset = offset;
+        }
+
         /// <summary>
         /// 数制格式化器
         /// </summary>
@@ -58,17 +127,14 @@ namespace Masuit.Tools.Strings
         /// <param name="offset">起始值偏移</param>
         public NumberFormater(byte @base, byte offset = 0)
         {
-            if (@base < 2)
+            Characters = @base switch
             {
-                @base = 2;
-            }
+                <= 2 => "01",
+                > 2 and < 65 => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, @base),
+                >= 65 and <= 91 => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,-.:;<=>?@[]^_`{|}~\"".Substring(0, @base),
+                _ => throw new ArgumentException("默认进制最大支持91进制")
+            };
 
-            if (@base > 64)
-            {
-                throw new ArgumentException("默认进制最大支持64进制");
-            }
-
-            Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, @base);
             if (offset >= @base)
             {
                 throw new ArgumentException("偏移量不能超过进制基数" + @base);
@@ -92,7 +158,7 @@ namespace Masuit.Tools.Strings
                 resultOffset = _offset - 1;
             }
 
-            number = number - resultOffset;
+            number -= resultOffset;
             List<string> result = new List<string>();
             long t = Math.Abs(number);
             while (t != 0)

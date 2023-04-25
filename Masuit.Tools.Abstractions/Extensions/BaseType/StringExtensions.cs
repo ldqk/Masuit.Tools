@@ -807,5 +807,15 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
         /// <param name="that"></param>
         /// <returns></returns>
         public static int HammingDistance(this string @this, string that) => new SimHash(@this).HammingDistance(new SimHash(that));
+
+        /// <summary>
+        /// 匹配字符串是否包含emoji字符
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool MatchEmoji(this string s)
+        {
+            return Regex.IsMatch(s, @"(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])");
+        }
     }
 }

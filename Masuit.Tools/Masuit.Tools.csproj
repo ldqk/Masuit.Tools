@@ -118,6 +118,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
       <Link>Strings\Template.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Strings\UnicodeFormater.cs">
+      <Link>Strings\UnicodeFormater.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
       <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
