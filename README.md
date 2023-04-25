@@ -165,13 +165,13 @@ Windows.ClearMemorySilent();
 可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 
 ```csharp
-NumberFormater nf = new NumberFormater(36);//内置2-62进制的转换
-//NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码
+NumberFormater nf = new NumberFormater(36);//内置2-91进制的转换
+//NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码，自定义字符可支持任意进制，你传1w个字符进去那就支持一万进制(手动狗头)
 string s36 = nf.ToString(12345678);
 long num = nf.FromString("7clzi");
 Console.WriteLine("12345678的36进制是：" + s36); // 7clzi
 Console.WriteLine("36进制的7clzi是：" + num); // 12345678
-var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue)); //配合随机数生成随机字符串
+var s = new NumberFormater(91).ToString(new Random().Next(100000, int.MaxValue)); //配合随机数生成随机字符串
 ```
 
 ```csharp

@@ -231,7 +231,7 @@ namespace Masuit.Tools.Strings
             int j = 0;
             var chars = str.ToCharArray();
             Array.Reverse(chars);
-            return new string(chars).Where(Characters.Contains).Sum(ch => (Characters.IndexOf(ch) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
+            return chars.Where(Characters.Contains).Sum(ch => (Characters.IndexOf(ch) + start) * (long)Math.Pow(Length, j++)) + resultOffset;
         }
 
         /// <summary>
