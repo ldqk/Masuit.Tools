@@ -27,7 +27,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.Net45", "Masui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.AspNetCore", "Masuit.Tools.AspNetCore\Masuit.Tools.AspNetCore.csproj", "{73BA93B7-C6AE-4B39-892E-3596D91BF96C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{144D7A0C-002D-48E4-8814-EA14011CFFFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreTest", "NetCoreTest\NetCoreTest.csproj", "{144D7A0C-002D-48E4-8814-EA14011CFFFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchmarkTest", "BenchmarkTest\BenchmarkTest.csproj", "{0599ACF0-8495-4E72-AB5E-B7446A5C413A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{144D7A0C-002D-48E4-8814-EA14011CFFFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0599ACF0-8495-4E72-AB5E-B7446A5C413A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0599ACF0-8495-4E72-AB5E-B7446A5C413A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0599ACF0-8495-4E72-AB5E-B7446A5C413A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0599ACF0-8495-4E72-AB5E-B7446A5C413A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
