@@ -1,9 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
+using BenchmarkTest;
 
-BenchmarkRunner.Run<TestClass>();
-
-[MemoryDiagnoser]
-public class TestClass
-{
-}
+BenchmarkRunner.Run<StreamTest>();
