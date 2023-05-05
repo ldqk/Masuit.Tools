@@ -43,6 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="DnsClient" Version="1.7.0" />
         <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -97,6 +98,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Extensions\Dynamics\" />
         <Folder Include="Files\FileDetector\" />
     </ItemGroup>
 

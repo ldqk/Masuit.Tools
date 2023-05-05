@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -111,6 +112,8 @@ namespace Masuit.Tools.Reflection
             return before.ToJsonString();
         }
 
+        private static readonly ConcurrentDictionary<string, Delegate> DelegateCache = new();
+
         /// <summary>
         /// 获取属性
         /// </summary>
@@ -120,9 +123,16 @@ namespace Masuit.Tools.Reflection
         /// <returns>T类型</returns>
         public static T GetProperty<T>(this object obj, string name)
         {
-            var parameter = Expression.Parameter(obj.GetType(), "e");
+            var type = obj.GetType();
+            if (DelegateCache.TryGetValue(type.Name + "." + name, out var func))
+            {
+                return (T)func.DynamicInvoke(obj);
+            }
+            var parameter = Expression.Parameter(type, "e");
             var property = Expression.PropertyOrField(parameter, name);
-            return (T)Expression.Lambda(property, parameter).Compile().DynamicInvoke(obj);
+            func = Expression.Lambda(property, parameter).Compile();
+            DelegateCache.TryAdd(type.Name + "." + name, func);
+            return (T)func.DynamicInvoke(obj);
         }
 
         /// <summary>
@@ -132,8 +142,7 @@ namespace Masuit.Tools.Reflection
         /// <returns>属性信息</returns>
         public static PropertyInfo[] GetProperties(this object obj)
         {
-            PropertyInfo[] propertyInfos = obj.GetType().GetProperties(bf);
-            return propertyInfos;
+            return obj.GetType().GetProperties(bf);
         }
 
         #endregion 属性字段设置

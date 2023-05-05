@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Masuit.Tools.Dynamics;
 using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools
@@ -208,6 +209,11 @@ namespace Masuit.Tools
             }
 
             return dictionary;
+        }
+
+        public static dynamic ToDynamic(this object obj)
+        {
+            return DynamicFactory.WithObject(obj);
         }
     }
 
