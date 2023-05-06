@@ -55,14 +55,8 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\*\*.*">
       <Link>Extensions\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\Dynamics\*.*">
-      <Link>Extensions\Dynamics\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\Dynamics\*\*.*">
       <Link>Extensions\Dynamics\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*.*">
-      <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*\*.*">
       <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
@@ -96,12 +90,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Linq\LinqExtension.cs">
       <Link>Linq\LinqExtension.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\Circle.cs">
-      <Link>Models\Circle.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\Sphere.cs">
-      <Link>Models\Sphere.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Net\*.*">
       <Link>Net\%(RecursiveDir)%(FileName)%(Extension)</Link>
