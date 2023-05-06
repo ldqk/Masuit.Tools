@@ -1,6 +1,6 @@
 ﻿# Masuit.Tools(码数吐司库)
 
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg) ![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg) <a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a> <a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg) ![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg) `<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24">``</a>` `<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24">``<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>`
 
 新手友好的C#万能工具库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
@@ -1197,6 +1197,46 @@ detector.FormatCategories;//格式类别
 |    XML    |               Extensible Markup Language Document               |
 |     Z     |                          Z Compressed                          |
 |    ZIP    |                           ZIP Package                           |
+
+### 47. 动态类型扩展
+
+让动态类型支持属性访问器和索引器调用
+
+```csharp
+        var obj = DynamicFactory.NewObject();
+        obj.Name = "Masuit";
+        obj.Age = 18;
+        obj.MyClass = DynamicFactory.WithObject(new
+        {
+            X = 10,
+            Y = 20,
+            Z = new List<int> { 1, 2, 3, 4, 5 }
+        });
+        Assert.Equal(obj.Name, obj["Name"]);
+        Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
+        Assert.Equal(obj.MyClass.Z[2], obj["MyClass"]["Z"][2]);
+```
+
+普通类型转换成动态类型
+
+```csharp
+        var obj = new
+        {
+            Name = "Masuit"
+        }.ToDynamic();
+        obj.Age = 18;
+        obj.MyClass = new
+        {
+            X = 10,
+            Y = 20,
+            Z = new List<int> { 1, 2, 3, 4, 5 }
+        }.ToDynamic();
+        obj.Prop = "test";
+        _ = obj - "Prop"; // 删除属性
+
+        Assert.Equal(obj.Name, obj["Name"]);
+        Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
