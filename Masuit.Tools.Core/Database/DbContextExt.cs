@@ -17,16 +17,16 @@ namespace Masuit.Tools.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="db"></param>
         /// <returns></returns>
-        public static IEnumerable<ChangeEntry> GetChanges<T>(this DbContext db)
+        public static IEnumerable<ChangeEntry<T>> GetChanges<T>(this DbContext db)
         {
             return db.ChangeTracker.Entries().Where(e => e.State == EntityState.Modified && e.Entity is T).Select(e =>
             {
                 var originalObject = e.OriginalValues.ToObject();
                 var currentObject = e.CurrentValues.ToObject();
-                return new ChangeEntry
+                return new ChangeEntry<T>
                 {
                     EntityState = e.State,
-                    Entity = e.Entity,
+                    Entity = (T)e.Entity,
                     EntityType = e.OriginalValues.EntityType.ClrType,
                     ChangeProperties = e.OriginalValues.Properties.Select(p => (Property: p, Value: p.PropertyInfo.GetValue(originalObject))).Zip(e.CurrentValues.Properties.Select(p => (Property: p, Value: p.PropertyInfo.GetValue(currentObject))), (t1, t2) => new ChangePropertyInfo()
                     {
@@ -74,15 +74,15 @@ namespace Masuit.Tools.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="db"></param>
         /// <returns></returns>
-        public static IEnumerable<ChangeEntry> GetAdded<T>(this DbContext db)
+        public static IEnumerable<ChangeEntry<T>> GetAdded<T>(this DbContext db)
         {
             return db.ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Entity is T).Select(e =>
             {
                 var currentObject = e.CurrentValues.ToObject();
-                return new ChangeEntry
+                return new ChangeEntry<T>
                 {
                     EntityState = e.State,
-                    Entity = e.Entity,
+                    Entity = (T)e.Entity,
                     EntityType = e.CurrentValues.EntityType.ClrType,
                     ChangeProperties = e.CurrentValues.Properties.Select(p => new ChangePropertyInfo()
                     {
@@ -127,15 +127,15 @@ namespace Masuit.Tools.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="db"></param>
         /// <returns></returns>
-        public static IEnumerable<ChangeEntry> GetRemoved<T>(this DbContext db)
+        public static IEnumerable<ChangeEntry<T>> GetRemoved<T>(this DbContext db)
         {
             return db.ChangeTracker.Entries().Where(e => e.State == EntityState.Deleted && e.Entity is T).Select(e =>
             {
                 var originalObject = e.OriginalValues.ToObject();
-                return new ChangeEntry
+                return new ChangeEntry<T>
                 {
                     EntityState = e.State,
-                    Entity = e.Entity,
+                    Entity = (T)e.Entity,
                     EntityType = e.OriginalValues.EntityType.ClrType,
                     ChangeProperties = e.OriginalValues.Properties.Select(p => new ChangePropertyInfo()
                     {
@@ -180,7 +180,7 @@ namespace Masuit.Tools.Core
         /// <typeparam name="T"></typeparam>
         /// <param name="db"></param>
         /// <returns></returns>
-        public static IEnumerable<ChangeEntry> GetAllChanges<T>(this DbContext db)
+        public static IEnumerable<ChangeEntry<T>> GetAllChanges<T>(this DbContext db)
         {
             return GetChanges<T>(db).Union(GetAdded<T>(db)).Union(GetRemoved<T>(db));
         }

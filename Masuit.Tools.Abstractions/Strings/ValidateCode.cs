@@ -1,16 +1,7 @@
-﻿#if NET461
-using System.Web;
-#else
-
-using Microsoft.AspNetCore.Http;
-
-#endif
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Masuit.Tools.AspNetCore.Mime;
 using Masuit.Tools.Systems;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -51,10 +42,9 @@ namespace Masuit.Tools.Strings
         /// 创建验证码的图片
         /// </summary>
         /// <param name="validateCode">验证码序列</param>
-        /// <param name="context">当前的HttpContext上下文对象</param>
         /// <param name="fontSize">字体大小，默认值28px</param>
         /// <exception cref="Exception">The operation failed.</exception>
-        public static byte[] CreateValidateGraphic(this HttpContext context, string validateCode, int fontSize = 28)
+        public static PooledMemoryStream CreateValidateGraphic(this string validateCode, int fontSize = 28)
         {
             var fontFamily = SystemFonts.Families.Where(f => new[] { "Consolas", "DejaVu Sans", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault();
             if (fontFamily == default)
@@ -103,13 +93,9 @@ namespace Masuit.Tools.Strings
             }
 
             //保存图片数据
-            using var stream = new PooledMemoryStream();
+            var stream = new PooledMemoryStream();
             image.Save(stream, WebpFormat.Instance);
-
-            //输出图片流
-            context.Response.Clear();
-            context.Response.ContentType = ContentType.Jpeg;
-            return stream.ToArray();
+            return stream;
         }
 
         /// <summary>

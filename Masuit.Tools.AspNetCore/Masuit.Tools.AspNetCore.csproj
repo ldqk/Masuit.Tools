@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>netcoreapp3.1;net5;net6;net7</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Description>
             包含一些AspNetCore常用的工具类。ModelBinder等
             官网教程：https://ldqk.org/55
@@ -40,6 +41,10 @@
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
     </ItemGroup>
 
     <ItemGroup>

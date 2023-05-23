@@ -50,7 +50,6 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
-        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
         <PackageReference Include="System.Management" Version="7.0.1" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
@@ -58,31 +57,28 @@
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.3]" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.3]" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.3]" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="2.2.0" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
@@ -91,6 +87,7 @@
         <Reference Include="System.Web" />
         <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.3]" />
         <PackageReference Include="System.Buffers" version="[4.5.1]" targetFramework="net461" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[4.5]" />
         <PackageReference Include="System.Net.Http" Version="[4.3.4]" />
         <PackageReference Include="System.Runtime.Numerics" version="[4.3.0]" targetFramework="net461" />

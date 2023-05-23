@@ -189,7 +189,7 @@
       <Version>[2.1.3]</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp.Drawing">
-      <Version>1.0.0-beta14</Version>
+      <Version>1.0.0-beta15</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
       <Version>2.6.111</Version>

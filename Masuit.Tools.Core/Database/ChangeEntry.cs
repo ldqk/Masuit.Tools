@@ -2,12 +2,12 @@
 
 namespace Masuit.Tools.Core;
 
-public class ChangeEntry
+public class ChangeEntry<T>
 {
     /// <summary>
     /// 所属实体
     /// </summary>
-    public object Entity { get; set; }
+    public T Entity { get; set; }
 
     /// <summary>
     /// 实体类型
@@ -23,4 +23,8 @@ public class ChangeEntry
     /// 字段变更信息
     /// </summary>
     public List<ChangePropertyInfo> ChangeProperties { get; set; }
+}
+
+public class ChangeEntry : ChangeEntry<object>
+{
 }

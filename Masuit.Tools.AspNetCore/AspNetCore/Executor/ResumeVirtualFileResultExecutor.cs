@@ -1,11 +1,7 @@
 ﻿using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
 using Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor
 {
@@ -37,7 +33,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor
             return base.ExecuteAsync(context, result);
         }
 
-        public ResumeVirtualFileResultExecutor(ILoggerFactory loggerFactory, IHostingEnvironment hostingEnvironment) : base(loggerFactory, hostingEnvironment)
+        public ResumeVirtualFileResultExecutor(ILoggerFactory loggerFactory, IWebHostEnvironment hostingEnvironment) : base(loggerFactory, hostingEnvironment)
         {
         }
     }

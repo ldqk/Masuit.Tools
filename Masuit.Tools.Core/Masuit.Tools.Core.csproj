@@ -36,7 +36,6 @@ github：https://github.com/ldqk/Masuit.Tools
 
     <ItemGroup>
         <PackageReference Include="FastExpressionCompiler" Version="3.3.4" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     </ItemGroup>
