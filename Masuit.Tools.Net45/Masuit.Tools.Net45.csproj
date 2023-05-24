@@ -150,9 +150,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Models\TreeExtensions.cs">
       <Link>Models\TreeExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Net\FtpClient.cs">
-      <Link>Net\FtpClient.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Net\MultiThreadDownloader.cs">
       <Link>Net\MultiThreadDownloader.cs</Link>
     </Compile>
@@ -251,21 +248,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools\Mvc\Internal\ByteRange.cs">
       <Link>Mvc\Internal\ByteRange.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools\Mvc\Mime\ContentType.cs">
-      <Link>Mvc\Mime\ContentType.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools\Mvc\Mime\DefaultMimeItems.cs">
-      <Link>Mvc\Mime\DefaultMimeItems.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools\Mvc\Mime\IMimeMapper.cs">
-      <Link>Mvc\Mime\IMimeMapper.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools\Mvc\Mime\MimeMapper.cs">
-      <Link>Mvc\Mime\MimeMapper.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools\Mvc\Mime\MimeMappingItem.cs">
-      <Link>Mvc\Mime\MimeMappingItem.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools\Net\CacheHelper.cs">
       <Link>Net\CacheHelper.cs</Link>

@@ -1,6 +1,6 @@
 ﻿# Masuit.Tools(码数吐司库)
 
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg) ![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg) <a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a> <a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE) [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core) ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg) ![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg) `<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24">``</a>` `<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24">``<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>`
 
 新手友好的C#万能工具库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
@@ -382,22 +382,7 @@ LogManager.Info("记录一次消息");
 LogManager.Error(new Exception("异常消息"));
 ```
 
-### 14.FTP客户端
-
-```csharp
-FtpClient ftpClient = FtpClient.GetAnonymousClient("192.168.2.2");//创建一个匿名访问的客户端
-//FtpClient ftpClient = FtpClient.GetClient("192.168.2.3","admin","123456");// 创建一个带用户名密码的客户端
-ftpClient.Delete("/1.txt");// 删除文件
-ftpClient.Download("/test/2.txt","D:\\test\\2.txt");// 下载文件
-ftpClient.UploadFile("/test/22.txt","D:\\test\\22.txt",(sum, progress) =>
-{
-    Console.WriteLine("已上传："+progress*1.0/sum);
-});//上传文件并检测进度
-List<string> files = ftpClient.GetFiles("/");//列出ftp服务端文件列表
-...
-```
-
-### 15.多线程后台下载
+### 14.多线程后台下载
 
 ```csharp
 var mtd = new MultiThreadDownloader("https://attachments-cdn.shimo.im/yXwC4kphjVQu06rH/KeyShot_Pro_7.3.37.7z",Environment.GetEnvironmentVariable("temp"),"E:\\Downloads\\KeyShot_Pro_7.3.37.7z",8);
@@ -424,7 +409,7 @@ mtd.Start();//开始下载
 //mtd.Resume(); // 继续下载
 ```
 
-### 16.加密解密/hash
+### 15.加密解密/hash
 
 ```csharp
 var enc="123456".MDString();// MD5
@@ -462,7 +447,7 @@ var enc = hidden.EncodeToZeroWidthText(); // 扩展函数调用：将字符串�
 var enc = ZeroWidthCodec.Encode(); // 类调用：将字符串编码成零宽字符串
 ```
 
-### 17.实体校验
+### 16.实体校验
 
 ```csharp
 public class MyClass
@@ -490,7 +475,7 @@ public class MyClass
 }
 ```
 
-### 18.HTML操作
+### 17.HTML操作
 
 ```csharp
 List<string> srcs = "html".MatchImgSrcs().ToList();// 获取html字符串里所有的img标签的src属性
@@ -499,7 +484,7 @@ var str="html".RemoveHtmlTag(); // 去除html标签
 ...
 ```
 
-### 19.DateTime扩展
+### 18.DateTime扩展
 
 ```csharp
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
@@ -510,7 +495,7 @@ double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
 ...
 ```
 
-### 20.IP地址和URL
+### 19.IP地址和URL
 
 ```csharp
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
@@ -523,7 +508,7 @@ PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
 ```
 
-### 21.元素去重
+### 20.元素去重
 
 ```csharp
 var list = new List<MyClass>()
@@ -545,7 +530,7 @@ List<MyClass> classes = list.DistinctBy(c => c.Email).ToList();
 Console.WriteLine(classes.Count==1);//True
 ```
 
-### 22.枚举扩展
+### 21.枚举扩展
 
 ```csharp
 public enum MyEnum
@@ -569,7 +554,7 @@ var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的�
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
 
-### 23.定长队列和ConcurrentHashSet实现
+### 22.定长队列和ConcurrentHashSet实现
 
 `如果是.NET5及以上，推荐使用框架自带的Channel实现该功能`
 
@@ -582,7 +567,7 @@ ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);//
 var set = new ConcurrentHashSet<string>(); // 用法和hashset保持一致
 ```
 
-### 24.反射操作
+### 23.反射操作
 
 ```csharp
 MyClass myClass = new MyClass();
@@ -591,14 +576,7 @@ myClass.SetProperty("Email","1@1.cn");//给对象设置值
 myClass.DeepClone(); // 对象深拷贝，带嵌套层级的
 ```
 
-### 25.获取线程内唯一对象
-
-```csharp
-CallContext<T>.SetData("db",dbContext);//设置线程内唯一对象
-CallContext<T>.GetData("db");//获取线程内唯一对象
-```
-
-### 26.邮件发送
+### 24.邮件发送
 
 ```csharp
 new Email()
@@ -617,7 +595,7 @@ new Email()
 });// 异步发送邮件
 ```
 
-### 27.图像的简单处理
+### 25.图像的简单处理
 
 ```csharp
 ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
@@ -652,7 +630,7 @@ var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
 
-### 28.随机数
+### 26.随机数
 
 ```csharp
 Random rnd = new Random();
@@ -661,7 +639,7 @@ double gauss = rnd.NextGauss(20,5);//产生正态高斯分布的随机数
 var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue));//生成随机字符串
 ```
 
-### 29.权重筛选功能
+### 27.权重筛选功能
 
 ```csharp
 var data=new List<WeightedItem<string>>()
@@ -687,7 +665,7 @@ var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
 ```
 
-### 30.EF Core支持AddOrUpdate方法
+### 28.EF Core支持AddOrUpdate方法
 
 ```csharp
 /// <summary>
@@ -700,14 +678,14 @@ public override Post SavePost(Post t)
 }
 ```
 
-### 31.敏感信息掩码
+### 29.敏感信息掩码
 
 ```csharp
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
 
-### 32.集合扩展
+### 30.集合扩展
 
 ```csharp
 var list = new List<string>()
@@ -804,7 +782,7 @@ list.ChangeIndex(item,3); // 将元素item的索引位置变为第3个
 list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为第2个
 ```
 
-### 33.Mime类型
+### 31.Mime类型
 
 ```csharp
 var mimeMapper = new MimeMapper();
@@ -812,7 +790,7 @@ var ext = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var mime = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ```
 
-### 34.日期时间扩展
+### 32.日期时间扩展
 
 ```csharp
 DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
@@ -831,7 +809,7 @@ range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断�
 ...
 ```
 
-### 35.流相关
+### 33.流相关
 
 ```csharp
 stream.SaveAsMemoryStream(); // 任意流转换成内存流
@@ -856,7 +834,7 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
 memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 
-### 36.数值转换
+### 34.数值转换
 
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
@@ -866,7 +844,7 @@ bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
 ```
 
-### 37.INI配置文件操作(仅支持Windows)
+### 35.INI配置文件操作(仅支持Windows)
 
 ```csharp
 INIFile ini=new INIFile("filename.ini");
@@ -876,7 +854,7 @@ ini.ClearAllSection(); // 清空所有配置节
 ini.ClearSection(section); // 清空配置节
 ```
 
-### 38.雷达图计算引擎
+### 36.雷达图计算引擎
 
 应用场景：计算两个多边形的相似度，用户画像之类的
 
@@ -885,7 +863,7 @@ var points=RadarChartEngine.ComputeIntersection(chart1,chart2); //获取两个�
 points.ComputeArea(); //计算多边形面积
 ```
 
-### 39.树形结构实现
+### 37.树形结构实现
 
 基本接口类：
 ITreeChildren：带Children属性的接口
@@ -908,7 +886,7 @@ var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChil
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
 
-### 40.简单的Excel导出
+### 38.简单的Excel导出
 
 需要额外依赖包：`Masuit.Tools.Excel`
 
@@ -930,7 +908,7 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
 5. ToExcel方法支持DataTable、List `<DataTable>`、Dictionary<string, DataTable>类型的直接调用
 
-### 41.EFCore实用扩展
+### 39.EFCore实用扩展
 
 #### 跟踪实体变更对比
 
@@ -997,14 +975,14 @@ dbcontext.Category.Include(c=>c.Children).ThenInclude(c=>c.Children).ThenInclude
 dbcontext.Category.IncludeRecursive(4, c => c.Children); // 自动Include 4次
 ```
 
-### 42.任何类型支持链式调用
+### 40.任何类型支持链式调用
 
 ```csharp
 a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
 
-### 43.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 41.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
 
 #### DeserializeOnlyContractResolver
 
@@ -1060,7 +1038,7 @@ public class ClassDto
 
 该解释器是DeserializeOnlyContractResolver和FallbackJsonPropertyResolver的融合版
 
-### 44. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
+### 42. ASP.NET Core Action同时支持queryString、表单和json请求类型的模型绑点器BodyOrDefaultModelBinder
 
 用法：
 引入包：`Masuit.Tools.AspNetCore`
@@ -1094,14 +1072,14 @@ Startup配置：
         }
 ```
 
-### 45. 字符串SimHash相似度算法
+### 43. 字符串SimHash相似度算法
 
 ```csharp
 var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
 
-### 46. 真实文件类型探测
+### 44. 真实文件类型探测
 
 ```csharp
 // 多种方式，任君调用
@@ -1198,7 +1176,7 @@ detector.FormatCategories;//格式类别
 |     Z     |                          Z Compressed                          |
 |    ZIP    |                           ZIP Package                           |
 
-### 47. 动态类型扩展
+### 45. 动态类型扩展
 
 让动态类型支持属性访问器和索引器调用
 

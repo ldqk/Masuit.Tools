@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.IO.Compression;
 using System.Reflection;
-using Masuit.Tools.AspNetCore.Mime;
+using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 

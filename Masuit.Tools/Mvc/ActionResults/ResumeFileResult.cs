@@ -1,5 +1,5 @@
 ﻿using Masuit.Tools.Mvc.Internal;
-using Masuit.Tools.Mvc.Mime;
+using Masuit.Tools.Mime;
 using System;
 using System.Globalization;
 using System.IO;
@@ -41,7 +41,6 @@ namespace Masuit.Tools.Mvc.ActionResults
         public ResumeFileResult(string fileName, HttpRequestBase request, string downloadFileName) : this(fileName, request.Headers[HttpHeaders.IfNoneMatch], request.Headers[HttpHeaders.IfModifiedSince], request.Headers[HttpHeaders.IfMatch], request.Headers[HttpHeaders.IfUnmodifiedSince], request.Headers[HttpHeaders.IfRange], request.Headers[HttpHeaders.Range], downloadFileName)
         {
         }
-
 
         public ResumeFileResult(string fileName, string ifNoneMatch, string ifModifiedSince, string ifMatch, string ifUnmodifiedSince, string ifRange, string range, string downloadFileName) : base(fileName, new MimeMapper().GetMimeFromPath(fileName))
         {

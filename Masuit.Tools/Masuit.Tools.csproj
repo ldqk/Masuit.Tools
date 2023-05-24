@@ -58,6 +58,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\Dynamics\*\*.*">
       <Link>Extensions\Dynamics\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*.*">
+      <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*\*.*">
       <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
@@ -91,8 +94,11 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Linq\LinqExtension.cs">
       <Link>Linq\LinqExtension.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Net\*.*">
-      <Link>Net\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\MultiThreadDownloader.cs">
+      <Link>Net\MultiThreadDownloader.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Net\PartialDownloader.cs">
+      <Link>Net\PartialDownloader.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\*.*">
       <Link>RandomSelector\%(RecursiveDir)%(FileName)%(Extension)</Link>
@@ -135,12 +141,7 @@
     <Compile Include="Mvc\ControllerExtension.cs" />
     <Compile Include="Mvc\HttpHeaders.cs" />
     <Compile Include="Mvc\Internal\ByteRange.cs" />
-    <Compile Include="Mvc\Mime\ContentType.cs" />
     <Compile Include="Mvc\ActionResults\ResumeFileResult.cs" />
-    <Compile Include="Mvc\Mime\DefaultMimeItems.cs" />
-    <Compile Include="Mvc\Mime\IMimeMapper.cs" />
-    <Compile Include="Mvc\Mime\MimeMapper.cs" />
-    <Compile Include="Mvc\Mime\MimeMappingItem.cs" />
     <Compile Include="Net\CacheHelper.cs" />
     <Compile Include="Net\CookieHelper.cs" />
     <Compile Include="Net\WebExtension.cs" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Masuit.Tools.AspNetCore.Mime
+namespace Masuit.Tools.Mime
 {
     /// <summary>
     /// 默认MIME映射器，可以根据文件扩展名获取标准内容类型。
@@ -38,14 +38,14 @@ namespace Masuit.Tools.AspNetCore.Mime
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public MimeMapper() : this(null)
         {
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="extensions"></param>
         public MimeMapper(params MimeMappingItem[] extensions)

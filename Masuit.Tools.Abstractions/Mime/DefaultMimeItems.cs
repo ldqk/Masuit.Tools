@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Masuit.Tools.AspNetCore.Mime
+namespace Masuit.Tools.Mime
 {
     public static class DefaultMimeItems
     {
@@ -389,46 +389,46 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "ms", MimeType = "application/x-wais-source"},
             new MimeMappingItem{Extension = "nc", MimeType = "application/x-netcdf"},
             new MimeMappingItem{Extension = "oda", MimeType = "application/oda"},
-            
+
             //<!-- OpenDocument Database -->
             new MimeMappingItem{Extension = "odb", MimeType = "application/vnd.oasis.opendocument.database"},
-            
+
             //<!-- OpenDocument Chart -->
             new MimeMappingItem{Extension = "odc", MimeType = "application/vnd.oasis.opendocument.chart"},
-    
+
             //<!-- OpenDocument Formula -->
             new MimeMappingItem{Extension = "odf", MimeType = "application/vnd.oasis.opendocument.formula"},
-    
+
             //<!-- OpenDocument Drawing -->
             new MimeMappingItem{Extension = "odg", MimeType = "application/vnd.oasis.opendocument.graphics"},
-    
+
             //<!-- OpenDocument Image -->
             new MimeMappingItem{Extension = "odi", MimeType = "application/vnd.oasis.opendocument.image"},
-    
+
             //<!-- OpenDocument Master Document -->
             new MimeMappingItem{Extension = "odm", MimeType = "application/vnd.oasis.opendocument.text-master"},
-    
+
             //<!-- OpenDocument Presentation -->
             new MimeMappingItem{Extension = "odp", MimeType = "application/vnd.oasis.opendocument.presentation"},
-    
+
             //<!-- OpenDocument Spreadsheet -->
             new MimeMappingItem{Extension = "ods", MimeType = "application/vnd.oasis.opendocument.spreadsheet"},
-    
+
             //<!-- OpenDocument Text -->
             new MimeMappingItem{Extension = "odt", MimeType = "application/vnd.oasis.opendocument.text"},
-    
+
             //<!-- OpenDocument Drawing Template -->
             new MimeMappingItem{Extension = "otg ", MimeType = "application/vnd.oasis.opendocument.graphics-template"},
-    
+
             //<!-- HTML Document Template -->
             new MimeMappingItem{Extension = "oth", MimeType = "application/vnd.oasis.opendocument.text-web"},
-    
+
             //<!-- OpenDocument Presentation Template -->
             new MimeMappingItem{Extension = "otp", MimeType = "application/vnd.oasis.opendocument.presentation-template"},
-    
+
             //<!-- OpenDocument Spreadsheet Template -->
             new MimeMappingItem{Extension = "ots", MimeType = "application/vnd.oasis.opendocument.spreadsheet-template "},
-    
+
             //<!-- OpenDocument Text Template -->
             new MimeMappingItem{Extension = "ott", MimeType = "application/vnd.oasis.opendocument.text-template"},
             new MimeMappingItem{Extension = "pbm", MimeType = "image/x-portable-bitmap"},
@@ -498,7 +498,7 @@ namespace Masuit.Tools.AspNetCore.Mime
             new MimeMappingItem{Extension = "xwd", MimeType = "image/x-xwindowdump"},
             new MimeMappingItem{Extension = "vsd", MimeType = "application/x-visio"},
             new MimeMappingItem{Extension = "wav", MimeType = "audio/x-wav"},
-            
+
             //<!-- Wireless Bitmap -->
             new MimeMappingItem{Extension = "wbmp", MimeType = "image/vnd.wap.wbmp"},
 

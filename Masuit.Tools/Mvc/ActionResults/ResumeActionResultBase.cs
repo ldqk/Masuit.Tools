@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Mvc.Mime;
+﻿using Masuit.Tools.Mime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,9 +16,13 @@ namespace Masuit.Tools.Mvc.ActionResults
         public string MultipartBoundary { get; set; }
 
         public string ContentType { get; }
+
         private readonly string _fileName;
+
         public DateTimeOffset? LastModified { get; set; }
+
         public string EntityTag { get; set; }
+
         public Stream FileContents { get; set; }
 
         protected ResumeActionResultBase(string fileName)
@@ -67,7 +71,6 @@ namespace Masuit.Tools.Mvc.ActionResults
             }
         }
 
-
         protected virtual bool ShouldProceedAfterEvaluatingPreconditions(HttpContextBase context, ResumeRequest resumingRequest)
         {
             var request = context.Request;
@@ -91,7 +94,6 @@ namespace Masuit.Tools.Mvc.ActionResults
                     }
                 }
             }
-
 
             if (!string.IsNullOrEmpty(check = (request.Headers[HttpWorkerRequest.GetKnownRequestHeaderName(HttpWorkerRequest.HeaderIfMatch)])))
             {
@@ -133,7 +135,6 @@ namespace Masuit.Tools.Mvc.ActionResults
                     }
                 }
             }
-
 
             if (!string.IsNullOrEmpty(check = (request.Headers[HttpWorkerRequest.GetKnownRequestHeaderName(HttpWorkerRequest.HeaderIfModifiedSince)])))
             {

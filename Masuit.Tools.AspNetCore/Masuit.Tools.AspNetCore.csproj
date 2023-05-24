@@ -44,6 +44,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FastExpressionCompiler" Version="3.3.4" />
       <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
     </ItemGroup>
 

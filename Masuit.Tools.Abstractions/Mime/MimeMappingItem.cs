@@ -1,7 +1,7 @@
-﻿namespace Masuit.Tools.AspNetCore.Mime
+﻿namespace Masuit.Tools.Mime
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class MimeMappingItem
     {

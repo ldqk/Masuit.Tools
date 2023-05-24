@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.AspNetCore.Mime;
+﻿using Masuit.Tools.Mime;
 using Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
@@ -11,6 +11,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
     public static class ControllerExtensions
     {
         private static readonly IMimeMapper _mimeMapper = new MimeMapper();
+
         /// <summary>
         /// 可断点续传和多线程下载的FileResult
         /// </summary>

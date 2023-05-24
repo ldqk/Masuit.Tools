@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.AspNetCore.Mime;
+﻿using Masuit.Tools.Mime;
 using System;
 using System.Collections.Generic;
 using System.IO;
