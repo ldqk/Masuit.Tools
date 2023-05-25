@@ -169,8 +169,13 @@ string s = html.HtmlSanitizerCustom(); // 自定义清理
 Windows.ClearMemorySilent();
 ```
 
-### 5.任意进制转换
-
+### 5.任意进制转换/中文数字
+#### 大写数字
+``` csharp
+var num=123.45.ToChineseMoney(); // 壹佰贰拾叁元肆角伍分
+var num=123.45.ToChineseNumber(); // 一百二十三点四五
+```
+#### 进制转换
 可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 
 ```csharp
