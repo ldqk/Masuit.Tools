@@ -89,11 +89,6 @@ public static class ControllerExtensions
     /// <returns></returns>
     public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream stream, string contentType, string fileDownloadName, string etag)
     {
-        if (stream.CanSeek)
-        {
-            stream.Seek(0, SeekOrigin.Begin);
-        }
-
         return new ResumeFileStreamResult(stream, contentType, etag)
         {
             FileDownloadName = fileDownloadName
