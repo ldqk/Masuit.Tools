@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-using Masuit.Tools.Mvc.Mime;
+using Masuit.Tools.Mime;
 using NUnit.Framework;
 
 namespace Masuit.Tools.UnitTest.Mvc

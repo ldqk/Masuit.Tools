@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Masuit.Tools.Core\Masuit.Tools.Core.csproj" />
+    <ProjectReference Include="..\..\Masuit.Tools.AspNetCore\Masuit.Tools.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
