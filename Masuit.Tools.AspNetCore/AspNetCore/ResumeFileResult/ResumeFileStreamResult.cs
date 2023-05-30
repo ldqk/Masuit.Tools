@@ -12,21 +12,26 @@ public class ResumeFileStreamResult : FileStreamResult, IResumeFileResult
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="fileStream">文件流</param>
+    /// <param name="stream">文件流</param>
     /// <param name="contentType">Content-Type</param>
     /// <param name="etag">ETag</param>
-    public ResumeFileStreamResult(Stream fileStream, string contentType, string etag = null) : this(fileStream, MediaTypeHeaderValue.Parse(contentType), !string.IsNullOrEmpty(etag) ? EntityTagHeaderValue.Parse(etag) : null)
+    public ResumeFileStreamResult(Stream stream, string contentType, string etag = null) : this(stream, MediaTypeHeaderValue.Parse(contentType), !string.IsNullOrEmpty(etag) ? EntityTagHeaderValue.Parse(etag) : null)
     {
     }
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="fileStream">文件流</param>
+    /// <param name="stream">文件流</param>
     /// <param name="contentType">Content-Type</param>
     /// <param name="etag">ETag</param>
-    public ResumeFileStreamResult(Stream fileStream, MediaTypeHeaderValue contentType, EntityTagHeaderValue etag = null) : base(fileStream, contentType)
+    public ResumeFileStreamResult(Stream stream, MediaTypeHeaderValue contentType, EntityTagHeaderValue etag = null) : base(stream, contentType)
     {
+        if (stream.CanSeek)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
         EntityTag = etag;
         EnableRangeProcessing = true;
     }

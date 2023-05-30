@@ -95,6 +95,7 @@ namespace Masuit.Tools.Strings
             //保存图片数据
             var stream = new PooledMemoryStream();
             image.Save(stream, WebpFormat.Instance);
+            stream.Position = 0;
             return stream;
         }
 

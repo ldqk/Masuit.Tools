@@ -57,39 +57,44 @@ public static class ControllerExtensions
     /// 可断点续传和多线程下载的FileResult
     /// </summary>
     /// <param name="controller"></param>
-    /// <param name="fileStream">文件二进制流</param>
+    /// <param name="stream">文件二进制流</param>
     /// <param name="contentType">Content-Type</param>
     /// <param name="fileDownloadName">下载的文件名</param>
     /// <returns></returns>
-    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string contentType, string fileDownloadName)
+    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream stream, string contentType, string fileDownloadName)
     {
-        return ResumeFile(controller, fileStream, contentType, fileDownloadName, null);
+        return ResumeFile(controller, stream, contentType, fileDownloadName, null);
     }
 
     /// <summary>
     /// 可断点续传和多线程下载的FileResult
     /// </summary>
     /// <param name="controller"></param>
-    /// <param name="fileStream">文件二进制流</param>
+    /// <param name="stream">文件二进制流</param>
     /// <param name="fileDownloadName">下载的文件名</param>
     /// <returns></returns>
-    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string fileDownloadName)
+    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream stream, string fileDownloadName)
     {
-        return ResumeFile(controller, fileStream, MimeMapper.GetMimeFromPath(fileDownloadName), fileDownloadName, null);
+        return ResumeFile(controller, stream, MimeMapper.GetMimeFromPath(fileDownloadName), fileDownloadName, null);
     }
 
     /// <summary>
     /// 可断点续传和多线程下载的FileResult
     /// </summary>
     /// <param name="controller"></param>
-    /// <param name="fileStream">文件二进制流</param>
+    /// <param name="stream">文件二进制流</param>
     /// <param name="contentType">Content-Type</param>
     /// <param name="fileDownloadName">下载的文件名</param>
     /// <param name="etag">ETag</param>
     /// <returns></returns>
-    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream fileStream, string contentType, string fileDownloadName, string etag)
+    public static ResumeFileStreamResult ResumeFile(this ControllerBase controller, Stream stream, string contentType, string fileDownloadName, string etag)
     {
-        return new ResumeFileStreamResult(fileStream, contentType, etag)
+        if (stream.CanSeek)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+        return new ResumeFileStreamResult(stream, contentType, etag)
         {
             FileDownloadName = fileDownloadName
         };
