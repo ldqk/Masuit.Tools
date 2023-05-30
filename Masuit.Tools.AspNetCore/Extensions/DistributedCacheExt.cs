@@ -1,8 +1,7 @@
-﻿using System;
-using System.Text;
-using Masuit.Tools.Systems;
+﻿using Masuit.Tools.Systems;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

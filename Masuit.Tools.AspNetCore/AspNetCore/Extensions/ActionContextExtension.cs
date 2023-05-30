@@ -2,32 +2,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions
+namespace Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
+
+/// <summary>
+/// ResumeFileHelper
+/// </summary>
+public static class ActionContextExtension
 {
     /// <summary>
-    /// ResumeFileHelper
+    /// 设置响应头ContentDispositionHeader
     /// </summary>
-    public static class ActionContextExtension
+    /// <param name="context"></param>
+    /// <param name="result"></param>
+    public static void SetContentDispositionHeaderInline(this ActionContext context, IResumeFileResult result)
     {
-        /// <summary>
-        /// 设置响应头ContentDispositionHeader
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="result"></param>
-        public static void SetContentDispositionHeaderInline(this ActionContext context, IResumeFileResult result)
+        context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
+        if (string.IsNullOrEmpty(result.FileDownloadName))
         {
-            context.HttpContext.Response.Headers[HeaderNames.AccessControlExposeHeaders] = HeaderNames.ContentDisposition;
-            if (string.IsNullOrEmpty(result.FileDownloadName))
+            var contentDisposition = new ContentDispositionHeaderValue("inline");
+
+            if (!string.IsNullOrWhiteSpace(result.FileInlineName))
             {
-                var contentDisposition = new ContentDispositionHeaderValue("inline");
-
-                if (!string.IsNullOrWhiteSpace(result.FileInlineName))
-                {
-                    contentDisposition.SetHttpFileName(result.FileInlineName);
-                }
-
-                context.HttpContext.Response.Headers[HeaderNames.ContentDisposition] = contentDisposition.ToString();
+                contentDisposition.SetHttpFileName(result.FileInlineName);
             }
+
+            context.HttpContext.Response.Headers[HeaderNames.ContentDisposition] = contentDisposition.ToString();
         }
     }
 }

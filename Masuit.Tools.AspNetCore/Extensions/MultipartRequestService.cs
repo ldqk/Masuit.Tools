@@ -1,15 +1,9 @@
 ﻿using Masuit.Tools.Core.AspNetCore;
 using Masuit.Tools.Systems;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 
@@ -21,8 +15,7 @@ public class MultipartRequestService : IMultipartRequestService
         var formAccumulator = new KeyValueAccumulator();
         var file = Array.Empty<byte>();
 
-        MultipartSection section;
-        while ((section = await reader.ReadNextSectionAsync(cancellationToken)) != null)
+        while (await reader.ReadNextSectionAsync(cancellationToken) is { } section)
         {
             if (!ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition))
             {

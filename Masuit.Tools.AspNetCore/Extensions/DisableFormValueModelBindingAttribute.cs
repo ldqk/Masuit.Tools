@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Masuit.Tools.AspNetCore.Extensions;

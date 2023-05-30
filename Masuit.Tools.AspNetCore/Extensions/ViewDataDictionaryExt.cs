@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

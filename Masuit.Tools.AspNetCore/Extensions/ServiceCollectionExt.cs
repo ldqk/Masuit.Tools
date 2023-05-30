@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

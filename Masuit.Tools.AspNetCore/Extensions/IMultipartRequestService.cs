@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

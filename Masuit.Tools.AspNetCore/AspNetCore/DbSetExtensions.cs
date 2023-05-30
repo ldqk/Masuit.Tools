@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
+
 namespace Masuit.Tools.Core.AspNetCore;
 
 public static class DbSetExtensions
