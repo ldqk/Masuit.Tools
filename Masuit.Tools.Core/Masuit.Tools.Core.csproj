@@ -6,7 +6,7 @@
 官网教程：https://ldqk.org/55
 github：https://github.com/ldqk/Masuit.Tools
         </Description>
-        <Version>2.6.2.1</Version>
+        <Version>2.6.2.2</Version>
         <Copyright>Copyright © 懒得勤快</Copyright>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
         <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
@@ -39,16 +39,16 @@ github：https://github.com/ldqk/Masuit.Tools
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.1.1]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.2.6]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.9]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.32]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5.0.11]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5.0.17]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.10]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.16]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />

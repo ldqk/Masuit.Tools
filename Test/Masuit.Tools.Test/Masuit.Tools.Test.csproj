@@ -97,10 +97,10 @@
       <Version>4.18.4</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>3.0.3</Version>
+      <Version>3.0.4</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>3.0.3</Version>
+      <Version>3.0.4</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.13.3</Version>
