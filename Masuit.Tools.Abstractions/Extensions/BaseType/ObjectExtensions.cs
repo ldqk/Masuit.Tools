@@ -259,7 +259,7 @@ namespace Masuit.Tools
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <param name="others"></param>
-		public static void Merge<T>(this T a, T b, params T[] others) where T : class
+		public static T Merge<T>(this T a, T b, params T[] others) where T : class
 		{
 			foreach (var item in new[] { b }.Concat(others))
 			{
@@ -269,6 +269,37 @@ namespace Masuit.Tools
 					a.SetProperty(p.Key, p.Value);
 				}
 			}
+
+			return a;
+		}
+
+		/// <summary>
+		/// 多个对象的属性值合并
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public static T Merge<T>(this IEnumerable<T> objects) where T : class
+		{
+			var list = objects as List<T> ?? objects.ToList();
+			if (list.Count == 0)
+			{
+				return null;
+			}
+
+			if (list.Count == 1)
+			{
+				return list[0];
+			}
+
+			foreach (var item in list.Skip(1))
+			{
+				var dic = item.ToDictionary();
+				foreach (var p in dic.Where(p => list[0].GetProperty(p.Key).IsDefaultValue()))
+				{
+					list[0].SetProperty(p.Key, p.Value);
+				}
+			}
+
+			return list[0];
 		}
 	}
 
