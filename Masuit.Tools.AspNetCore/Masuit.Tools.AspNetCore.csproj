@@ -18,7 +18,7 @@
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <Version>1.2.2.3</Version>
+        <Version>1.2.2.4</Version>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <FileVersion>1.1.9</FileVersion>
@@ -59,9 +59,9 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[5.0.17]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.16]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.18]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.7" />
     </ItemGroup>
 </Project>
