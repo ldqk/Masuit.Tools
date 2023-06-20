@@ -64,5 +64,9 @@ namespace Masuit.Tools.Models
             TotalPages = (int)Math.Ceiling(count * 1.0 / size);
             Data = items;
         }
+
+        public PagedList()
+        {
+        }
     }
 }
