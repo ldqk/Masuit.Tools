@@ -22,6 +22,7 @@ public static class IConvertibleExtensions
             case TypeCode.Double:
             case TypeCode.Single:
                 return true;
+
             default:
                 return false;
         }
@@ -172,14 +173,14 @@ public static class IConvertibleExtensions
             return null;
         }
 
-        if (type.IsNumeric())
-        {
-            return value.ToType(type, new NumberFormatInfo());
-        }
-
         if (type.IsEnum)
         {
             return Enum.Parse(type, value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        if (type.IsNumeric())
+        {
+            return value.ToType(type, new NumberFormatInfo());
         }
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -206,6 +207,5 @@ public static class IConvertibleExtensions
             }
         }
         return Convert.ChangeType(value, type);
-
     }
 }

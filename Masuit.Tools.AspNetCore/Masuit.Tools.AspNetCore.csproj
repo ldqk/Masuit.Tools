@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Description>
             包含一些AspNetCore常用的工具类。ModelBinder等
-            官网教程：https://ldqk.org/55
+            官网教程：https://masuit.org/55
             github：https://github.com/ldqk/Masuit.Tools
         </Description>
         <Copyright>Copyright © 懒得勤快</Copyright>
@@ -18,7 +18,7 @@
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <Version>1.2.2.4</Version>
+        <Version>1.2.2.5</Version>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <FileVersion>1.1.9</FileVersion>
