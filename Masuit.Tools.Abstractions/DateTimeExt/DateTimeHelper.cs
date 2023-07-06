@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Masuit.Tools.DateTimeExt
@@ -520,6 +522,84 @@ namespace Masuit.Tools.DateTimeExt
             strResout += sec + "秒";
             return strResout;
         }
+
+        /// <summary>
+        /// 时间段并集
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="sources"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static ICollection<T> GetUnionSet<T>(this T destination, List<T> sources) where T : ITimePeriod, new()
+        {
+            var result = true;
+            ICollection<T> frames = new List<T>();
+
+            var timeFrames = sources.Where(frame =>
+                !(destination.StartTime > frame.EndTime || destination.EndTime < frame.StartTime)).ToList();
+            if (timeFrames.Any())
+                foreach (var frame in timeFrames)
+                {
+                    frames.Add(frame);
+                    sources.Remove(frame);
+                }
+
+            if (!frames.Any()) return frames;
+            var timePeriod = new T()
+            {
+                EndTime = frames.OrderBy(frame => frame.EndTime).Max(frame => frame.EndTime),
+                StartTime = frames.OrderBy(frame => frame.StartTime).Min(frame => frame.StartTime)
+            };
+
+            while (result)
+            {
+                var maxTimeFrame = GetUnionSet<T>(timePeriod, sources);
+                if (!maxTimeFrame.Any())
+                    result = false;
+                else
+                    foreach (var frame in maxTimeFrame)
+                        frames.Add(frame);
+            }
+
+            return frames;
+        }
+
+        /// <summary>
+        /// 获取一批时间段内存在相互重叠的最大时间段
+        /// </summary>
+        /// <param name="destination">基础时间段</param>
+        /// <param name="sources">一批时间段</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <remarks>源数据sources 会受到影响</remarks>
+        public static T GetMaxTimePeriod<T>(this T destination, List<T> sources) where T : ITimePeriod, new()
+        {
+            var list = sources.Select(period => new T()
+            {
+                EndTime = period.EndTime,
+                StartTime = period.StartTime,
+            }).ToList();
+
+            var timePeriods = GetUnionSet(destination, list);
+            return new T()
+            {
+                EndTime = timePeriods.OrderBy(period => period.EndTime).Max(period => period.EndTime),
+                StartTime = timePeriods.OrderBy(period => period.StartTime).Min(period => period.StartTime)
+            };
+        }
+    }
+
+    public interface ITimePeriod
+    {
+        /// <summary>
+        /// 起始时间
+        /// </summary>
+        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// 终止时间
+        /// </summary>
+        public DateTime EndTime { get; set; }
     }
 
     /// <summary>
