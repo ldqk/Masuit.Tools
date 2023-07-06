@@ -53,6 +53,18 @@ namespace Masuit.Tools.Files
         }
 
         /// <summary>
+        /// 将文件夹压缩到一个文件流中，可保存为zip文件，方便于web方式下载
+        /// </summary>
+        /// <param name="dir">文件夹</param>
+        /// <param name="rootdir"></param>
+        /// <param name="archiveType"></param>
+        /// <returns>文件流</returns>
+        public PooledMemoryStream ZipStream(string dir, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+        {
+            return ZipStream(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), rootdir, archiveType);
+        }
+
+        /// <summary>
         /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
         /// </summary>
         /// <param name="streams">多个文件流</param>
@@ -81,6 +93,18 @@ namespace Masuit.Tools.Files
                 streams.Dispose();
             }
             return ms;
+        }
+
+        /// <summary>
+        /// 压缩文件夹
+        /// </summary>
+        /// <param name="dir">文件夹</param>
+        /// <param name="zipFile">压缩到...</param>
+        /// <param name="rootdir">压缩包内部根文件夹</param>
+        /// <param name="archiveType"></param>
+        public void Zip(string dir, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+        {
+            Zip(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), zipFile, rootdir, archiveType);
         }
 
         /// <summary>
