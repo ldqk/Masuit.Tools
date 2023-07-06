@@ -34,6 +34,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     public PooledMemoryStream(byte[] buffer) : this(ArrayPool<byte>.Shared, buffer.Length)
     {
         Buffer.BlockCopy(buffer, 0, _data, 0, buffer.Length);
+        _length = buffer.Length;
     }
 
     public PooledMemoryStream(ArrayPool<byte> arrayPool, int capacity = 0)
