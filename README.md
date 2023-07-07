@@ -32,9 +32,9 @@
 
 ## 建议开发环境
 
-操作系统：Windows 10 1903及以上版本 
-开发工具：VisualStudio2019 v16.5及以上版本 
-SDK：.Net Core 2.1.0及以上所有版本 
+操作系统：Windows 10 1903及以上版本  
+开发工具：VisualStudio2019 v16.5及以上版本  
+SDK：.Net Core 2.1.0及以上所有版本  
 
 ## 安装程序包
 
