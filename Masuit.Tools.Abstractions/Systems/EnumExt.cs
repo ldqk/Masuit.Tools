@@ -141,31 +141,83 @@ namespace Masuit.Tools.Systems
         }
 
         /// <summary>
-        /// 根据枚举成员获取自定义属性EnumDisplayNameAttribute的属性DisplayName
+        /// 获取枚举值的Description信息
         /// </summary>
-        /// <returns></returns>
-        public static Dictionary<string, int> GetDescriptionAndValue(this Type enumType)
+        /// <param name ="value">枚举值</param>
+        /// <param name ="args">要格式化的对象</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static string GetDescription(this Enum value, params object[] args)
         {
-            return Enum.GetValues(enumType).Cast<object>().ToDictionary(e => GetDescription(e as Enum), e => (int)e);
+            var type = value.GetType();
+            if (!Enum.IsDefined(type, value))
+            {
+                return Enum.GetValues(type).OfType<Enum>().Where(value.HasFlag).Select(e =>
+                {
+                    var member = type.GetField(e.ToString());
+                    return string.Format(member.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attrs && attrs.Length != 0 ? attrs[0].Description : e.ToString(), args);
+                }).Join(",");
+            }
+
+            var member = type.GetField(value.ToString());
+            return string.Format(member.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Length != 0 ? attributes[0].Description : value.ToString(), args);
         }
 
         /// <summary>
-        /// 根据枚举成员获取DescriptionAttribute的属性Description
+        /// 获取枚举值的Description信息
         /// </summary>
-        /// <returns></returns>
-        public static string GetDescription(this Enum en)
+        /// <param name ="value">枚举值</param>
+        /// <param name ="args">要格式化的对象</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum value) where TAttribute : Attribute
         {
-            var type = en.GetType(); //获取类型
-            var memberInfos = type.GetMember(en.ToString()); //获取成员
-            if (memberInfos.Any())
+            var type = value.GetType();
+            if (!Enum.IsDefined(type, value))
             {
-                if (memberInfos[0].GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attrs && attrs.Length > 0)
-                {
-                    return attrs[0].Description; //返回当前描述
-                }
+                return Enum.GetValues(type).OfType<Enum>().Where(value.HasFlag).SelectMany(e => type.GetField(e.ToString()).GetCustomAttributes<TAttribute>(false));
             }
 
-            return en.ToString();
+            return type.GetField(value.ToString()).GetCustomAttributes<TAttribute>(false);
+        }
+
+        /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static EnumDescriptionAttribute GetEnumDescription(this Enum value)
+        {
+            return GetEnumDescriptions(value).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static NullableDictionary<string, (string Description, string Display)> GetTypedEnumDescriptions(this Enum value)
+        {
+            return GetEnumDescriptions(value).ToDictionarySafety(a => a.Language, a => (a.Description, a.Display));
+        }
+
+        /// <summary>
+        /// 获取枚举值的Description信息
+        /// </summary>
+        /// <param name ="value">枚举值</param>
+        /// <returns>如果未找到DescriptionAttribute则返回null或返回类型描述</returns>
+        public static IEnumerable<EnumDescriptionAttribute> GetEnumDescriptions(this Enum value)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            var type = value.GetType();
+            if (!Enum.IsDefined(type, value))
+            {
+                return Enum.GetValues(type).OfType<Enum>().Where(value.HasFlag).SelectMany(e => type.GetField(e.ToString()).GetCustomAttributes(typeof(EnumDescriptionAttribute), false).OfType<EnumDescriptionAttribute>());
+            }
+
+            return type.GetField(value.ToString()).GetCustomAttributes(typeof(EnumDescriptionAttribute), false).OfType<EnumDescriptionAttribute>();
         }
 
         /// <summary>
