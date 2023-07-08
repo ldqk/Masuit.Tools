@@ -1,10 +1,10 @@
 ﻿# Masuit.Tools(码数吐司库)
 
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![许可证](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg)
-![language](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg)
+![编程语言](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg)
 <a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a>
 <a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
 
@@ -32,9 +32,9 @@
 
 ## 建议开发环境
 
-操作系统：Windows 10 1903及以上版本
-开发工具：VisualStudio2019 v16.5及以上版本
-SDK：.Net Core 2.1.0及以上所有版本
+操作系统：Windows 10 1903及以上版本  
+开发工具：VisualStudio2019 v16.5及以上版本  
+SDK：.Net Core 2.1.0及以上所有版本  
 
 ## 安装程序包
 
