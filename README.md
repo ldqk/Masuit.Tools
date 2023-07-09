@@ -495,18 +495,7 @@ var str="html".RemoveHtmlTag(); // 去除html标签
 ...
 ```
 
-### 18.DateTime扩展
-
-```csharp
-double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
-double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
-double nanoseconds = DateTime.Now.GetTotalNanoseconds();// 获取纳秒级时间戳
-double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
-double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
-...
-```
-
-### 19.IP地址和URL
+### 18.IP地址和URL
 
 ```csharp
 bool inRange = "192.168.2.2".IpAddressInRange("192.168.1.1","192.168.3.255");// 判断IP地址是否在这个地址段里
@@ -517,6 +506,32 @@ bool isExternalAddress = "http://baidu.com".IsExternalAddress();// 判断是否�
 string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
 PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
+```
+
+### 19.对象属性值合并
+```csharp
+public class MyClass
+{
+    public string A { get; set; }
+
+    public bool? B { get; set; }
+
+    public int? C { get; set; }
+}
+
+var a = new MyClass()
+{
+    A = "aa"
+};
+var b = new MyClass()
+{
+    B = true
+};
+var c = new MyClass()
+{
+    C = 3
+};
+var merge = a.Merge(b, c); // 合并后对象：A = "aa"，B = true，C = 3
 ```
 
 ### 20.元素去重
@@ -804,10 +819,13 @@ var mime = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
 ### 32.日期时间扩展
 
 ```csharp
-DateTime.Now.GetTotalSeconds(); // 获取该时间相对于1970-01-01 00:00:00的秒数
-DateTime.Now.GetTotalMilliseconds(); // 获取该时间相对于1970-01-01 00:00:00的毫秒数
-DateTime.Now.GetTotalMicroseconds(); // 获取该时间相对于1970-01-01 00:00:00的微秒数
-DateTime.Now.GetTotalNanoseconds(); // 获取该时间相对于1970-01-01 00:00:00的纳秒数
+
+double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
+double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
+double nanoseconds = DateTime.Now.GetTotalNanoseconds();// 获取纳秒级时间戳
+double seconds = DateTime.Now.GetTotalSeconds();// 获取秒级时间戳
+double minutes = DateTime.Now.GetTotalMinutes();// 获取分钟级时间戳
+
 var indate=DateTime.Parse("2020-8-3").In(DateTime.Parse("2020-8-2"),DateTime.Parse("2020-8-4"));//true
 DateTime time="2021-1-1 8:00:00".ToDateTime(); //字符串转DateTime
 
@@ -817,6 +835,9 @@ range.Union(DateTime.Parse("2020-8-4"), DateTime.Parse("2020-8-6")); //连接两
 range.In(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-6"));//判断是否在某个时间段内，true
 var (intersected,range2) = range.Intersect(DateTime.Parse("2020-8-4"), DateTime.Parse("2020-8-6"));//两个时间段是否相交，(true,2020-8-3~2020-8-4)
 range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断是否包含某个时间段，true
+
+range.GetUnionSet(List<DateTimeRange>); // 根据某个时间段查找在某批时间段中的最大并集
+range.GetMaxTimePeriod(List<DateTimeRange>); // 获取一批时间段内存在相互重叠的最大时间段
 ...
 ```
 
