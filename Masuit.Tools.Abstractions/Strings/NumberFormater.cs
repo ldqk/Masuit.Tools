@@ -150,6 +150,11 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public string ToString(long number)
         {
+            if (number == 0)
+            {
+                return "0";
+            }
+
             int start = 0;
             int resultOffset = 0;
             if (_offset > 0)
@@ -184,6 +189,11 @@ namespace Masuit.Tools.Strings
         /// <returns></returns>
         public string ToString(BigInteger number)
         {
+            if (number.IsZero)
+            {
+                return "0";
+            }
+
             int start = 0;
             int resultOffset = 0;
             if (_offset > 0)
