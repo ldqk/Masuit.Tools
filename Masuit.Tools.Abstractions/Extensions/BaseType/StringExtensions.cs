@@ -617,7 +617,17 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchPhoneNumber(this string s)
         {
-            return !string.IsNullOrEmpty(s) && s[0] == '1' && (s[1] > '2' || s[1] <= '9');
+            return !string.IsNullOrEmpty(s) && s.Length == 11 && s[0] == '1' && (s[1] > '2' || s[1] <= '9');
+        }
+
+        /// <summary>
+        /// 匹配固话号码
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchLandline(this string s)
+        {
+            return Regex.IsMatch(s, @"^0\d{2,3}(?:-?\d{8}|-?\d{7})$");
         }
 
         #endregion 校验手机号码的正确性
