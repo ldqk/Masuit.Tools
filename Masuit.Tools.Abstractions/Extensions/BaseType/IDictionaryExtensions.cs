@@ -660,11 +660,11 @@ namespace Masuit.Tools
         /// <param name="key"></param>
         /// <param name="addValueFactory"></param>
         /// <returns></returns>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TValue> addValueFactory)
+        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> @this, TKey key, Func<TValue> addValueFactory)
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(key, addValueFactory());
+                @this[key] = addValueFactory();
             }
 
             return @this[key];
@@ -683,7 +683,7 @@ namespace Masuit.Tools
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(key, await addValueFactory());
+                @this[key] = await addValueFactory();
             }
 
             return @this[key];
@@ -698,11 +698,12 @@ namespace Masuit.Tools
         /// <param name="key"></param>
         /// <param name="addValue"></param>
         /// <returns></returns>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, TValue addValue)
+        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> @this, TKey key, TValue addValue)
         {
             if (!@this.ContainsKey(key))
             {
-                @this.Add(key, addValue);
+                @this[key] = addValue;
+                return addValue;
             }
 
             return @this[key];
