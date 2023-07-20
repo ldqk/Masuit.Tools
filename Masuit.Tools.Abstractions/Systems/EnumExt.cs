@@ -15,8 +15,7 @@ namespace Masuit.Tools.Systems
     public static partial class EnumExt
     {
         private static readonly ConcurrentDictionary<Type, Dictionary<int, string>> EnumNameValueDict = new ConcurrentDictionary<Type, Dictionary<int, string>>();
-        private static readonly ConcurrentDictionary<Type, Dictionary<string, int>> EnumValueNameDict = new ConcurrentDictionary<Type, Dictionary<string, int>>();
-        private static ConcurrentDictionary<string, Type> _enumTypeDict;
+        private static NullableDictionary<string, Type> _enumTypeDict;
 
         /// <summary>
         /// 获取枚举对象Key与显示名称的字典
@@ -30,14 +29,7 @@ namespace Masuit.Tools.Systems
                 throw new Exception("给定的类型不是枚举类型");
             }
 
-            var names = EnumNameValueDict.ContainsKey(enumType) ? EnumNameValueDict[enumType] : new Dictionary<int, string>();
-            if (names.Count == 0)
-            {
-                names = GetDictionaryItems(enumType);
-                EnumNameValueDict[enumType] = names;
-            }
-
-            return names;
+            return EnumNameValueDict.GetOrAdd(enumType, _ => GetDictionaryItems(enumType));
         }
 
         private static Dictionary<int, string> GetDictionaryItems(Type enumType)
@@ -46,8 +38,7 @@ namespace Masuit.Tools.Systems
             var names = new Dictionary<int, string>(enumItems.Length);
             foreach (FieldInfo enumItem in enumItems)
             {
-                int intValue = (int)enumItem.GetValue(enumType);
-                names[intValue] = enumItem.Name;
+                names[(int)enumItem.GetValue(enumType)] = enumItem.Name;
             }
 
             return names;
@@ -62,7 +53,7 @@ namespace Masuit.Tools.Systems
         public static Type GetEnumType(this Assembly assembly, string typeName)
         {
             _enumTypeDict ??= LoadEnumTypeDict(assembly);
-            return _enumTypeDict.ContainsKey(typeName) ? _enumTypeDict[typeName] : null;
+            return _enumTypeDict[typeName];
         }
 
         /// <summary>
@@ -84,9 +75,9 @@ namespace Masuit.Tools.Systems
             return en.ToString();
         }
 
-        private static ConcurrentDictionary<string, Type> LoadEnumTypeDict(Assembly assembly)
+        private static NullableDictionary<string, Type> LoadEnumTypeDict(Assembly assembly)
         {
-            return new ConcurrentDictionary<string, Type>(assembly.GetTypes().Where(o => o.IsEnum).ToDictionary(o => o.Name, o => o));
+            return assembly.GetTypes().Where(o => o.IsEnum).ToDictionarySafety(o => o.Name, o => o);
         }
 
         /// <summary>
@@ -137,7 +128,10 @@ namespace Masuit.Tools.Systems
         public static IEnumerable<TEnum> Split<TEnum>(this TEnum value) where TEnum : Enum
         {
             var type = typeof(TEnum);
-            return Enum.IsDefined(type, value) ? new[] { value } : Enum.GetValues(type).Cast<TEnum>().Where(e => value.HasFlag(e));
+            return Enum.IsDefined(type, value) ? new[]
+            {
+                value
+            } : Enum.GetValues(type).Cast<TEnum>().Where(e => value.HasFlag(e));
         }
 
         /// <summary>
@@ -212,5 +206,10 @@ namespace Masuit.Tools.Systems
 
             return nvc;
         }
+
+        /// <summary>
+        /// 根据枚举成员获取自定义属性EnumDisplayNameAttribute的属性DisplayName
+        /// </summary>
+        public static Dictionary<string, int> GetDescriptionAndValue(this Type enumType) => Enum.GetValues(enumType).Cast<object>().ToDictionary(e => (e as Enum).GetDescription(), e => (int)e);
     }
 }
