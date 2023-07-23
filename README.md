@@ -1018,14 +1018,17 @@ a.Next(func1).Next(func2).Next(func3);
 
 #### DeserializeOnlyContractResolver
 
-该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
+该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute/SerializeIgnoreAttribute标记的，在反序列化的时候生效，在序列化的时候忽略;被SerializeOnlyJsonPropertyAttribute/DeserializeIgnoreAttribute标记的，在序列化的时候生效，在反序列化的时候忽略
 
 ```csharp
 public class ClassDto
     {
         [DeserializeOnlyJsonProperty]
+        //[SerializeIgnore]
         public string MyProperty { get; set; }
 
+        [SerializeOnlyJsonProperty]
+        //[DeserializeIgnore]
         public int Num { get; set; }
     }
   
