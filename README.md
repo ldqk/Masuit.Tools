@@ -1014,7 +1014,7 @@ a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
 
-### 41.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 41.Newtonsoft.Json的只允许字段(反)序列化行为的契约解释器
 
 #### DeserializeOnlyContractResolver
 
