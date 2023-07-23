@@ -1023,10 +1023,12 @@ a.Next(func1).Next(func2).Next(func3);
 ```csharp
 public class ClassDto
     {
+        // 序列化时忽略这个属性/反序列化时加载这个属性
         [DeserializeOnlyJsonProperty]
         //[SerializeIgnore]
         public string MyProperty { get; set; }
 
+        // 反序列化时忽略这个属性/序列化时加载这个属性
         [SerializeOnlyJsonProperty]
         //[DeserializeIgnore]
         public int Num { get; set; }
