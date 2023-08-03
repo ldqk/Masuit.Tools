@@ -1014,18 +1014,23 @@ a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
 
-### 41.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 41.Newtonsoft.Json的只允许字段(反)序列化行为的契约解释器
 
 #### DeserializeOnlyContractResolver
 
-该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
+该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute/SerializeIgnoreAttribute标记的，在反序列化的时候生效，在序列化的时候忽略;被SerializeOnlyJsonPropertyAttribute/DeserializeIgnoreAttribute标记的，在序列化的时候生效，在反序列化的时候忽略
 
 ```csharp
 public class ClassDto
     {
+        // 序列化时忽略这个属性/反序列化时加载这个属性
         [DeserializeOnlyJsonProperty]
+        //[SerializeIgnore]
         public string MyProperty { get; set; }
 
+        // 反序列化时忽略这个属性/序列化时加载这个属性
+        [SerializeOnlyJsonProperty]
+        //[DeserializeIgnore]
         public int Num { get; set; }
     }
   
