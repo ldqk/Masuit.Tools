@@ -1082,13 +1082,10 @@ PM> Install-Package Masuit.Tools.AspNetCore
 Startup配置：
 
 ```csharp
-    services.AddMvc(options =>
-        {
-             options.ModelBinderProviders.InsertBodyOrDefaultBinding();
-        })
+app.UseBodyOrDefaultModelBinder();
 ```
 
-在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，当然也可以省略，示例代码如下：
+在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：
 
 ```csharp
         [HttpGet("query"),HttpPost("query")]

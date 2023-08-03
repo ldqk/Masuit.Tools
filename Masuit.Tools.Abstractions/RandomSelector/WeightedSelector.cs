@@ -103,7 +103,7 @@ namespace Masuit.Tools.RandomSelector
         /// <summary>
         /// 执行权重筛选，取多个元素
         /// </summary>
-        public List<T> SelectMultiple(int count)
+        public IEnumerable<T> SelectMultiple(int count)
         {
             CalculateCumulativeWeights();
             var selector = new MultipleSelector<T>(this);
@@ -145,6 +145,7 @@ namespace Masuit.Tools.RandomSelector
 
             return results;
         }
+
         public IEnumerator<T> GetEnumerator()
         {
             return Items.GetEnumerator() as IEnumerator<T>;
