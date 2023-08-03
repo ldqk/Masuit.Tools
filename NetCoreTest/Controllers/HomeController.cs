@@ -9,7 +9,7 @@ public class HomeController : Controller
 {
 	[HttpPost("test")]
 	[ProducesResponseType(typeof(MyClass), (int)HttpStatusCode.OK)]
-	public async Task<ActionResult> Test(MyClass mc)
+	public async Task<ActionResult> Test([FromBodyOrDefault] MyClass mc)
 	{
 		return Ok(mc);
 	}
