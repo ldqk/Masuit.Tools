@@ -24,6 +24,40 @@ namespace Masuit.Tools
 			return type.IsValueType & type.IsPrimitive;
 		}
 
+		/// <summary>
+		/// 判断类型是否是常见的简单类型
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static bool IsSimpleType(this Type type)
+		{
+			//IsPrimitive 判断是否为基础类型。
+			//基元类型为 Boolean、 Byte、 SByte、 Int16、 UInt16、 Int32、 UInt32、 Int64、 UInt64、 IntPtr、 UIntPtr、 Char、 Double 和 Single。
+			var t = Nullable.GetUnderlyingType(type) ?? type;
+			return t.IsPrimitive || t.IsEnum || t == typeof(decimal) || t == typeof(string) || t == typeof(Guid) || t == typeof(TimeSpan) || t == typeof(Uri);
+		}
+
+		/// <summary>
+		/// 是否是常见类型的 数组形式 类型
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static bool IsSimpleArrayType(this Type type)
+		{
+			return type.IsArray && Type.GetType(type.FullName!.Trim('[', ']')).IsSimpleType();
+		}
+
+		/// <summary>
+		/// 是否是常见类型的 泛型形式 类型
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static bool IsSimpleListType(this Type type)
+		{
+			type = Nullable.GetUnderlyingType(type) ?? type;
+			return type.IsGenericType && type.GetGenericArguments().Length == 1 && type.GetGenericArguments().FirstOrDefault().IsSimpleType();
+		}
+
 		public static bool IsDefaultValue(this object value)
 		{
 			if (value == default)

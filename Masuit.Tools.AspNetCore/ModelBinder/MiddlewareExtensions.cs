@@ -1,6 +1,6 @@
 ﻿namespace Masuit.Tools.AspNetCore.ModelBinder;
 
-public static class BodyOrDefaultModelBinderMiddlewareExtensions
+public static class MiddlewareExtensions
 {
 	/// <summary>
 	/// 使用自动参数绑定中间件
@@ -9,6 +9,6 @@ public static class BodyOrDefaultModelBinderMiddlewareExtensions
 	/// <returns></returns>
 	public static IApplicationBuilder UseBodyOrDefaultModelBinder(this IApplicationBuilder appBuilder)
 	{
-		return appBuilder.UseMiddleware<BodyOrDefaultModelBinderMiddleware>();
+		return appBuilder.UseMiddleware<BodyOrDefaultBinderMiddleware>();
 	}
 }

@@ -1,23 +1,26 @@
 ﻿using System.Collections;
 using System.Net.Mime;
 using System.Reflection;
+using System.Xml.Linq;
+using Masuit.Tools.Systems;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
-public class BodyOrDefaultModelBinder : IModelBinder
+public class FromBodyOrDefaultModelBinder : IModelBinder
 {
-	private static readonly List<BindType> AutoTypes;
+	private static readonly List<BindType> BindTypes;
 
-	static BodyOrDefaultModelBinder()
+	static FromBodyOrDefaultModelBinder()
 	{
-		AutoTypes = Enum.GetNames(typeof(BindType)).Select(t => Enum.Parse<BindType>(t)).Where(t => t != BindType.None && t != BindType.Services).ToList();
+		BindTypes = Enum.GetNames(typeof(BindType)).Select(Enum.Parse<BindType>).Where(t => t != BindType.Default).ToList();
 	}
 
-	private readonly ILogger<BodyOrDefaultModelBinder> _logger;
+	private readonly ILogger<FromBodyOrDefaultModelBinder> _logger;
 
-	public BodyOrDefaultModelBinder(ILogger<BodyOrDefaultModelBinder> logger)
+	public FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> logger)
 	{
 		_logger = logger;
 	}
@@ -26,19 +29,19 @@ public class BodyOrDefaultModelBinder : IModelBinder
 	{
 		var context = bindingContext.HttpContext;
 		var attr = bindingContext.GetAttribute<FromBodyOrDefaultAttribute>();
-		var fieldName = attr?.FieldName ?? bindingContext.FieldName;
+		var field = attr?.FieldName ?? bindingContext.FieldName;
 		var modelType = bindingContext.ModelType;
-		object targetValue = null;
+		object value = null;
 		if (attr != null)
 		{
 			if (modelType.IsSimpleType() || modelType.IsSimpleArrayType() || modelType.IsSimpleListType())
 			{
-				if (attr.Type == BindType.None)
+				if (attr.Type == BindType.Default)
 				{
-					foreach (var type in AutoTypes)
+					foreach (var type in BindTypes)
 					{
-						targetValue = GetBindingValue(bindingContext, type, fieldName, modelType);
-						if (targetValue != null)
+						value = GetBindingValue(bindingContext, type, field, modelType);
+						if (value != null)
 						{
 							break;
 						}
@@ -46,22 +49,29 @@ public class BodyOrDefaultModelBinder : IModelBinder
 				}
 				else
 				{
-					targetValue = GetBindingValue(bindingContext, attr.Type, fieldName, modelType);
+					foreach (var type in attr.Type.Split())
+					{
+						value = GetBindingValue(bindingContext, type, field, modelType);
+						if (value != null)
+						{
+							break;
+						}
+					}
 				}
 			}
 			else
 			{
-				if (BodyOrDefaultModelBinderMiddleware.JsonObject != null)
+				if (bindingContext.HttpContext.Items.TryGetValue("BodyOrDefaultModelBinder@JsonBody", out var obj) && obj is JObject json)
 				{
 					if (modelType.IsArray || modelType.IsGenericType && modelType.GenericTypeArguments.Length == 1)
 					{
-						if (BodyOrDefaultModelBinderMiddleware.JsonObject.TryGetValue(fieldName, StringComparison.OrdinalIgnoreCase, out var jtoken))
+						if (json.TryGetValue(field, StringComparison.OrdinalIgnoreCase, out var jtoken))
 						{
-							targetValue = jtoken.ToObject(modelType);
+							value = jtoken.ToObject(modelType);
 						}
 						else
 						{
-							_logger.LogWarning($"TraceIdentifier：{context.TraceIdentifier}，AutoBinderMiddleware从{BodyOrDefaultModelBinderMiddleware.JsonObject}中获取{fieldName}失败！");
+							_logger.LogWarning($"TraceIdentifier：{context.TraceIdentifier}，BodyOrDefaultModelBinder从{json}中获取{field}失败！");
 						}
 					}
 					else
@@ -69,31 +79,31 @@ public class BodyOrDefaultModelBinder : IModelBinder
 						// 可能是 字典或者实体 类型,尝试将modeltype 当初整个请求参数对象
 						try
 						{
-							targetValue = BodyOrDefaultModelBinderMiddleware.JsonObject.ToObject(modelType);
+							value = json.ToObject(modelType);
 						}
 						catch (Exception e)
 						{
-							_logger.LogError(e, e.Message, BodyOrDefaultModelBinderMiddleware.JsonObject.ToString());
+							_logger.LogError(e, e.Message, json.ToString());
 						}
 					}
 				}
 
-				if (targetValue == null)
+				if (value == null)
 				{
 					var (requestData, keys) = GetRequestData(bindingContext, modelType);
 					if (keys.Any())
 					{
-						var setObj = Activator.CreateInstance(modelType);
+						var instance = Activator.CreateInstance(modelType);
 						switch (requestData)
 						{
 							case IEnumerable<KeyValuePair<string, StringValues>> stringValues:
 								{
 									foreach (var item in stringValues)
 									{
-										var prop = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-										if (prop != null)
+										var property = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+										if (property != null)
 										{
-											prop.SetValue(setObj, item.Value.ConvertObject(prop.PropertyType));
+											property.SetValue(instance, item.Value.ConvertObject(property.PropertyType));
 										}
 									}
 
@@ -104,10 +114,10 @@ public class BodyOrDefaultModelBinder : IModelBinder
 									//处理Cookie
 									foreach (var item in strs)
 									{
-										var prop = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-										if (prop != null)
+										var property = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+										if (property != null)
 										{
-											prop.SetValue(setObj, item.Value.ConvertObject(prop.PropertyType));
+											property.SetValue(instance, item.Value.ConvertObject(property.PropertyType));
 										}
 									}
 
@@ -118,10 +128,10 @@ public class BodyOrDefaultModelBinder : IModelBinder
 									//处理路由
 									foreach (var item in objects)
 									{
-										var prop = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-										if (prop != null)
+										var property = modelType.GetProperty(item.Key, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+										if (property != null)
 										{
-											prop.SetValue(setObj, item.Value.ConvertObject(prop.PropertyType));
+											property.SetValue(instance, item.Value.ConvertObject(property.PropertyType));
 										}
 									}
 
@@ -129,20 +139,20 @@ public class BodyOrDefaultModelBinder : IModelBinder
 								}
 						}
 
-						targetValue = setObj;
+						value = instance;
 					}
 				}
 			}
 
-			if (targetValue == null && attr.DefaultValue != null)
+			if (value == null && attr.DefaultValue != null)
 			{
-				targetValue = attr.DefaultValue.ChangeType(modelType);
+				value = attr.DefaultValue.ChangeType(modelType);
 			}
 		}
 
-		if (targetValue != null)
+		if (value != null)
 		{
-			bindingContext.Result = ModelBindingResult.Success(targetValue);
+			bindingContext.Result = ModelBindingResult.Success(value);
 		}
 
 		return Task.CompletedTask;
@@ -181,7 +191,6 @@ public class BodyOrDefaultModelBinder : IModelBinder
 	/// <param name="bindType"></param>
 	/// <param name="fieldName"></param>
 	/// <param name="modelType"></param>
-	/// <returns></returns>
 	private object GetBindingValue(ModelBindingContext bindingContext, BindType bindType, string fieldName, Type modelType)
 	{
 		var context = bindingContext.HttpContext;
@@ -190,8 +199,8 @@ public class BodyOrDefaultModelBinder : IModelBinder
 		{
 			try
 			{
-				var cttType = new ContentType(context.Request.ContentType);
-				mediaType = cttType.MediaType.ToLower();
+				var contentType = new ContentType(context.Request.ContentType);
+				mediaType = contentType.MediaType.ToLower();
 			}
 			catch (Exception ex)
 			{
@@ -207,8 +216,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
 				{
 					case "application/json":
 						{
-							var jsonObj = BodyOrDefaultModelBinderMiddleware.JsonObject;
-							if (jsonObj != null && jsonObj.TryGetValue(fieldName, StringComparison.OrdinalIgnoreCase, out var values))
+							if (bindingContext.HttpContext.Items.TryGetValue("BodyOrDefaultModelBinder@JsonBody", out var obj) && obj is JObject json && json.TryGetValue(fieldName, StringComparison.OrdinalIgnoreCase, out var values))
 							{
 								targetValue = values.ConvertObject(modelType);
 							}
@@ -217,25 +225,24 @@ public class BodyOrDefaultModelBinder : IModelBinder
 						break;
 
 					case "application/xml":
-
-						//var xmlObj = AutoBinderMiddleware.XmlObject;
-
-						//if (xmlObj != null)
-						//{
-						//    var xmlElt = xmlObj.Element(fieldName);
-
-						//    if (xmlElt != null)
-						//    {
-						//    }
-						//}
-						break;
+						{
+							if (bindingContext.HttpContext.Items.TryGetValue("BodyOrDefaultModelBinder@XmlBody", out var obj) && obj is XDocument xml)
+							{
+								var xmlElt = xml.Element(fieldName);
+								if (xmlElt != null)
+								{
+									targetValue = xmlElt.Value.ConvertObject(modelType);
+								}
+							}
+							break;
+						}
 				}
 
 				break;
 
 			case BindType.Query:
 				{
-					if (context.Request.Query != null && context.Request.Query.Count > 0 && context.Request.Query.TryGetValue(fieldName, out var values))
+					if (context.Request.Query is { Count: > 0 } && context.Request.Query.TryGetValue(fieldName, out var values))
 					{
 						targetValue = values.ConvertObject(modelType);
 					}
@@ -245,7 +252,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
 
 			case BindType.Form:
 				{
-					if (context.Request.HasFormContentType && context.Request.Form.Count > 0 && context.Request.Form.TryGetValue(fieldName, out StringValues values))
+					if (context.Request is { HasFormContentType: true, Form.Count: > 0 } && context.Request.Form.TryGetValue(fieldName, out var values))
 					{
 						targetValue = values.ConvertObject(modelType);
 					}
@@ -255,7 +262,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
 
 			case BindType.Header:
 				{
-					if (context.Request.Headers != null && context.Request.Headers.Count > 0 && context.Request.Headers.TryGetValue(fieldName, out var values))
+					if (context.Request.Headers is { Count: > 0 } && context.Request.Headers.TryGetValue(fieldName, out var values))
 					{
 						targetValue = values.ConvertObject(modelType);
 					}
@@ -265,7 +272,7 @@ public class BodyOrDefaultModelBinder : IModelBinder
 
 			case BindType.Cookie:
 				{
-					if (context.Request.Cookies != null && context.Request.Cookies.Count > 0 && context.Request.Cookies.TryGetValue(fieldName, out var values))
+					if (context.Request.Cookies is { Count: > 0 } && context.Request.Cookies.TryGetValue(fieldName, out var values))
 					{
 						targetValue = values.ConvertObject(modelType);
 					}
@@ -275,12 +282,16 @@ public class BodyOrDefaultModelBinder : IModelBinder
 
 			case BindType.Route:
 				{
-					if (bindingContext.ActionContext.RouteData.Values != null && bindingContext.ActionContext.RouteData.Values.Count > 0 && bindingContext.ActionContext.RouteData.Values.TryGetValue(fieldName, out var values))
+					if (bindingContext.ActionContext.RouteData.Values is { Count: > 0 } && bindingContext.ActionContext.RouteData.Values.TryGetValue(fieldName, out var values))
 					{
 						targetValue = values.ConvertObject(modelType);
 					}
 				}
 
+				break;
+
+			case BindType.Services:
+				targetValue = bindingContext.ActionContext.HttpContext.RequestServices.GetRequiredService(modelType);
 				break;
 		}
 

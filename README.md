@@ -866,7 +866,7 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
 memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 
-### 34.数值转换
+### 34.类型转换
 
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
@@ -874,6 +874,14 @@ memoryStream.SaveFile("filename"); // 将内存流转储成文件
 1.23.ConvertTo<T>(); // 小数转T基本类型
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
+
+1.23.ChangeTypeTo<T>(); //小数转T基本类型,ConvertTo和ChangeTypeTo的区别在于：ConvertTo只适用于基元类型的互转，ChangeTypeTo不仅适用于基元类型的互转还支持数组、字符串的转换(Parse)，ConvertTo的性能更高
+
+type.IsPrimitive(); // 判断类型是否是值类型
+type.IsSimpleType(); // 判断类型是否是常见的简单类型，基元类型为 Boolean、 Byte、 SByte、 Int16、 UInt16、 Int32、 UInt32、 Int64、 UInt64、 IntPtr、 UIntPtr、 Char、 Double 、 Single、枚举、Nullable<T>。
+type.IsSimpleArrayType(); // 判断类型是否是常见类型的 数组形式 类型
+type.IsSimpleListType(); // 判断类型是否是常见类型的 泛型形式 类型
+
 ```
 
 ### 35.INI配置文件操作(仅支持Windows)

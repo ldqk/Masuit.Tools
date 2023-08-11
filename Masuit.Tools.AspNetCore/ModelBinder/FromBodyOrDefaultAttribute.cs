@@ -34,11 +34,15 @@ namespace Masuit.Tools.AspNetCore.ModelBinder
 	[AttributeUsage(AttributeTargets.Parameter)]
 	public class FromBodyOrDefaultAttribute : ModelBinderAttribute
 	{
-		public FromBodyOrDefaultAttribute() : this(BindType.None, null, null)
+		public FromBodyOrDefaultAttribute() : this(BindType.Default, null, null)
 		{
 		}
 
-		public FromBodyOrDefaultAttribute(IConvertible defaultValue) : this(BindType.None, null, defaultValue)
+		public FromBodyOrDefaultAttribute(IConvertible defaultValue) : this(BindType.Default, null, defaultValue)
+		{
+		}
+
+		public FromBodyOrDefaultAttribute(BindType type) : this(type, null, null)
 		{
 		}
 
@@ -46,7 +50,7 @@ namespace Masuit.Tools.AspNetCore.ModelBinder
 		{
 		}
 
-		public FromBodyOrDefaultAttribute(BindType type, string fieldname, IConvertible defaultValue) : base(typeof(BodyOrDefaultModelBinder))
+		public FromBodyOrDefaultAttribute(BindType type, string fieldname, IConvertible defaultValue) : base(typeof(FromBodyOrDefaultModelBinder))
 		{
 			Type = type;
 			FieldName = fieldname;
@@ -61,51 +65,5 @@ namespace Masuit.Tools.AspNetCore.ModelBinder
 		/// 取值方式
 		/// </summary>
 		public BindType Type { get; set; }
-	}
-
-	/// <summary>
-	/// 枚举取值方式
-	/// </summary>
-	public enum BindType
-	{
-		/// <summary>
-		/// 无设定，自动取值(1.取请求数据中的某个值，2.请求数据当成一个对象取值)
-		/// </summary>
-		None,
-
-		/// <summary>
-		/// 从请求正文中获取值
-		/// </summary>
-		Body,
-
-		/// <summary>
-		/// 从查询字符串获取值
-		/// </summary>
-		Query,
-
-		/// <summary>
-		/// 从已发布的表单字段中获取值
-		/// </summary>
-		Form,
-
-		/// <summary>
-		/// 从 HTTP 标头中获取值
-		/// </summary>
-		Header,
-
-		/// <summary>
-		/// 从 Cookie 中取值
-		/// </summary>
-		Cookie,
-
-		/// <summary>
-		/// 从路由数据中获取值
-		/// </summary>
-		Route,
-
-		/// <summary>
-		/// 从依赖关系注入容器中获取类型的实例
-		/// </summary>
-		Services
 	}
 }

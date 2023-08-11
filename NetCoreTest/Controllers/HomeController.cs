@@ -9,9 +9,13 @@ public class HomeController : Controller
 {
 	[HttpPost("test")]
 	[ProducesResponseType(typeof(MyClass), (int)HttpStatusCode.OK)]
-	public async Task<ActionResult> Test([FromBodyOrDefault] MyClass mc)
+	public async Task<ActionResult> Test([FromBodyOrDefault] MyClass mc, [FromBodyOrDefault(BindType.Body | BindType.Query)] string name)
 	{
-		return Ok(mc);
+		return Ok(new
+		{
+			name,
+			mc
+		});
 	}
 }
 

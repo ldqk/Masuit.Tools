@@ -5,30 +5,22 @@ using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
-public sealed class BodyOrDefaultModelBinderMiddleware
+public sealed class BodyOrDefaultBinderMiddleware
 {
 	private readonly RequestDelegate _next;
-	private readonly ILogger<BodyOrDefaultModelBinderMiddleware> _logger;
+	private readonly ILogger<BodyOrDefaultBinderMiddleware> _logger;
 
-	public BodyOrDefaultModelBinderMiddleware(RequestDelegate next, ILogger<BodyOrDefaultModelBinderMiddleware> logger)
+	public BodyOrDefaultBinderMiddleware(RequestDelegate next, ILogger<BodyOrDefaultBinderMiddleware> logger)
 	{
 		_next = next;
 		_logger = logger;
 	}
 
-	public static JObject JsonObject { get; private set; }
-
-	public static XDocument XmlObject { get; private set; }
-
 	public Task Invoke(HttpContext context)
 	{
-		JsonObject = null;
-		XmlObject = null;
-
 		var contentType = context.Request.ContentType;
 		string mediaType;
 		var charSet = "utf-8";
-
 		if (string.IsNullOrWhiteSpace(contentType))
 		{
 			//表单提交
@@ -36,16 +28,16 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 		}
 		else
 		{
-			var cttType = new ContentType(contentType);
-			if (!string.IsNullOrWhiteSpace(cttType.CharSet))
+			var type = new ContentType(contentType);
+			if (!string.IsNullOrWhiteSpace(type.CharSet))
 			{
-				charSet = cttType.CharSet;
+				charSet = type.CharSet;
 			}
-			mediaType = cttType.MediaType.ToLower();
+
+			mediaType = type.MediaType.ToLower();
 		}
 
-		Encoding encoding = Encoding.GetEncoding(charSet);
-
+		var encoding = Encoding.GetEncoding(charSet);
 		if (mediaType == "application/x-www-form-urlencoded")
 		{
 			//普通表单提交
@@ -56,10 +48,7 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 		}
 		else if (mediaType == "application/json")
 		{
-			#region json数据提交
-
 			var body = context.GetBodyString(encoding)?.Trim();
-
 			if (string.IsNullOrWhiteSpace(body))
 			{
 				return _next(context);
@@ -72,7 +61,7 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 
 			try
 			{
-				JsonObject = JObject.Parse(body);
+				context.Items.AddOrUpdate("BodyOrDefaultModelBinder@JsonBody", _ => JObject.Parse(body), (_, _) => JObject.Parse(body));
 				return _next(context);
 			}
 			catch (Exception ex)
@@ -80,15 +69,10 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 				_logger.LogError(ex, "Parsing json failed:" + body);
 				return _next(context);
 			}
-
-			#endregion json数据提交
 		}
 		else if (mediaType == "application/xml")
 		{
-			#region xml数据提交
-
 			var body = context.GetBodyString(encoding)?.Trim();
-
 			if (string.IsNullOrWhiteSpace(body))
 			{
 				return _next(context);
@@ -96,7 +80,7 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 
 			try
 			{
-				XmlObject = XDocument.Parse(body);
+				context.Items.AddOrUpdate("BodyOrDefaultModelBinder@XmlBody", _ => XDocument.Parse(body), (_, _) => XDocument.Parse(body));
 				return _next(context);
 			}
 			catch (Exception ex)
@@ -104,9 +88,8 @@ public sealed class BodyOrDefaultModelBinderMiddleware
 				_logger.LogError(ex, "Parsing xml failed:" + body);
 				return _next(context);
 			}
-
-			#endregion xml数据提交
 		}
+
 		return _next(context);
 	}
 }
