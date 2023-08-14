@@ -1257,7 +1257,7 @@ detector.FormatCategories;//格式类别
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
 ```
-### 46. 反病毒
+### 46. 反病毒(仅支持Windows)
 ```csharp
 // 要求系统WindowsDefender没有被精简掉
 var windowsDefender = new WindowsDefenderScanService();
