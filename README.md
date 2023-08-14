@@ -1257,6 +1257,24 @@ detector.FormatCategories;//格式类别
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
 ```
+### 46. 反病毒
+```csharp
+// 要求系统WindowsDefender没有被精简掉
+var windowsDefender = new WindowsDefenderScanService();
+var result = windowsDefender.ScanFile(@"Y:\1.exe"); // 扫描文件
+var result = windowsDefender.ScanDirectory(@"Y:\"); // 扫描文件夹
+var result = windowsDefender.ScanStream(stream); // 扫描文件流
+
+// 要求C:\Windows\System32\amsi.dll文件存在
+var amsiService = new AmsiScanService();
+amsiService.Scan(stream); // 扫描文件流
+amsiService.Scan(@"Y:\1.exe"); // 扫描文件
+amsiService.Scan(bytes); // 扫描二进制数组
+
+// ASP.NET Core
+service.AddWindowsDefenderService();
+service.AddAMSI();
+```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
