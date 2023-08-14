@@ -1272,7 +1272,7 @@ amsiService.Scan(@"Y:\1.exe"); // 扫描文件
 amsiService.Scan(bytes); // 扫描二进制数组
 
 // ASP.NET Core
-service.AddWindowsDefenderService();
+service.AddWindowsDefender();
 service.AddAMSI();
 ```
 
