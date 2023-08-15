@@ -660,7 +660,7 @@ namespace Masuit.Tools
         /// <param name="key"></param>
         /// <param name="addValueFactory"></param>
         /// <returns></returns>
-        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> @this, TKey key, Func<TValue> addValueFactory)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TValue> addValueFactory)
         {
             if (!@this.ContainsKey(key))
             {

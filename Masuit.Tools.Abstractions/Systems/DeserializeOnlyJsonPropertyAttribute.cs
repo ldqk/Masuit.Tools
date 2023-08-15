@@ -11,7 +11,7 @@ public class DeserializeOnlyJsonPropertyAttribute : Attribute
 }
 
 /// <summary>
-/// 只允许反序列化
+/// 只允许序列化
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 public class SerializeOnlyJsonPropertyAttribute : Attribute

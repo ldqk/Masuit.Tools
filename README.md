@@ -866,7 +866,7 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
 memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 
-### 34.数值转换
+### 34.类型转换
 
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
@@ -874,6 +874,14 @@ memoryStream.SaveFile("filename"); // 将内存流转储成文件
 1.23.ConvertTo<T>(); // 小数转T基本类型
 bool b=1.23.TryConvertTo<T>(out result); // 小数转T基本类型
 var num=1.2345.ToDecimal(2); //转decimal并保留两位小数
+
+1.23.ChangeTypeTo<T>(); //小数转T基本类型,ConvertTo和ChangeTypeTo的区别在于：ConvertTo只适用于基元类型的互转，ChangeTypeTo不仅适用于基元类型的互转还支持数组、字符串的转换(Parse)，ConvertTo的性能更高
+
+type.IsPrimitive(); // 判断类型是否是值类型
+type.IsSimpleType(); // 判断类型是否是常见的简单类型，基元类型为 Boolean、 Byte、 SByte、 Int16、 UInt16、 Int32、 UInt32、 Int64、 UInt64、 IntPtr、 UIntPtr、 Char、 Double 、 Single、枚举、Nullable<T>。
+type.IsSimpleArrayType(); // 判断类型是否是常见类型的 数组形式 类型
+type.IsSimpleListType(); // 判断类型是否是常见类型的 泛型形式 类型
+
 ```
 
 ### 35.INI配置文件操作(仅支持Windows)
@@ -1014,18 +1022,23 @@ a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
 
-### 41.Newtonsoft.Json的只允许字段反序列化行为的契约解释器
+### 41.Newtonsoft.Json的只允许字段(反)序列化行为的契约解释器
 
 #### DeserializeOnlyContractResolver
 
-该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute标记的，在反序列化的时候生效，在序列化的时候忽略
+该解释器针对类属性被DeserializeOnlyJsonPropertyAttribute/SerializeIgnoreAttribute标记的，在反序列化的时候生效，在序列化的时候忽略;被SerializeOnlyJsonPropertyAttribute/DeserializeIgnoreAttribute标记的，在序列化的时候生效，在反序列化的时候忽略
 
 ```csharp
 public class ClassDto
     {
+        // 序列化时忽略这个属性/反序列化时加载这个属性
         [DeserializeOnlyJsonProperty]
+        //[SerializeIgnore]
         public string MyProperty { get; set; }
 
+        // 反序列化时忽略这个属性/序列化时加载这个属性
+        [SerializeOnlyJsonProperty]
+        //[DeserializeIgnore]
         public int Num { get; set; }
     }
   
@@ -1082,13 +1095,10 @@ PM> Install-Package Masuit.Tools.AspNetCore
 Startup配置：
 
 ```csharp
-    services.AddMvc(options =>
-        {
-             options.ModelBinderProviders.InsertBodyOrDefaultBinding();
-        })
+app.UseBodyOrDefaultModelBinder();
 ```
 
-在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，当然也可以省略，示例代码如下：
+在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：
 
 ```csharp
         [HttpGet("query"),HttpPost("query")]
@@ -1246,6 +1256,24 @@ detector.FormatCategories;//格式类别
 
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
+```
+### 46. 反病毒(仅支持Windows)
+```csharp
+// 要求系统WindowsDefender没有被精简掉
+var windowsDefender = new WindowsDefenderScanService();
+var result = windowsDefender.ScanFile(@"Y:\1.exe"); // 扫描文件
+var result = windowsDefender.ScanDirectory(@"Y:\"); // 扫描文件夹
+var result = windowsDefender.ScanStream(stream); // 扫描文件流
+
+// 要求C:\Windows\System32\amsi.dll文件存在
+var amsiService = new AmsiScanService();
+amsiService.Scan(stream); // 扫描文件流
+amsiService.Scan(@"Y:\1.exe"); // 扫描文件
+amsiService.Scan(bytes); // 扫描二进制数组
+
+// ASP.NET Core
+service.AddWindowsDefender();
+service.AddAMSI();
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult

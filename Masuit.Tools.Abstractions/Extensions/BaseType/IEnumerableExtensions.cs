@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Masuit.Tools;
 
 /// <summary>
-/// 
+///
 /// </summary>
 public static class IEnumerableExtensions
 {
@@ -72,7 +72,6 @@ public static class IEnumerableExtensions
                 yield return source;
         }
     }
-
 
     /// <summary>
     /// 多个集合取交集元素
