@@ -12,28 +12,23 @@ namespace Masuit.Tools.Systems
         #region 私有字段
 
         private static long _machineId; //机器码
-        private static long _dataId; //数据ID
         private static long _sequence; //计数从零开始
         private static long _lastTimestamp = -1L; //最后时间戳
 
         private const long Twepoch = 687888001020L; //唯一时间随机量
 
-        private const long MachineIdBits = 5L; //机器码字节数
-        private const long DataBits = 5L; //数据字节数
-        private const long MaxMachineId = -1L ^ -1L << (int)MachineIdBits; //最大机器码
-        private const long MaxDataBitId = -1L ^ (-1L << (int)DataBits); //最大数据字节数
+        private const int MachineBits = 10; //机器码字节数
 
-        private const long SequenceBits = 12L; //计数器字节数，12个字节用来保存计数码        
-        private const long MachineIdShift = SequenceBits; //机器码数据左移位数，就是后面计数器占用的位数
-        private const long DatacenterIdShift = SequenceBits + MachineIdBits;
-        private const long TimestampLeftShift = DatacenterIdShift + DataBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数
-        private const long SequenceMask = -1L ^ -1L << (int)SequenceBits; //一毫秒内可以产生计数，如果达到该值则等到下一毫秒在进行生成
+        private const int SequenceBits = 12; //计数器字节数，12个字节用来保存计数码
+        private const int MachineLeft = SequenceBits; //机器码数据左移位数，就是后面计数器占用的位数
+        private const long TimestampLeft = MachineBits + SequenceBits; //时间戳左移动位数就是机器码+计数器总字节数+数据字节数
+        private const long SequenceMask = -1L ^ -1L << SequenceBits; //一毫秒内可以产生计数，如果达到该值则等到下一毫秒在进行生成
 
         private static readonly object SyncRoot = new object(); //加锁对象
         private static NumberFormater _numberFormater = new NumberFormater(36);
         private static SnowFlake _snowFlake;
 
-        #endregion
+        #endregion 私有字段
 
         /// <summary>
         /// 获取一个新的id
@@ -54,7 +49,7 @@ namespace Masuit.Tools.Systems
         /// </summary>
         public SnowFlake()
         {
-            Snowflakes(0, -1);
+            Snowflakes(0);
         }
 
         /// <summary>
@@ -63,39 +58,19 @@ namespace Masuit.Tools.Systems
         /// <param name="machineId">机器码</param>
         public SnowFlake(long machineId)
         {
-            Snowflakes(machineId, -1);
+            Snowflakes(machineId);
         }
 
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="machineId">机器码</param>
-        /// <param name="datacenterId">数据中心id</param>
-        public SnowFlake(long machineId, long datacenterId)
-        {
-            Snowflakes(machineId, datacenterId);
-        }
-
-        private void Snowflakes(long machineId, long datacenterId)
+        private void Snowflakes(long machineId)
         {
             if (machineId >= 0)
             {
-                if (machineId > MaxMachineId)
+                if (machineId > 1024)
                 {
                     throw new Exception("机器码ID非法");
                 }
 
                 _machineId = machineId;
-            }
-
-            if (datacenterId >= 0)
-            {
-                if (datacenterId > MaxDataBitId)
-                {
-                    throw new Exception("数据中心ID非法");
-                }
-
-                _dataId = datacenterId;
             }
         }
 
@@ -134,7 +109,7 @@ namespace Masuit.Tools.Systems
                 }
 
                 _lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳
-                long id = ((timestamp - Twepoch) << (int)TimestampLeftShift) | (_dataId << (int)DatacenterIdShift) | (_machineId << (int)MachineIdShift) | _sequence;
+                long id = ((timestamp - Twepoch) << (int)TimestampLeft) | (_machineId << MachineLeft) | _sequence;
                 return id;
             }
         }
