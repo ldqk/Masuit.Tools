@@ -8,9 +8,9 @@ using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Win32.AntiVirus;
 
-public class WindowsDefenderScanService
+public static class WindowsDefenderScanService
 {
-	public WindowsDefenderScanService()
+	static WindowsDefenderScanService()
 	{
 		if (!Directory.Exists(SystemParameter.WindowsDefenderPath))
 		{
@@ -27,7 +27,7 @@ public class WindowsDefenderScanService
 	/// 扫描文件流
 	/// </summary>
 	/// <param name="filePath"></param>
-	public ScanResult ScanStream(Stream stream)
+	public static ScanResult ScanStream(Stream stream)
 	{
 		var temp = Path.Combine(Environment.GetEnvironmentVariable("temp"), SnowFlake.NewId);
 		stream.SaveFile(temp);
@@ -53,7 +53,7 @@ public class WindowsDefenderScanService
 	/// 扫描文件
 	/// </summary>
 	/// <param name="filePath"></param>
-	public ScanResult ScanFile(string filePath)
+	public static ScanResult ScanFile(string filePath)
 	{
 		if (!File.Exists(filePath))
 		{
@@ -92,7 +92,7 @@ public class WindowsDefenderScanService
 	/// </summary>
 	/// <param name="directoryPath"></param>
 	/// <returns>如有威胁文件，只返回文件夹中有威胁的文件</returns>
-	public ScanResult ScanDirectory(string directoryPath)
+	public static ScanResult ScanDirectory(string directoryPath)
 	{
 		if (!Directory.Exists(directoryPath))
 		{
@@ -110,6 +110,15 @@ public class WindowsDefenderScanService
 				return new ScanResult
 				{
 					Result = ResultCode.NotDetected,
+				};
+			}
+
+			if (result.Contains("CmdTool: Failed"))
+			{
+				return new ScanResult
+				{
+					Result = ResultCode.Exception,
+					Msg = result
 				};
 			}
 
@@ -141,7 +150,7 @@ public class WindowsDefenderScanService
 	/// </summary>
 	/// <param name="path"></param>
 	/// <returns></returns>
-	private string RunScanCommand(string path)
+	private static string RunScanCommand(string path)
 	{
 		if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
