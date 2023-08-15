@@ -35,7 +35,18 @@ public class WindowsDefenderScanService
 		{
 			stream.Position = 0;
 		}
-		return ScanFile(temp);
+
+		var result = ScanFile(temp);
+		try
+		{
+			File.Delete(temp);
+		}
+		catch (Exception)
+		{
+			// ignored
+		}
+
+		return result;
 	}
 
 	/// <summary>
