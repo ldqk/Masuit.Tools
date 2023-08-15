@@ -218,7 +218,7 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        #endregion CPU核心
+        #endregion CPU相关
 
         #region 内存相关
 
@@ -363,7 +363,7 @@ namespace Masuit.Tools.Hardware
             return GetTotalPhysicalMemory() - GetFreePhysicalMemory();
         }
 
-        #endregion 可用内存
+        #endregion 内存相关
 
         #region 硬盘相关
 
@@ -535,7 +535,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IPAddress GetLocalUsedIP(AddressFamily family)
         {
-            return NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).Select(t => t.GetIPProperties()).Where(p => p.DhcpServerAddresses.Count > 0).SelectMany(p => p.UnicastAddresses).Select(p => p.Address).FirstOrDefault(p => !(p.IsIPv6Teredo || p.IsIPv6LinkLocal || p.IsIPv6Multicast || p.IsIPv6SiteLocal) && p.AddressFamily == family);
+            return NetworkInterface.GetAllNetworkInterfaces().Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).OrderByDescending(c => c.Speed).Select(t => t.GetIPProperties()).Where(p => p.DhcpServerAddresses.Count > 0).SelectMany(p => p.UnicastAddresses).Select(p => p.Address).FirstOrDefault(p => !(p.IsIPv6Teredo || p.IsIPv6LinkLocal || p.IsIPv6Multicast || p.IsIPv6SiteLocal) && p.AddressFamily == family);
         }
 
         /// <summary>
@@ -544,7 +544,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static List<UnicastIPAddressInformation> GetLocalIPs()
         {
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces().OrderByDescending(c => c.Speed).Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up); //所有网卡信息
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces().Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).OrderByDescending(c => c.Speed); //所有网卡信息
             return interfaces.SelectMany(n => n.GetIPProperties().UnicastAddresses).ToList();
         }
 
@@ -707,7 +707,6 @@ namespace Masuit.Tools.Hardware
                     }
                     return "";
                 });
-
             }
             catch (Exception e)
             {
@@ -742,7 +741,7 @@ namespace Masuit.Tools.Hardware
             });
         }
 
-        #endregion
+        #endregion 主板相关
 
         #region 公共函数
 
