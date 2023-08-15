@@ -241,7 +241,9 @@ Console.WriteLine("执行for循环100000次耗时"+time+"s");
 ```csharp
 var sf = SnowFlake.GetInstance();
 string token = sf.GetUniqueId();// rcofqodori0w
+string token = SnowFlake.NewId;// rcofqodori0w
 string shortId = sf.GetUniqueShortId(8);// qodw9728
+string token = SnowFlakeNew.NewId;// 改良版雪花id，对时间回拨不敏感
 ```
 
 ```csharp
@@ -250,7 +252,7 @@ double time = HiPerfTimer.Execute(() =>
 {
     for (int i = 0; i < 1000000; i++)
     {
-        set.Add(SnowFlake.GetInstance().GetUniqueId());
+        set.Add(SnowFlake.NewId);
     }
 });
 Console.WriteLine(set.Count == 1000000); //True
