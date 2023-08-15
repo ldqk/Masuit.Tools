@@ -1261,21 +1261,15 @@ detector.FormatCategories;//格式类别
 ```
 ### 46. 反病毒(仅支持Windows)
 ```csharp
-// 要求系统WindowsDefender没有被精简掉
-var windowsDefender = new WindowsDefenderScanService();
-var result = windowsDefender.ScanFile(@"Y:\1.exe"); // 扫描文件
-var result = windowsDefender.ScanDirectory(@"Y:\"); // 扫描文件夹
-var result = windowsDefender.ScanStream(stream); // 扫描文件流
+// 要求系统WindowsDefender没有被停掉
+var result = WindowsDefenderScanService.ScanFile(@"Y:\1.exe"); // 扫描文件
+var result = WindowsDefenderScanService.ScanDirectory(@"Y:\"); // 扫描文件夹
+var result = WindowsDefenderScanService.ScanStream(stream); // 扫描文件流
 
-// 要求C:\Windows\System32\amsi.dll文件存在
-var amsiService = new AmsiScanService();
-amsiService.Scan(stream); // 扫描文件流
-amsiService.Scan(@"Y:\1.exe"); // 扫描文件
-amsiService.Scan(bytes); // 扫描二进制数组
-
-// ASP.NET Core
-service.AddWindowsDefender();
-service.AddAMSI();
+// 要求C:\Windows\System32\amsi.dll文件存在，可在WindowsDefender停止时工作
+AmsiScanService.Scan(stream); // 扫描文件流
+AmsiScanService.Scan(@"Y:\1.exe"); // 扫描文件
+AmsiScanService.Scan(bytes); // 扫描二进制数组
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
