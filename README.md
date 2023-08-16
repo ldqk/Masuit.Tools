@@ -5,8 +5,8 @@
 [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg)
 ![编程语言](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg)
-<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a>
-<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
+`<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24">``</a>`
+`<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24">``<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>`
 
 新手友好的C#万能工具库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
@@ -32,9 +32,9 @@
 
 ## 建议开发环境
 
-操作系统：Windows 10 1903及以上版本  
-开发工具：VisualStudio2019 v16.5及以上版本  
-SDK：.Net Core 2.1.0及以上所有版本  
+操作系统：Windows 10 1903及以上版本
+开发工具：VisualStudio2019 v16.5及以上版本
+SDK：.Net Core 2.1.0及以上所有版本
 
 ## 安装程序包
 
@@ -107,13 +107,46 @@ public Startup(IConfiguration configuration)
 
 https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 
-### 1.检验字符串是否是Email、手机号、URL、IP地址、身份证号等
+### 0. 一些创意类型
+
+DisposableDictionary：可被Disposable的字典类型，用于存放Value是Disposable类型的数据，用法和普通字典一致
+
+NullableConcurrentDictionary/NullableDictionary：Key可为null的字典类型，用法和普通字典一致
+
+ConcurrentHashSet：并发HashSet，用法和HashSet一致
+
+ConcurrentLimitedQueue：定长并发队列，特点是长度是固定的，用法与ConcurrentQueue一致
+
+LimitedQueue：定长队列，特点是长度是固定的，用法与Queue一致
+
+LargeMemoryStream：超大内存流，最大可支持1TB数据，推荐当数据流大于2GB时使用，用法与MemoryStream一致
+
+PooledMemoryStream：池化内存流，可内存复用，用法与MemoryStream一致，性能比MemoryStream好
+
+ITree `<T>`：树形实体接口约束，实现该接口可让类型实现一些树形操作
+
+ChineseCalendar：中国农历类型，可以实现天干地支节气等数据的获取
+
+Clay/DynamicFactory：粘土动态类型，可实现类似js的弱类型编程
+
+RadarChart：雷达图类型，可用于做数据分析或用户行为画像
+
+Circle：圆形类型，可实现⚪的相交相切相离的判断
+
+Sphere：球体类型，可实现计算球体上两点的弧长计算，相交相切相离的判断
+
+MimeMapper：mime类型映射
+
+具体用法，可参阅后文详细示例：
+
+### 1. 检验字符串是否是Email、手机号、URL、IP地址、身份证号等
 
 ```csharp
 var (isMatch, match) = "337845818@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单，逗号分隔，如"EmailDomainBlockList": "^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com",
-bool isInetAddress = "114.114.114.114".MatchInetAddress();
-bool isUrl = "http://ldqk.org/20/history".MatchUrl();
-bool isPhoneNumber = "15205201520".MatchPhoneNumber();
+bool isInetAddress = "114.114.114.114".MatchInetAddress(); // 匹配IP地址
+bool isUrl = "http://masuit.org/20/history".MatchUrl(); // 匹配url
+bool isPhoneNumber = "15205201520".MatchPhoneNumber(); // 匹配手机号
+bool isLandline = "01088888888".MatchLandline(); // 匹配座机号
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 bool isCNPatentNumber = "200410018477.9".MatchCNPatentNumber(); // 校验中国专利申请号或专利号，是否带校验位，校验位前是否带“.”，都可以校验，待校验的号码前不要带CN、ZL字样的前缀
 ```
@@ -170,12 +203,16 @@ Windows.ClearMemorySilent();
 ```
 
 ### 5.任意进制转换/中文数字
+
 #### 大写数字
-``` csharp
+
+```csharp
 var num=123.45.ToChineseMoney(); // 壹佰贰拾叁元肆角伍分
 var num=123.45.ToChineseNumber(); // 一百二十三点四五
 ```
+
 #### 进制转换
+
 可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 
 ```csharp
@@ -450,6 +487,7 @@ string s = "123".Crc32();// 生成crc32摘要
 string s = "123".Crc64();// 生成crc64摘要
 string s = "123".SHA256();// 生成SHA256摘要
 
+// 零宽字符串，通常用作文章水印，以一种看不见的字符插入到文本中，使攻击者无法直接识别文本内容，从而起到保护文章的作用。
 string pub="hello,world!";
 string hidden="ldqk";
 var str = pub.InjectZeroWidthString(hidden); // 扩展函数调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
@@ -457,7 +495,7 @@ var str = ZeroWidthCodec.Encrypt(pub,hidden); // 类调用：将"ldqk"以零宽�
 var dec = str.DecodeZeroWidthString(); // 扩展函数调用：将包含零宽字符串的密文解密出隐藏字符串"ldqk"
 var dec = ZeroWidthCodec.Decrypt(str); // 类调用：将包含零宽字符串的密文解密出隐藏字符串"ldqk"
 var enc = hidden.EncodeToZeroWidthText(); // 扩展函数调用：将字符串编码成零宽字符串
-var enc = ZeroWidthCodec.Encode(); // 类调用：将字符串编码成零宽字符串
+var enc = ZeroWidthCodec.Encode(str); // 类调用：将字符串编码成零宽字符串
 ```
 
 ### 16.实体校验
@@ -470,6 +508,9 @@ public class MyClass
 
     [IsPhone]
     public string PhoneNumber { get; set; }
+
+    [IsLandline]
+    public string Landline { get; set; }
 
     [IsIPAddress]
     public string IP { get; set; }
@@ -508,9 +549,13 @@ bool isExternalAddress = "http://baidu.com".IsExternalAddress();// 判断是否�
 string isp = "114.114.114.114".GetISP(); // 获取ISP运营商信息
 PhysicsAddress physicsAddress = "114.114.114.114".GetPhysicsAddressInfo().Result;// 获取详细地理信息对象
 Tuple<string, List<string>> ipAddressInfo = "114.114.114.114".GetIPAddressInfo().Result;// 获取详细地理信息集合
+
+uint number=ipAddress.ToUInt32(); // IP地址转10进制
+uint number="114.114.114.114".IPToID(); // IP地址转10进制
 ```
 
 ### 19.对象属性值合并
+
 ```csharp
 public class MyClass
 {
@@ -561,15 +606,22 @@ Console.WriteLine(classes.Count==1);//True
 ### 21.枚举扩展
 
 ```csharp
+[Flags]
 public enum MyEnum
 {
     [Display(Name = "读")]
     [Description("读")]
-    Read,
+    [EnumDescription("读取操作","读","zh-CN")] // 多语言枚举描述
+    [EnumDescription("Read","Read","en-US")]
+    Read=1,
   
     [Display(Name = "写")]
     [Description("写")]
-    Write
+    Write=2,
+
+    Delete=4,
+
+    All=8
 }
 ```
 
@@ -580,6 +632,11 @@ string desc = MyEnum.Read.GetDescription();// 获取Description标签
 string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
 string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
+```
+
+```csharp
+var op=MyEnum.Read|MyEnum.Write|MyEnum.Delete;
+var enums=op.Split(); // 拆分枚举值，得到枚举数组，这个函数建议使用在按位定值的枚举
 ```
 
 ### 22.定长队列和ConcurrentHashSet实现
@@ -602,6 +659,8 @@ MyClass myClass = new MyClass();
 PropertyInfo[] properties = myClass.GetProperties();// 获取属性列表
 myClass.SetProperty("Email","1@1.cn");//给对象设置值
 myClass.DeepClone(); // 对象深拷贝，带嵌套层级的
+myClass.ToDictionary(); // 对象转字典
+myClass.ToDynamic(); // 对象转换成动态可扩展类型
 ```
 
 ### 24.邮件发送
@@ -667,7 +726,7 @@ double gauss = rnd.NextGauss(20,5);//产生正态高斯分布的随机数
 var s = new NumberFormater(62).ToString(new Random().Next(100000, int.MaxValue));//生成随机字符串
 ```
 
-### 27.权重筛选功能
+### 27.权重随机筛选功能
 
 ```csharp
 var data=new List<WeightedItem<string>>()
@@ -691,6 +750,11 @@ var selector = new WeightedSelector<string>(new List<WeightedItem<string>>()
 });
 var item = selector.Select();//按权重选出1个元素
 var list = selector.SelectMultiple(3);//按权重选出3个元素
+```
+
+```csharp
+list.WeightedItems(3,e=>e.Price); // 按价格权重选出3个元素
+list.WeightedBy(e=>e.Price); // 按价格权重选出1个元素
 ```
 
 ### 28.EF Core支持AddOrUpdate方法
@@ -808,6 +872,8 @@ var sect=list.IntersectAll();// [3]
 // 集合元素改变其索引位置
 list.ChangeIndex(item,3); // 将元素item的索引位置变为第3个
 list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为第2个
+
+var item=list.Percentile(50); // 取第50%分位数的元素
 ```
 
 ### 31.Mime类型
@@ -816,6 +882,11 @@ list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为
 var mimeMapper = new MimeMapper();
 var ext = mimeMapper.GetExtensionFromMime("image/jpeg"); // .jpg
 var mime = mimeMapper.GetMimeFromExtension(".jpg"); // image/jpeg
+
+ContentType常量库：
+var type=ContentType.Exe; // application/octet-stream
+var type=ContentType.Jpeg; // image/jpeg
+var type=DefaultMimeItems.Items.FirstOrDefault(t=>t.Extension=="jpg"); // image/jpeg
 ```
 
 ### 32.日期时间扩展
@@ -868,7 +939,7 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
 memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 
-### 34.类型转换
+### 34.类型操作
 
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
@@ -883,6 +954,24 @@ type.IsPrimitive(); // 判断类型是否是值类型
 type.IsSimpleType(); // 判断类型是否是常见的简单类型，基元类型为 Boolean、 Byte、 SByte、 Int16、 UInt16、 Int32、 UInt32、 Int64、 UInt64、 IntPtr、 UIntPtr、 Char、 Double 、 Single、枚举、Nullable<T>。
 type.IsSimpleArrayType(); // 判断类型是否是常见类型的 数组形式 类型
 type.IsSimpleListType(); // 判断类型是否是常见类型的 泛型形式 类型
+
+myClass.ToJsonString(); //序列化成json字符串
+
+string s=null;
+string str=s.IfNullOrEmpty("aa");//如果为空则返回aa
+string str=s.IfNullOrEmpty(()=>"aa");//如果为空则返回aa,延迟执行
+
+bool contains=s.Contains(new[]{"aa","bb"});// 检测字符串中是否包含列表中的关键词(快速匹配)
+bool contains=s.ContainsSafety(new[]{"aa","bb"});// 检测字符串中是否包含列表中的关键词(安全匹配)，没有计时攻击风险
+bool contains=s.EndsWith(new[]{"aa","bb"});// 检测字符串中是否以列表中的任意关键词结尾
+bool contains=s.StartsWith(new[]{"aa","bb"});// 检测字符串中是否以列表中的任意关键词开头
+
+string str=s.Take(10); // 取字符串前10个字符
+
+bool emoji=s.MatchEmoji(); // 匹配字符串是否包含emoji
+
+var width=str.StringWidth(14); // 计算字符串以14号字体大小的渲染宽度像素
+var width=str.StringWidth("微软雅黑",14); // 计算字符串以14号字体大小的微软雅黑字体的渲染宽度像素
 
 ```
 
@@ -1259,7 +1348,9 @@ detector.FormatCategories;//格式类别
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
 ```
+
 ### 46. 反病毒(仅支持Windows)
+
 ```csharp
 // 要求系统WindowsDefender没有被停掉
 var result = WindowsDefenderScanService.ScanFile(@"Y:\1.exe"); // 扫描文件
@@ -1270,6 +1361,55 @@ var result = WindowsDefenderScanService.ScanStream(stream); // 扫描文件流
 AmsiScanService.Scan(stream); // 扫描文件流
 AmsiScanService.Scan(@"Y:\1.exe"); // 扫描文件
 AmsiScanService.Scan(bytes); // 扫描二进制数组
+```
+
+### 47. 生成验证码
+
+```csharp
+var code=ValidateCode.ValidateCode(6); // 生成6位长度的验证码
+var stream=code.CreateValidateGraphic(); // 生成验证码图片流
+```
+
+### 48. DistributedCache扩展
+
+```csharp
+var item=cache.Get<T>(key); // 获取值
+var item=cache.GetOrAdd<T>(key,value); // 获取或添加值
+var item=cache.GetOrAdd<T>(key,valueFactory); // 获取或添加值
+cache.Set<T>(key,value); // 设置值
+cache.AddOrUpdate<T>(key,value,valueFactory); // 添加或更新值
+```
+
+### 49. ViewData扩展
+
+```csharp
+var item=ViewData.GetValue<T>(key);//获取对象
+var item=ViewData.GetValueOrDefault<T>(key,defaultValue);//获取对象
+var item=ViewData.GetValueOrDefault<T>(key,defaultValueFactory);//获取对象
+```
+
+### 50. 线程上下文存取临时值
+
+```csharp
+CurrentContext<T>.SetData(value);//设置值
+var item=CurrentContext<T>.GetData();//获取值
+
+CurrentContext.SetData(value);//设置值
+var item=CurrentContext.GetData<T>();//获取值
+```
+
+### 51. ASP.NET Core自动扫描注册服务
+
+```csharp
+// 自动扫描注册服务
+services.AutoRegisterServices();
+
+// 需要自动注册的服务打上ServiceInject标记即可。
+[ServiceInject(ServiceLifetime.Scoped)]
+public class MyClass:MyInterface{...}
+
+[ServiceInject(ServiceLifetime.Scoped)]
+public class MyService{...}
 ```
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
