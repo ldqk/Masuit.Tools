@@ -5,8 +5,8 @@
 [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg)
 ![编程语言](https://img.shields.io/github/languages/top/ldqk/Masuit.Tools.svg)
-`<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24">``</a>`
-`<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24">``<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>`
+<a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a>
+<a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
 
 新手友好的C#万能工具库，包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
@@ -109,33 +109,33 @@ https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 
 ### 0. 一些创意类型
 
-DisposableDictionary：可被Disposable的字典类型，用于存放Value是Disposable类型的数据，用法和普通字典一致
+`DisposableDictionary`：可被Disposable的字典类型，用于存放Value是Disposable类型的数据，用法和普通字典一致
 
-NullableConcurrentDictionary/NullableDictionary：Key可为null的字典类型，用法和普通字典一致
+`NullableConcurrentDictionary`/`NullableDictionary`：Key可为null的字典类型，用法和普通字典一致
 
-ConcurrentHashSet：并发HashSet，用法和HashSet一致
+`ConcurrentHashSet`：并发HashSet，用法和HashSet一致
 
-ConcurrentLimitedQueue：定长并发队列，特点是长度是固定的，用法与ConcurrentQueue一致
+`ConcurrentLimitedQueue`：定长并发队列，特点是长度是固定的，用法与ConcurrentQueue一致
 
-LimitedQueue：定长队列，特点是长度是固定的，用法与Queue一致
+`LimitedQueue`：定长队列，特点是长度是固定的，用法与Queue一致
 
-LargeMemoryStream：超大内存流，最大可支持1TB数据，推荐当数据流大于2GB时使用，用法与MemoryStream一致
+`LargeMemoryStream`：超大内存流，最大可支持1TB数据，推荐当数据流大于2GB时使用，用法与MemoryStream一致
 
-PooledMemoryStream：池化内存流，可内存复用，用法与MemoryStream一致，性能比MemoryStream好
+`PooledMemoryStream`：池化内存流，可内存复用，用法与MemoryStream一致，性能比MemoryStream好
 
-ITree `<T>`：树形实体接口约束，实现该接口可让类型实现一些树形操作
+`ITree<T>`：树形实体接口约束，实现该接口可让类型实现一些树形操作
 
-ChineseCalendar：中国农历类型，可以实现天干地支节气等数据的获取
+`ChineseCalendar`：中国农历类型，可以实现天干地支节气等数据的获取
 
-Clay/DynamicFactory：粘土动态类型，可实现类似js的弱类型编程
+`Clay`/`DynamicFactory`：粘土动态类型，可实现类似js的弱类型编程
 
-RadarChart：雷达图类型，可用于做数据分析或用户行为画像
+`RadarChart`：雷达图类型，可用于做数据分析或用户行为画像
 
-Circle：圆形类型，可实现⚪的相交相切相离的判断
+`Circle`：圆形类型，可实现⚪的相交相切相离的判断
 
-Sphere：球体类型，可实现计算球体上两点的弧长计算，相交相切相离的判断
+`Sphere`：球体类型，可实现计算球体上两点的弧长计算，相交相切相离的判断
 
-MimeMapper：mime类型映射
+`MimeMapper`：mime类型映射
 
 具体用法，可参阅后文详细示例：
 
