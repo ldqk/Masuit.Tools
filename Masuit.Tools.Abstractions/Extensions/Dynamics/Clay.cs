@@ -11,6 +11,8 @@ public class Clay : IDynamicMetaObjectProvider, IClayBehaviorProvider
 {
     private readonly ClayBehaviorCollection _behavior;
 
+    public NullValueHandle NullValueHandle { get; set; }
+
     public Clay() : this(Enumerable.Empty<IClayBehavior>())
     {
     }
@@ -40,7 +42,7 @@ public class Clay : IDynamicMetaObjectProvider, IClayBehaviorProvider
 
     public Dictionary<string, object> ToDictionary()
     {
-        return _behavior.OfType<PropBehavior>().First().GetProps();
+        return _behavior.OfType<PropBehavior>().DefaultIfEmpty(new PropBehavior()).First().GetProps();
     }
 
     /// <summary>
@@ -53,4 +55,39 @@ public class Clay : IDynamicMetaObjectProvider, IClayBehaviorProvider
         left.ToDictionary().Remove(right);
         return left;
     }
+
+    /// <summary>
+    /// 移除属性
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    public static Clay operator +(Clay left, string right)
+    {
+        left[right] = DynamicFactory.NewObject();
+        return left;
+    }
+
+    public new object this[string key]
+    {
+        get => ToDictionary()[key];
+
+        set
+        {
+            var dic = ToDictionary();
+            if (dic.ContainsKey(key))
+            {
+                ToDictionary()[key] = value;
+            }
+            else
+            {
+                ToDictionary()[key] = DynamicFactory.NewObject();
+            }
+        }
+    }
+}
+
+public enum NullValueHandle
+{
+    Default,
+    NewObject
 }
