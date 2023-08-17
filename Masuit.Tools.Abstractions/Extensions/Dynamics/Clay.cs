@@ -9,85 +9,69 @@ namespace Masuit.Tools.Dynamics;
 
 public class Clay : IDynamicMetaObjectProvider, IClayBehaviorProvider
 {
-    private readonly ClayBehaviorCollection _behavior;
+	private readonly ClayBehaviorCollection _behavior;
 
-    public NullValueHandle NullValueHandle { get; set; }
+	public Clay() : this(Enumerable.Empty<IClayBehavior>())
+	{
+	}
 
-    public Clay() : this(Enumerable.Empty<IClayBehavior>())
-    {
-    }
+	public Clay(params IClayBehavior[] behaviors) : this(behaviors.AsEnumerable())
+	{
+	}
 
-    public Clay(params IClayBehavior[] behaviors) : this(behaviors.AsEnumerable())
-    {
-    }
+	public Clay(IEnumerable<IClayBehavior> behaviors)
+	{
+		_behavior = new ClayBehaviorCollection(behaviors);
+	}
 
-    public Clay(IEnumerable<IClayBehavior> behaviors)
-    {
-        _behavior = new ClayBehaviorCollection(behaviors);
-    }
+	DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
+	{
+		return new ClayMetaObject(this, parameter);
+	}
 
-    DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
-    {
-        return new ClayMetaObject(this, parameter);
-    }
+	IClayBehavior IClayBehaviorProvider.Behavior => _behavior;
 
-    IClayBehavior IClayBehaviorProvider.Behavior => _behavior;
+	/// <inheritdoc />
+	public override string ToString()
+	{
+		var fallback = base.ToString();
+		return _behavior.InvokeMember(() => fallback, this, "ToString", Arguments.Empty()) as string ?? string.Empty;
+	}
 
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        var fallback = base.ToString();
-        return _behavior.InvokeMember(() => fallback, this, "ToString", Arguments.Empty()) as string ?? string.Empty;
-    }
+	public Dictionary<string, object> ToDictionary()
+	{
+		return _behavior.OfType<PropBehavior>().FirstOrDefault()?.GetProps();
+	}
 
-    public Dictionary<string, object> ToDictionary()
-    {
-        return _behavior.OfType<PropBehavior>().DefaultIfEmpty(new PropBehavior()).First().GetProps();
-    }
+	/// <summary>
+	/// 移除属性
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Clay operator -(Clay left, string right)
+	{
+		left.ToDictionary().Remove(right);
+		return left;
+	}
 
-    /// <summary>
-    /// 移除属性
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    public static Clay operator -(Clay left, string right)
-    {
-        left.ToDictionary().Remove(right);
-        return left;
-    }
+	/// <summary>
+	/// 移除属性
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Clay operator +(Clay left, string right)
+	{
+		left[right] = DynamicFactory.NewObject();
+		return left;
+	}
 
-    /// <summary>
-    /// 移除属性
-    /// </summary>
-    /// <param name="left"></param>
-    /// <param name="right"></param>
-    public static Clay operator +(Clay left, string right)
-    {
-        left[right] = DynamicFactory.NewObject();
-        return left;
-    }
-
-    public new object this[string key]
-    {
-        get => ToDictionary()[key];
-
-        set
-        {
-            var dic = ToDictionary();
-            if (dic.ContainsKey(key))
-            {
-                ToDictionary()[key] = value;
-            }
-            else
-            {
-                ToDictionary()[key] = DynamicFactory.NewObject();
-            }
-        }
-    }
-}
-
-public enum NullValueHandle
-{
-    Default,
-    NewObject
+	/// <summary>
+	///
+	/// </summary>
+	/// <param name="key"></param>
+	public object this[string key]
+	{
+		get => ToDictionary()[key];
+		set => ToDictionary()[key] = value;
+	}
 }
