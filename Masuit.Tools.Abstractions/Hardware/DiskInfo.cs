@@ -13,6 +13,7 @@ public class DiskInfo
     /// 本地实例
     /// </summary>
     public static List<DiskInfo> Locals => _locals;
+
     /// <summary>
     /// 序列号
     /// </summary>
