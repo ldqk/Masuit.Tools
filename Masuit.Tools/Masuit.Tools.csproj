@@ -76,17 +76,11 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CpuInfo.cs">
       <Link>Hardware\CpuInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CPU_INFO.cs">
-      <Link>Hardware\CPU_INFO.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskData.cs">
       <Link>Hardware\DiskData.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskInfo.cs">
       <Link>Hardware\DiskInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\MemoryInfo.cs">
-      <Link>Hardware\MemoryInfo.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\NetData.cs">
       <Link>Hardware\NetData.cs</Link>
@@ -96,9 +90,6 @@
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemInfo.cs">
       <Link>Hardware\SystemInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemtimeInfo.cs">
-      <Link>Hardware\SystemtimeInfo.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Hardware\Unit.cs">
       <Link>Hardware\Unit.cs</Link>
