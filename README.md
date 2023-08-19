@@ -1317,6 +1317,7 @@ detector.FormatCategories;//格式类别
         var obj = DynamicFactory.NewObject();
         obj.Name = "Masuit";
         obj.Age = 18;
+        obj["Gender"]="男"
         obj.MyClass = DynamicFactory.WithObject(new
         {
             X = 10,
@@ -1324,6 +1325,7 @@ detector.FormatCategories;//格式类别
             Z = new List<int> { 1, 2, 3, 4, 5 }
         });
         Assert.Equal(obj.Name, obj["Name"]);
+        Assert.Equal(obj["Gender"], obj.Gender);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
         Assert.Equal(obj.MyClass.Z[2], obj["MyClass"]["Z"][2]);
 ```
@@ -1344,6 +1346,7 @@ detector.FormatCategories;//格式类别
         }.ToDynamic();
         obj.Prop = "test";
         _ = obj - "Prop"; // 删除属性
+        _ = obj + "Prop"; // 增加属性
 
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
