@@ -15,7 +15,7 @@ public class FromBodyOrDefaultModelBinder : IModelBinder
 
 	static FromBodyOrDefaultModelBinder()
 	{
-		BindTypes = Enum.GetNames(typeof(BindType)).Select(Enum.Parse<BindType>).Where(t => t != BindType.Default).ToList();
+		BindTypes = BindType.Default.Split().ToList();
 	}
 
 	private readonly ILogger<FromBodyOrDefaultModelBinder> _logger;

@@ -9,7 +9,7 @@ public enum BindType
 	/// <summary>
 	/// 自动取值(1.取请求数据中的某个值，2.请求数据当成一个对象取值)
 	/// </summary>
-	Default = Body | Query | Form | Header | Cookie | Route | Services,
+	Default = Body | Query | Form | Header | Cookie | Route,
 
 	/// <summary>
 	/// 从查询字符串获取值
