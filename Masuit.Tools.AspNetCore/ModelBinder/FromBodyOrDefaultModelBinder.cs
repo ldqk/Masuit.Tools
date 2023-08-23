@@ -11,12 +11,15 @@ namespace Masuit.Tools.AspNetCore.ModelBinder;
 
 public class FromBodyOrDefaultModelBinder : IModelBinder
 {
-	private static readonly List<BindType> BindTypes;
-
-	static FromBodyOrDefaultModelBinder()
+	private static readonly List<BindType> BindTypes = new()
 	{
-		BindTypes = BindType.Default.Split().ToList();
-	}
+		BindType.Query,
+		BindType.Body,
+		BindType.Header,
+		BindType.Form,
+		BindType.Cookie,
+		BindType.Route
+	};
 
 	private readonly ILogger<FromBodyOrDefaultModelBinder> _logger;
 
@@ -234,6 +237,7 @@ public class FromBodyOrDefaultModelBinder : IModelBinder
 									targetValue = xmlElt.Value.ConvertObject(modelType);
 								}
 							}
+
 							break;
 						}
 				}
