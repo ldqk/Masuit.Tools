@@ -36,13 +36,13 @@ namespace Masuit.Tools.Abstractions.Test.Security
         }
 
         [Fact]
-        public void 签名验证()
+        public void 绛惧悕楠岃瘉()
         {
             RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();
             string data = "Hello World!".Base64Encrypt();
             string sign = data.SignatureString(rsaKey.PrivateKey);
 
-            // 验证结果为False
+            // 楠岃瘉缁撴灉涓篎alse
             Assert.True(data.SignatureDeformatter(rsaKey.PublicKey, sign));
         }
     }
