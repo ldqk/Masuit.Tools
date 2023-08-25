@@ -27,17 +27,20 @@ namespace Masuit.Tools.Hardware
         private const int WsVisible = 268435456;
         private const int WsBorder = 8388608;
         private static readonly PerformanceCounter PcCpuLoad; //CPU计数器
+        
+        private static readonly PerformanceCounter MemoryCounter;
+        private static readonly PerformanceCounter CpuCounter;
+        private static readonly PerformanceCounter DiskReadCounter;
+        private static readonly PerformanceCounter DiskWriteCounter;
 
-        private static readonly PerformanceCounter MemoryCounter = new PerformanceCounter();
-        private static readonly PerformanceCounter CpuCounter = new PerformanceCounter();
-        private static readonly PerformanceCounter DiskReadCounter = new PerformanceCounter();
-        private static readonly PerformanceCounter DiskWriteCounter = new PerformanceCounter();
-
-        private static readonly string[] InstanceNames;
+        private static readonly string[] InstanceNames = new string[]{};
         private static readonly PerformanceCounter[] NetRecvCounters;
         private static readonly PerformanceCounter[] NetSentCounters;
         private static readonly Dictionary<string, dynamic> _cache = new();
 
+        public static bool IsWinPlatform => Environment.OSVersion.Platform is PlatformID.Win32Windows
+            or PlatformID.Win32S or PlatformID.WinCE or PlatformID.Win32NT;
+        
         #endregion 字段
 
         #region 构造函数
@@ -47,48 +50,56 @@ namespace Masuit.Tools.Hardware
         /// </summary>
         static SystemInfo()
         {
-            //初始化CPU计数器
-            PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+            if (IsWinPlatform)
             {
-                MachineName = "."
-            };
-            PcCpuLoad.NextValue();
+                MemoryCounter = new PerformanceCounter();
+                CpuCounter = new PerformanceCounter();
+                DiskReadCounter = new PerformanceCounter();
+                DiskWriteCounter = new PerformanceCounter();
+                
+                //初始化CPU计数器
+                PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+                {
+                    MachineName = "."
+                };
+                PcCpuLoad.NextValue();
+                
+                //获得物理内存
+                try
+                {
+                    using var mc = new ManagementClass("Win32_ComputerSystem");
+                    using var moc = mc.GetInstances();
+                    foreach (var mo in moc)
+                    {
+                        using (mo)
+                        {
+                            if (mo["TotalPhysicalMemory"] != null)
+                            {
+                                PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
+                            }
+                        }
+                    }
+
+                    var cat = new PerformanceCounterCategory("Network Interface");
+                    InstanceNames = cat.GetInstanceNames();
+                    NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
+                    NetSentCounters = new PerformanceCounter[InstanceNames.Length];
+                    for (int i = 0; i < InstanceNames.Length; i++)
+                    {
+                        NetRecvCounters[i] = new PerformanceCounter();
+                        NetSentCounters[i] = new PerformanceCounter();
+                    }
+
+                    CompactFormat = false;
+                }
+                catch (Exception e)
+                {
+                    LogManager.Error(e);
+                }
+            }
 
             //CPU个数
             ProcessorCount = Environment.ProcessorCount;
-
-            //获得物理内存
-            try
-            {
-                using var mc = new ManagementClass("Win32_ComputerSystem");
-                using var moc = mc.GetInstances();
-                foreach (var mo in moc)
-                {
-                    using (mo)
-                    {
-                        if (mo["TotalPhysicalMemory"] != null)
-                        {
-                            PhysicalMemory = long.Parse(mo["TotalPhysicalMemory"].ToString());
-                        }
-                    }
-                }
-
-                var cat = new PerformanceCounterCategory("Network Interface");
-                InstanceNames = cat.GetInstanceNames();
-                NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
-                NetSentCounters = new PerformanceCounter[InstanceNames.Length];
-                for (int i = 0; i < InstanceNames.Length; i++)
-                {
-                    NetRecvCounters[i] = new PerformanceCounter();
-                    NetSentCounters[i] = new PerformanceCounter();
-                }
-
-                CompactFormat = false;
-            }
-            catch (Exception e)
-            {
-                LogManager.Error(e);
-            }
         }
 
         #endregion 构造函数
@@ -105,7 +116,7 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 获取CPU占用率 %
         /// </summary>
-        public static float CpuLoad => PcCpuLoad.NextValue();
+        public static float CpuLoad => PcCpuLoad?.NextValue() ?? 0;
 
         /// <summary>
         /// 获取当前进程的CPU使用率（至少需要0.5s）
@@ -141,6 +152,8 @@ namespace Masuit.Tools.Hardware
         /// <returns>CPU温度</returns>
         public static float GetCPUTemperature()
         {
+            if (IsWinPlatform is false) return 0;
+            
             try
             {
                 using var mos = new ManagementObjectSearcher(@"root\WMI", "select * from MSAcpi_ThermalZoneTemperature");
@@ -173,9 +186,17 @@ namespace Masuit.Tools.Hardware
             {
                 return _cache.GetOrAdd(nameof(GetCpuCount), () =>
                 {
-                    using var m = new ManagementClass("Win32_Processor");
-                    using var moc = m.GetInstances();
-                    return moc.Count;
+                    if (IsWinPlatform is false)
+                    {
+                        int cpuCount = Environment.ProcessorCount;
+                        return cpuCount;
+                    }
+                    else
+                    {
+                        using var m = new ManagementClass("Win32_Processor");
+                        using var moc = m.GetInstances();
+                        return moc.Count;
+                    }
                 });
             }
             catch (Exception)
@@ -199,6 +220,8 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
+                if (IsWinPlatform is false) return new List<CpuInfo>();
+                
                 return CpuObjects.Value.Select(mo => new CpuInfo
                 {
                     NumberOfLogicalProcessors = ProcessorCount,
@@ -229,6 +252,8 @@ namespace Masuit.Tools.Hardware
         {
             get
             {
+                if (IsWinPlatform is false) return 0;
+                
                 try
                 {
                     using var mc = new ManagementClass("Win32_OperatingSystem");
@@ -323,6 +348,8 @@ namespace Masuit.Tools.Hardware
         public static string GetMemoryPData()
         {
             string s = QueryComputerSystem("totalphysicalmemory");
+            if (string.IsNullOrEmpty(s)) return "";
+            
             float totalphysicalmemory = Convert.ToSingle(s);
             float d = GetCounterValue(MemoryCounter, "Memory", "Available Bytes", null);
             d = totalphysicalmemory - d;
@@ -384,7 +411,7 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
-                if (DiskInfos.Count > 0)
+                if (IsWinPlatform == false || DiskInfos.Count > 0)
                 {
                     return DiskInfos;
                 }
@@ -423,10 +450,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetNetData(NetData nd)
         {
-            if (InstanceNames.Length == 0)
-            {
-                return 0;
-            }
+            if (InstanceNames is {Length: 0}) return 0;
 
             float d = 0;
             for (int i = 0; i < InstanceNames.Length; i++)
@@ -465,6 +489,8 @@ namespace Masuit.Tools.Hardware
             //获取网卡硬件地址
             try
             {
+                if (IsWinPlatform is false) return new List<string>();
+                
                 return _cache.GetOrAdd(nameof(GetMacAddress), () =>
                 {
                     IList<string> list = new List<string>();
@@ -507,6 +533,8 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
+                if (IsWinPlatform is false) return "";
+                
                 return _cache.GetOrAdd(nameof(GetIPAddressWMI), () =>
                 {
                     using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
@@ -535,6 +563,8 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IPAddress GetLocalUsedIP(AddressFamily family)
         {
+            if (IsWinPlatform is false) return default;
+            
             return NetworkInterface.GetAllNetworkInterfaces().Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).OrderByDescending(c => c.Speed).Select(t => t.GetIPProperties()).Where(p => p.DhcpServerAddresses.Count > 0).SelectMany(p => p.UnicastAddresses).Select(p => p.Address).FirstOrDefault(p => !(p.IsIPv6Teredo || p.IsIPv6LinkLocal || p.IsIPv6Multicast || p.IsIPv6SiteLocal) && p.AddressFamily == family);
         }
 
@@ -556,6 +586,8 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
+                if (IsWinPlatform is false) return "";
+                
                 return _cache.GetOrAdd(nameof(GetNetworkCardAddress), () =>
                 {
                     using var mos = new ManagementObjectSearcher("select * from Win32_NetworkAdapter where ((MACAddress Is Not NULL) and (Manufacturer <> 'Microsoft'))");
@@ -585,6 +617,8 @@ namespace Masuit.Tools.Hardware
         /// <returns>datetime</returns>
         public static DateTime BootTime()
         {
+            if (IsWinPlatform is false) return default;
+            
             var query = new SelectQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem WHERE Primary='true'");
             using var searcher = new ManagementObjectSearcher(query);
             using var moc = searcher.Get();
@@ -608,6 +642,8 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
+                if (IsWinPlatform is false) return string.Empty;
+                
                 var mos = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
                 using var moc = mos.Get();
                 foreach (var mo in moc)
@@ -632,6 +668,8 @@ namespace Masuit.Tools.Hardware
         /// <returns>所有应用程序集合</returns>
         public static ArrayList FindAllApps(int handle)
         {
+            if (IsWinPlatform is false) return default;
+            
             var apps = new ArrayList();
             int hwCurr = GetWindow(handle, GwHwndfirst);
 
@@ -668,13 +706,20 @@ namespace Masuit.Tools.Hardware
             {
                 return _cache.GetOrAdd(nameof(GetSystemType), () =>
                 {
-                    using var mc = new ManagementClass("Win32_ComputerSystem");
-                    using var moc = mc.GetInstances();
-                    foreach (var mo in moc)
+                    if (IsWinPlatform is false)
                     {
-                        return mo["SystemType"].ToString().Trim();
+                        return Environment.OSVersion.Platform.ToString();
                     }
-                    return "";
+                    else
+                    {
+                        using var mc = new ManagementClass("Win32_ComputerSystem");
+                        using var moc = mc.GetInstances();
+                        foreach (var mo in moc)
+                        {
+                            return mo["SystemType"].ToString().Trim();
+                        }
+                        return "";
+                    }
                 });
             }
             catch (Exception e)
@@ -697,6 +742,8 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
+                if (IsWinPlatform is false) return "";
+                
                 return _cache.GetOrAdd(nameof(GetBiosSerialNumber), () =>
                 {
                     using var searcher = new ManagementObjectSearcher("select * from Win32_BIOS");
@@ -722,6 +769,8 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static BiosInfo GetBiosInfo()
         {
+            if (IsWinPlatform is false) return new BiosInfo();
+            
             return _cache.GetOrAdd(nameof(GetBiosInfo), () =>
             {
                 using var searcher = new ManagementObjectSearcher("select * from Win32_BaseBoard");
@@ -765,6 +814,8 @@ namespace Masuit.Tools.Hardware
 
         private static float GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
         {
+            if (IsWinPlatform is false) return 0;
+
             pc.CategoryName = categoryName;
             pc.CounterName = counterName;
             pc.InstanceName = instanceName;
