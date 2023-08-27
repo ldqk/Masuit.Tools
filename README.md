@@ -977,6 +977,12 @@ var width=str.StringWidth("微软雅黑",14); // 计算字符串以14号字体�
 var width=str.CharacterCount(); // 获取字符串的字符数
 var width=str.BytesCount(); // 获取字符串的字节数
 
+
+var s = "🤔1🥳a👨‍👩‍👧‍👦啊";
+Console.WriteLine("长度：" + s.Length); // 18
+Console.WriteLine("宽度：" + s.StringWidth()); // 7
+Console.WriteLine("字节数：" + s.BytesCount()); // 38
+Console.WriteLine("字符数：" + s.CharacterCount()); // 6
 ```
 
 ### 35.INI配置文件操作(仅支持Windows)
