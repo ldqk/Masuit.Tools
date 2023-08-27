@@ -958,6 +958,8 @@ type.IsSimpleListType(); // 判断类型是否是常见类型的 泛型形式 �
 myClass.ToJsonString(); //序列化成json字符串
 
 string s=null;
+bool b=s.IsNullOrEmpty();//判断字符串是否为空
+bool b=s.NotNullOrEmpty();//判断字符串不为空
 string str=s.IfNullOrEmpty("aa");//如果为空则返回aa
 string str=s.IfNullOrEmpty(()=>"aa");//如果为空则返回aa,延迟执行
 
@@ -972,6 +974,8 @@ bool emoji=s.MatchEmoji(); // 匹配字符串是否包含emoji
 
 var width=str.StringWidth(14); // 计算字符串以14号字体大小的渲染宽度像素
 var width=str.StringWidth("微软雅黑",14); // 计算字符串以14号字体大小的微软雅黑字体的渲染宽度像素
+var width=str.CharacterCount(); // 获取字符串的字符数
+var width=str.BytesCount(); // 获取字符串的字节数
 
 ```
 
