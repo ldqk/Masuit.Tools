@@ -18,7 +18,7 @@ public class SnowFlakeNew
     private const long SequenceMask = -1L ^ -1L << SequenceBits; //一微秒内可以产生计数，如果达到该值则等到下一微妙在进行生成
     private static long _lastTimestamp = -1L;
     private static readonly object LockObj = new object();
-    private readonly NumberFormater _numberFormater = new NumberFormater(36);
+    private static NumberFormater _numberFormater = new NumberFormater(36);
     private static SnowFlakeNew _snowFlake;
 
     /// <summary>
@@ -51,6 +51,15 @@ public class SnowFlakeNew
     public SnowFlakeNew(int machineId)
     {
         _workerId = machineId;
+    }
+
+    /// <summary>
+    /// 设置数制格式化器
+    /// </summary>
+    /// <param name="nf"></param>
+    public static void SetNumberFormater(NumberFormater nf)
+    {
+        _numberFormater = nf;
     }
 
     public long GetLongId()

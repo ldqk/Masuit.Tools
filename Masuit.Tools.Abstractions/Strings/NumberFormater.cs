@@ -131,7 +131,7 @@ namespace Masuit.Tools.Strings
             {
                 <= 2 => "01",
                 > 2 and < 65 => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, @base),
-                >= 65 and <= 91 => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,-.:;<=>?@[]^_`{|}~\"".Substring(0, @base),
+                >= 65 and <= 95 => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._!@$#%*+?&()/\\,-:;<=>?[]^`{|}~'\"".Substring(0, @base),
                 _ => throw new ArgumentException("默认进制最大支持91进制")
             };
 
@@ -147,7 +147,6 @@ namespace Masuit.Tools.Strings
         /// 数字转换为指定的进制形式字符串
         /// </summary>
         /// <param name="number"></param>
-        /// <returns></returns>
         public string ToString(long number)
         {
             if (number == 0)
@@ -258,6 +257,7 @@ namespace Masuit.Tools.Strings
                 start = 1;
                 resultOffset = _offset - 1;
             }
+
             int j = 0;
             var charArray = str.ToCharArray();
             Array.Reverse(charArray);
@@ -283,7 +283,13 @@ namespace Masuit.Tools.Strings
         // 转换万以下整数
         private static string ChangeInt(string x)
         {
-            string[] strArrayLevelNames = { "", "十", "百", "千" };
+            string[] strArrayLevelNames =
+            {
+                "",
+                "十",
+                "百",
+                "千"
+            };
             string ret = "";
             int i;
             for (i = x.Length - 1; i >= 0; i--)
@@ -363,6 +369,7 @@ namespace Masuit.Tools.Strings
                     result += temp;
                 }
             }
+
             int i;
             if ((i = result.IndexOf("零万", StringComparison.Ordinal)) != -1)
             {
@@ -401,6 +408,7 @@ namespace Masuit.Tools.Strings
                 result = "负";
                 x = x.Remove(0, 1);
             }
+
             if (x[0].ToString() == ".")
             {
                 x = "0" + x;
