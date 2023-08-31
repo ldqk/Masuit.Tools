@@ -1,6 +1,8 @@
 ﻿using Masuit.Tools.DateTimeExt;
 using Masuit.Tools.Strings;
 using System;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace Masuit.Tools.Systems
 {
@@ -49,7 +51,8 @@ namespace Masuit.Tools.Systems
         /// </summary>
         public SnowFlake()
         {
-            Snowflakes(0);
+            var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
+            Snowflakes(bytes[4] << 4 | bytes[5]);
         }
 
         /// <summary>
