@@ -226,6 +226,18 @@ namespace Masuit.Tools
 		}
 
 		/// <summary>
+		/// json反序列化成对象
+		/// </summary>
+		public static T FromJson<T>(this string json, JsonSerializerSettings setting = null)
+		{
+			if (string.IsNullOrEmpty(json))
+			{
+				return default;
+			}
+			return JsonConvert.DeserializeObject<T>(json,setting);
+		}
+
+		/// <summary>
 		/// 链式操作
 		/// </summary>
 		/// <typeparam name="T1"></typeparam>
