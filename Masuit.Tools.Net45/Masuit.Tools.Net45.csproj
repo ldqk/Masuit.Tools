@@ -195,8 +195,77 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Strings\UnicodeFormater.cs">
       <Link>Strings\UnicodeFormater.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
-      <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\CompositeContractResolver.cs">
+      <Link>Systems\CompositeContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\ConcurrentHashSet.cs">
+      <Link>Systems\ConcurrentHashSet.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\ConcurrentLimitedQueue.cs">
+      <Link>Systems\ConcurrentLimitedQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyContractResolver.cs">
+      <Link>Systems\DeserializeOnlyContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DeserializeOnlyJsonPropertyAttribute.cs">
+      <Link>Systems\DeserializeOnlyJsonPropertyAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\Disposable.cs">
+      <Link>Systems\Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DisposableConcurrentDictionary.cs">
+      <Link>Systems\DisposableConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\DisposableDictionary.cs">
+      <Link>Systems\DisposableDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\EnumExt.cs">
+      <Link>Systems\EnumExt.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonProperty.cs">
+      <Link>Systems\FallbackJsonProperty.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonPropertyResolver.cs">
+      <Link>Systems\FallbackJsonPropertyResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\HiPerfTimer.cs">
+      <Link>Systems\HiPerfTimer.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\LargeMemoryStream.cs">
+      <Link>Systems\LargeMemoryStream.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\LimitedQueue.cs">
+      <Link>Systems\LimitedQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\MaskConverter.cs">
+      <Link>Systems\MaskConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\MaskEmailConverter.cs">
+      <Link>Systems\MaskEmailConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableConcurrentDictionary.cs">
+      <Link>Systems\NullableConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullableDictionary.cs">
+      <Link>Systems\NullableDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\NullObject.cs">
+      <Link>Systems\NullObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\PooledMemoryStream.cs">
+      <Link>Systems\PooledMemoryStream.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SerializeIgnoreAttribute.cs">
+      <Link>Systems\SerializeIgnoreAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlake.cs">
+      <Link>Systems\SnowFlake.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlakeNew.cs">
+      <Link>Systems\SnowFlakeNew.cs</Link>
+    </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\StopwatchHelper.cs">
+      <Link>Systems\StopwatchHelper.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Validator\ComplexPassword.cs">
       <Link>Validator\ComplexPassword.cs</Link>

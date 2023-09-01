@@ -776,7 +776,17 @@ public override Post SavePost(Post t)
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
+```csharp
+// Attribute的方式为json序列化时进行数据脱敏
+public class MyClass
+{
+    [JsonConverter(typeof(MaskEmailConverter))]
+    public string Email { get; set; }
 
+    [JsonConverter(typeof(MaskConverter))]
+    public string PhoneNumber { get; set; }
+}
+```
 ### 30.集合扩展
 
 ```csharp
