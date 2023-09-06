@@ -13,6 +13,7 @@ namespace Masuit.Tools.Systems
 	{
 		#region 私有字段
 
+		private static long Offset = 0L; //起始偏移量
 		private static long _machineId; //机器码
 		private static long _sequence; //计数从零开始
 		private static long _lastTimestamp = -1L; //最后时间戳
@@ -57,7 +58,7 @@ namespace Masuit.Tools.Systems
 		public SnowFlake()
 		{
 			var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
-			Snowflakes(bytes[4] << 4 | bytes[5]);
+			Snowflakes(bytes[4] << 2 | bytes[5]);
 		}
 
 		/// <summary>
@@ -92,6 +93,15 @@ namespace Masuit.Tools.Systems
 		}
 
 		/// <summary>
+		/// 设置起始偏移量
+		/// </summary>
+		/// <param name="offset"></param>
+		public static void SetInitialOffset(long offset)
+		{
+			Offset = offset;
+		}
+
+		/// <summary>
 		/// 获取长整形的ID
 		/// </summary>
 		/// <returns></returns>
@@ -118,7 +128,7 @@ namespace Masuit.Tools.Systems
 
 				_lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳
 				long id = ((timestamp - Twepoch) << (int)TimestampLeft) | (_machineId << MachineLeft) | _sequence;
-				return id;
+				return id - Offset;
 			}
 		}
 

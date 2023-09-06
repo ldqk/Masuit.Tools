@@ -13,6 +13,7 @@ public class SnowFlakeNew
 {
 	private readonly long _workerId; //机器ID
 	private const long Twepoch = 1692079923000L; //唯一时间随机量
+	private static long Offset = 7783685984256L; //起始偏移量
 	private static long _sequence;
 	private const int SequenceBits = 12; //计数器字节数，10个字节用来保存计数码
 	private const long SequenceMask = -1L ^ -1L << SequenceBits; //一微秒内可以产生计数，如果达到该值则等到下一微妙在进行生成
@@ -46,7 +47,7 @@ public class SnowFlakeNew
 	public SnowFlakeNew()
 	{
 		var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
-		_workerId = bytes[4] << 4 | bytes[5];
+		_workerId = bytes[4] << 2 | bytes[5];
 	}
 
 	/// <summary>
@@ -55,7 +56,24 @@ public class SnowFlakeNew
 	/// <param name="machineId">机器码</param>
 	public SnowFlakeNew(int machineId)
 	{
-		_workerId = machineId;
+		if (machineId >= 0)
+		{
+			if (machineId > 1024)
+			{
+				throw new Exception("机器码ID非法");
+			}
+
+			_workerId = machineId;
+		}
+	}
+
+	/// <summary>
+	/// 设置起始偏移量
+	/// </summary>
+	/// <param name="offset"></param>
+	public static void SetInitialOffset(long offset)
+	{
+		Offset = offset;
 	}
 
 	/// <summary>
@@ -95,7 +113,7 @@ public class SnowFlakeNew
 				throw new Exception($"Clock moved backwards.  Refusing to generate id for {_lastTimestamp - timestamp} milliseconds");
 			}
 			_lastTimestamp = timestamp; //把当前时间戳保存为最后生成ID的时间戳
-			return _workerId << 52 | (timestamp - Twepoch << 12) | _sequence;
+			return (_workerId << 52 | (timestamp - Twepoch << 12) | _sequence) - Offset;
 		}
 	}
 
