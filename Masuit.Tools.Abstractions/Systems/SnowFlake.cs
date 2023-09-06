@@ -57,8 +57,15 @@ namespace Masuit.Tools.Systems
 		/// </summary>
 		public SnowFlake()
 		{
+		}
+
+		/// <summary>
+		/// 默认构造函数
+		/// </summary>
+		static SnowFlake()
+		{
 			var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
-			Snowflakes(bytes[4] << 2 | bytes[5]);
+			SetMachienId(bytes[4] << 2 | bytes[5]);
 		}
 
 		/// <summary>
@@ -67,10 +74,10 @@ namespace Masuit.Tools.Systems
 		/// <param name="machineId">机器码</param>
 		public SnowFlake(long machineId)
 		{
-			Snowflakes(machineId);
+			SetMachienId(machineId);
 		}
 
-		private void Snowflakes(long machineId)
+		public static void SetMachienId(long machineId)
 		{
 			if (machineId >= 0)
 			{

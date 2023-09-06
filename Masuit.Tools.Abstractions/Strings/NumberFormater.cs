@@ -163,22 +163,22 @@ namespace Masuit.Tools.Strings
 			}
 
 			number -= resultOffset;
-			List<string> result = new List<string>();
+			List<char> result = new List<char>();
 			long t = Math.Abs(number);
 			while (t != 0)
 			{
 				var mod = t % Length;
 				t = Math.Abs(t / Length);
-				var character = Characters[Convert.ToInt32(mod) - start].ToString();
+				var character = Characters[Convert.ToInt32(mod) - start];
 				result.Insert(0, character);
 			}
 
 			if (number < 0)
 			{
-				result.Insert(0, "-");
+				result.Insert(0, '-');
 			}
 
-			return string.Join("", result);
+			return new string(result.ToArray());
 		}
 
 		/// <summary>
@@ -202,11 +202,11 @@ namespace Masuit.Tools.Strings
 			}
 
 			number = number - resultOffset;
-			List<string> result = new List<string>();
+			List<char> result = new List<char>();
 			if (number < 0)
 			{
 				number = -number;
-				result.Add("0");
+				result.Add('-');
 			}
 
 			BigInteger t = number;
@@ -215,11 +215,11 @@ namespace Masuit.Tools.Strings
 			{
 				var mod = t % Length;
 				t = BigInteger.Abs(BigInteger.Divide(t, Length));
-				var character = Characters[(int)mod - start].ToString();
+				var character = Characters[(int)mod - start];
 				result.Insert(0, character);
 			}
 
-			return string.Join("", result);
+			return new string(result.ToArray());
 		}
 
 		/// <summary>

@@ -216,7 +216,7 @@ var num=123.45.ToChineseNumber(); // 一百二十三点四五
 可用于生成短id，短hash，随机字符串等操作，纯数学运算。
 
 ```csharp
-NumberFormater nf = new NumberFormater(36);//内置2-91进制的转换
+NumberFormater nf = new NumberFormater(36);//内置2-95进制的转换
 //NumberFormater nf = new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz");// 自定义进制字符，可用于生成验证码，自定义字符可支持任意进制，你传1w个字符进去那就支持一万进制(手动狗头)
 string s36 = nf.ToString(12345678);
 long num = nf.FromString("7clzi");
@@ -276,11 +276,25 @@ Console.WriteLine("执行for循环100000次耗时"+time+"s");
 ### 7.产生分布式唯一有序短id(雪花id)
 
 ```csharp
+// 实例调用
 var sf = SnowFlake.GetInstance();
-string token = sf.GetUniqueId();// rcofqodori0w
-string token = SnowFlake.NewId;// rcofqodori0w
+string id = sf.GetUniqueId();// rcofqodori0w
+var sfn = SnowFlakeNew.GetInstance(); // 改良版雪花id，对时间回拨不敏感
+string id = sfn.GetUniqueId();// vmbq8q3s3zul
+
+// 静态调用
+string id = SnowFlake.NewId;// rcofqodori0w
 string shortId = sf.GetUniqueShortId(8);// qodw9728
-string token = SnowFlakeNew.NewId;// 改良版雪花id，对时间回拨不敏感
+string id = SnowFlakeNew.NewId;// 改良版雪花id，对时间回拨不敏感
+
+// 全局设置
+SnowFlake.SetMachienId(1); // 设置机器id
+SnowFlake.SetInitialOffset(4219864516915105792); // 设置起始偏移量
+SnowFlake.SetNumberFormater(new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz._-!")); // 设置数制格式化器
+
+SnowFlakeNew.SetMachienId(1); // 设置机器id
+SnowFlakeNew.SetInitialOffset(4219864516915105792); // 设置起始偏移量
+SnowFlakeNew.SetNumberFormater(new NumberFormater("0123456789abcdefghijklmnopqrstuvwxyz._-!")); // 设置数制格式化器
 ```
 
 ```csharp

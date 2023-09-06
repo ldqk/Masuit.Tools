@@ -11,7 +11,7 @@ namespace Masuit.Tools.Systems;
 /// </summary>
 public class SnowFlakeNew
 {
-	private readonly long _workerId; //机器ID
+	private static long _workerId; //机器ID
 	private const long Twepoch = 1692079923000L; //唯一时间随机量
 	private static long Offset = 7783685984256L; //起始偏移量
 	private static long _sequence;
@@ -45,6 +45,12 @@ public class SnowFlakeNew
 	/// 默认构造函数
 	/// </summary>
 	public SnowFlakeNew()
+	{ }
+
+	/// <summary>
+	/// 默认构造函数
+	/// </summary>
+	static SnowFlakeNew()
 	{
 		var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
 		_workerId = bytes[4] << 2 | bytes[5];
@@ -55,6 +61,11 @@ public class SnowFlakeNew
 	/// </summary>
 	/// <param name="machineId">机器码</param>
 	public SnowFlakeNew(int machineId)
+	{
+		SetMachienId(machineId);
+	}
+
+	public static void SetMachienId(long machineId)
 	{
 		if (machineId >= 0)
 		{
