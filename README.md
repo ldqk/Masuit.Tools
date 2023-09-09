@@ -963,7 +963,7 @@ FileStream fs = new FileStream(@"D:\boot.vmdk", FileMode.OpenOrCreate, FileAcces
 memoryStream.SaveFile("filename"); // 将内存流转储成文件
 ```
 
-### 34.类型操作
+### 34.类型操作/字符串
 
 ```csharp
 1.2345678901.Digits8(); // 将小数截断为8位
@@ -1007,6 +1007,9 @@ Console.WriteLine("长度：" + s.Length); // 18
 Console.WriteLine("宽度：" + s.StringWidth()); // 7
 Console.WriteLine("字节数：" + s.BytesCount()); // 38
 Console.WriteLine("字符数：" + s.CharacterCount()); // 6
+
+var s="aa".ToSBC(); // 转换为全角
+var s="ａａ".ToDBC(); // 转换为半角
 ```
 
 ### 35.INI配置文件操作(仅支持Windows)
