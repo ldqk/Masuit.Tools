@@ -794,10 +794,10 @@ public override Post SavePost(Post t)
 // Attribute的方式为json序列化时进行数据脱敏
 public class MyClass
 {
-    [JsonConverter(typeof(MaskEmailConverter))]
+    [JsonConverter(typeof(MaskEmailConverter))] // 请注意命名空间，使用Newtonsoft.Json请导入Masuit.Tools.Systems命名空间，使用System.Text.Json请导入Masuit.Tools.Systems.Text.Json命名空间
     public string Email { get; set; }
 
-    [JsonConverter(typeof(MaskConverter))]
+    [JsonConverter(typeof(MaskConverter))] // 请注意命名空间，使用Newtonsoft.Json请导入Masuit.Tools.Systems命名空间，使用System.Text.Json请导入Masuit.Tools.Systems.Text.Json命名空间
     public string PhoneNumber { get; set; }
 }
 ```
@@ -1147,7 +1147,7 @@ a.Next(func1).Next(func2).Next(func3);
 "123".Next(s=>s.ToInt32()).Next(x=>x*2).Next(x=>Math.Log(x));
 ```
 
-### 41.Newtonsoft.Json的只允许字段(反)序列化行为的契约解释器
+### 41.Newtonsoft.Json和System.Text.Json的只允许字段(反)序列化行为的契约解释器
 
 #### DeserializeOnlyContractResolver
 
@@ -1167,10 +1167,14 @@ public class ClassDto
         public int Num { get; set; }
     }
   
+    // Newtonsoft.Json
     JsonConvert.SerializeObject(new MyClass(),new JsonSerializerSettings()
     {
         ContractResolver = new DeserializeOnlyContractResolver() // 配置使用DeserializeOnlyContractResolver解释器
     });
+
+    // System.Text.Json
+    JsonSerializer.Serialize(object, new JsonSerializerOptions() { TypeInfoResolver = new SerializeIgnoreResolver() });
 ```
 
 如果是WebAPI全局使用：
