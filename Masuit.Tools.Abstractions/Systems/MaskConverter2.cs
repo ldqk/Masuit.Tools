@@ -23,7 +23,7 @@ public class MaskConverter : JsonConverter<string>
 	/// <param name="options">An object that specifies serialization options to use.</param>
 	public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(value.Mask());
+		writer.WriteStringValue(string.IsNullOrEmpty(value) ? value : value.Mask());
 	}
 }
 
@@ -45,7 +45,7 @@ public class MaskEmailConverter : JsonConverter<string>
 	/// <param name="options">An object that specifies serialization options to use.</param>
 	public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
 	{
-		writer.WriteStringValue(value.MaskEmail());
+		writer.WriteStringValue(string.IsNullOrEmpty(value) ? value : value.MaskEmail());
 	}
 }
 
