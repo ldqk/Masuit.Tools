@@ -137,6 +137,8 @@ https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 
 `MimeMapper`：mime类型映射
 
+`VersionNumber`：版本号类型，比System.Version功能更多一点，用法一致
+
 具体用法，可参阅后文详细示例：
 
 ### 1. 检验字符串是否是Email、手机号、URL、IP地址、身份证号等
