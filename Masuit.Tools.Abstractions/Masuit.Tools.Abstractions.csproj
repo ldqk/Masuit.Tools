@@ -48,7 +48,7 @@
     <ItemGroup>
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="DnsClient" Version="1.7.0" />
-        <PackageReference Include="HtmlSanitizer" Version="8.0.692" />
+        <PackageReference Include="HtmlSanitizer" Version="8.0.718" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

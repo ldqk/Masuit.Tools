@@ -205,7 +205,7 @@
       <Version>1.7.0</Version>
     </PackageReference>
     <PackageReference Include="HtmlSanitizer">
-      <Version>8.0.692</Version>
+      <Version>8.0.718</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.2.9</Version>
