@@ -639,7 +639,7 @@ namespace Masuit.Tools
 		/// <returns>是否匹配成功</returns>
 		public static bool MatchPhoneNumber(this string s)
 		{
-			return !string.IsNullOrEmpty(s) && s.Length == 11 && s[0] == '1' && (s[1] > '2' || s[1] <= '9');
+			return !string.IsNullOrEmpty(s) && s.Length == 11 && s[0] == '1' && (s[1] > '2' || s[1] <= '9') && long.TryParse(s, out _);
 		}
 
 		/// <summary>
