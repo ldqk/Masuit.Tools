@@ -59,9 +59,9 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[5.0.17]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.23]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.24]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.12" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.13" />
     </ItemGroup>
 </Project>
