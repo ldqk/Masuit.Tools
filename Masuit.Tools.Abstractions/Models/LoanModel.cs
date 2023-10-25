@@ -1,6 +1,7 @@
 ﻿#if NET5_0_OR_GREATER
 using System.Collections.Generic;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Microsoft.VisualBasic;
 using System.Threading.Channels;
@@ -202,12 +203,14 @@ public enum LoanType
 	/// <summary>
 	/// 等额本息
 	/// </summary>
-	EquivalentPrincipal,
+	[Description("等额本息")]
+	EquivalentInterest,
 
 	/// <summary>
 	/// 等额本金
 	/// </summary>
-	EquivalentInterest,
+	[Description("等额本金")]
+	EquivalentPrincipal,
 }
 
 /// <summary>

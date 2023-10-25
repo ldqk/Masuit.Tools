@@ -792,6 +792,7 @@ public override Post SavePost(Post t)
 "13123456789".Mask(); // 131****5678
 "admin@masuit.com".MaskEmail(); // a****n@masuit.com
 ```
+
 ```csharp
 // Attribute的方式为json序列化时进行数据脱敏
 public class MyClass
@@ -803,6 +804,7 @@ public class MyClass
     public string PhoneNumber { get; set; }
 }
 ```
+
 ### 30.集合扩展
 
 ```csharp
@@ -1459,28 +1461,33 @@ public class MyService{...}
 ```
 
 ### 52. 房贷试算模型
-**支持多次提前还款和多次调整利率，同时支持提前还款时变更贷款方式和缩短年限，如有利率调整或提前还款计划，因银行计算受实时利率或提前还款违约金影响，本试算模型的计算结果和银行结果大约有1‰的误差，结果仅供参考，请以银行结果为准**  
+
+集成案例：https://masuit.org/tools/loan
+
+**支持多次提前还款和多次调整利率，同时支持提前还款时变更贷款方式和缩短年限，如有利率调整或提前还款计划，因银行计算受实时利率或提前还款违约金影响，本试算模型的计算结果和银行结果大约有1‰的误差，结果仅供参考，请以银行结果为准。**
+
 模拟案例：
 贷款100万，
 初始利率6.27%，
 等额本息方式，
 贷30年，
-首次还款时间2021-2-1。  
+首次还款时间2021-2-1。
 
-利率调整：  
-2022-1-1利率调整为5.92%，LPR调整  
-2023-1-1利率调整为5.85%，LPR调整  
-2023-9-25利率调整为4.3%，政策因素银行自动调整  
-2025-1-1利率调整为4.2%，LPR调整  
-2026-1-1利率调整为4.1%，LPR调整  
+利率调整：
+2022-1-1利率调整为5.92%，LPR调整
+2023-1-1利率调整为5.85%，LPR调整
+2023-9-25利率调整为4.3%，政策因素银行自动调整
+2025-1-1利率调整为4.2%，LPR调整
+2026-1-1利率调整为4.1%，LPR调整
 
-提前还款计划：  
-2022-10-23提前还款10万，贷款方式不变，  
-2023-10-11提前还款10万并缩短年限(`实际目前银行政策不允许`)，  
-2025-10-12提前还款10万并修改为等额本金方式，  
+提前还款计划：
+2022-10-23提前还款10万，贷款方式不变，
+2023-10-11提前还款10万并缩短年限(`实际目前银行政策不允许`)，
+2025-10-12提前还款10万并修改为等额本金方式，
 2026-10-14提前还款10万并以等额本金方式+缩短年限(`实际目前银行政策不允许`)。
 
 计算代码如下：
+
 ```csharp
 var (totalInterest, actualInterest, savedInterest, totalRepayment, actualPayment, paymentPlans) = new LoanModel(1000000, 0.0627m, 360, DateTime.Parse("2021-2-1"))
 {
@@ -1502,13 +1509,14 @@ var (totalInterest, actualInterest, savedInterest, totalRepayment, actualPayment
 	}
 }.Payment();
 ```
-计算结果：  
+
+计算结果：
 总利息totalInterest：1221266.8
 实际支付利息actualInterest：403845.58
 提前还款节省利息savedInterest：817421.22
 总提前还款totalRepayment：400000.00
 实际还款总额actualPayment：1403845.58
-总还款期数paymentPlans：258期，**List类型，每条记录可以展示当期的利率，利息，本金，剩余本金等信息**  
+总还款期数paymentPlans：258期，**List类型，每条记录可以展示当期的利率，利息，本金，剩余本金等信息**
 
 # Asp.Net MVC和Asp.Net Core的支持断点续传和多线程下载的ResumeFileResult
 
