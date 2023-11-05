@@ -46,12 +46,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AngleSharp" Version="1.0.6-alpha-325" />
+        <PackageReference Include="AngleSharp.Css" Version="1.0.0-alpha-99" />
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="DnsClient" Version="1.7.0" />
-        <PackageReference Include="HtmlSanitizer" Version="8.0.746" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
         <PackageReference Include="System.Management" Version="7.0.2" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
