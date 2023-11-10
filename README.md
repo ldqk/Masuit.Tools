@@ -701,8 +701,6 @@ new Email()
 ### 25.图像的简单处理
 
 ```csharp
-ImageUtilities.CompressImage(@"F:\src\1.jpg", @"F:\dest\2.jpg");//无损压缩图片
-
 "base64".SaveDataUriAsImageFile();// 将Base64编码转换成图片
 
 Image image = Image.FromFile(@"D:\1.jpg");
