@@ -1039,6 +1039,7 @@ points.ComputeArea(); //计算多边形面积
 ITreeChildren：带Children属性的接口
 ITreeParent：带Parent属性的接口
 ITree：继承ITreeParent和ITreeChildren，同时多了Name属性
+ITreeEntity：继承ITreeChildren，同时多了Id和ParentId属性
 
 相关扩展方法：
 
@@ -1052,7 +1053,8 @@ tree.IsLeaf(); // 是否是叶子节点
 tree.Level(); // 所处深度/层级
 tree.Path(); // 全路径
 
-var tree=list.ToTree(c => c.Id, c => c.Pid);//继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
+var tree=list.ToTree();//集合元素继承自ITreeEntity<T,TKey>或ITreeEntity<T>的集合转换成树形结构
+var tree=list.ToTree(c => c.Id, c => c.Pid);//集合元素继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
 
@@ -1489,22 +1491,22 @@ public class MyService{...}
 ```csharp
 var (totalInterest, actualInterest, savedInterest, totalRepayment, actualPayment, paymentPlans) = new LoanModel(1000000, 0.0627m, 360, DateTime.Parse("2021-2-1"))
 {
-	RateAdjustments = new Dictionary<DateTime, decimal?>()
-	{
-		[DateTime.Parse("2022-1-1")] = 0.0592m, // 调整前月供6170.19，调整后月供5948.53
-		[DateTime.Parse("2023-1-1")] = 0.058m, // 调整前月供5948.53，调整后月供5273.92
-		[DateTime.Parse("2023-9-25")] = 0.043m, // 调整前月供5273.92，调整后月供4496.91，调整次月还款5118.55
-		[DateTime.Parse("2025-1-1")] = 0.042m, // 调整前月供4496.91，调整后首月4457.15
-		[DateTime.Parse("2026-1-1")] = 0.041m, // 调整前月供4762.47，调整后月供4702，调整次月还款8.87元(还款方式改为了等额本金)
-	},
+    RateAdjustments = new Dictionary<DateTime, decimal?>()
+    {
+        [DateTime.Parse("2022-1-1")] = 0.0592m, // 调整前月供6170.19，调整后月供5948.53
+        [DateTime.Parse("2023-1-1")] = 0.058m, // 调整前月供5948.53，调整后月供5273.92
+        [DateTime.Parse("2023-9-25")] = 0.043m, // 调整前月供5273.92，调整后月供4496.91，调整次月还款5118.55
+        [DateTime.Parse("2025-1-1")] = 0.042m, // 调整前月供4496.91，调整后首月4457.15
+        [DateTime.Parse("2026-1-1")] = 0.041m, // 调整前月供4762.47，调整后月供4702，调整次月还款8.87元(还款方式改为了等额本金)
+    },
 
-	Prepayments = new List<PrepaymentOption>()
-	{
-		new(DateTime.Parse("2022-10-23"), 100000m, false, LoanType.EquivalentInterest), // 提前还款前月供5948.53，提前还款后月供5339.85
-		new(DateTime.Parse("2023-10-11"), 100000m, true, LoanType.EquivalentInterest), // 提前还款前月供5273.92，提前还款后月供4493.84，期数减少64期
-		new(DateTime.Parse("2025-10-12"), 100000m, false, LoanType.EquivalentPrincipal), // 提前还款前月供4771.56，提前还款后月供首月4762.47，每月递减60.4元
-		new(DateTime.Parse("2026-10-14"), 100000m, true, LoanType.EquivalentPrincipal), // 提前还款前月供4260.28，提前还款后月供首月4251.44，每月递减8.84元，期数减少38期
-	}
+    Prepayments = new List<PrepaymentOption>()
+    {
+        new(DateTime.Parse("2022-10-23"), 100000m, false, LoanType.EquivalentInterest), // 提前还款前月供5948.53，提前还款后月供5339.85
+        new(DateTime.Parse("2023-10-11"), 100000m, true, LoanType.EquivalentInterest), // 提前还款前月供5273.92，提前还款后月供4493.84，期数减少64期
+        new(DateTime.Parse("2025-10-12"), 100000m, false, LoanType.EquivalentPrincipal), // 提前还款前月供4771.56，提前还款后月供首月4762.47，每月递减60.4元
+        new(DateTime.Parse("2026-10-14"), 100000m, true, LoanType.EquivalentPrincipal), // 提前还款前月供4260.28，提前还款后月供首月4251.44，每月递减8.84元，期数减少38期
+    }
 }.Payment();
 ```
 
