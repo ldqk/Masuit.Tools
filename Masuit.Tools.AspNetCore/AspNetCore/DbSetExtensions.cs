@@ -47,6 +47,11 @@ public static class DbSetExtensions
             collection = entities.ToList();
         }
 
+        if (collection.Count == 0)
+        {
+            return;
+        }
+
         var func = keySelector.CompileFast();
         var keyObjects = collection.Select(s => func(s)).ToList();
         var parameter = keySelector.Parameters[0];
