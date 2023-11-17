@@ -39,17 +39,38 @@ namespace Masuit.Tools.Models
         T Parent { get; set; }
     }
 
+    /// <summary>
+    /// 树形实体（值类型主键）
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     public interface ITreeEntity<T, TKey> : ITreeChildren<T> where TKey : struct, IComparable
     {
+        /// <summary>
+        /// 主键id
+        /// </summary>
         public TKey Id { get; set; }
 
+        /// <summary>
+        /// 父级id
+        /// </summary>
         public TKey? ParentId { get; set; }
     }
 
+    /// <summary>
+    /// 树形实体(字符串主键)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface ITreeEntity<T> : ITreeChildren<T>
     {
+        /// <summary>
+        /// 主键id
+        /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        /// 父级id
+        /// </summary>
         public string ParentId { get; set; }
     }
 }
