@@ -80,15 +80,15 @@ namespace Masuit.Tools.Core.Validator
                 return false;
             }
 
+            if (!string.IsNullOrEmpty(WhiteList) && WhiteList.Split('!').Any(item => Regex.IsMatch(email, item)))
+            {
+                return true;
+            }
+
             if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(new[] { '!', ';' }, StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
             {
                 ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
-            }
-
-            if (!string.IsNullOrEmpty(WhiteList) && WhiteList.Split('!').Any(item => Regex.IsMatch(email, item)))
-            {
-                return true;
             }
 
             var isMatch = email.MatchEmail().isMatch;
