@@ -15,7 +15,9 @@
 ![Masuit Tools](https://user-images.githubusercontent.com/20254980/208012013-28813c43-daa2-4b64-9e4a-78829325a7a4.png)
 
 项目开发模式：日常代码积累+网络搜集
+
 ⭐⭐⭐喜欢这个项目的话就Star、Fork、Follow素质三连关♂注一下吧⭐⭐⭐
+
 关于本项目，如果你有任何不懂的地方或使用过程中遇到任何问题，可以直接提issue或私信联系我，我会为你提供**完全免费**的技术指导，当然，如果你觉得不好意思接受免费的指导，想适当打赏我也是不会拒绝的！🤣🤣🤣
 
 ## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！
@@ -32,9 +34,11 @@
 
 ## 建议开发环境
 
-操作系统：Windows 10 1903及以上版本
-开发工具：VisualStudio2019 v16.5及以上版本
-SDK：.Net Core 2.1.0及以上所有版本
+操作系统：Windows 11 23H2及以上版本
+
+开发工具：VisualStudio2022 v17.8及以上版本
+
+SDK：.Net Core 2.1.0及以上**所有版本**
 
 ## 安装程序包
 
