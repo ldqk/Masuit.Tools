@@ -71,7 +71,7 @@ namespace Masuit.Tools
                 sbyte s => s == 0,
                 short s => s == 0,
                 char s => s == 0,
-                bool s => s == false,
+                bool s => s,
                 ushort s => s == 0,
                 int s => s == 0,
                 uint s => s == 0,
@@ -83,6 +83,7 @@ namespace Masuit.Tools
                 Enum s => Equals(s, Enum.GetValues(value.GetType()).GetValue(0)),
                 DateTime s => s == DateTime.MinValue,
                 DateTimeOffset s => s == DateTimeOffset.MinValue,
+                Guid g => g == Guid.Empty,
                 _ => false
             };
         }

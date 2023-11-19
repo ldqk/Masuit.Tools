@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace Masuit.Tools.Systems;
 
@@ -7,25 +6,18 @@ namespace Masuit.Tools.Systems;
 /// 可空对象
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public readonly struct NullObject<T> : IComparable, IComparable<T>
+public readonly record struct NullObject<T> : IComparable, IComparable<T>
 {
-    [DefaultValue(true)]
-    private readonly bool _isnull;
-
-    private NullObject(T item, bool isnull) : this()
+    public NullObject()
     {
-        _isnull = isnull;
+    }
+
+    public NullObject(T item)
+    {
         Item = item;
     }
 
-    public NullObject(T item) : this(item, item == null)
-    {
-    }
-
-    public static NullObject<T> Null()
-    {
-        return new NullObject<T>();
-    }
+    public static NullObject<T> Null => new();
 
     public T Item { get; }
 
@@ -33,10 +25,7 @@ public readonly struct NullObject<T> : IComparable, IComparable<T>
     /// 是否是null
     /// </summary>
     /// <returns></returns>
-    public bool IsNull()
-    {
-        return _isnull;
-    }
+    public bool IsNull => Item.IsDefaultValue();
 
     /// <summary>
     /// 隐式转换
@@ -86,34 +75,9 @@ public readonly struct NullObject<T> : IComparable, IComparable<T>
         return Item.ToString().CompareTo(other.ToString());
     }
 
-    public override bool Equals(object obj)
-    {
-        if (obj == null)
-        {
-            return IsNull();
-        }
-
-        if (obj is not NullObject<T> nullObject)
-        {
-            return false;
-        }
-
-        if (IsNull())
-        {
-            return nullObject.IsNull();
-        }
-
-        if (nullObject.IsNull())
-        {
-            return false;
-        }
-
-        return Item.Equals(nullObject.Item);
-    }
-
     public override int GetHashCode()
     {
-        if (_isnull)
+        if (Item.IsDefaultValue())
         {
             return 0;
         }
