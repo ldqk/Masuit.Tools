@@ -10,10 +10,18 @@ using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools
 {
+    /// <summary>
+    /// 对象扩展
+    /// </summary>
     public static class ObjectExtensions
     {
         private static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        /// <summary>
+        /// 是否是基本数据类型
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(string))
@@ -21,7 +29,7 @@ namespace Masuit.Tools
                 return true;
             }
 
-            return type.IsValueType & type.IsPrimitive;
+            return type.IsValueType && type.IsPrimitive;
         }
 
         /// <summary>
@@ -58,6 +66,11 @@ namespace Masuit.Tools
             return type.IsGenericType && type.GetGenericArguments().Length == 1 && type.GetGenericArguments().FirstOrDefault().IsSimpleType();
         }
 
+        /// <summary>
+        /// 是否是默认值
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool IsDefaultValue(this object value)
         {
             if (value == default)
@@ -84,15 +97,27 @@ namespace Masuit.Tools
                 DateTime s => s == DateTime.MinValue,
                 DateTimeOffset s => s == DateTimeOffset.MinValue,
                 Guid g => g == Guid.Empty,
+                ValueType => Activator.CreateInstance(value.GetType()).Equals(value),
                 _ => false
             };
         }
 
+        /// <summary>
+        /// 深克隆
+        /// </summary>
+        /// <param name="originalObject"></param>
+        /// <returns></returns>
         public static object DeepClone(this object originalObject)
         {
             return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
         }
 
+        /// <summary>
+        /// 深克隆
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         public static T DeepClone<T>(this T original)
         {
             return (T)DeepClone((object)original);
@@ -176,31 +201,13 @@ namespace Masuit.Tools
         public static bool IsNullOrEmpty<T>(this T value)
           where T : class
         {
-            #region 1.对象级别
-
-            //引用为null
-            bool isObjectNull = value is null;
-            if (isObjectNull)
+            return value switch
             {
-                return true;
-            }
-
-            //判断是否为集合
-            var tempEnumerator = (value as IEnumerable)?.GetEnumerator();
-            if (tempEnumerator == null) return false;//这里出去代表是对象 且 引用不为null.所以为false
-
-            #endregion 1.对象级别
-
-            #region 2.集合级别
-
-            //到这里就代表是集合且引用不为空，判断长度
-            //MoveNext方法返回tue代表集合中至少有一个数据,返回false就代表0长度
-            bool isZeroLenth = tempEnumerator.MoveNext() == false;
-            if (isZeroLenth) return true;
-
-            return isZeroLenth;
-
-            #endregion 2.集合级别
+                null => true,
+                string s => string.IsNullOrWhiteSpace(s),
+                IEnumerable list => !list.GetEnumerator().MoveNext(),
+                _ => false
+            };
         }
 
         /// <summary>
