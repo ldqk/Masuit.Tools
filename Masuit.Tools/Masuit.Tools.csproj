@@ -214,7 +214,7 @@
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpCompress">
-      <Version>0.33.0</Version>
+      <Version>0.34.2</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp.Drawing">
       <Version>1.0.0</Version>
