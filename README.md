@@ -1040,10 +1040,10 @@ points.ComputeArea(); //计算多边形面积
 ### 37.树形结构实现
 
 基本接口类：
-ITreeChildren：带Children属性的接口
-ITreeParent：带Parent属性的接口
-ITree：继承ITreeParent和ITreeChildren，同时多了Name属性
-ITreeEntity：继承ITreeChildren，同时多了Id和ParentId属性
+ITreeChildren：带Children属性的接口  
+ITreeParent：带Parent属性的接口  
+ITree：继承ITreeParent和ITreeChildren，同时多了Name属性  
+ITreeEntity：继承ITreeChildren，同时多了Id和ParentId属性  
 
 相关扩展方法：
 
