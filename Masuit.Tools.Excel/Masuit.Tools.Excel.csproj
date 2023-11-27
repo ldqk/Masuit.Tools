@@ -38,7 +38,7 @@
       </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="EPPlus" Version="7.0.1" />
+        <PackageReference Include="EPPlus" Version="7.0.2" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
