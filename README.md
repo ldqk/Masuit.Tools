@@ -507,7 +507,7 @@ string s = "123".Crc32();// 生成crc32摘要
 string s = "123".Crc64();// 生成crc64摘要
 string s = "123".SHA256();// 生成SHA256摘要
 
-// 零宽字符串，通常用作文章水印，以一种看不见的字符插入到文本中，使攻击者无法直接识别文本内容，从而起到保护文章的作用。
+// 零宽字符串，通常用作文章暗水印，以一种看不见的字符插入到文本中，使攻击者无法直接识别文本内容，从而起到保护文章的作用，可通过代码把水印还原出来取证。
 string pub="hello,world!";
 string hidden="ldqk";
 var str = pub.InjectZeroWidthString(hidden); // 扩展函数调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
@@ -1040,10 +1040,10 @@ points.ComputeArea(); //计算多边形面积
 ### 37.树形结构实现
 
 基本接口类：
-ITreeChildren：带Children属性的接口
-ITreeParent：带Parent属性的接口
-ITree：继承ITreeParent和ITreeChildren，同时多了Name属性
-ITreeEntity：继承ITreeChildren，同时多了Id和ParentId属性
+ITreeChildren：带Children属性的接口  
+ITreeParent：带Parent属性的接口  
+ITree：继承ITreeParent和ITreeChildren，同时多了Name属性  
+ITreeEntity：继承ITreeChildren，同时多了Id和ParentId属性  
 
 相关扩展方法：
 
