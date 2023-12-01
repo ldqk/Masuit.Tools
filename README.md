@@ -1,6 +1,6 @@
 ﻿# Masuit.Tools(码数吐司库)
 
-[![许可证](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![许可证](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE)
 [![nuget](https://img.shields.io/nuget/v/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 [![nuget](https://img.shields.io/nuget/dt/Masuit.Tools.Core.svg)](https://www.nuget.org/packages/Masuit.Tools.Core)
 ![codeSize](https://img.shields.io/github/languages/code-size/ldqk/Masuit.Tools.svg)
@@ -30,7 +30,7 @@
 
 ## 请注意：
 
-一旦使用本开源项目以及引用了本项目或包含本项目代码的公司因为违反劳动法（包括但不限定非法裁员、超时用工、雇佣童工等）在任何法律诉讼中败诉的，一经发现，本项目作者有权利追讨本项目的使用费（**公司工商注册信息认缴金额的2-5倍作为本项目的授权费**），或者直接不允许使用任何包含本项目的源代码！任何性质的 `外包公司`或 `996公司`需要使用本类库，请联系作者进行商业授权！其他企业或个人可随意使用不受限。996那叫用人，也是废人。8小时工作制才可以让你有时间自我提升，将来有竞争力。反对996，人人有责！
+一旦使用本开源项目以及引用了本项目或包含本项目代码的公司因为违反劳动法（包括但不限定非法裁员、超时用工、雇佣童工等）在任何法律诉讼中败诉的，一经发现，本项目作者有权利追讨本项目的使用费（**公司工商注册信息认缴金额的2-5倍作为本项目的授权费**），或者直接不允许使用任何包含本项目的源代码！ `人力外包公司`或 `007公司`需要使用本类库，请联系作者进行商业授权！其他企业或个人可随意使用不受限。007那叫用人，也是废人。8小时工作制才可以让你有时间自我提升，将来有竞争力。反对007，人人有责！
 
 ## 建议开发环境
 
