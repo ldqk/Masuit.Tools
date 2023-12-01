@@ -467,6 +467,12 @@ namespace Ganss.Xss
 
         private void DoSanitize(IHtmlDocument dom, IParentNode context, string baseUrl = "")
         {
+            // remove disallowed tags
+            foreach (var tag in context.QuerySelectorAll("*").Where(t => !IsAllowedTag(t)).ToList())
+            {
+                RemoveTag(tag, RemoveReason.NotAllowedTag);
+            }
+
             // always encode text in raw data content
             foreach (var tag in context.QuerySelectorAll("*")
                 .Where(t => t is not IHtmlStyleElement
@@ -478,12 +484,6 @@ namespace Ganss.Xss
                     tag.InnerHtml = escapedHtml;
                 if (tag.InnerHtml != escapedHtml) // setting InnerHtml does not work for noscript
                     tag.SetInnerText(escapedHtml);
-            }
-
-            // remove disallowed tags
-            foreach (var tag in context.QuerySelectorAll("*").Where(t => !IsAllowedTag(t)).ToList())
-            {
-                RemoveTag(tag, RemoveReason.NotAllowedTag);
             }
 
             SanitizeStyleSheets(dom, baseUrl);
@@ -628,7 +628,7 @@ namespace Ganss.Xss
                         OnPostProcessNode(e);
                         if (e.ReplacementNodes.Any())
                         {
-                            ((IChildNode)node).Replace(e.ReplacementNodes.ToArray());
+                            ((IChildNode)node).Replace([.. e.ReplacementNodes]);
                         }
                     }
                 }
@@ -862,7 +862,7 @@ namespace Ganss.Xss
             if (!e.Cancel)
             {
                 if (KeepChildNodes && tag.HasChildNodes)
-                    tag.Replace(tag.ChildNodes.ToArray());
+                    tag.Replace([.. tag.ChildNodes]);
                 else
                     tag.Remove();
             }

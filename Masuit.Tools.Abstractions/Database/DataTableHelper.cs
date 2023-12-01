@@ -82,8 +82,13 @@ namespace Masuit.Tools.Database
         public static DataTable ToDataTable<T>(this IList<T> list, string tableName = null)
         {
             var result = new DataTable(tableName);
-            if (list.Count <= 0)
+            if (list.Count == 0)
             {
+                foreach (var property in typeof(T).GetProperties())
+                {
+                    // 添加表头列，列名为属性名
+                    result.Columns.Add(property.Name, property.PropertyType);
+                }
                 return result;
             }
 
