@@ -1,7 +1,9 @@
 ﻿using Masuit.Tools.AspNetCore.ResumeFileResults.Extensions;
 using Masuit.Tools.AspNetCore.ResumeFileResults.ResumeFileResult;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor;
 

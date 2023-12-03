@@ -4,6 +4,8 @@ using Masuit.Tools.Files;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Masuit.Tools.Core.AspNetCore;
 
@@ -65,7 +67,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     private static void RegisterServiceByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 && t.IsClass && !t.IsAbstract).ToList();
+        var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 && t.IsClass && !t.IsAbstract);
 
         foreach (var type in types)
         {

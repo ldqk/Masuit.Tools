@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 
