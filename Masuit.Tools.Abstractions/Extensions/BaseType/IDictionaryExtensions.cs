@@ -87,8 +87,6 @@ namespace Masuit.Tools
             }
         }
 
-#if NETSTANDARD2_1_OR_GREATER
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -123,8 +121,6 @@ namespace Masuit.Tools
             return @this[key];
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -143,8 +139,6 @@ namespace Masuit.Tools
 
             return @this[key];
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -184,8 +178,6 @@ namespace Masuit.Tools
             return @this[key];
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -204,8 +196,6 @@ namespace Masuit.Tools
 
             return @this[key];
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -243,8 +233,6 @@ namespace Masuit.Tools
             return @this[key];
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -263,8 +251,6 @@ namespace Masuit.Tools
 
             return @this[key];
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -298,8 +284,6 @@ namespace Masuit.Tools
             }
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -315,8 +299,6 @@ namespace Masuit.Tools
                 AddOrUpdate(@this, item.Key, item.Value, updateValueFactory);
             }
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -344,8 +326,6 @@ namespace Masuit.Tools
             return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -358,8 +338,6 @@ namespace Masuit.Tools
         {
             return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -393,8 +371,6 @@ namespace Masuit.Tools
             }
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -410,8 +386,6 @@ namespace Masuit.Tools
                 AddOrUpdate(that, item.Key, item.Value, updateValueFactory);
             }
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -439,8 +413,6 @@ namespace Masuit.Tools
             return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
         }
 
-#endif
-
         /// <summary>
         /// 添加或更新键值对
         /// </summary>
@@ -465,11 +437,7 @@ namespace Masuit.Tools
         /// <param name="updateValueFactory">更新时的操作</param>
         public static TValue AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
-            if (!@this.ContainsKey(key))
-            {
-                @this.Add(key, addValueFactory(key));
-            }
-            else
+            if (!@this.TryAdd(key, addValueFactory(key)))
             {
                 @this[key] = updateValueFactory(key, @this[key]);
             }
@@ -488,11 +456,7 @@ namespace Masuit.Tools
         /// <param name="updateValueFactory">更新时的操作</param>
         public static TValue AddOrUpdate<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
-            if (!@this.ContainsKey(key))
-            {
-                @this.Add(key, addValueFactory(key));
-            }
-            else
+            if (!@this.TryAdd(key, addValueFactory(key)))
             {
                 @this[key] = updateValueFactory(key, @this[key]);
             }
@@ -511,11 +475,7 @@ namespace Masuit.Tools
         /// <param name="updateValueFactory">更新时的操作</param>
         public static TValue AddOrUpdate<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
         {
-            if (!@this.ContainsKey(key))
-            {
-                @this.TryAdd(key, addValueFactory(key));
-            }
-            else
+            if (!@this.TryAdd(key, addValueFactory(key)))
             {
                 @this[key] = updateValueFactory(key, @this[key]);
             }
@@ -534,19 +494,13 @@ namespace Masuit.Tools
         /// <param name="updateValueFactory">更新时的操作</param>
         public static async Task<TValue> AddOrUpdateAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<TKey, Task<TValue>> addValueFactory, Func<TKey, TValue, Task<TValue>> updateValueFactory)
         {
-            if (!@this.ContainsKey(key))
-            {
-                @this.Add(key, await addValueFactory(key));
-            }
-            else
+            if (!@this.TryAdd(key, await addValueFactory(key)))
             {
                 @this[key] = await updateValueFactory(key, @this[key]);
             }
 
             return @this[key];
         }
-
-#if NETSTANDARD2_1_OR_GREATER
 
         /// <summary>
         /// 添加或更新键值对
@@ -566,8 +520,6 @@ namespace Masuit.Tools
 
             return @this[key];
         }
-
-#endif
 
         /// <summary>
         /// 添加或更新键值对
@@ -624,8 +576,6 @@ namespace Masuit.Tools
             return @this[key];
         }
 
-#if NETSTANDARD2_1_OR_GREATER
-
         /// <summary>
         /// 获取或添加
         /// </summary>
@@ -637,6 +587,19 @@ namespace Masuit.Tools
         public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> @this, TKey key, TValue addValue)
         {
             return @this.TryAdd(key, addValue) ? addValue : @this[key];
+        }
+
+#if NETSTANDARD2_1_OR_GREATER
+#else
+
+        public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey : notnull
+        {
+            if (dictionary == null)
+                throw new ArgumentNullException(nameof(dictionary));
+            if (dictionary.IsReadOnly||dictionary.ContainsKey(key))
+                return false;
+            dictionary.Add(key, value);
+            return true;
         }
 
 #endif
