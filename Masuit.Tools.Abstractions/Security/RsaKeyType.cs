@@ -1,9 +1,8 @@
-﻿namespace Masuit.Tools.Security
+﻿namespace Masuit.Tools.Security;
+
+public enum RsaKeyType
 {
-    public enum RsaKeyType
-    {
-        XML,
-        PKCS1,
-        PKCS8
-    }
+    XML,
+    PKCS1,
+    PKCS8
 }

@@ -6,10 +6,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Compression)]
-internal class Bzip2Detector : AbstractSignatureDetector
+internal sealed class Bzip2Detector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] Bz2SignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x42, 0x5A, 0x68 } },
+        new() { Position = 0, Signature = "BZh"u8.ToArray() },
     };
 
     public override string Extension => "bz2";

@@ -35,7 +35,7 @@ namespace Masuit.Tools.Hardware
         private static readonly PerformanceCounter DiskReadCounter;
         private static readonly PerformanceCounter DiskWriteCounter;
 
-        private static readonly string[] InstanceNames = new string[] { };
+        private static readonly string[] InstanceNames = { };
         private static readonly PerformanceCounter[] NetRecvCounters;
         private static readonly PerformanceCounter[] NetSentCounters;
         private static readonly Dictionary<string, dynamic> _cache = new();
@@ -190,15 +190,12 @@ namespace Masuit.Tools.Hardware
                 {
                     if (!IsWinPlatform)
                     {
-                        int cpuCount = Environment.ProcessorCount;
-                        return cpuCount;
+                        return Environment.ProcessorCount;
                     }
-                    else
-                    {
-                        using var m = new ManagementClass("Win32_Processor");
-                        using var moc = m.GetInstances();
-                        return moc.Count;
-                    }
+
+                    using var m = new ManagementClass("Win32_Processor");
+                    using var moc = m.GetInstances();
+                    return moc.Count;
                 });
             }
             catch (Exception)
@@ -207,7 +204,7 @@ namespace Masuit.Tools.Hardware
             }
         }
 
-        private static readonly Lazy<List<ManagementBaseObject>> CpuObjects = new Lazy<List<ManagementBaseObject>>(() =>
+        private static readonly Lazy<List<ManagementBaseObject>> CpuObjects = new(() =>
         {
             using var mos = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
             using var moc = mos.Get();
@@ -222,8 +219,7 @@ namespace Masuit.Tools.Hardware
         {
             try
             {
-                if (!IsWinPlatform) return new List<CpuInfo>();
-
+                if (!IsWinPlatform) return [];
                 return CpuObjects.Value.Select(mo => new CpuInfo
                 {
                     NumberOfLogicalProcessors = ProcessorCount,
@@ -239,7 +235,7 @@ namespace Masuit.Tools.Hardware
             }
             catch (Exception)
             {
-                return new List<CpuInfo>();
+                return [];
             }
         }
 
@@ -352,8 +348,8 @@ namespace Masuit.Tools.Hardware
             string s = QueryComputerSystem("totalphysicalmemory");
             if (string.IsNullOrEmpty(s)) return "";
 
-            float totalphysicalmemory = Convert.ToSingle(s);
-            float d = GetCounterValue(MemoryCounter, "Memory", "Available Bytes", null);
+            var totalphysicalmemory = Convert.ToSingle(s);
+            var d = GetCounterValue(MemoryCounter, "Memory", "Available Bytes", null);
             d = totalphysicalmemory - d;
             s = CompactFormat ? "%" : "% (" + FormatBytes(d) + " / " + FormatBytes(totalphysicalmemory) + ")";
             d /= totalphysicalmemory;
@@ -443,7 +439,7 @@ namespace Masuit.Tools.Hardware
             }
             catch (Exception)
             {
-                return new List<DiskInfo>();
+                return [];
             }
         }
 
@@ -680,7 +676,6 @@ namespace Masuit.Tools.Hardware
 
             var apps = new List<string>();
             int hwCurr = GetWindow(handle, GwHwndfirst);
-
             while (hwCurr > 0)
             {
                 int IsTask = WsVisible | WsBorder;
@@ -689,7 +684,7 @@ namespace Masuit.Tools.Hardware
                 if (taskWindow)
                 {
                     int length = GetWindowTextLength(new IntPtr(hwCurr));
-                    StringBuilder sb = new StringBuilder(2 * length + 1);
+                    var sb = new StringBuilder(2 * length + 1);
                     GetWindowText(hwCurr, sb, sb.Capacity);
                     string strTitle = sb.ToString();
                     if (!string.IsNullOrEmpty(strTitle))
@@ -718,16 +713,14 @@ namespace Masuit.Tools.Hardware
                     {
                         return Environment.OSVersion.Platform.ToString();
                     }
-                    else
+
+                    using var mc = new ManagementClass("Win32_ComputerSystem");
+                    using var moc = mc.GetInstances();
+                    foreach (var mo in moc)
                     {
-                        using var mc = new ManagementClass("Win32_ComputerSystem");
-                        using var moc = mc.GetInstances();
-                        foreach (var mo in moc)
-                        {
-                            return mo["SystemType"].ToString().Trim();
-                        }
-                        return "";
+                        return mo["SystemType"].ToString().Trim();
                     }
+                    return "";
                 });
             }
             catch (Exception e)
@@ -790,7 +783,7 @@ namespace Masuit.Tools.Hardware
                 string uuid = null;
                 string model = null;
                 if (guidKey != null) guid = guidKey.GetValue("MachineGuid") + "";
-                if (uuidKey != null) uuid = (uuidKey.GetValue("LastConfig") + "")?.Trim('{', '}').ToUpper();
+                if (uuidKey != null) uuid = (uuidKey.GetValue("LastConfig") + "").Trim('{', '}').ToUpper();
                 var biosKey = Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\BIOS");
                 biosKey ??= Registry.LocalMachine.OpenSubKey(@"SYSTEM\HardwareConfig\Current");
                 if (biosKey != null)

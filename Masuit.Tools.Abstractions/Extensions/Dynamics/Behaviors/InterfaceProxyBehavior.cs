@@ -36,21 +36,14 @@ internal class InterfaceProxyBehavior : ClayBehavior
         return Activator.CreateInstance(proxyType, interceptors, self);
     }
 
-    private class Interceptor : IInterceptor
+    private class Interceptor(object self) : IInterceptor
     {
-        private object Self { get; }
-
-        public Interceptor(object self)
-        {
-            Self = self;
-        }
-
         public void Intercept(IInvocation invocation)
         {
             if (invocation.Method == DynamicMetaObjectProviderGetMetaObject)
             {
                 var expression = (Expression)invocation.Arguments.Single();
-                invocation.ReturnValue = new ForwardingMetaObject(expression, BindingRestrictions.Empty, invocation.Proxy, (IDynamicMetaObjectProvider)Self, exprProxy => Expression.Field(exprProxy, "__target"));
+                invocation.ReturnValue = new ForwardingMetaObject(expression, BindingRestrictions.Empty, invocation.Proxy, (IDynamicMetaObjectProvider)self, exprProxy => Expression.Field(exprProxy, "__target"));
                 return;
             }
 

@@ -11,24 +11,17 @@ using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
-public class FromBodyOrDefaultModelBinder : IModelBinder
+public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> logger) : IModelBinder
 {
-    private static readonly List<BindType> BindTypes = new()
-    {
+    private static readonly List<BindType> BindTypes =
+    [
         BindType.Query,
         BindType.Body,
         BindType.Header,
         BindType.Form,
         BindType.Cookie,
         BindType.Route
-    };
-
-    private readonly ILogger<FromBodyOrDefaultModelBinder> _logger;
-
-    public FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> logger)
-    {
-        _logger = logger;
-    }
+    ];
 
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {
@@ -76,7 +69,7 @@ public class FromBodyOrDefaultModelBinder : IModelBinder
                         }
                         else
                         {
-                            _logger.LogWarning($"TraceIdentifier：{context.TraceIdentifier}，BodyOrDefaultModelBinder从{json}中获取{field}失败！");
+                            logger.LogWarning($"TraceIdentifier：{context.TraceIdentifier}，BodyOrDefaultModelBinder从{json}中获取{field}失败！");
                         }
                     }
                     else
@@ -88,7 +81,7 @@ public class FromBodyOrDefaultModelBinder : IModelBinder
                         }
                         catch (Exception e)
                         {
-                            _logger.LogError(e, e.Message, json.ToString());
+                            logger.LogError(e, e.Message, json.ToString());
                         }
                     }
                 }
@@ -209,7 +202,7 @@ public class FromBodyOrDefaultModelBinder : IModelBinder
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message, context.Request.ContentType);
+                logger.LogError(ex, ex.Message, context.Request.ContentType);
             }
         }
 

@@ -21,12 +21,7 @@ public class EnumOfAttribute : ValidationAttribute
 
     public override bool IsValid(object value)
     {
-        if (value is null)
-        {
-            return true;
-        }
-
-        return Enum.IsDefined(Type, value);
+        return value is null || Enum.IsDefined(Type, value);
     }
 }
 
@@ -37,11 +32,6 @@ public class NotNullOrEmptyAttribute : ValidationAttribute
 {
     public override bool IsValid(object value)
     {
-        if (value is null)
-        {
-            return false;
-        }
-
-        return !value.IsNullOrEmpty();
+        return value is not null && !value.IsNullOrEmpty();
     }
 }

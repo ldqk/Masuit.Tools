@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class PDBDetector : AbstractRegexSignatureDetector
+internal sealed class PDBDetector : AbstractRegexSignatureDetector
 {
     public override string Extension => "pdb";
 

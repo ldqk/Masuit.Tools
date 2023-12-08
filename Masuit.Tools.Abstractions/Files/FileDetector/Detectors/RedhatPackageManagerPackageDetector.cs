@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class RedhatPackageManagerPackageDetector : AbstractSignatureDetector
+internal sealed class RedhatPackageManagerPackageDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] RpmSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0xED, 0xAB, 0xEE, 0xDB } },

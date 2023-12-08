@@ -10,7 +10,6 @@ namespace Masuit.Tools.Media;
 public class ImageHasher
 {
     private readonly IImageTransformer _transformer;
-
     private float[][] _dctMatrix;
     private bool _isDctMatrixInitialized;
     private readonly object _dctMatrixLockObject = new();

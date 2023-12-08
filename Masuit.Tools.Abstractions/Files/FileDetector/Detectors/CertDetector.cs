@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class CertDetector : AbstractSignatureDetector
+internal sealed class CertDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] CrtSignatureInfo = {
         new() { Position = 0, Signature = Encoding.GetEncoding ( "ascii" ).GetBytes ( "-----BEGIN CERTIFICATE-----" ) },

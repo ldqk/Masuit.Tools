@@ -7,10 +7,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class QuakeArchiveDetector : AbstractSignatureDetector
+internal sealed class QuakeArchiveDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] PakSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x50, 0x41, 0x43, 0x4B } },
+        new() { Position = 0, Signature = "PACK"u8.ToArray() },
     };
 
     public override string Extension => "pak";

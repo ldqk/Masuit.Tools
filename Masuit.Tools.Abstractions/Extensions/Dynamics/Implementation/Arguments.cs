@@ -69,8 +69,10 @@ internal static class Arguments
 
             public Named(IEnumerable<T> arguments, IEnumerable<string> names)
             {
-                _arguments = arguments.Skip(arguments.Count() - names.Count());
-                _names = names;
+                var args = arguments as IList<T> ?? arguments.ToList();
+                var ns = names as IList<string> ?? names.ToList();
+                _arguments = args.Skip(args.Count - ns.Count());
+                _names = ns;
             }
 
             private IEnumerable<KeyValuePair<string, T>> MakeEnumerable()
@@ -141,29 +143,13 @@ internal static class Arguments
 
             T IDictionary<string, T>.this[string key]
             {
-                get
-                {
-                    return MakeEnumerable().Where(kv => kv.Key == key).Select(kv => kv.Value).FirstOrDefault();
-                }
-
+                get => MakeEnumerable().Where(kv => kv.Key == key).Select(kv => kv.Value).FirstOrDefault();
                 set => throw new NotImplementedException();
             }
 
-            ICollection<string> IDictionary<string, T>.Keys
-            {
-                get
-                {
-                    return _namesCollection ??= _names as ICollection<string> ?? _names.ToArray();
-                }
-            }
+            ICollection<string> IDictionary<string, T>.Keys => _namesCollection ??= _names as ICollection<string> ?? _names.ToArray();
 
-            ICollection<T> IDictionary<string, T>.Values
-            {
-                get
-                {
-                    return _argumentsCollection ??= _arguments as ICollection<T> ?? _arguments.ToArray();
-                }
-            }
+            ICollection<T> IDictionary<string, T>.Values => _argumentsCollection ??= _arguments as ICollection<T> ?? _arguments.ToArray();
         }
     }
 

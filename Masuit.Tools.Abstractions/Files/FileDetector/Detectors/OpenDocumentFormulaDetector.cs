@@ -9,7 +9,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class OpenDocumentFormulaDetector : AbstractZipDetailDetector
+internal sealed class OpenDocumentFormulaDetector : AbstractZipDetailDetector
 {
     public override IEnumerable<string> Files
     {

@@ -7,10 +7,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Compression)]
-internal class XarDetector : AbstractSignatureDetector
+internal sealed class XarDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] XarSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x78, 0x61, 0x72, 0x21 } },
+        new() { Position = 0, Signature = "xar!"u8.ToArray() },
     };
 
     public override string Extension => "xar";

@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 [FormatCategory(FormatCategory.Video)]
 [FormatCategory(FormatCategory.Audio)]
 [FormatCategory(FormatCategory.Image)]
-internal class MP4Detector : AbstractISOBaseMediaFileDetailDetector
+internal sealed class MP4Detector : AbstractISOBaseMediaFileDetailDetector
 {
     public override string Extension => "mp4";
 

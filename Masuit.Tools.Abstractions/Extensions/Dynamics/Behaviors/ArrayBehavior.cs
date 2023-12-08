@@ -7,7 +7,7 @@ namespace Masuit.Tools.Dynamics.Behaviors;
 
 internal class ArrayBehavior : ClayBehavior
 {
-    private readonly List<object> _data = new();
+    private readonly List<object> _data = [];
 
     /// <inheritdoc />
     public override object GetIndex(Func<object> proceed, object self, IEnumerable<string> keys)
@@ -33,6 +33,7 @@ internal class ArrayBehavior : ClayBehavior
             case "GetEnumerator":
                 return new Clay(new InterfaceProxyBehavior(), new EnumeratorBehavior(_data.GetEnumerator()));
         }
+
         return proceed();
     }
 
@@ -50,9 +51,17 @@ internal class ArrayBehavior : ClayBehavior
                 return self;
 
             case "Insert":
-                return IfInitialInteger(args, (index, arr) => { _data.InsertRange(index, arr); return self; }, proceed);
+                return IfInitialInteger(args, (index, arr) =>
+                {
+                    _data.InsertRange(index, arr);
+                    return self;
+                }, proceed);
             case "RemoveAt":
-                return IfSingleInteger(args, index => { _data.RemoveAt(index); return self; }, proceed);
+                return IfSingleInteger(args, index =>
+                {
+                    _data.RemoveAt(index);
+                    return self;
+                }, proceed);
             case "Contains":
                 return IfSingleArgument(args, arg => _data.Contains(arg), proceed);
 
@@ -70,12 +79,7 @@ internal class ArrayBehavior : ClayBehavior
                 }, proceed);
         }
 
-        if (!args.Any())
-        {
-            return GetMember(proceed, self, name);
-        }
-
-        return proceed();
+        return args.Any() ? proceed() : GetMember(proceed, self, name);
     }
 
     private static object IfArguments<T1, T2>(IEnumerable<object> args, Func<T1, T2, object> func, Func<object> proceed)
@@ -108,45 +112,38 @@ internal class ArrayBehavior : ClayBehavior
         return proceed();
     }
 
-    private class EnumeratorBehavior : ClayBehavior
+    private class EnumeratorBehavior(IEnumerator enumerator) : ClayBehavior
     {
-        private readonly IEnumerator _enumerator;
-
-        public EnumeratorBehavior(IEnumerator enumerator)
-        {
-            _enumerator = enumerator;
-        }
-
         public override object InvokeMember(Func<object> proceed, object self, string name, INamedEnumerable<object> args)
         {
             switch (name)
             {
                 case "MoveNext":
-                    return _enumerator.MoveNext();
+                    return enumerator.MoveNext();
 
                 case "Reset":
-                    _enumerator.Reset();
+                    enumerator.Reset();
                     return null;
 
                 case "Dispose":
-                    if (_enumerator is IDisposable disposable)
+                    if (enumerator is IDisposable disposable)
                     {
                         disposable.Dispose();
                     }
 
                     return null;
             }
+
             return proceed();
         }
 
         public override object GetMember(Func<object> proceed, object self, string name)
         {
-            switch (name)
+            return name switch
             {
-                case "Current":
-                    return _enumerator.Current;
-            }
-            return proceed();
+                "Current" => enumerator.Current,
+                _ => proceed()
+            };
         }
     }
 }

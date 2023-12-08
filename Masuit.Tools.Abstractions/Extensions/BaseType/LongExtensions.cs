@@ -1,52 +1,51 @@
 ﻿using Masuit.Tools.Strings;
 using System;
 
-namespace Masuit.Tools
+namespace Masuit.Tools;
+
+public static class LongExtensions
 {
-    public static class LongExtensions
+    /// <summary>
+    /// 十进制转任意进制
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="newBase">进制</param>
+    /// <returns></returns>
+    public static string ToBase(this long num, byte newBase)
     {
-        /// <summary>
-        /// 十进制转任意进制
-        /// </summary>
-        /// <param name="num"></param>
-        /// <param name="newBase">进制</param>
-        /// <returns></returns>
-        public static string ToBase(this long num, byte newBase)
-        {
-            var nf = new NumberFormater(newBase);
-            return nf.ToString(num);
-        }
+        var nf = new NumberFormater(newBase);
+        return nf.ToString(num);
+    }
 
-        /// <summary>
-        /// 转换成字节数组
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static byte[] GetBytes(this long value)
-        {
-            return BitConverter.GetBytes(value);
-        }
+    /// <summary>
+    /// 转换成字节数组
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static byte[] GetBytes(this long value)
+    {
+        return BitConverter.GetBytes(value);
+    }
 
-        /// <summary>
-        /// 十进制转任意进制
-        /// </summary>
-        /// <param name="num"></param>
-        /// <param name="newBase">进制</param>
-        /// <returns></returns>
-        public static string ToBase(this ulong num, byte newBase)
-        {
-            var nf = new NumberFormater(newBase);
-            return nf.ToString(num);
-        }
+    /// <summary>
+    /// 十进制转任意进制
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="newBase">进制</param>
+    /// <returns></returns>
+    public static string ToBase(this ulong num, byte newBase)
+    {
+        var nf = new NumberFormater(newBase);
+        return nf.ToString(num);
+    }
 
-        /// <summary>
-        /// 转换成字节数组
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static byte[] GetBytes(this ulong value)
-        {
-            return BitConverter.GetBytes(value);
-        }
+    /// <summary>
+    /// 转换成字节数组
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static byte[] GetBytes(this ulong value)
+    {
+        return BitConverter.GetBytes(value);
     }
 }

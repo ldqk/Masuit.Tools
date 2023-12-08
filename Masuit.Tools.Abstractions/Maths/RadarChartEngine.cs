@@ -21,7 +21,7 @@ namespace Masuit.Tools.Maths
             var count = points.Count;
             for (var i = 0; i < count; i++)
             {
-                area = area + (points[i].X * points[(i + 1) % count].Y - points[(i + 1) % count].X * points[i].Y);
+                area += (points[i].X * points[(i + 1) % count].Y - points[(i + 1) % count].X * points[i].Y);
             }
 
             return Math.Abs(0.5 * area);

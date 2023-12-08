@@ -7,7 +7,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
 [FormatCategory(FormatCategory.Compression)]
-internal class _7zDetector : AbstractSignatureDetector
+internal sealed class _7zDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] _7ZSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x37, 0x7A, 0xBC, 0xAF, 0x27, 0x1C } },

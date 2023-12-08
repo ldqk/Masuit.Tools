@@ -8,11 +8,11 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
 [FormatCategory(FormatCategory.Video)]
-internal class WebPDetector : AbstractSignatureDetector
+internal sealed class WebPDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] WebpSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x52, 0x49, 0x46, 0x46 } },
-        new() { Position = 8, Signature = new byte [] { 0x57, 0x45, 0x42, 0x50 }, Presignature = new byte [] { 0x52, 0x49, 0x46, 0x46 } },
+        new() { Position = 0, Signature = "RIFF"u8.ToArray() },
+        new() { Position = 8, Signature = "WEBP"u8.ToArray(), Presignature = "RIFF"u8.ToArray() },
     };
 
     public override string Extension => "webp";

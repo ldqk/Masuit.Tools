@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class UStarFormatTarDetector : AbstractSignatureDetector
+internal sealed class UStarFormatTarDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] TarSignatureInfo = {
         new () { Position = 0x101, Signature = new byte [] { 0x75, 0x73, 0x74, 0x61, 0x72, 0x00, 0x30, 0x30 } },

@@ -8,11 +8,11 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Video)]
 [FormatCategory(FormatCategory.Image)]
-internal class GifDetector : AbstractSignatureDetector
+internal sealed class GifDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] GifSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 } },
-        new() { Position = 0, Signature = new byte [] { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 } },
+        new() { Position = 0, Signature = "GIF87a"u8.ToArray() },
+        new() { Position = 0, Signature = "GIF89a"u8.ToArray() },
     };
 
     public override string Extension => "gif";

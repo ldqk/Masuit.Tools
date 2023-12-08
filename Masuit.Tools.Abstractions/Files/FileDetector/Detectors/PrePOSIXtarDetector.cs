@@ -9,7 +9,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class POSIXtarDetector : IDetector
+internal sealed class POSIXtarDetector : IDetector
 {
     public string Precondition => null;
 

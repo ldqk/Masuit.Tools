@@ -43,7 +43,7 @@ public abstract class AbstractFullRegexDetector : IDetector
         foreach (var encoding in encodings)
         {
             stream.Position = 0;
-            using var reader = new StreamReader(stream, encoding, true, 4096, true);
+            var reader = new StreamReader(stream, encoding, true, 4096, true);
             string buffer = reader.ReadToEnd();
             if (Pattern.Replace(buffer, "") == string.Empty)
             {

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Masuit.Tools.Models;
 
 /// <summary>
 /// 版本号
 /// </summary>
-[DataContract]
 public sealed record VersionNumber : IComparable, IComparable<VersionNumber>
 {
     /// <summary>

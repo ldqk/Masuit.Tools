@@ -6,11 +6,11 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
-internal class BitmapDetector : AbstractSignatureDetector
+internal sealed class BitmapDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] BmpSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x42, 0x4D } },
-        new() { Position = 6, Signature = new byte [] { 0x00, 0x00, 0x00, 0x00 }, Presignature = new byte [] { 0x42, 0x4D } },
+        new() { Position = 0, Signature = "BM"u8.ToArray() },
+        new() { Position = 6, Signature = new byte [] { 0x00, 0x00, 0x00, 0x00 }, Presignature = "BM"u8.ToArray() },
     };
 
     public override string Extension => "bmp";

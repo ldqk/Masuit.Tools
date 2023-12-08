@@ -14,7 +14,7 @@ public sealed class ConcurrentHashSet<T> : ISet<T>, IDisposable
 {
     private readonly ReaderWriterLockSlim _lock = new(LockRecursionPolicy.SupportsRecursion);
 
-    private readonly HashSet<T> _hashSet = new();
+    private readonly HashSet<T> _hashSet = [];
 
     public int Count
     {
@@ -48,7 +48,7 @@ public sealed class ConcurrentHashSet<T> : ISet<T>, IDisposable
 
     public ConcurrentHashSet(IEnumerable<T> collection)
     {
-        _hashSet = new HashSet<T>(collection);
+        _hashSet = [.. collection];
     }
 
     public ConcurrentHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
@@ -58,7 +58,7 @@ public sealed class ConcurrentHashSet<T> : ISet<T>, IDisposable
 
     public ConcurrentHashSet(SerializationInfo info, StreamingContext context)
     {
-        _hashSet = new HashSet<T>();
+        _hashSet = [];
         var iSerializable = (ISerializable)_hashSet;
         iSerializable.GetObjectData(info, context);
     }

@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class PPSXDetector : AbstractZipDetailDetector
+internal sealed class PPSXDetector : AbstractZipDetailDetector
 {
     public override IEnumerable<string> Files
     {
@@ -32,7 +32,7 @@ internal class PPSXDetector : AbstractZipDetailDetector
     {
         if (filename == "[Content_Types].xml")
         {
-            using StreamReader reader = new StreamReader(entry.Open());
+            var reader = new StreamReader(entry.Open());
             var text = reader.ReadToEnd();
             return text.IndexOf("<Override PartName=\"/ppt/presentation.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slideshow.main+xml\"/>") >= 0;
         }

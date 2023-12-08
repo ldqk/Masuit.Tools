@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class TextDetector : IDetector
+internal sealed class TextDetector : IDetector
 {
     private static readonly byte[] SignatureBuffer = new byte[4];
     private static readonly char[] TextBuffer = new char[4096];

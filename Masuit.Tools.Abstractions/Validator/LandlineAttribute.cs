@@ -5,7 +5,7 @@ namespace Masuit.Tools.Core.Validator;
 /// <summary>
 /// 验证固定电话是否合法
 /// </summary>
-public class IsLandlineAttribute : ValidationAttribute
+public class LandlineAttribute : ValidationAttribute
 {
     /// <summary>
     /// 是否允许为空
@@ -18,7 +18,7 @@ public class IsLandlineAttribute : ValidationAttribute
     ///
     /// </summary>
     /// <param name="customMessage">自定义错误消息</param>
-    public IsLandlineAttribute(string customMessage = null)
+    public LandlineAttribute(string customMessage = null)
     {
         _customMessage = customMessage;
     }

@@ -7,11 +7,11 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Audio)]
-internal class WaveDetector : AbstractSignatureDetector
+internal sealed class WaveDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] WavSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x52, 0x49, 0x46, 0x46 } },
-        new() { Position = 8, Signature = new byte [] { 0x57, 0x41, 0x56, 0x45 }, Presignature = new byte [] { 0x52, 0x49, 0x46, 0x46 } },
+        new() { Position = 0, Signature = "RIFF"u8.ToArray() },
+        new() { Position = 8, Signature = "WAVE"u8.ToArray(), Presignature = "RIFF"u8.ToArray() },
     };
 
     public override string Extension => "wav";

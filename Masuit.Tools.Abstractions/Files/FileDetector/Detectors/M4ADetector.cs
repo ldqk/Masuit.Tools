@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Audio)]
-internal class M4ADetector : AbstractISOBaseMediaFileDetailDetector
+internal sealed class M4ADetector : AbstractISOBaseMediaFileDetailDetector
 {
     public override string Extension => "m4a";
 

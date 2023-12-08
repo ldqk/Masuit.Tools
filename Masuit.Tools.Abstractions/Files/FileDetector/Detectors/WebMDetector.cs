@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Video)]
 [FormatCategory(FormatCategory.Audio)]
-internal class WebMDetector : AbstractSignatureDetector
+internal sealed class WebMDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] WebmSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x1A, 0x45, 0xDF, 0xA3 } },

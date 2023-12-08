@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class SQLiteDetector : AbstractSignatureDetector
+internal sealed class SQLiteDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] SqliteSignatureInfo = {
         new () { Position = 0, Signature = new byte [] { 0x53, 0x51, 0x4C, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6F, 0x72, 0x6D, 0x61, 0x74, 0x20, 0x33, 0x00 } },

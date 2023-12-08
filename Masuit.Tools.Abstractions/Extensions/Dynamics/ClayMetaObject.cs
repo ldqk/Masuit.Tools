@@ -8,10 +8,9 @@ using Masuit.Tools.Dynamics.Implementation;
 
 namespace Masuit.Tools.Dynamics;
 
-internal class ClayMetaObject : DynamicMetaObject
+internal class ClayMetaObject(object value, Expression expression) : DynamicMetaObject(expression, BindingRestrictions.Empty, value)
 {
     private static readonly MethodInfo ClayBehaviorInvokeMember = typeof(IClayBehavior).GetMethod("InvokeMember");
-
     private static readonly MethodInfo ClayBehaviorGetMember = typeof(IClayBehavior).GetMethod("GetMember");
     private static readonly MethodInfo ClayBehaviorSetMember = typeof(IClayBehavior).GetMethod("SetMember");
     private static readonly MethodInfo ClayBehaviorGetIndex = typeof(IClayBehavior).GetMethod("GetIndex");
@@ -22,10 +21,6 @@ internal class ClayMetaObject : DynamicMetaObject
     private static readonly MethodInfo ClayBehaviorGetMemberMissing = typeof(IClayBehavior).GetMethod("GetMemberMissing");
     private static readonly MethodInfo ClayBehaviorSetMemberMissing = typeof(IClayBehavior).GetMethod("SetMemberMissing");
     private static readonly MethodInfo ClayBehaviorConvertMissing = typeof(IClayBehavior).GetMethod("ConvertMissing");
-
-    public ClayMetaObject(object value, Expression expression) : base(expression, BindingRestrictions.Empty, value)
-    {
-    }
 
     public ClayMetaObject(object value, Expression expression, Func<Expression, Expression> getClayBehavior) : this(value, expression)
     {

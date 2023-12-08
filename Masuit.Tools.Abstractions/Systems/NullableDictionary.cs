@@ -10,11 +10,11 @@ namespace Masuit.Tools.Systems;
 /// <typeparam name="TValue"></typeparam>
 public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TValue>
 {
-    public NullableDictionary() : base()
+    public NullableDictionary()
     {
     }
 
-    public NullableDictionary(TValue fallbackValue) : base()
+    public NullableDictionary(TValue fallbackValue)
     {
         FallbackValue = fallbackValue;
     }

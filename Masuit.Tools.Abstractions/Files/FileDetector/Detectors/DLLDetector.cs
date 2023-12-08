@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.System)]
 [FormatCategory(FormatCategory.Executable)]
-internal class DLLDetector : IDetector
+internal sealed class DLLDetector : IDetector
 {
     public string Precondition => "exe";
 

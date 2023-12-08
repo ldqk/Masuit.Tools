@@ -7,10 +7,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class RichTextFormatDetector : AbstractSignatureDetector
+internal sealed class RichTextFormatDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] RtfSignatureInfo = {
-        new () { Position = 0, Signature = new byte [] { 0x7B, 0x5C, 0x72, 0x74, 0x66, 0x31 } },
+        new () { Position = 0, Signature = "{\\rtf1"u8.ToArray() },
     };
 
     public override string Extension => "rtf";

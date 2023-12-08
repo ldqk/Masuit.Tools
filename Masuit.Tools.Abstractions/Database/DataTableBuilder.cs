@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 
 namespace Masuit.Tools.Database
 {
-    internal class DataTableBuilder<T>
+    internal sealed class DataTableBuilder<T>
     {
         private static readonly MethodInfo GetValueMethod = typeof(DataRow).GetMethod("get_Item", new[]
         {
@@ -32,7 +32,7 @@ namespace Masuit.Tools.Database
 
         public static DataTableBuilder<T> CreateBuilder(DataRow dataRecord)
         {
-            DynamicMethod methodCreateEntity = new DynamicMethod("DynamicCreateEntity", typeof(T), new[]
+            var methodCreateEntity = new DynamicMethod("DynamicCreateEntity", typeof(T), new[]
             {
                 typeof(DataRow)
             }, typeof(T), true);

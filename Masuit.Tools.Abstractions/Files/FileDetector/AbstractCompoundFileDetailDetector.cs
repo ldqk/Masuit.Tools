@@ -36,16 +36,10 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         try
         {
             using var cf = new CompoundFile(stream, CFSConfiguration.LeaveOpen | CFSConfiguration.Default);
-            foreach (var chunk in Chunks)
-            {
-                var compoundFileStream = cf.RootStorage.GetStream(chunk);
-                if (compoundFileStream == null || !IsValidChunk(chunk, compoundFileStream.GetData()))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return !(from chunk in Chunks
+                     let compoundFileStream = cf.RootStorage.GetStream(chunk)
+                     where compoundFileStream == null || !IsValidChunk(chunk, compoundFileStream.GetData())
+                     select chunk).Any();
         }
         catch
         {
@@ -156,12 +150,11 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         public void Insert(IRBNode newNode)
         {
             newNode.Color = Color.RED;
-            IRBNode insertedNode = newNode;
 
-            if (Root == null) Root = insertedNode;
+            if (Root == null) Root = newNode;
             else
             {
-                IRBNode n = Root;
+                var n = Root;
                 while (true)
                 {
                     int compResult = newNode.CompareTo(n);
@@ -170,7 +163,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                     {
                         if (n.Left == null)
                         {
-                            n.Left = insertedNode;
+                            n.Left = newNode;
                             break;
                         }
 
@@ -180,17 +173,17 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                     {
                         if (n.Right == null)
                         {
-                            n.Right = insertedNode;
+                            n.Right = newNode;
                             break;
                         }
                         n = n.Right;
                     }
                 }
-                insertedNode.Parent = n;
+                newNode.Parent = n;
             }
 
-            Insert1(insertedNode);
-            NodeInserted?.Invoke(insertedNode);
+            Insert1(newNode);
+            NodeInserted?.Invoke(newNode);
         }
 
         private void Insert1(IRBNode n)
@@ -255,17 +248,23 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 DoVisitTree(action, walker);
         }
 
-        private void DoVisitTree(Action<IRBNode> action, IRBNode walker)
+        private static void DoVisitTree(Action<IRBNode> action, IRBNode walker)
         {
-            if (walker.Left != null)
+            while (true)
             {
-                DoVisitTree(action, walker.Left);
-            }
+                if (walker.Left != null)
+                {
+                    DoVisitTree(action, walker.Left);
+                }
 
-            action?.Invoke(walker);
-            if (walker.Right != null)
-            {
-                DoVisitTree(action, walker.Right);
+                action?.Invoke(walker);
+                if (walker.Right != null)
+                {
+                    walker = walker.Right;
+                    continue;
+                }
+
+                break;
             }
         }
 
@@ -280,15 +279,21 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private void DoVisitTreeNodes(Action<IRBNode> action, IRBNode walker)
         {
-            if (walker.Left != null)
+            while (true)
             {
-                DoVisitTreeNodes(action, walker.Left);
-            }
+                if (walker.Left != null)
+                {
+                    DoVisitTreeNodes(action, walker.Left);
+                }
 
-            action?.Invoke(walker);
-            if (walker.Right != null)
-            {
-                DoVisitTreeNodes(action, walker.Right);
+                action?.Invoke(walker);
+                if (walker.Right != null)
+                {
+                    walker = walker.Right;
+                    continue;
+                }
+
+                break;
             }
         }
 
@@ -298,7 +303,9 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             private Queue<IRBNode> heap = new();
 
             internal RBTreeEnumerator(RBTree tree)
-            { tree.VisitTreeNodes(item => heap.Enqueue(item)); }
+            {
+                tree.VisitTreeNodes(heap.Enqueue);
+            }
 
             public IRBNode Current => heap.ElementAt(position);
 
@@ -307,13 +314,13 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
             object System.Collections.IEnumerator.Current => heap.ElementAt(position);
 
-            public bool MoveNext() => (++position < heap.Count);
+            public bool MoveNext() => ++position < heap.Count;
 
             public void Reset()
             { position = -1; }
         }
 
-        public RBTreeEnumerator GetEnumerator() => new RBTreeEnumerator(this);
+        public RBTreeEnumerator GetEnumerator() => new(this);
 
         internal void FireNodeOperation(IRBNode node, NodeOp operation)
         {
@@ -355,22 +362,22 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public Sector(int size, Stream stream)
         {
-            this.Size = size;
-            this._stream = stream;
+            Size = size;
+            _stream = stream;
         }
 
         public Sector(int size, byte[] data)
         {
-            this.Size = size;
-            this._data = data;
-            this._stream = null;
+            Size = size;
+            _data = data;
+            _stream = null;
         }
 
         public Sector(int size)
         {
-            this.Size = size;
-            this._data = null;
-            this._stream = null;
+            Size = size;
+            _data = null;
+            _stream = null;
         }
 
         internal SectorType Type { get; set; }
@@ -413,9 +420,9 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             DirtyFlag = true;
         }
 
-        internal void ReleaseData() => this._data = null;
+        internal void ReleaseData() => _data = null;
 
-        private readonly object _lockObject = new Object();
+        private readonly object _lockObject = new();
 
         #region IDisposable Members
 
@@ -429,10 +436,10 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 {
                     lock (_lockObject)
                     {
-                        this._data = null;
-                        this.DirtyFlag = false;
-                        this.Id = Sector.Endofchain;
-                        this.Size = 0;
+                        _data = null;
+                        DirtyFlag = false;
+                        Id = Endofchain;
+                        Size = 0;
                     }
                 }
             }
@@ -455,25 +462,23 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
     internal sealed class DirectoryEntry : IRBNode
     {
-        internal const int THIS_IS_GREATER = 1;
-        internal const int OTHER_IS_GREATER = -1;
-        private IList<DirectoryEntry> dirRepository;
+        internal const int ThisIsGreater = 1;
+        internal const int OtherIsGreater = -1;
+        private readonly IList<DirectoryEntry> _dirRepository;
 
-        public int SID { get; set; } = -1;
+        public int Sid { get; set; } = -1;
 
-        internal const Int32 NOSTREAM = unchecked((int)0xFFFFFFFF);
+        internal const int Nostream = unchecked((int)0xFFFFFFFF);
 
-        private DirectoryEntry(String name, StgType stgType, IList<DirectoryEntry> dirRepository)
+        private DirectoryEntry(string name, StgType stgType, IList<DirectoryEntry> dirRepository)
         {
-            this.dirRepository = dirRepository;
-
-            this.StgType = stgType;
-
+            _dirRepository = dirRepository;
+            StgType = stgType;
             switch (stgType)
             {
                 case StgType.StgStream:
 
-                    StorageCLSID = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                    StorageClsid = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     CreationDate = new byte[8];
                     ModifyDate = new byte[8];
                     break;
@@ -488,34 +493,29 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                     break;
             }
 
-            this.SetEntryName(name);
+            SetEntryName(name);
         }
 
         public byte[] EntryName { get; private set; } = new byte[64];
 
-        public String GetEntryName()
+        public string GetEntryName()
         {
-            if (EntryName != null && EntryName.Length > 0)
-                return Encoding.Unicode.GetString(EntryName).Remove((NameLength - 1) / 2);
-            else return String.Empty;
+            return EntryName is { Length: > 0 } ? Encoding.Unicode.GetString(EntryName).Remove((NameLength - 1) / 2) : string.Empty;
         }
 
-        public void SetEntryName(String entryName)
+        public void SetEntryName(string entryName)
         {
-            if (entryName.Contains(@"\") || entryName.Contains(@"/") ||
-                entryName.Contains(@":") || entryName.Contains(@"!"))
+            if (entryName.Contains(@"\") || entryName.Contains(@"/") || entryName.Contains(@":") || entryName.Contains(@"!"))
                 throw new Exception("Invalid character in entry: the characters '\\', '/', ':','!' cannot be used in entry name");
 
             if (entryName.Length > 31)
                 throw new Exception("Entry name MUST be smaller than 31 characters");
 
-            byte[] newName = null;
             byte[] temp = Encoding.Unicode.GetBytes(entryName);
-            newName = new byte[64];
+            var newName = new byte[64];
             Buffer.BlockCopy(temp, 0, newName, 0, temp.Length);
             newName[temp.Length] = 0x00;
             newName[temp.Length + 1] = 0x00;
-
             EntryName = newName;
             NameLength = (ushort)(temp.Length + 2);
         }
@@ -526,53 +526,47 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public Color Color { get; set; } = Color.BLACK;
 
-        public Int32 LeftSibling { get; set; } = NOSTREAM;
+        public int LeftSibling { get; set; } = Nostream;
 
-        public Int32 RightSibling { get; set; } = NOSTREAM;
+        public int RightSibling { get; set; } = Nostream;
 
-        public Int32 Child { get; set; } = NOSTREAM;
+        public int Child { get; set; } = Nostream;
 
-        public Guid StorageCLSID { get; set; } = Guid.NewGuid();
+        public Guid StorageClsid { get; set; } = Guid.NewGuid();
 
-        public Int32 StateBits { get; set; }
+        public int StateBits { get; set; }
 
         public byte[] CreationDate { get; set; } = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
         public byte[] ModifyDate { get; set; } = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-        public Int32 StartSetc { get; set; } = Sector.Endofchain;
+        public int StartSetc { get; set; } = Sector.Endofchain;
 
         public long Size { get; set; }
 
         public int CompareTo(object obj)
         {
-            DirectoryEntry otherDir = obj as DirectoryEntry;
-
-            if (otherDir == null)
+            if (obj is not DirectoryEntry otherDir)
                 throw new Exception("Invalid casting: compared object does not implement IDirectorEntry interface");
 
-            if (this.NameLength > otherDir.NameLength)
-                return THIS_IS_GREATER;
-            else if (this.NameLength < otherDir.NameLength)
-                return OTHER_IS_GREATER;
-            else
+            if (NameLength > otherDir.NameLength)
+                return ThisIsGreater;
+            if (NameLength < otherDir.NameLength)
+                return OtherIsGreater;
+            string thisName = Encoding.Unicode.GetString(EntryName, 0, NameLength);
+            string otherName = Encoding.Unicode.GetString(otherDir.EntryName, 0, otherDir.NameLength);
+            for (int z = 0; z < thisName.Length; z++)
             {
-                String thisName = Encoding.Unicode.GetString(this.EntryName, 0, this.NameLength);
-                String otherName = Encoding.Unicode.GetString(otherDir.EntryName, 0, otherDir.NameLength);
+                char thisChar = char.ToUpperInvariant(thisName[z]);
+                char otherChar = char.ToUpperInvariant(otherName[z]);
 
-                for (int z = 0; z < thisName.Length; z++)
-                {
-                    char thisChar = char.ToUpperInvariant(thisName[z]);
-                    char otherChar = char.ToUpperInvariant(otherName[z]);
-
-                    if (thisChar > otherChar)
-                        return THIS_IS_GREATER;
-                    else if (thisChar < otherChar)
-                        return OTHER_IS_GREATER;
-                }
-
-                return 0;
+                if (thisChar > otherChar)
+                    return ThisIsGreater;
+                if (thisChar < otherChar)
+                    return OtherIsGreater;
             }
+
+            return 0;
         }
 
         public override bool Equals(object obj)
@@ -584,7 +578,6 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         {
             ulong h = 2166136261;
             int i;
-
             for (i = 0; i < buffer.Length; i++)
                 h = (h * 16777619) ^ buffer[i];
 
@@ -607,20 +600,18 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 LeftSibling = rw.ReadInt32();
                 RightSibling = rw.ReadInt32();
                 Child = rw.ReadInt32();
-
                 if (StgType == StgType.StgInvalid)
                 {
-                    LeftSibling = NOSTREAM;
-                    RightSibling = NOSTREAM;
-                    Child = NOSTREAM;
+                    LeftSibling = Nostream;
+                    RightSibling = Nostream;
+                    Child = Nostream;
                 }
 
-                StorageCLSID = new Guid(rw.ReadBytes(16));
+                StorageClsid = new Guid(rw.ReadBytes(16));
                 StateBits = rw.ReadInt32();
                 CreationDate = rw.ReadBytes(8);
                 ModifyDate = rw.ReadBytes(8);
                 StartSetc = rw.ReadInt32();
-
                 if (ver == 3)
                 {
                     Size = rw.ReadInt32();
@@ -637,33 +628,28 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         {
             get
             {
-                if (LeftSibling == NOSTREAM)
+                if (LeftSibling == Nostream)
                     return null;
-                return dirRepository[LeftSibling];
+                return _dirRepository[LeftSibling];
             }
 
             set
             {
-                LeftSibling = value != null ? (value as DirectoryEntry).SID : NOSTREAM;
-                if (LeftSibling != NOSTREAM)
-                    dirRepository[LeftSibling].Parent = this;
+                LeftSibling = (value as DirectoryEntry)?.Sid ?? Nostream;
+                if (LeftSibling != Nostream)
+                    _dirRepository[LeftSibling].Parent = this;
             }
         }
 
         public IRBNode Right
         {
-            get
-            {
-                if (RightSibling == NOSTREAM)
-                    return null;
-                return dirRepository[RightSibling];
-            }
+            get => RightSibling == Nostream ? null : _dirRepository[RightSibling];
 
             set
             {
-                RightSibling = value != null ? ((DirectoryEntry)value).SID : NOSTREAM;
-                if (RightSibling != NOSTREAM)
-                    dirRepository[RightSibling].Parent = this;
+                RightSibling = ((DirectoryEntry)value)?.Sid ?? Nostream;
+                if (RightSibling != Nostream)
+                    _dirRepository[RightSibling].Parent = this;
             }
         }
 
@@ -677,25 +663,24 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         internal static DirectoryEntry New(String name, StgType stgType, IList<DirectoryEntry> dirRepository)
         {
-            DirectoryEntry de = null;
+            DirectoryEntry de;
             if (dirRepository != null)
             {
                 de = new DirectoryEntry(name, stgType, dirRepository);
                 dirRepository.Add(de);
-                de.SID = dirRepository.Count - 1;
+                de.Sid = dirRepository.Count - 1;
             }
             else
-                throw new ArgumentNullException("dirRepository", "Directory repository cannot be null in New() method");
+                throw new ArgumentNullException(nameof(dirRepository), "Directory repository cannot be null in New() method");
 
             return de;
         }
 
-        internal static DirectoryEntry Mock(String name, StgType stgType) => new DirectoryEntry(name, stgType, null);
+        internal static DirectoryEntry Mock(string name, StgType stgType) => new(name, stgType, null);
 
-        internal static DirectoryEntry TryNew(String name, StgType stgType, IList<DirectoryEntry> dirRepository)
+        internal static DirectoryEntry TryNew(string name, StgType stgType, IList<DirectoryEntry> dirRepository)
         {
-            DirectoryEntry de = new DirectoryEntry(name, stgType, dirRepository);
-
+            var de = new DirectoryEntry(name, stgType, dirRepository);
             if (de != null)
             {
                 for (int i = 0; i < dirRepository.Count; i++)
@@ -703,37 +688,32 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                     if (dirRepository[i].StgType == StgType.StgInvalid)
                     {
                         dirRepository[i] = de;
-                        de.SID = i;
+                        de.Sid = i;
                         return de;
                     }
                 }
             }
 
             dirRepository.Add(de);
-            de.SID = dirRepository.Count - 1;
-
+            de.Sid = dirRepository.Count - 1;
             return de;
         }
 
-        public override string ToString() => $"{Name} [{SID}]{(StgType == StgType.StgStream ? "Stream" : "Storage")}";
+        public override string ToString() => $"{Name} [{Sid}]{(StgType == StgType.StgStream ? "Stream" : "Storage")}";
 
         public void AssignValueTo(IRBNode other)
         {
-            DirectoryEntry d = other as DirectoryEntry;
-
+            var d = other as DirectoryEntry;
             d.SetEntryName(GetEntryName());
-
             d.CreationDate = new byte[CreationDate.Length];
             CreationDate.CopyTo(d.CreationDate, 0);
-
             d.ModifyDate = new byte[ModifyDate.Length];
             ModifyDate.CopyTo(d.ModifyDate, 0);
-
             d.Size = Size;
             d.StartSetc = StartSetc;
             d.StateBits = StateBits;
             d.StgType = StgType;
-            d.StorageCLSID = new Guid(StorageCLSID.ToByteArray());
+            d.StorageClsid = new Guid(StorageClsid.ToByteArray());
             d.Child = Child;
         }
     }
@@ -754,7 +734,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         { }
 
         protected CFItem(CompoundFile compoundFile)
-        { this.compoundFile = compoundFile; }
+        { compoundFile = compoundFile; }
 
         internal DirectoryEntry DirEntry { get; set; }
 
@@ -764,7 +744,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public static bool operator ==(CFItem leftItem, CFItem rightItem)
         {
-            if (System.Object.ReferenceEquals(leftItem, rightItem))
+            if (ReferenceEquals(leftItem, rightItem))
                 return true;
             if (((object)leftItem == null) || ((object)rightItem == null))
                 return false;
@@ -822,12 +802,12 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public Guid CLSID
         {
-            get => DirEntry.StorageCLSID;
+            get => DirEntry.StorageClsid;
 
             set
             {
                 if (DirEntry.StgType != StgType.StgStream)
-                    DirEntry.StorageCLSID = value;
+                    DirEntry.StorageClsid = value;
                 else
                     throw new Exception("Object class GUID can only be set on Root and Storage entries");
             }
@@ -837,38 +817,35 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public override string ToString()
         {
-            return (DirEntry != null)
-                ? $"[{DirEntry.LeftSibling},{DirEntry.SID},{DirEntry.RightSibling}] {DirEntry.GetEntryName()}"
-                : string.Empty;
+            return DirEntry != null ? $"[{DirEntry.LeftSibling},{DirEntry.Sid},{DirEntry.RightSibling}] {DirEntry.GetEntryName()}" : string.Empty;
         }
     }
 
     internal sealed class CFStream : CFItem
     {
-        internal CFStream(CompoundFile compoundFile, DirectoryEntry dirEntry)
-            : base(compoundFile)
+        internal CFStream(CompoundFile compoundFile, DirectoryEntry dirEntry) : base(compoundFile)
         {
-            if (dirEntry == null || dirEntry.SID < 0)
+            if (dirEntry == null || dirEntry.Sid < 0)
                 throw new Exception("Attempting to add a CFStream using an unitialized directory");
-            this.DirEntry = dirEntry;
+            DirEntry = dirEntry;
         }
 
-        public Byte[] GetData()
+        public byte[] GetData()
         {
             CheckDisposed();
-            return this.CompoundFile.GetData(this);
+            return CompoundFile.GetData(this);
         }
 
         public int Read(byte[] buffer, long position, int count)
         {
             CheckDisposed();
-            return this.CompoundFile.ReadData(this, position, buffer, 0, count);
+            return CompoundFile.ReadData(this, position, buffer, 0, count);
         }
 
         internal int Read(byte[] buffer, long position, int offset, int count)
         {
             CheckDisposed();
-            return this.CompoundFile.ReadData(this, position, buffer, offset, count);
+            return CompoundFile.ReadData(this, position, buffer, offset, count);
         }
     }
 
@@ -876,111 +853,82 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
     {
         private RBTree children;
 
-        internal RBTree Children
-        {
-            get
-            {
-                if (children == null)
-                    children = LoadChildren(this.DirEntry.SID) ?? this.CompoundFile.CreateNewTree();
-                return children;
-            }
-        }
+        internal RBTree Children => children ??= LoadChildren(DirEntry.Sid) ?? CompoundFile.CreateNewTree();
 
-        internal CFStorage(CompoundFile compFile, DirectoryEntry dirEntry)
-            : base(compFile)
+        internal CFStorage(CompoundFile compFile, DirectoryEntry dirEntry) : base(compFile)
         {
-            if (dirEntry == null || dirEntry.SID < 0)
+            if (dirEntry == null || dirEntry.Sid < 0)
                 throw new Exception("Attempting to create a CFStorage using an unitialized directory");
-            this.DirEntry = dirEntry;
+            DirEntry = dirEntry;
         }
 
         private RBTree LoadChildren(int SID)
         {
-            RBTree childrenTree = this.CompoundFile.GetChildrenTree(SID);
-
-            if (childrenTree.Root != null)
-                this.DirEntry.Child = (childrenTree.Root as DirectoryEntry).SID;
-            else
-                this.DirEntry.Child = DirectoryEntry.NOSTREAM;
-
+            var childrenTree = CompoundFile.GetChildrenTree(SID);
+            DirEntry.Child = (childrenTree.Root as DirectoryEntry)?.Sid ?? DirectoryEntry.Nostream;
             return childrenTree;
         }
 
         public CFStream GetStream(String streamName)
         {
             CheckDisposed();
-
-            DirectoryEntry tmp = DirectoryEntry.Mock(streamName, StgType.StgStream);
-
+            var tmp = DirectoryEntry.Mock(streamName, StgType.StgStream);
             if (Children.TryLookup(tmp, out IRBNode outDe) && (((DirectoryEntry)outDe).StgType == StgType.StgStream))
-                return new CFStream(this.CompoundFile, (DirectoryEntry)outDe);
-            else
-                throw new KeyNotFoundException("Cannot find item [" + streamName + "] within the current storage");
+                return new CFStream(CompoundFile, (DirectoryEntry)outDe);
+            throw new KeyNotFoundException("Cannot find item [" + streamName + "] within the current storage");
         }
 
         public CFStream TryGetStream(String streamName)
         {
             CheckDisposed();
-
-            DirectoryEntry tmp = DirectoryEntry.Mock(streamName, StgType.StgStream);
-
+            var tmp = DirectoryEntry.Mock(streamName, StgType.StgStream);
             if (Children.TryLookup(tmp, out IRBNode outDe) && ((outDe as DirectoryEntry).StgType == StgType.StgStream))
-                return new CFStream(this.CompoundFile, (DirectoryEntry)outDe);
-            else
-                return null;
+                return new CFStream(CompoundFile, (DirectoryEntry)outDe);
+            return null;
         }
 
         public CFStorage GetStorage(String storageName)
         {
             CheckDisposed();
-
-            DirectoryEntry template = DirectoryEntry.Mock(storageName, StgType.StgInvalid);
-
-            if (Children.TryLookup(template, out IRBNode outDe) && (outDe as DirectoryEntry).StgType == StgType.StgStorage)
-                return new CFStorage(this.CompoundFile, outDe as DirectoryEntry);
+            var template = DirectoryEntry.Mock(storageName, StgType.StgInvalid);
+            if (Children.TryLookup(template, out var outDe) && (outDe as DirectoryEntry).StgType == StgType.StgStorage)
+                return new CFStorage(CompoundFile, outDe as DirectoryEntry);
             else
                 throw new KeyNotFoundException("Cannot find item [" + storageName + "] within the current storage");
         }
 
-        public CFStorage TryGetStorage(String storageName)
+        public CFStorage TryGetStorage(string storageName)
         {
             CheckDisposed();
-
-            DirectoryEntry template = DirectoryEntry.Mock(storageName, StgType.StgInvalid);
-
-            if (Children.TryLookup(template, out IRBNode outDe) && ((DirectoryEntry)outDe).StgType == StgType.StgStorage)
-                return new CFStorage(this.CompoundFile, outDe as DirectoryEntry);
-            else
-                return null;
+            var template = DirectoryEntry.Mock(storageName, StgType.StgInvalid);
+            if (Children.TryLookup(template, out var outDe) && ((DirectoryEntry)outDe).StgType == StgType.StgStorage)
+                return new CFStorage(CompoundFile, outDe as DirectoryEntry);
+            return null;
         }
 
         public void VisitEntries(Action<CFItem> action, bool recursive)
         {
             CheckDisposed();
-
             if (action != null)
             {
-                List<IRBNode> subStorages = new List<IRBNode>();
-
+                var subStorages = new List<IRBNode>();
                 void internalAction(IRBNode targetNode)
                 {
                     DirectoryEntry d = targetNode as DirectoryEntry;
                     if (d.StgType == StgType.StgStream)
-                        action(new CFStream(this.CompoundFile, d));
+                        action(new CFStream(CompoundFile, d));
                     else
-                        action(new CFStorage(this.CompoundFile, d));
+                        action(new CFStorage(CompoundFile, d));
 
-                    if (d.Child != DirectoryEntry.NOSTREAM)
+                    if (d.Child != DirectoryEntry.Nostream)
                         subStorages.Add(targetNode);
-
-                    return;
                 }
 
-                this.Children.VisitTreeNodes(internalAction);
+                Children.VisitTreeNodes(internalAction);
 
                 if (recursive && subStorages.Count > 0)
-                    foreach (IRBNode n in subStorages)
-                        (new CFStorage(this.CompoundFile, n as DirectoryEntry)).VisitEntries(action, recursive);
+                    foreach (var n in subStorages)
+                        new CFStorage(CompoundFile, n as DirectoryEntry).VisitEntries(action, recursive);
             }
         }
     }
@@ -1022,7 +970,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public uint DIFATSectorsNumber { get; set; }
 
-        public int[] DIFAT { get; private set; } = new int[109];
+        public int[] DIFAT { get; } = new int[109];
 
         public Header() : this(3)
         {
@@ -1052,31 +1000,28 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public void Read(Stream stream)
         {
-            using (BinaryReader rw = new BinaryReader(stream, Encoding.UTF8, true))
-            {
-                HeaderSignature = rw.ReadBytes(8);
-                CheckSignature();
-                CLSID = rw.ReadBytes(16);
-                MinorVersion = rw.ReadUInt16();
-                MajorVersion = rw.ReadUInt16();
-                CheckVersion();
-                ByteOrder = rw.ReadUInt16();
-                SectorShift = rw.ReadUInt16();
-                MiniSectorShift = rw.ReadUInt16();
-                rw.ReadBytes(6);
-                DirectorySectorsNumber = rw.ReadInt32();
-                FATSectorsNumber = rw.ReadInt32();
-                FirstDirectorySectorID = rw.ReadInt32();
-                rw.ReadUInt32();
-                MinSizeStandardStream = rw.ReadUInt32();
-                FirstMiniFATSectorID = rw.ReadInt32();
-                MiniFATSectorsNumber = rw.ReadUInt32();
-                FirstDIFATSectorID = rw.ReadInt32();
-                DIFATSectorsNumber = rw.ReadUInt32();
-
-                for (int i = 0; i < 109; i++)
-                    DIFAT[i] = rw.ReadInt32();
-            }
+            var rw = new BinaryReader(stream, Encoding.UTF8, true);
+            HeaderSignature = rw.ReadBytes(8);
+            CheckSignature();
+            CLSID = rw.ReadBytes(16);
+            MinorVersion = rw.ReadUInt16();
+            MajorVersion = rw.ReadUInt16();
+            CheckVersion();
+            ByteOrder = rw.ReadUInt16();
+            SectorShift = rw.ReadUInt16();
+            MiniSectorShift = rw.ReadUInt16();
+            rw.ReadBytes(6);
+            DirectorySectorsNumber = rw.ReadInt32();
+            FATSectorsNumber = rw.ReadInt32();
+            FirstDirectorySectorID = rw.ReadInt32();
+            rw.ReadUInt32();
+            MinSizeStandardStream = rw.ReadUInt32();
+            FirstMiniFATSectorID = rw.ReadInt32();
+            MiniFATSectorsNumber = rw.ReadUInt32();
+            FirstDIFATSectorID = rw.ReadInt32();
+            DIFATSectorsNumber = rw.ReadUInt32();
+            for (int i = 0; i < 109; i++)
+                DIFAT[i] = rw.ReadInt32();
         }
 
         private void CheckVersion()
@@ -1099,11 +1044,10 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
     {
         private readonly int _sectorSize;
         private long _position;
-
         private readonly List<Sector> _sectorChain;
         private readonly Stream _stream;
         private readonly bool _isFatStream = false;
-        private readonly List<Sector> _freeSectors = new List<Sector>();
+        private readonly List<Sector> _freeSectors = [];
 
         public IEnumerable<Sector> FreeSectors => _freeSectors;
 
@@ -1112,15 +1056,14 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             if (sectorSize <= 0)
                 throw new Exception("Sector size must be greater than zero");
 
-            this._sectorChain = sectorChain ?? throw new Exception("Sector Chain cannot be null");
-            this._sectorSize = sectorSize;
-            this._stream = stream;
+            _sectorChain = sectorChain ?? throw new Exception("Sector Chain cannot be null");
+            _sectorSize = sectorSize;
+            _stream = stream;
         }
 
-        public StreamView(List<Sector> sectorChain, int sectorSize, long length, Queue<Sector> availableSectors, Stream stream, bool isFatStream = false)
-            : this(sectorChain, sectorSize, stream)
+        public StreamView(List<Sector> sectorChain, int sectorSize, long length, Queue<Sector> availableSectors, Stream stream, bool isFatStream = false) : this(sectorChain, sectorSize, stream)
         {
-            this._isFatStream = isFatStream;
+            _isFatStream = isFatStream;
             AdjustLength(length, availableSectors);
         }
 
@@ -1155,30 +1098,24 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public int ReadInt32()
         {
-            this.Read(buf, 0, 4);
+            Read(buf, 0, 4);
             return (((buf[0] | (buf[1] << 8)) | (buf[2] << 16)) | (buf[3] << 24));
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             int nRead = 0;
-            int nToRead = 0;
-
-            if (_sectorChain != null && _sectorChain.Count > 0)
+            if (_sectorChain is { Count: > 0 })
             {
                 // First sector
                 int secIndex = (int)(_position / _sectorSize);
-
-                nToRead = Math.Min(_sectorChain[0].Size - ((int)_position % _sectorSize), count);
-
+                var nToRead = Math.Min(_sectorChain[0].Size - ((int)_position % _sectorSize), count);
                 if (secIndex < _sectorChain.Count)
                 {
-                    Buffer.BlockCopy(_sectorChain[secIndex].GetData(),
-                        (int)(_position % _sectorSize), buffer, offset, nToRead);
+                    Buffer.BlockCopy(_sectorChain[secIndex].GetData(), (int)(_position % _sectorSize), buffer, offset, nToRead);
                 }
 
                 nRead += nToRead;
-
                 ++secIndex;
 
                 // Central sectors
@@ -1192,7 +1129,6 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
                 // Last sector
                 nToRead = count - nRead;
-
                 if (nToRead != 0)
                 {
                     Buffer.BlockCopy(_sectorChain[secIndex].GetData(), 0, buffer, offset + nRead, nToRead);
@@ -1200,11 +1136,10 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 }
 
                 _position += nRead;
-
                 return nRead;
             }
-            else
-                return 0;
+
+            return 0;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -1221,16 +1156,15 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private void AdjustLength(long value, Queue<Sector> availableSectors = null)
         {
-            this._length = value;
-            long delta = value - (_sectorChain.Count * (long)_sectorSize);
+            _length = value;
+            long delta = value - _sectorChain.Count * (long)_sectorSize;
 
             if (delta > 0)
             {
                 int nSec = (int)Math.Ceiling(((double)delta / _sectorSize));
                 while (nSec > 0)
                 {
-                    Sector t = null;
-
+                    Sector t;
                     if (availableSectors == null || availableSectors.Count == 0)
                     {
                         t = new Sector(_sectorSize, _stream);
@@ -1264,79 +1198,49 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
     {
         public CFSConfiguration Configuration { get; private set; } = CFSConfiguration.Default;
 
-        internal int GetSectorSize() => 2 << (header.SectorShift - 1);
+        internal int GetSectorSize() => 2 << (_header.SectorShift - 1);
 
-        private const int HEADER_DIFAT_ENTRIES_COUNT = 109;
-        private readonly int DIFAT_SECTOR_FAT_ENTRIES_COUNT = 127;
-        private readonly int FAT_SECTOR_ENTRIES_COUNT = 128;
-        private const int SIZE_OF_SID = 4;
-        private const int FLUSHING_QUEUE_SIZE = 6000;
-        private const int FLUSHING_BUFFER_MAX_SIZE = 1024 * 1024 * 16;
-
-        private List<Sector> sectors = new List<Sector>();
-
-        private Header header;
-
-        internal Stream sourceStream = null;
+        private const int HeaderDifatEntriesCount = 109;
+        private readonly int _difatSectorFatEntriesCount = 127;
+        private readonly int _fatSectorEntriesCount = 128;
+        private const int SizeOfSid = 4;
+        private const int FlushingQueueSize = 6000;
+        private const int FlushingBufferMaxSize = 1024 * 1024 * 16;
+        private List<Sector> _sectors = [];
+        private Header _header;
+        internal Stream SourceStream;
 
         public CompoundFile(Stream stream, CFSConfiguration configParameters)
         {
-            this.closeStream = !configParameters.HasFlag(CFSConfiguration.LeaveOpen);
-
+            closeStream = !configParameters.HasFlag(CFSConfiguration.LeaveOpen);
             LoadStream(stream);
-
-            DIFAT_SECTOR_FAT_ENTRIES_COUNT = (GetSectorSize() / 4) - 1;
-            FAT_SECTOR_ENTRIES_COUNT = (GetSectorSize() / 4);
+            _difatSectorFatEntriesCount = (GetSectorSize() / 4) - 1;
+            _fatSectorEntriesCount = (GetSectorSize() / 4);
         }
-
-        private string fileName = string.Empty;
 
         private void Load(Stream stream)
         {
             try
             {
-                this.header = new Header();
-                this.directoryEntries = new List<DirectoryEntry>();
-
-                this.sourceStream = stream;
-
-                header.Read(stream);
-
-                int n_sector = Ceiling(((stream.Length - GetSectorSize()) / (double)GetSectorSize()));
-
+                _header = new Header();
+                directoryEntries = new List<DirectoryEntry>();
+                SourceStream = stream;
+                _header.Read(stream);
+                int nSector = Ceiling((stream.Length - GetSectorSize()) / (double)GetSectorSize());
                 if (stream.Length > 0x7FFFFF0)
-                    this._transactionLockAllocated = true;
+                    _transactionLockAllocated = true;
 
-                sectors = new List<Sector>();
-                for (int i = 0; i < n_sector; i++)
-                    sectors.Add(null);
+                _sectors = [];
+                for (int i = 0; i < nSector; i++)
+                    _sectors.Add(null);
 
                 LoadDirectories();
-
-                this.RootStorage = new CFStorage(this, directoryEntries[0]);
+                RootStorage = new CFStorage(this, directoryEntries[0]);
             }
             catch (Exception)
             {
                 if (stream != null && closeStream)
                     stream.Dispose();
-                throw;
-            }
-        }
-
-        private void LoadFile(String fileName)
-        {
-            this.fileName = fileName;
-            FileStream fs = null;
-
-            try
-            {
-                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                Load(fs);
-            }
-            catch
-            {
-                if (fs != null)
-                    fs.Dispose();
                 throw;
             }
         }
@@ -1351,71 +1255,47 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             Load(stream);
         }
 
-        public bool HasSourceStream => sourceStream != null;
-
-        private void PersistMiniStreamToStream(List<Sector> miniSectorChain)
-        {
-            List<Sector> miniStream = GetSectorChain(RootEntry.StartSetc, SectorType.Normal);
-
-            StreamView miniStreamView = new StreamView(miniStream, GetSectorSize(), this.RootStorage.Size, null, sourceStream);
-
-            for (int i = 0; i < miniSectorChain.Count; i++)
-            {
-                Sector s = miniSectorChain[i];
-
-                if (s.Id == -1)
-                    throw new Exception("Invalid minisector index");
-
-                miniStreamView.Seek(Sector.MinisectorSize * s.Id, SeekOrigin.Begin);
-                miniStreamView.Write(s.GetData(), 0, Sector.MinisectorSize);
-            }
-        }
-
         private void AllocateMiniSectorChain(List<Sector> sectorChain)
         {
-            List<Sector> miniFAT = GetSectorChain(header.FirstMiniFATSectorID, SectorType.Normal);
+            List<Sector> miniFAT = GetSectorChain(_header.FirstMiniFATSectorID, SectorType.Normal);
             List<Sector> miniStream = GetSectorChain(RootEntry.StartSetc, SectorType.Normal);
 
             StreamView miniFATView = new StreamView(miniFAT, GetSectorSize(),
-                header.MiniFATSectorsNumber * Sector.MinisectorSize,
-                null, this.sourceStream, true);
+                _header.MiniFATSectorsNumber * Sector.MinisectorSize,
+                null, SourceStream, true);
 
             StreamView miniStreamView = new StreamView(miniStream, GetSectorSize(),
-                this.RootStorage.Size, null, sourceStream);
+                RootStorage.Size, null, SourceStream);
 
             for (int i = 0; i < sectorChain.Count; i++)
             {
                 Sector s = sectorChain[i];
-
                 if (s.Id == -1)
                 {
-                    miniStreamView.Seek(this.RootStorage.Size + Sector.MinisectorSize, SeekOrigin.Begin);
+                    miniStreamView.Seek(RootStorage.Size + Sector.MinisectorSize, SeekOrigin.Begin);
                     s.Id = (int)(miniStreamView.Position - Sector.MinisectorSize) / Sector.MinisectorSize;
 
-                    this.RootStorage.DirEntry.Size = miniStreamView.Length;
+                    RootStorage.DirEntry.Size = miniStreamView.Length;
                 }
             }
 
             for (int i = 0; i < sectorChain.Count - 1; i++)
             {
-                Int32 currentId = sectorChain[i].Id;
-                Int32 nextId = sectorChain[i + 1].Id;
-
+                int currentId = sectorChain[i].Id;
+                int nextId = sectorChain[i + 1].Id;
                 miniFATView.Seek(currentId * 4, SeekOrigin.Begin);
                 miniFATView.Write(BitConverter.GetBytes(nextId), 0, 4);
             }
 
-            miniFATView.Seek(sectorChain[sectorChain.Count - 1].Id * SIZE_OF_SID, SeekOrigin.Begin);
+            miniFATView.Seek(sectorChain[sectorChain.Count - 1].Id * SizeOfSid, SeekOrigin.Begin);
             miniFATView.Write(BitConverter.GetBytes(Sector.Endofchain), 0, 4);
-
             AllocateSectorChain(miniStreamView.BaseSectorChain);
             AllocateSectorChain(miniFATView.BaseSectorChain);
-
             if (miniFAT.Count > 0)
             {
-                this.RootStorage.DirEntry.StartSetc = miniStream[0].Id;
-                header.MiniFATSectorsNumber = (uint)miniFAT.Count;
-                header.FirstMiniFATSectorID = miniFAT[0].Id;
+                RootStorage.DirEntry.StartSetc = miniStream[0].Id;
+                _header.MiniFATSectorsNumber = (uint)miniFAT.Count;
+                _header.FirstMiniFATSectorID = miniFAT[0].Id;
             }
         }
 
@@ -1425,7 +1305,6 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 return;
 
             SectorType _st = sectorChain[0].Type;
-
             if (_st == SectorType.Normal)
                 AllocateSectorChain(sectorChain);
             else if (_st == SectorType.Mini)
@@ -1438,8 +1317,8 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             {
                 if (s.Id == -1)
                 {
-                    sectors.Add(s);
-                    s.Id = sectors.Count - 1;
+                    _sectors.Add(s);
+                    s.Id = _sectors.Count - 1;
                 }
             }
 
@@ -1454,11 +1333,9 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         {
             if (_transactionLockAdded && !_transactionLockAllocated)
             {
-                StreamView fatStream = new StreamView(GetFatSectorChain(), GetSectorSize(), sourceStream);
-
+                StreamView fatStream = new StreamView(GetFatSectorChain(), GetSectorSize(), SourceStream);
                 fatStream.Seek(_lockSectorId * 4, SeekOrigin.Begin);
                 fatStream.Write(BitConverter.GetBytes(Sector.Endofchain), 0, 4);
-
                 _transactionLockAllocated = true;
             }
         }
@@ -1466,85 +1343,70 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         private void AllocateFATSectorChain(List<Sector> sectorChain)
         {
             List<Sector> fatSectors = GetSectorChain(-1, SectorType.FAT);
-
             StreamView fatStream = new StreamView(fatSectors, GetSectorSize(),
-                header.FATSectorsNumber * GetSectorSize(), null,
-                sourceStream, true);
+                _header.FATSectorsNumber * GetSectorSize(), null,
+                SourceStream, true);
 
             for (int i = 0; i < sectorChain.Count - 1; i++)
             {
                 Sector sN = sectorChain[i + 1];
                 Sector sC = sectorChain[i];
-
                 fatStream.Seek(sC.Id * 4, SeekOrigin.Begin);
                 fatStream.Write(BitConverter.GetBytes(sN.Id), 0, 4);
             }
 
             fatStream.Seek(sectorChain[sectorChain.Count - 1].Id * 4, SeekOrigin.Begin);
             fatStream.Write(BitConverter.GetBytes(Sector.Endofchain), 0, 4);
-
             AllocateDIFATSectorChain(fatStream.BaseSectorChain);
         }
 
         private void AllocateDIFATSectorChain(List<Sector> FATsectorChain)
         {
-            header.FATSectorsNumber = FATsectorChain.Count;
-
+            _header.FATSectorsNumber = FATsectorChain.Count;
             foreach (Sector s in FATsectorChain)
             {
                 if (s.Id == -1)
                 {
-                    sectors.Add(s);
-                    s.Id = sectors.Count - 1;
+                    _sectors.Add(s);
+                    s.Id = _sectors.Count - 1;
                     s.Type = SectorType.FAT;
                 }
             }
 
-            int nCurrentSectors = sectors.Count;
-
-            int nDIFATSectors = (int)header.DIFATSectorsNumber;
-
-            if (FATsectorChain.Count > HEADER_DIFAT_ENTRIES_COUNT)
+            int nCurrentSectors = _sectors.Count;
+            int nDIFATSectors = (int)_header.DIFATSectorsNumber;
+            if (FATsectorChain.Count > HeaderDifatEntriesCount)
             {
-                nDIFATSectors = Ceiling((double)(FATsectorChain.Count - HEADER_DIFAT_ENTRIES_COUNT) / DIFAT_SECTOR_FAT_ENTRIES_COUNT);
-                nDIFATSectors = LowSaturation(nDIFATSectors - (int)header.DIFATSectorsNumber); //required DIFAT
+                nDIFATSectors = Ceiling((double)(FATsectorChain.Count - HeaderDifatEntriesCount) / _difatSectorFatEntriesCount);
+                nDIFATSectors = LowSaturation(nDIFATSectors - (int)_header.DIFATSectorsNumber); //required DIFAT
             }
 
             nCurrentSectors += nDIFATSectors;
-
-            while (header.FATSectorsNumber * FAT_SECTOR_ENTRIES_COUNT < nCurrentSectors)
+            while (_header.FATSectorsNumber * _fatSectorEntriesCount < nCurrentSectors)
             {
-                Sector extraFATSector = new Sector(GetSectorSize(), sourceStream);
-                sectors.Add(extraFATSector);
-
-                extraFATSector.Id = sectors.Count - 1;
+                Sector extraFATSector = new Sector(GetSectorSize(), SourceStream);
+                _sectors.Add(extraFATSector);
+                extraFATSector.Id = _sectors.Count - 1;
                 extraFATSector.Type = SectorType.FAT;
-
                 FATsectorChain.Add(extraFATSector);
-
-                header.FATSectorsNumber++;
+                _header.FATSectorsNumber++;
                 nCurrentSectors++;
-
-                if (nDIFATSectors * DIFAT_SECTOR_FAT_ENTRIES_COUNT <
-                    (header.FATSectorsNumber > HEADER_DIFAT_ENTRIES_COUNT ?
-                        header.FATSectorsNumber - HEADER_DIFAT_ENTRIES_COUNT :
-                        0))
+                if (nDIFATSectors * _difatSectorFatEntriesCount < (_header.FATSectorsNumber > HeaderDifatEntriesCount ? _header.FATSectorsNumber - HeaderDifatEntriesCount : 0))
                 {
                     nDIFATSectors++;
                     nCurrentSectors++;
                 }
             }
 
-            List<Sector> difatSectors = GetSectorChain(-1, SectorType.DIFAT);
-            StreamView difatStream = new StreamView(difatSectors, GetSectorSize(), sourceStream);
-
+            var difatSectors = GetSectorChain(-1, SectorType.DIFAT);
+            var difatStream = new StreamView(difatSectors, GetSectorSize(), SourceStream);
             for (int i = 0; i < FATsectorChain.Count; i++)
             {
-                if (i < HEADER_DIFAT_ENTRIES_COUNT)
-                    header.DIFAT[i] = FATsectorChain[i].Id;
+                if (i < HeaderDifatEntriesCount)
+                    _header.DIFAT[i] = FATsectorChain[i].Id;
                 else
                 {
-                    if (i != HEADER_DIFAT_ENTRIES_COUNT && (i - HEADER_DIFAT_ENTRIES_COUNT) % DIFAT_SECTOR_FAT_ENTRIES_COUNT == 0)
+                    if (i != HeaderDifatEntriesCount && (i - HeaderDifatEntriesCount) % _difatSectorFatEntriesCount == 0)
                     {
                         difatStream.Write(new byte[sizeof(int)], 0, sizeof(int));
                     }
@@ -1557,91 +1419,71 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             {
                 if (difatStream.BaseSectorChain[i].Id == -1)
                 {
-                    sectors.Add(difatStream.BaseSectorChain[i]);
-                    difatStream.BaseSectorChain[i].Id = sectors.Count - 1;
+                    _sectors.Add(difatStream.BaseSectorChain[i]);
+                    difatStream.BaseSectorChain[i].Id = _sectors.Count - 1;
                     difatStream.BaseSectorChain[i].Type = SectorType.DIFAT;
                 }
             }
 
-            header.DIFATSectorsNumber = (uint)nDIFATSectors;
-
+            _header.DIFATSectorsNumber = (uint)nDIFATSectors;
             if (difatStream.BaseSectorChain != null && difatStream.BaseSectorChain.Count > 0)
             {
-                header.FirstDIFATSectorID = difatStream.BaseSectorChain[0].Id;
-                header.DIFATSectorsNumber = (uint)difatStream.BaseSectorChain.Count;
-
+                _header.FirstDIFATSectorID = difatStream.BaseSectorChain[0].Id;
+                _header.DIFATSectorsNumber = (uint)difatStream.BaseSectorChain.Count;
                 for (int i = 0; i < difatStream.BaseSectorChain.Count - 1; i++)
-                    Buffer.BlockCopy(BitConverter.GetBytes(difatStream.BaseSectorChain[i + 1].Id),
-                        0, difatStream.BaseSectorChain[i].GetData(),
-                        GetSectorSize() - sizeof(int), 4);
+                    Buffer.BlockCopy(BitConverter.GetBytes(difatStream.BaseSectorChain[i + 1].Id), 0, difatStream.BaseSectorChain[i].GetData(), GetSectorSize() - sizeof(int), 4);
 
-                Buffer.BlockCopy(BitConverter.GetBytes(Sector.Endofchain), 0,
-                    difatStream.BaseSectorChain[difatStream.BaseSectorChain.Count - 1].GetData(),
-                    GetSectorSize() - sizeof(int), sizeof(int));
+                Buffer.BlockCopy(BitConverter.GetBytes(Sector.Endofchain), 0, difatStream.BaseSectorChain[difatStream.BaseSectorChain.Count - 1].GetData(), GetSectorSize() - sizeof(int), sizeof(int));
             }
-            else header.FirstDIFATSectorID = Sector.Endofchain;
-
-            StreamView fatSv = new StreamView(FATsectorChain, GetSectorSize(), header.FATSectorsNumber * GetSectorSize(), null, sourceStream);
-
-            for (int i = 0; i < header.DIFATSectorsNumber; i++)
+            else _header.FirstDIFATSectorID = Sector.Endofchain;
+            StreamView fatSv = new StreamView(FATsectorChain, GetSectorSize(), _header.FATSectorsNumber * GetSectorSize(), null, SourceStream);
+            for (int i = 0; i < _header.DIFATSectorsNumber; i++)
             {
                 fatSv.Seek(difatStream.BaseSectorChain[i].Id * 4, SeekOrigin.Begin);
                 fatSv.Write(BitConverter.GetBytes(Sector.Difsect), 0, 4);
             }
 
-            for (int i = 0; i < header.FATSectorsNumber; i++)
+            for (int i = 0; i < _header.FATSectorsNumber; i++)
             {
                 fatSv.Seek(fatSv.BaseSectorChain[i].Id * 4, SeekOrigin.Begin);
                 fatSv.Write(BitConverter.GetBytes(Sector.Fatsect), 0, 4);
             }
 
-            header.FATSectorsNumber = fatSv.BaseSectorChain.Count;
+            _header.FATSectorsNumber = fatSv.BaseSectorChain.Count;
         }
 
         private List<Sector> GetDifatSectorChain()
         {
-            int validationCount = 0;
-
             List<Sector> result = new List<Sector>();
-
-            int nextSecID
-                = Sector.Endofchain;
-
-            if (header.DIFATSectorsNumber != 0)
+            int nextSecID;
+            if (_header.DIFATSectorsNumber != 0)
             {
-                validationCount = (int)header.DIFATSectorsNumber;
-
-                Sector s = sectors[header.FirstDIFATSectorID];
-
+                var validationCount = (int)_header.DIFATSectorsNumber;
+                Sector s = _sectors[_header.FirstDIFATSectorID];
                 if (s == null)
                 {
-                    sectors[header.FirstDIFATSectorID] = s = new Sector(GetSectorSize(), sourceStream)
+                    _sectors[_header.FirstDIFATSectorID] = s = new Sector(GetSectorSize(), SourceStream)
                     {
                         Type = SectorType.DIFAT,
-                        Id = header.FirstDIFATSectorID
+                        Id = _header.FirstDIFATSectorID
                     };
                 }
 
                 result.Add(s);
-
-                while (true && validationCount >= 0)
+                while (validationCount >= 0)
                 {
                     nextSecID = BitConverter.ToInt32(s.GetData(), GetSectorSize() - 4);
-
                     if (nextSecID == Sector.Freesect || nextSecID == Sector.Endofchain) break;
-
                     validationCount--;
-
                     if (validationCount < 0)
                     {
                         Dispose();
                         throw new InvalidDataException("DIFAT sectors count mismatched. Corrupted compound file");
                     }
 
-                    s = sectors[nextSecID];
-
+                    s = _sectors[nextSecID];
                     if (s == null)
-                        sectors[nextSecID] = s = new Sector(GetSectorSize(), sourceStream) { Id = nextSecID };
+                        _sectors[nextSecID] = s = new Sector(GetSectorSize(), SourceStream) { Id = nextSecID };
 
                     result.Add(s);
                 }
@@ -1652,23 +1494,20 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private List<Sector> GetFatSectorChain()
         {
-            int N_HEADER_FAT_ENTRY = 109;
-
-            List<Sector> result = new List<Sector>();
-            int nextSecID = Sector.Endofchain;
+            const int nHeaderFatEntry = 109;
+            List<Sector> result = [];
+            int nextSecId;
             List<Sector> difatSectors = GetDifatSectorChain();
-
             int idx = 0;
-            while (idx < header.FATSectorsNumber && idx < N_HEADER_FAT_ENTRY)
+            while (idx < _header.FATSectorsNumber && idx < nHeaderFatEntry)
             {
-                nextSecID = header.DIFAT[idx];
-                Sector s = sectors[nextSecID];
-
+                nextSecId = _header.DIFAT[idx];
+                Sector s = _sectors[nextSecId];
                 if (s == null)
                 {
-                    sectors[nextSecID] = s = new Sector(GetSectorSize(), sourceStream)
+                    _sectors[nextSecId] = s = new Sector(GetSectorSize(), SourceStream)
                     {
-                        Id = nextSecID,
+                        Id = nextSecId,
                         Type = SectorType.FAT
                     };
                 }
@@ -1679,18 +1518,13 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
             if (difatSectors.Count > 0)
             {
-                var difatStream = new StreamView(difatSectors, GetSectorSize(),
-                    header.FATSectorsNumber > N_HEADER_FAT_ENTRY ? (header.FATSectorsNumber - N_HEADER_FAT_ENTRY) * 4 : 0,
-                    null, sourceStream);
-
-                byte[] nextDIFATSectorBuffer = new byte[4];
-                difatStream.Read(nextDIFATSectorBuffer, 0, 4);
-                nextSecID = BitConverter.ToInt32(nextDIFATSectorBuffer, 0);
-
+                var difatStream = new StreamView(difatSectors, GetSectorSize(), _header.FATSectorsNumber > nHeaderFatEntry ? (_header.FATSectorsNumber - nHeaderFatEntry) * 4 : 0, null, SourceStream);
+                byte[] nextDifatSectorBuffer = new byte[4];
+                difatStream.Read(nextDifatSectorBuffer, 0, 4);
+                nextSecId = BitConverter.ToInt32(nextDifatSectorBuffer, 0);
                 int i = 0;
-                int nFat = N_HEADER_FAT_ENTRY;
-
-                while (nFat < header.FATSectorsNumber)
+                int nFat = nHeaderFatEntry;
+                while (nFat < _header.FATSectorsNumber)
                 {
                     if (difatStream.Position == ((GetSectorSize() - 4) + i * GetSectorSize()))
                     {
@@ -1699,64 +1533,57 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                         continue;
                     }
 
-                    Sector s = sectors[nextSecID];
-
+                    Sector s = _sectors[nextSecId];
                     if (s == null)
                     {
-                        sectors[nextSecID] = s = new Sector(GetSectorSize(), sourceStream)
+                        _sectors[nextSecId] = s = new Sector(GetSectorSize(), SourceStream)
                         {
                             Type = SectorType.FAT,
-                            Id = nextSecID
+                            Id = nextSecId
                         };
                     }
 
                     result.Add(s);
-
-                    difatStream.Read(nextDIFATSectorBuffer, 0, 4);
-                    nextSecID = BitConverter.ToInt32(nextDIFATSectorBuffer, 0);
+                    difatStream.Read(nextDifatSectorBuffer, 0, 4);
+                    nextSecId = BitConverter.ToInt32(nextDifatSectorBuffer, 0);
                     nFat++;
                 }
             }
+
             return result;
         }
 
         private List<Sector> GetNormalSectorChain(int secID)
         {
-            List<Sector> result = new List<Sector>();
-
-            int nextSecID = secID;
-
-            List<Sector> fatSectors = GetFatSectorChain();
-
-            var fatStream = new StreamView(fatSectors, GetSectorSize(), fatSectors.Count * GetSectorSize(), null, sourceStream);
-
+            var result = new List<Sector>();
+            int nextSecId = secID;
+            var fatSectors = GetFatSectorChain();
+            var fatStream = new StreamView(fatSectors, GetSectorSize(), fatSectors.Count * GetSectorSize(), null, SourceStream);
             while (true)
             {
-                if (nextSecID == Sector.Endofchain) break;
+                if (nextSecId == Sector.Endofchain) break;
 
-                if (nextSecID < 0)
-                    throw new InvalidDataException(String.Format("Next Sector ID reference is below zero. NextID : {0}", nextSecID));
+                if (nextSecId < 0)
+                    throw new InvalidDataException($"Next Sector ID reference is below zero. NextID : {nextSecId}");
 
-                if (nextSecID >= sectors.Count)
-                    throw new InvalidDataException(String.Format("Next Sector ID reference an out of range sector. NextID : {0} while sector count {1}", nextSecID, sectors.Count));
+                if (nextSecId >= _sectors.Count)
+                    throw new InvalidDataException($"Next Sector ID reference an out of range sector. NextID : {nextSecId} while sector count {_sectors.Count}");
 
-                Sector s = sectors[nextSecID];
+                Sector s = _sectors[nextSecId];
                 if (s == null)
                 {
-                    sectors[nextSecID] = s = new Sector(GetSectorSize(), sourceStream)
+                    _sectors[nextSecId] = s = new Sector(GetSectorSize(), SourceStream)
                     {
-                        Id = nextSecID,
+                        Id = nextSecId,
                         Type = SectorType.Normal
                     };
                 }
 
                 result.Add(s);
-
-                fatStream.Seek(nextSecID * 4, SeekOrigin.Begin);
+                fatStream.Seek(nextSecId * 4, SeekOrigin.Begin);
                 int next = fatStream.ReadInt32();
-
-                if (next != nextSecID)
-                    nextSecID = next;
+                if (next != nextSecId)
+                    nextSecId = next;
                 else
                     throw new InvalidDataException("Cyclic sector chain found. File is corrupted");
             }
@@ -1766,41 +1593,31 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private List<Sector> GetMiniSectorChain(int secID)
         {
-            List<Sector> result = new List<Sector>();
-
+            List<Sector> result = [];
             if (secID != Sector.Endofchain)
             {
-                int nextSecID = secID;
-
-                List<Sector> miniFAT = GetNormalSectorChain(header.FirstMiniFATSectorID);
-                List<Sector> miniStream = GetNormalSectorChain(RootEntry.StartSetc);
-
-                StreamView miniFATView = new StreamView(miniFAT, GetSectorSize(), header.MiniFATSectorsNumber * Sector.MinisectorSize, null, sourceStream);
-                StreamView miniStreamView = new StreamView(miniStream, GetSectorSize(), RootStorage.Size, null, sourceStream);
-                BinaryReader miniFATReader = new BinaryReader(miniFATView);
-
-                nextSecID = secID;
-
+                var miniFat = GetNormalSectorChain(_header.FirstMiniFATSectorID);
+                var miniStream = GetNormalSectorChain(RootEntry.StartSetc);
+                var miniFatView = new StreamView(miniFat, GetSectorSize(), _header.MiniFATSectorsNumber * Sector.MinisectorSize, null, SourceStream);
+                var miniStreamView = new StreamView(miniStream, GetSectorSize(), RootStorage.Size, null, SourceStream);
+                var miniFatReader = new BinaryReader(miniFatView);
+                var nextSecId = secID;
                 while (true)
                 {
-                    if (nextSecID == Sector.Endofchain)
+                    if (nextSecId == Sector.Endofchain)
                         break;
 
-                    Sector ms = new Sector(Sector.MinisectorSize, sourceStream);
-                    byte[] temp = new byte[Sector.MinisectorSize];
-
-                    ms.Id = nextSecID;
+                    var ms = new Sector(Sector.MinisectorSize, SourceStream);
+                    ms.Id = nextSecId;
                     ms.Type = SectorType.Mini;
-
-                    miniStreamView.Seek(nextSecID * Sector.MinisectorSize, SeekOrigin.Begin);
+                    miniStreamView.Seek(nextSecId * Sector.MinisectorSize, SeekOrigin.Begin);
                     miniStreamView.Read(ms.GetData(), 0, Sector.MinisectorSize);
-
                     result.Add(ms);
-
-                    miniFATView.Seek(nextSecID * 4, SeekOrigin.Begin);
-                    nextSecID = miniFATReader.ReadInt32();
+                    miniFatView.Seek(nextSecId * 4, SeekOrigin.Begin);
+                    nextSecId = miniFatReader.ReadInt32();
                 }
             }
+
             return result;
         }
 
@@ -1827,12 +1644,11 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         public CFStorage RootStorage { get; private set; }
 
-        public int Version => this.header.MajorVersion;
+        public int Version => _header.MajorVersion;
 
         internal RBTree CreateNewTree()
         {
-            RBTree bst = new RBTree();
-            return bst;
+            return new RBTree();
         }
 
         internal RBTree GetChildrenTree(int sid)
@@ -1845,14 +1661,14 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         private RBTree DoLoadChildrenTrusted(DirectoryEntry de)
         {
             RBTree bst = null;
-            if (de.Child != DirectoryEntry.NOSTREAM)
+            if (de.Child != DirectoryEntry.Nostream)
                 bst = new RBTree(directoryEntries[de.Child]);
             return bst;
         }
 
         private void DoLoadChildren(RBTree bst, DirectoryEntry de)
         {
-            if (de.Child != DirectoryEntry.NOSTREAM)
+            if (de.Child != DirectoryEntry.Nostream)
             {
                 if (directoryEntries[de.Child].StgType == StgType.StgInvalid) return;
 
@@ -1869,16 +1685,15 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             de.Right = null;
         }
 
-        private readonly List<int> _levelSiDs = new List<int>();
+        private readonly List<int> _levelSiDs = [];
 
         private void LoadSiblings(RBTree bst, DirectoryEntry de)
         {
             _levelSiDs.Clear();
-
-            if (de.LeftSibling != DirectoryEntry.NOSTREAM)
+            if (de.LeftSibling != DirectoryEntry.Nostream)
                 DoLoadSiblings(bst, directoryEntries[de.LeftSibling]);
 
-            if (de.RightSibling != DirectoryEntry.NOSTREAM)
+            if (de.RightSibling != DirectoryEntry.Nostream)
             {
                 _levelSiDs.Add(de.RightSibling);
                 DoLoadSiblings(bst, directoryEntries[de.RightSibling]);
@@ -1905,7 +1720,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private bool ValidateSibling(int sid)
         {
-            if (sid != DirectoryEntry.NOSTREAM)
+            if (sid != DirectoryEntry.Nostream)
             {
                 if (sid >= directoryEntries.Count)
                     return false;
@@ -1927,79 +1742,42 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         private void LoadDirectories()
         {
-            List<Sector> directoryChain = GetSectorChain(header.FirstDirectorySectorID, SectorType.Normal);
+            List<Sector> directoryChain = GetSectorChain(_header.FirstDirectorySectorID, SectorType.Normal);
 
-            if (header.FirstDirectorySectorID == Sector.Endofchain)
-                header.FirstDirectorySectorID = directoryChain[0].Id;
+            if (_header.FirstDirectorySectorID == Sector.Endofchain)
+                _header.FirstDirectorySectorID = directoryChain[0].Id;
 
-            StreamView dirReader = new StreamView(directoryChain, GetSectorSize(), directoryChain.Count * GetSectorSize(), null, sourceStream);
-
+            var dirReader = new StreamView(directoryChain, GetSectorSize(), directoryChain.Count * GetSectorSize(), null, SourceStream);
             while (dirReader.Position < directoryChain.Count * GetSectorSize())
             {
                 DirectoryEntry de = DirectoryEntry.New(String.Empty, StgType.StgInvalid, directoryEntries);
-                de.Read(dirReader, this.Version);
+                de.Read(dirReader, Version);
             }
-        }
-
-        private void CheckFileLength() => throw new NotImplementedException();
-
-        internal int ReadData(CFStream cFStream, long position, byte[] buffer, int count)
-        {
-            if (count > buffer.Length)
-                throw new ArgumentException("count parameter exceeds buffer size");
-
-            DirectoryEntry de = cFStream.DirEntry;
-
-            count = (int)Math.Min(de.Size - position, count);
-
-            StreamView sView = null;
-            if (de.Size < header.MinSizeStandardStream)
-                sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, sourceStream);
-            else
-                sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, sourceStream);
-
-            sView.Seek(position, SeekOrigin.Begin);
-            int result = sView.Read(buffer, 0, count);
-
-            return result;
         }
 
         internal int ReadData(CFStream cFStream, long position, byte[] buffer, int offset, int count)
         {
-            DirectoryEntry de = cFStream.DirEntry;
-
+            var de = cFStream.DirEntry;
             count = (int)Math.Min(de.Size - offset, count);
-
-            StreamView sView = null;
-            if (de.Size < header.MinSizeStandardStream)
-                sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, sourceStream);
-            else
-                sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, sourceStream);
-
+            var sView = de.Size < _header.MinSizeStandardStream ? new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, SourceStream) : new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, SourceStream);
             sView.Seek(position, SeekOrigin.Begin);
-            int result = sView.Read(buffer, offset, count);
-
-            return result;
+            return sView.Read(buffer, offset, count);
         }
 
         internal byte[] GetData(CFStream cFStream)
         {
             AssertDisposed();
-
-            byte[] result = null;
-
+            byte[] result;
             DirectoryEntry de = cFStream.DirEntry;
-
-            if (de.Size < header.MinSizeStandardStream)
+            if (de.Size < _header.MinSizeStandardStream)
             {
-                var miniView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, sourceStream);
-
-                using (BinaryReader br = new BinaryReader(miniView))
-                    result = br.ReadBytes((int)de.Size);
+                var miniView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, SourceStream);
+                using var br = new BinaryReader(miniView);
+                result = br.ReadBytes((int)de.Size);
             }
             else
             {
-                var sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, sourceStream);
+                var sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, SourceStream);
                 result = new byte[(int)de.Size];
                 sView.Read(result, 0, result.Length);
             }
@@ -2012,20 +1790,20 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             AssertDisposed();
             if (sid < 0)
                 return null;
-            byte[] result = null;
+            byte[] result;
             try
             {
                 DirectoryEntry de = directoryEntries[sid];
-                if (de.Size < header.MinSizeStandardStream)
+                if (de.Size < _header.MinSizeStandardStream)
                 {
-                    var miniView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, sourceStream);
-                    BinaryReader br = new BinaryReader(miniView);
+                    var miniView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Mini), Sector.MinisectorSize, de.Size, null, SourceStream);
+                    var br = new BinaryReader(miniView);
                     result = br.ReadBytes((int)de.Size);
                     br.Dispose();
                 }
                 else
                 {
-                    var sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, sourceStream);
+                    var sView = new StreamView(GetSectorChain(de.StartSetc, SectorType.Normal), GetSectorSize(), de.Size, null, SourceStream);
                     result = new byte[(int)de.Size];
                     sView.Read(result, 0, result.Length);
                 }
@@ -2042,8 +1820,8 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             AssertDisposed();
             if (sid < 0)
                 throw new Exception("Invalid SID");
-            DirectoryEntry de = directoryEntries[sid];
-            return de.StorageCLSID;
+            var de = directoryEntries[sid];
+            return de.StorageClsid;
         }
 
         public Guid GetGuidForStream(int sid)
@@ -2051,11 +1829,11 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
             AssertDisposed();
             if (sid < 0)
                 throw new Exception("Invalid SID");
-            Guid g = new Guid("00000000000000000000000000000000");
+            var g = new Guid("00000000000000000000000000000000");
             for (int i = sid - 1; i >= 0; i--)
             {
-                if (directoryEntries[i].StorageCLSID != g && directoryEntries[i].StgType == StgType.StgStorage)
-                    return directoryEntries[i].StorageCLSID;
+                if (directoryEntries[i].StorageClsid != g && directoryEntries[i].StgType == StgType.StgStorage)
+                    return directoryEntries[i].StorageClsid;
             }
             return g;
         }
@@ -2071,7 +1849,7 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
         #region IDisposable Members
 
         private bool _disposed;//false
-        private object lockObject = new Object();
+        private object lockObject = new();
 
         public void Dispose()
         {
@@ -2081,21 +1859,20 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
                 {
                     lock (lockObject)
                     {
-                        if (sectors != null)
+                        if (_sectors != null)
                         {
-                            sectors.Clear();
-                            sectors = null;
+                            _sectors.Clear();
+                            _sectors = null;
                         }
 
-                        this.RootStorage = null;
-                        this.header = null;
-                        this.directoryEntries.Clear();
-                        this.directoryEntries = null;
-                        this.fileName = null;
+                        RootStorage = null;
+                        _header = null;
+                        directoryEntries.Clear();
+                        directoryEntries = null;
                     }
 
-                    if (this.sourceStream != null && closeStream && !Configuration.HasFlag(CFSConfiguration.LeaveOpen))
-                        this.sourceStream.Dispose();
+                    if (SourceStream != null && closeStream && !Configuration.HasFlag(CFSConfiguration.LeaveOpen))
+                        SourceStream.Dispose();
                 }
             }
             finally
@@ -2107,33 +1884,23 @@ public abstract class AbstractCompoundFileDetailDetector : AbstractSignatureDete
 
         #endregion IDisposable Members
 
-        private List<DirectoryEntry> directoryEntries = new List<DirectoryEntry>();
+        private List<DirectoryEntry> directoryEntries = [];
 
         internal IList<DirectoryEntry> GetDirectories() => directoryEntries;
 
         internal DirectoryEntry RootEntry => directoryEntries[0];
 
-        private IList<DirectoryEntry> FindDirectoryEntries(String entryName)
+        private IEnumerable<DirectoryEntry> FindDirectoryEntries(string entryName)
         {
-            List<DirectoryEntry> result = new List<DirectoryEntry>();
-
-            foreach (DirectoryEntry d in directoryEntries)
-                if (d.GetEntryName() == entryName && d.StgType != StgType.StgInvalid)
-                    result.Add(d);
-
-            return result;
+            return directoryEntries.Where(d => d.GetEntryName() == entryName && d.StgType != StgType.StgInvalid).ToList();
         }
 
-        public IList<CFItem> GetAllNamedEntries(String entryName)
+        public IList<CFItem> GetAllNamedEntries(string entryName)
         {
-            IList<DirectoryEntry> r = FindDirectoryEntries(entryName);
-            List<CFItem> result = new List<CFItem>();
-
-            foreach (DirectoryEntry id in r)
-                if (id.GetEntryName() == entryName && id.StgType != StgType.StgInvalid)
-                    result.Add(id.StgType == StgType.StgStorage ? new CFStorage(this, id) : new CFStream(this, id));
-
-            return result;
+            var r = FindDirectoryEntries(entryName);
+            return (from id in r
+                    where id.GetEntryName() == entryName && id.StgType != StgType.StgInvalid
+                    select (CFItem)(id.StgType == StgType.StgStorage ? new CFStorage(this, id) : new CFStream(this, id))).ToList();
         }
 
         public int GetNumDirectories()

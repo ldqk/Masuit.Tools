@@ -39,15 +39,11 @@ internal class NullBehavior : ClayBehavior
     /// <inheritdoc />
     public override object BinaryOperation(Func<object> proceed, object self, ExpressionType operation, object value)
     {
-        switch (operation)
+        return operation switch
         {
-            case ExpressionType.Equal:
-                return ReferenceEquals(value, NullInstance.Instance) || value == null;
-
-            case ExpressionType.NotEqual:
-                return !ReferenceEquals(value, NullInstance.Instance) && value != null;
-        }
-
-        return proceed();
+            ExpressionType.Equal => ReferenceEquals(value, NullInstance.Instance) || value == null,
+            ExpressionType.NotEqual => !ReferenceEquals(value, NullInstance.Instance) && value != null,
+            _ => proceed()
+        };
     }
 }

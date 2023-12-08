@@ -11,128 +11,127 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Webp;
 
-namespace Masuit.Tools.Strings
+namespace Masuit.Tools.Strings;
+
+/// <summary>
+/// 画验证码
+/// </summary>
+public static class ValidateCode
 {
-	/// <summary>
-	/// 画验证码
-	/// </summary>
-	public static class ValidateCode
-	{
-		/// <summary>
-		/// 生成验证码
-		/// </summary>
-		/// <param name="length">指定验证码的长度</param>
-		/// <returns>验证码字符串</returns>
-		public static string CreateValidateCode(int length)
-		{
-			string ch = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890@#$%&?";
-			byte[] b = new byte[4];
-			using var cpt = RandomNumberGenerator.Create();
-			cpt.GetBytes(b);
-			var r = new Random(BitConverter.ToInt32(b, 0));
-			var sb = new StringBuilder();
-			for (int i = 0; i < length; i++)
-			{
-				sb.Append(ch[r.StrictNext(ch.Length)]);
-			}
+    /// <summary>
+    /// 生成验证码
+    /// </summary>
+    /// <param name="length">指定验证码的长度</param>
+    /// <returns>验证码字符串</returns>
+    public static string CreateValidateCode(int length)
+    {
+        string ch = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ1234567890@#$%&?";
+        byte[] b = new byte[4];
+        using var cpt = RandomNumberGenerator.Create();
+        cpt.GetBytes(b);
+        var r = new Random(BitConverter.ToInt32(b, 0));
+        var sb = new StringBuilder();
+        for (int i = 0; i < length; i++)
+        {
+            sb.Append(ch[r.StrictNext(ch.Length)]);
+        }
 
-			return sb.ToString();
-		}
+        return sb.ToString();
+    }
 
-		/// <summary>
-		/// 创建验证码的图片
-		/// </summary>
-		/// <param name="validateCode">验证码序列</param>
-		/// <param name="fontSize">字体大小，默认值28px</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		public static PooledMemoryStream CreateValidateGraphic(this string validateCode, int fontSize = 28)
-		{
-			var fontFamily = SystemFonts.Families.Where(f => new[] { "Consolas", "DejaVu Sans", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault();
-			if (fontFamily == default)
-			{
-				fontFamily = SystemFonts.Families.OrderByRandom().FirstOrDefault();
-			}
+    /// <summary>
+    /// 创建验证码的图片
+    /// </summary>
+    /// <param name="validateCode">验证码序列</param>
+    /// <param name="fontSize">字体大小，默认值28px</param>
+    /// <exception cref="Exception">The operation failed.</exception>
+    public static PooledMemoryStream CreateValidateGraphic(this string validateCode, int fontSize = 28)
+    {
+        var fontFamily = SystemFonts.Families.Where(f => new[] { "Consolas", "DejaVu Sans", "KaiTi", "NSimSun", "SimSun", "SimHei", "Microsoft YaHei UI", "Arial" }.Contains(f.Name)).OrderByRandom().FirstOrDefault();
+        if (fontFamily == default)
+        {
+            fontFamily = SystemFonts.Families.OrderByRandom().FirstOrDefault();
+        }
 
-			var font = fontFamily.CreateFont(fontSize);
-			var measure = TextMeasurer.MeasureSize(validateCode, new TextOptions(font));
-			var width = (int)Math.Ceiling(measure.Width + 15);
-			var height = (int)Math.Ceiling(measure.Height + 15);
-			using var image = new Image<Rgba32>(width, height);
+        var font = fontFamily.CreateFont(fontSize);
+        var measure = TextMeasurer.MeasureSize(validateCode, new TextOptions(font));
+        var width = (int)Math.Ceiling(measure.Width + 15);
+        var height = (int)Math.Ceiling(measure.Height + 15);
+        using var image = new Image<Rgba32>(width, height);
 
-			//生成随机生成器
-			Random random = new Random();
+        //生成随机生成器
+        Random random = new Random();
 
-			//清空图片背景色
-			image.Mutate(g =>
-			{
-				g.BackgroundColor(Color.White);
+        //清空图片背景色
+        image.Mutate(g =>
+        {
+            g.BackgroundColor(Color.White);
 
-				//画图片的干扰线
-				for (int i = 0; i < 65; i++)
-				{
-					int x1 = random.StrictNext(width);
-					int x2 = random.StrictNext(width);
-					int y1 = random.StrictNext(height);
-					int y2 = random.StrictNext(height);
-					g.Draw(new SolidPen(new Color(new Rgba32((byte)random.StrictNext(255), (byte)random.StrictNext(255), (byte)random.StrictNext(255))), 1), new Path(new[] { new PointF(x1, y1), new PointF(x2, y2) }));
-				}
+            //画图片的干扰线
+            for (int i = 0; i < 65; i++)
+            {
+                int x1 = random.StrictNext(width);
+                int x2 = random.StrictNext(width);
+                int y1 = random.StrictNext(height);
+                int y2 = random.StrictNext(height);
+                g.Draw(new SolidPen(new Color(new Rgba32((byte)random.StrictNext(255), (byte)random.StrictNext(255), (byte)random.StrictNext(255))), 1), new Path(new[] { new PointF(x1, y1), new PointF(x2, y2) }));
+            }
 
-				//渐变.
-				var brush = new LinearGradientBrush(new PointF(0, 0), new PointF(width, height), GradientRepetitionMode.Repeat, new ColorStop(0.5f, Color.Blue), new ColorStop(0.5f, Color.DarkRed));
-				g.DrawText(validateCode, font, brush, new PointF(3, 2));
+            //渐变.
+            var brush = new LinearGradientBrush(new PointF(0, 0), new PointF(width, height), GradientRepetitionMode.Repeat, new ColorStop(0.5f, Color.Blue), new ColorStop(0.5f, Color.DarkRed));
+            g.DrawText(validateCode, font, brush, new PointF(3, 2));
 
-				//画图片的边框线
-				g.Draw(Color.Silver, 1, new RectangleF(0, 0, width - 1, height - 1));
-			});
+            //画图片的边框线
+            g.Draw(Color.Silver, 1, new RectangleF(0, 0, width - 1, height - 1));
+        });
 
-			//画图片的前景干扰点
-			for (int i = 0; i < 350; i++)
-			{
-				int x = random.StrictNext(image.Width);
-				int y = random.StrictNext(image.Height);
-				image[x, y] = new Rgba32(random.StrictNext(255), random.StrictNext(255), random.StrictNext(255));
-			}
+        //画图片的前景干扰点
+        for (int i = 0; i < 350; i++)
+        {
+            int x = random.StrictNext(image.Width);
+            int y = random.StrictNext(image.Height);
+            image[x, y] = new Rgba32(random.StrictNext(255), random.StrictNext(255), random.StrictNext(255));
+        }
 
-			//保存图片数据
-			var stream = new PooledMemoryStream();
-			image.Save(stream, WebpFormat.Instance);
-			stream.Position = 0;
-			return stream;
-		}
+        //保存图片数据
+        var stream = new PooledMemoryStream();
+        image.Save(stream, WebpFormat.Instance);
+        stream.Position = 0;
+        return stream;
+    }
 
-		/// <summary>
-		/// 字符串宽度
-		/// </summary>
-		/// <param name="s"></param>
-		/// <param name="fontSize"></param>
-		/// <returns></returns>
-		public static float StringWidth(this string s, int fontSize = 1)
-		{
-			var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI");
-			if (fontFamily == default)
-			{
-				fontFamily = SystemFonts.Families.FirstOrDefault();
-			}
+    /// <summary>
+    /// 字符串宽度
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="fontSize"></param>
+    /// <returns></returns>
+    public static float StringWidth(this string s, int fontSize = 1)
+    {
+        var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == "Microsoft YaHei UI");
+        if (fontFamily == default)
+        {
+            fontFamily = SystemFonts.Families.FirstOrDefault();
+        }
 
-			return TextMeasurer.MeasureSize(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
-		}
+        return TextMeasurer.MeasureSize(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
+    }
 
-		/// <summary>
-		/// 字符串宽度
-		/// </summary>
-		/// <param name="s"></param>
-		/// <param name="fontName">字体名字，如：Microsoft YaHei UI</param>
-		/// <param name="fontSize"></param>
-		/// <returns></returns>
-		public static float StringWidth(this string s, string fontName, int fontSize = 1)
-		{
-			var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == fontName);
-			if (fontFamily == default)
-			{
-				throw new ArgumentException($"字体 {fontName} 不存在，请尝试其它字体！");
-			}
+    /// <summary>
+    /// 字符串宽度
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="fontName">字体名字，如：Microsoft YaHei UI</param>
+    /// <param name="fontSize"></param>
+    /// <returns></returns>
+    public static float StringWidth(this string s, string fontName, int fontSize = 1)
+    {
+        var fontFamily = SystemFonts.Families.FirstOrDefault(f => f.Name == fontName);
+        if (fontFamily == default)
+        {
+            throw new ArgumentException($"字体 {fontName} 不存在，请尝试其它字体！");
+        }
 
-			return TextMeasurer.MeasureSize(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
-		}
-	}
+        return TextMeasurer.MeasureSize(s, new TextOptions(fontFamily.CreateFont(fontSize))).Width;
+    }
 }

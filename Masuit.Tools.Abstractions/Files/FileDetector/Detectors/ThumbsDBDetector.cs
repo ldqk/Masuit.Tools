@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.System)]
-internal class ThumbsDBDetector : AbstractSignatureDetector
+internal sealed class ThumbsDBDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] ThumbdbSignatureInfo = {
         new () { Position = 0, Signature = new byte [] { 0xFD, 0xFF, 0xFF, 0xFF } },

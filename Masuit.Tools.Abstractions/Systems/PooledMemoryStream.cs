@@ -22,7 +22,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
 
     private const float OverExpansionFactor = 2;
 
-    private byte[] _data = new byte[0];
+    private byte[] _data = { };
     private int _length;
     private readonly ArrayPool<byte> _pool;
     private bool _isDisposed;

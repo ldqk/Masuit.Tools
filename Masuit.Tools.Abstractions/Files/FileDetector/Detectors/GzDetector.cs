@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Compression)]
-internal class GzDetector : AbstractSignatureDetector
+internal sealed class GzDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] GzSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x1F, 0x8B } },

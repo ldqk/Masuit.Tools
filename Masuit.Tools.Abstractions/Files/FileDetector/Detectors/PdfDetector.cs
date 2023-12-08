@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class PdfDetector : AbstractRegexSignatureDetector
+internal sealed class PdfDetector : AbstractRegexSignatureDetector
 {
     public override string Extension => "pdf";
 

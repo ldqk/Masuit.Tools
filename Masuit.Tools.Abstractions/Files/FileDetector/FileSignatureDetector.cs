@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector;
 
 public static class FileSignatureDetector
 {
-    private static List<IDetector> Detectors { get; set; } = new();
+    private static List<IDetector> Detectors { get; set; } = [];
 
     public static IReadOnlyList<IDetector> Registered => Detectors;
 

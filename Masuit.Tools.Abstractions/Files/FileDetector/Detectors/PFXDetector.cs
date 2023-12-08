@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class PFXDetector : AbstractSignatureDetector
+internal sealed class PFXDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] PfxSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x30, 0x82, 0x06 } },

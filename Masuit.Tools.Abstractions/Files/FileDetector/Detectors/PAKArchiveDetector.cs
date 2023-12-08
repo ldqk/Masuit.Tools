@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class PAKArchiveDetector : AbstractSignatureDetector
+internal sealed class PAKArchiveDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] PakSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x1A, 0x0B } },

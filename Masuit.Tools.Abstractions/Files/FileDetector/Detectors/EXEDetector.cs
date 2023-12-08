@@ -8,10 +8,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Executable)]
-internal class EXEDetector : AbstractSignatureDetector
+internal sealed class EXEDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] ExeSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x4D, 0x5A } },
+        new() { Position = 0, Signature = "MZ"u8.ToArray() },
     };
 
     public override string Extension => "exe";
@@ -27,7 +27,7 @@ internal class EXEDetector : AbstractSignatureDetector
         if (base.Detect(stream))
         {
             stream.Position = 60;
-            using BinaryReader reader = new BinaryReader(stream, Encoding.UTF8, true);
+            var reader = new BinaryReader(stream, Encoding.UTF8, true);
             stream.Position = reader.ReadInt32();
             return reader.ReadByte() == 0x50 && reader.ReadByte() == 0x45 && reader.ReadByte() == 0 && reader.ReadByte() == 0;
         }

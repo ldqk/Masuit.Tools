@@ -8,7 +8,7 @@ namespace Masuit.Tools.Dynamics;
 
 internal class DefaultClayActivator : IClayActivator
 {
-    private static readonly IProxyBuilder _builder = new DefaultProxyBuilder();
+    private static readonly IProxyBuilder Builder = new DefaultProxyBuilder();
 
     public dynamic CreateInstance(Type baseType, IEnumerable<IClayBehavior> behaviors, IEnumerable<object> arguments)
     {
@@ -46,7 +46,7 @@ internal class DefaultClayActivator : IClayActivator
             };
         }
 
-        var proxyType = _builder.CreateClassProxyType(baseType, Type.EmptyTypes, options);
+        var proxyType = Builder.CreateClassProxyType(baseType, Type.EmptyTypes, options);
         constructorArgs.Add(new IInterceptor[]
         {
             new ClayInterceptor()
@@ -59,16 +59,9 @@ internal class DefaultClayActivator : IClayActivator
         return contextualize(Activator.CreateInstance(proxyType, constructorArgs.ToArray()));
     }
 
-    private class MixinClayBehaviorProvider : IClayBehaviorProvider
+    private class MixinClayBehaviorProvider(IEnumerable<IClayBehavior> behaviors) : IClayBehaviorProvider
     {
-        private readonly IClayBehavior _behavior;
-
-        public MixinClayBehaviorProvider(IEnumerable<IClayBehavior> behaviors)
-        {
-            _behavior = new ClayBehaviorCollection(behaviors);
-        }
-
-        IClayBehavior IClayBehaviorProvider.Behavior => _behavior;
+        IClayBehavior IClayBehaviorProvider.Behavior { get; } = new ClayBehaviorCollection(behaviors);
     }
 
     private class MixinDynamicMetaObjectProvider : IDynamicMetaObjectProvider

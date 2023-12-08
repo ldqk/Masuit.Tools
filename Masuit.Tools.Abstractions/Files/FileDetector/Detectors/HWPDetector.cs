@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class HWPDetector : AbstractRegexSignatureDetector
+internal sealed class HWPDetector : AbstractRegexSignatureDetector
 {
     public override string Extension => "hwp";
 

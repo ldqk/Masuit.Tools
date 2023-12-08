@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class MicrosoftInstallerDetector : AbstractCompoundFileDetailDetector
+internal sealed class MicrosoftInstallerDetector : AbstractCompoundFileDetailDetector
 {
     public override IEnumerable<string> Chunks
     {
@@ -26,7 +27,7 @@ internal class MicrosoftInstallerDetector : AbstractCompoundFileDetailDetector
 
     protected override bool IsValidChunk(string chunkName, byte[] chunkData)
     {
-        return chunkName == "SummaryInformation" && Encoding.ASCII.GetString(chunkData, 0, chunkData.Length).IndexOf("Installation Database") != -1;
+        return chunkName == "SummaryInformation" && Encoding.ASCII.GetString(chunkData, 0, chunkData.Length).IndexOf("Installation Database", StringComparison.Ordinal) != -1;
     }
 
     public override string ToString() => "Microsoft Installer Setup File Detector";

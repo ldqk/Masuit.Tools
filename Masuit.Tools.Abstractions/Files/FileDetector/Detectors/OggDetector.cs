@@ -8,10 +8,10 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Audio)]
 [FormatCategory(FormatCategory.Video)]
-internal class OggDetector : AbstractSignatureDetector
+internal sealed class OggDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] OggSignatureInfo = {
-        new () { Position = 0, Signature = new byte [] { 0x4F, 0x67, 0x67, 0x53 } },
+        new () { Position = 0, Signature = "OggS"u8.ToArray() },
     };
 
     public override string Extension => "ogg";

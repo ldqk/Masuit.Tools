@@ -7,7 +7,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Video)]
 [FormatCategory(FormatCategory.Audio)]
-internal class _3GPDetector : AbstractISOBaseMediaFileDetailDetector
+internal sealed class _3GPDetector : AbstractISOBaseMediaFileDetailDetector
 {
     public override string Extension => "3gp";
 

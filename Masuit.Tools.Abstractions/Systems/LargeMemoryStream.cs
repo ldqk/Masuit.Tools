@@ -23,11 +23,11 @@ public class LargeMemoryStream : Stream
 
     private byte[][] _streamBuffers;
 
-    private int _pageCount = 0;
-    private long _allocatedBytes = 0;
+    private int _pageCount;
+    private long _allocatedBytes;
 
-    private long _position = 0;
-    private long _length = 0;
+    private long _position;
+    private long _length;
     private bool _isDisposed;
 
     private int GetPageCount(long length)
@@ -96,6 +96,7 @@ public class LargeMemoryStream : Stream
     public override long Position
     {
         get => _position;
+
         set
         {
             if (value > _length)

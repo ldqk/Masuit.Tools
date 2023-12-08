@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
-internal class TgaDetector : IDetector
+internal sealed class TgaDetector : IDetector
 {
     public string Extension => "tga";
 
@@ -28,7 +28,7 @@ internal class TgaDetector : IDetector
 
         stream.Position = 17;
         int depth = stream.ReadByte();
-        if (!(depth == 8 || depth == 24 || depth == 15 || depth == 16 || depth == 32))
+        if (depth is not (8 or 24 or 15 or 16 or 32))
         {
             return false;
         }

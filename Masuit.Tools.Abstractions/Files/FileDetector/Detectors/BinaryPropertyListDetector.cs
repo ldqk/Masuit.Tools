@@ -6,10 +6,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class BinaryPropertyListDetector : AbstractSignatureDetector
+internal sealed class BinaryPropertyListDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] BplistSignatureInfo = {
-        new () { Position = 0, Signature = new byte [] { 0x62, 0x70, 0x6C, 0x69, 0x73, 0x74 } },
+        new () { Position = 0, Signature = "bplist"u8.ToArray() },
     };
 
     public override string Extension => "bplist";

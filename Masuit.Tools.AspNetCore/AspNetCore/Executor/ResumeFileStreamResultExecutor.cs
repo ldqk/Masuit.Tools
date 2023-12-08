@@ -9,16 +9,8 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.Executor;
 /// <summary>
 /// 可断点续传的FileStreamResult执行器
 /// </summary>
-internal class ResumeFileStreamResultExecutor : FileStreamResultExecutor, IActionResultExecutor<ResumeFileStreamResult>
+internal class ResumeFileStreamResultExecutor(ILoggerFactory loggerFactory) : FileStreamResultExecutor(loggerFactory), IActionResultExecutor<ResumeFileStreamResult>
 {
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="loggerFactory"></param>
-    public ResumeFileStreamResultExecutor(ILoggerFactory loggerFactory) : base(loggerFactory)
-    {
-    }
-
     /// <summary>
     /// 执行Result
     /// </summary>

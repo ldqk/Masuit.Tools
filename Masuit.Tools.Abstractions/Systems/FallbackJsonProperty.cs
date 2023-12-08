@@ -6,15 +6,9 @@ namespace Masuit.Tools.Systems;
 /// 多别名属性
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class FallbackJsonProperty : Attribute
+public class FallbackJsonProperty(string preferredName, params string[] fallbackReadNames) : Attribute
 {
-    public string PreferredName { get; }
+    public string PreferredName { get; } = preferredName;
 
-    public string[] FallbackReadNames { get; }
-
-    public FallbackJsonProperty(string preferredName, params string[] fallbackReadNames)
-    {
-        PreferredName = preferredName;
-        FallbackReadNames = fallbackReadNames;
-    }
+    public string[] FallbackReadNames { get; } = fallbackReadNames;
 }

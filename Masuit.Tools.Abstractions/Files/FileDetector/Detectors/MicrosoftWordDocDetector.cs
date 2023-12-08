@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class MicrosoftWordDocDetector : AbstractCompoundFileDetailDetector
+internal sealed class MicrosoftWordDocDetector : AbstractCompoundFileDetailDetector
 {
     public override IEnumerable<string> Chunks
     {

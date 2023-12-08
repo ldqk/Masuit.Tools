@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Masuit.Tools.Systems
+namespace Masuit.Tools.Systems;
+
+/// <summary>
+/// 计数器帮助类
+/// </summary>
+public static class StopwatchHelper
 {
     /// <summary>
-    /// 计数器帮助类
+    /// 执行方法
     /// </summary>
-    public static class StopwatchHelper
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static double Execute(Action action)
     {
-        /// <summary>
-        /// 执行方法
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static double Execute(Action action)
-        {
-            var sw = Stopwatch.StartNew();
-            action();
-            return sw.ElapsedMilliseconds;
-        }
+        var sw = Stopwatch.StartNew();
+        action();
+        return sw.ElapsedMilliseconds;
     }
 }

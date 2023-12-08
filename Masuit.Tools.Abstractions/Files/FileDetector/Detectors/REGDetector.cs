@@ -9,7 +9,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
 [FormatCategory(FormatCategory.System)]
-internal class REGDetector : AbstractRegexSignatureDetector
+internal sealed class REGDetector : AbstractRegexSignatureDetector
 {
     public override string Precondition => "txt";
 

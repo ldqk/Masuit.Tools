@@ -8,7 +8,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Video)]
 [FormatCategory(FormatCategory.Audio)]
-internal class QuickTimeDetector : AbstractISOBaseMediaFileDetailDetector
+internal sealed class QuickTimeDetector : AbstractISOBaseMediaFileDetailDetector
 {
     public override string Extension => "mov";
 

@@ -5,13 +5,8 @@ using System.Linq.Expressions;
 
 namespace Masuit.Tools.Dynamics;
 
-internal class ClayBehaviorCollection : List<IClayBehavior>, IClayBehavior
+internal class ClayBehaviorCollection(IEnumerable<IClayBehavior> behaviors) : List<IClayBehavior>(behaviors), IClayBehavior
 {
-    public ClayBehaviorCollection(IEnumerable<IClayBehavior> behaviors)
-        : base(behaviors)
-    {
-    }
-
     private object Execute(Func<object> proceed, Func<Func<object>, IClayBehavior, Func<object>> linker)
     {
         return this.Aggregate(proceed, linker)();

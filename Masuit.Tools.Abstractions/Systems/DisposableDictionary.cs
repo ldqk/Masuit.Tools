@@ -36,7 +36,7 @@ public class DisposableDictionary<TKey, TValue> : NullableDictionary<TKey, TValu
         GC.SuppressFinalize(this);
     }
 
-    public DisposableDictionary() : base()
+    public DisposableDictionary()
     {
     }
 

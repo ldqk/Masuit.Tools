@@ -9,7 +9,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class OpenDocumentSpreadSheetDetector : AbstractZipDetailDetector
+internal sealed class OpenDocumentSpreadSheetDetector : AbstractZipDetailDetector
 {
     public override IEnumerable<string> Files
     {
@@ -31,8 +31,8 @@ internal class OpenDocumentSpreadSheetDetector : AbstractZipDetailDetector
     {
         if (filename == "mimetype")
         {
-            using Stream mimetypeStream = entry.Open();
-            byte[] buffer = new byte["application/vnd.oasis.opendocument.spreadsheet".Length];
+            var mimetypeStream = entry.Open();
+            var buffer = new byte["application/vnd.oasis.opendocument.spreadsheet".Length];
             if (mimetypeStream.Read(buffer, 0, buffer.Length) != buffer.Length)
             {
                 return false;

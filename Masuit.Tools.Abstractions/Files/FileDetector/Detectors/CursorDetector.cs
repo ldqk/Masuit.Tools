@@ -6,7 +6,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
-internal class CursorDetector : AbstractSignatureDetector
+internal sealed class CursorDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] CurSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x00, 0x00, 0x02, 0x00 } },

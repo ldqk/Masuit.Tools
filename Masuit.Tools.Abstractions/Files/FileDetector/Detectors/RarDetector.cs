@@ -8,7 +8,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
 [FormatCategory(FormatCategory.Compression)]
-internal class RarDetector : AbstractSignatureDetector
+internal sealed class RarDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] RarSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x52, 0x61, 0x72, 0x21, 0x1A, 0x07, 0x00 } },

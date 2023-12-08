@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
-internal class JpegDetector : AbstractSignatureDetector
+internal sealed class JpegDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] JpegSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0xFF, 0xD8, 0xFF, 0xFE, 0x00 } },

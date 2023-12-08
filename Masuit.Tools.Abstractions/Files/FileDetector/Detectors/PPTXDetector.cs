@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class PPTXDetector : AbstractZipDetailDetector
+internal sealed class PPTXDetector : AbstractZipDetailDetector
 {
     public override IEnumerable<string> Files
     {

@@ -7,10 +7,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Image)]
-internal class TiffDetector : AbstractSignatureDetector
+internal sealed class TiffDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] TiffSignatureInfo = {
-        new () { Position = 0, Signature = new byte [] { 0x49, 0x49, 0x49 } },
+        new () { Position = 0, Signature = "III"u8.ToArray() },
         new () { Position = 0, Signature = new byte [] { 0x49, 0x49, 0x2A, 0x00 } },
         new () { Position = 0, Signature = new byte [] { 0x4D, 0x4D, 0x00, 0x2A } },
         new () { Position = 0, Signature = new byte [] { 0x4D, 0x4D, 0x00, 0x2B } },

@@ -7,7 +7,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.System)]
-internal class WindowsShortcutDetector : AbstractSignatureDetector
+internal sealed class WindowsShortcutDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] LnkSignatureInfo = {
         new() { Position = 0, Signature = new byte [] { 0x4C, 0x00, 0x00, 0x00, 0x01, 0x14, 0x02, 0x00 } },

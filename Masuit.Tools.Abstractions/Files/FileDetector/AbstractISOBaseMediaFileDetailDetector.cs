@@ -21,7 +21,7 @@ public abstract class AbstractISOBaseMediaFileDetailDetector : IDetector
 
     public virtual bool Detect(Stream stream)
     {
-        using var reader = new BinaryReader(stream, Encoding.UTF8, true);
+        var reader = new BinaryReader(stream, Encoding.UTF8, true);
         int offset = reader.ReadInt32();
 
         if (reader.ReadByte() == 0x66 && reader.ReadByte() == 0x74 && reader.ReadByte() == 0x79 && reader.ReadByte() == 0x70)

@@ -1,27 +1,19 @@
-﻿namespace Masuit.Tools.RandomSelector
+﻿namespace Masuit.Tools.RandomSelector;
+
+public class WeightedItem<T>(T value, int weight)
 {
-    public class WeightedItem<T>
-    {
-        /// <summary>
-        /// 权重
-        /// </summary>
-        public int Weight;
+    /// <summary>
+    /// 权重
+    /// </summary>
+    public int Weight = weight;
 
-        /// <summary>
-        /// 元素
-        /// </summary>
-        public readonly T Value;
+    /// <summary>
+    /// 元素
+    /// </summary>
+    public readonly T Value = value;
 
-        /// <summary>
-        /// 累计权重
-        /// </summary>
-        internal int CumulativeWeight;
-
-        public WeightedItem(T value, int weight)
-        {
-            Value = value;
-            Weight = weight;
-            CumulativeWeight = 0;
-        }
-    }
+    /// <summary>
+    /// 累计权重
+    /// </summary>
+    internal int CumulativeWeight = 0;
 }

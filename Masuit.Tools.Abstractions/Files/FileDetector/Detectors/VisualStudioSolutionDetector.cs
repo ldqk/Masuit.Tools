@@ -8,7 +8,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Document)]
-internal class VisualStudioSolutionDetector : AbstractRegexSignatureDetector
+internal sealed class VisualStudioSolutionDetector : AbstractRegexSignatureDetector
 {
     public override string Precondition => "txt";
 

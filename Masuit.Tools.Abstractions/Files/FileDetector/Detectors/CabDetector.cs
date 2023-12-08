@@ -6,10 +6,10 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.Archive)]
-internal class CabDetector : AbstractSignatureDetector
+internal sealed class CabDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] CabSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x4D, 0x53, 0x43, 0x46 } },
+        new() { Position = 0, Signature = "MSCF"u8.ToArray() },
     };
 
     public override string Extension => "cab";

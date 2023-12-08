@@ -7,17 +7,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
-public sealed class BodyOrDefaultBinderMiddleware
+public sealed class BodyOrDefaultBinderMiddleware(RequestDelegate next, ILogger<BodyOrDefaultBinderMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<BodyOrDefaultBinderMiddleware> _logger;
-
-    public BodyOrDefaultBinderMiddleware(RequestDelegate next, ILogger<BodyOrDefaultBinderMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public Task Invoke(HttpContext context)
     {
         var contentType = context.Request.ContentType;
@@ -53,23 +44,23 @@ public sealed class BodyOrDefaultBinderMiddleware
             var body = context.GetBodyString(encoding)?.Trim();
             if (string.IsNullOrWhiteSpace(body))
             {
-                return _next(context);
+                return next(context);
             }
 
             if (!(body.StartsWith("{") && body.EndsWith("}")))
             {
-                return _next(context);
+                return next(context);
             }
 
             try
             {
                 context.Items.AddOrUpdate("BodyOrDefaultModelBinder@JsonBody", _ => JObject.Parse(body), (_, _) => JObject.Parse(body));
-                return _next(context);
+                return next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Parsing json failed:" + body);
-                return _next(context);
+                logger.LogError(ex, "Parsing json failed:" + body);
+                return next(context);
             }
         }
         else if (mediaType == "application/xml")
@@ -77,21 +68,21 @@ public sealed class BodyOrDefaultBinderMiddleware
             var body = context.GetBodyString(encoding)?.Trim();
             if (string.IsNullOrWhiteSpace(body))
             {
-                return _next(context);
+                return next(context);
             }
 
             try
             {
                 context.Items.AddOrUpdate("BodyOrDefaultModelBinder@XmlBody", _ => XDocument.Parse(body), (_, _) => XDocument.Parse(body));
-                return _next(context);
+                return next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Parsing xml failed:" + body);
-                return _next(context);
+                logger.LogError(ex, "Parsing xml failed:" + body);
+                return next(context);
             }
         }
 
-        return _next(context);
+        return next(context);
     }
 }
