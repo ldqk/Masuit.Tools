@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Masuit.Tools.Security;
 
 namespace Masuit.Tools
 {
@@ -703,7 +704,8 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static string Crc32(this string s)
         {
-            return string.Join(string.Empty, new Security.Crc32().ComputeHash(Encoding.UTF8.GetBytes(s)).Select(b => b.ToString("x2")));
+            using var crc32 = new Crc32();
+            return string.Join(string.Empty, crc32.ComputeHash(Encoding.UTF8.GetBytes(s)).Select(b => b.ToString("x2")));
         }
 
         /// <summary>
@@ -713,7 +715,8 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static string Crc64(this string s)
         {
-            return string.Join(string.Empty, new Security.Crc64().ComputeHash(Encoding.UTF8.GetBytes(s)).Select(b => b.ToString("x2")));
+            using var crc64 = new Crc64();
+            return string.Join(string.Empty, crc64.ComputeHash(Encoding.UTF8.GetBytes(s)).Select(b => b.ToString("x2")));
         }
 
         #endregion Crc32
@@ -731,7 +734,7 @@ namespace Masuit.Tools
         /// <returns>是否匹配成功</returns>
         public static bool MatchCNPatentNumber(this string patnum)
         {
-            Regex patnumWithCheckbitPattern = new Regex(@"^
+            var patnumWithCheckbitPattern = new Regex(@"^
 (?<!\d)
 (?<patentnum>
     (?<basenum>
@@ -748,7 +751,7 @@ namespace Masuit.Tools
 )
 (?!\d)
 $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            Match m = patnumWithCheckbitPattern.Match(patnum);
+            var m = patnumWithCheckbitPattern.Match(patnum);
             if (!m.Success)
             {
                 return false;
@@ -758,10 +761,10 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
             patnum = patnum.ToUpper().Replace(".", "");
             if (patnum.Length == 9 || patnum.Length == 8)
             {
-                byte[] factors8 = new byte[] { 2, 3, 4, 5, 6, 7, 8, 9 };
+                byte[] factors8 = { 2, 3, 4, 5, 6, 7, 8, 9 };
                 int year = Convert.ToUInt16(patnum.Substring(0, 2));
-                year += (year >= 85) ? (ushort)1900u : (ushort)2000u;
-                if (year >= 1985 || year <= 2003)
+                year += year >= 85 ? (ushort)1900u : (ushort)2000u;
+                if (year is >= 1985 or <= 2003)
                 {
                     int sum = 0;
                     for (byte i = 0; i < 8; i++)
@@ -770,12 +773,9 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
                     }
 
                     char checkbit = "0123456789X"[sum % 11];
-                    if (patnum.Length == 9)
+                    if (patnum.Length == 9 && checkbit != patnum[8])
                     {
-                        if (checkbit != patnum[8])
-                        {
-                            isPatnumTrue = false;
-                        }
+                        isPatnumTrue = false;
                     }
                 }
                 else
@@ -783,7 +783,7 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
                     isPatnumTrue = false;
                 }
             }
-            else if (patnum.Length == 13 || patnum.Length == 12)
+            else if (patnum.Length is 13 or 12)
             {
                 byte[] factors12 = { 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5 };
                 int year = Convert.ToUInt16(patnum.Substring(0, 4));

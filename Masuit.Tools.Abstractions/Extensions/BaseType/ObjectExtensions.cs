@@ -7,6 +7,9 @@ using System.Reflection;
 using Masuit.Tools.Dynamics;
 using Masuit.Tools.Reflection;
 using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using Masuit.Tools.Systems;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Masuit.Tools;
 
@@ -106,10 +109,11 @@ public static class ObjectExtensions
     /// 深克隆
     /// </summary>
     /// <param name="originalObject"></param>
+    /// <param name="useJson">使用json方式</param>
     /// <returns></returns>
-    public static object DeepClone(this object originalObject)
+    public static object DeepClone(this object originalObject, bool useJson = false)
     {
-        return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
+        return useJson ? InternalJsonCopy(originalObject) : InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
     }
 
     /// <summary>
@@ -117,10 +121,21 @@ public static class ObjectExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="original"></param>
+    /// <param name="useJson">使用json方式</param>
     /// <returns></returns>
-    public static T DeepClone<T>(this T original)
+    public static T DeepClone<T>(this T original, bool useJson = false)
     {
-        return (T)DeepClone((object)original);
+        return useJson ? InternalJsonCopy(original) : (T)InternalCopy(original, new Dictionary<object, object>(new ReferenceEqualityComparer()));
+    }
+
+    private static T InternalJsonCopy<T>(T obj)
+    {
+        using var stream = new PooledMemoryStream();
+        using var writer = new Utf8JsonWriter(stream);
+        JsonSerializer.Serialize(writer, obj);
+        writer.Flush();
+        var reader = new Utf8JsonReader(stream.ToArray());
+        return JsonSerializer.Deserialize<T>(ref reader);
     }
 
     private static object InternalCopy(object originalObject, IDictionary<object, object> visited)
