@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Media
 {
@@ -1088,7 +1089,7 @@ namespace Masuit.Tools.Media
         {
             string strbase64 = source.Substring(source.IndexOf(',') + 1).Trim('\0');
             byte[] arr = Convert.FromBase64String(strbase64);
-            using var ms = new MemoryStream(arr);
+            using var ms = new PooledMemoryStream(arr);
             using var bmpp = new Bitmap(ms);
 
             //新建第二个bitmap类型的bmpp2变量。

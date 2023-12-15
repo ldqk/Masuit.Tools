@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Mvc.ActionResults
 {
@@ -12,7 +13,7 @@ namespace Masuit.Tools.Mvc.ActionResults
                 throw new ArgumentNullException(nameof(fileContents));
             }
 
-            FileContents = new MemoryStream(fileContents);
+            FileContents = new PooledMemoryStream(fileContents);
         }
 
         public ResumeFileContentResult(byte[] fileContents, string fileName, string etag) : this(fileContents, fileName)

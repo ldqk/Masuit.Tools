@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Masuit.Tools.Net45</id>
-    <version>2.6.8.2</version>
+    <version>2.6.8.3</version>
     <title>Masuit.Tools</title>
     <authors>懒得勤快</authors>
     <owners>masuit.com</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/ldqk/Masuit.Tools</projectUrl>
     <!--<iconUrl></iconUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Masuit.Tools的.NET Framework 4.5专用版本，相比4.6.1及.NET Core的版本，阉割了HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等功能。</description>
+    <description>全龄段友好的C#万能工具库，码数吐司库(适用于.NET Core项目)，Masuit.Tools的.NET Framework 4.5专用版本，相比4.6.1及.NET Core的版本，阉割了HTML、文件压缩、ASP.NET扩展、硬件监测、Session扩展等功能。</description>
     <releaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</releaseNotes>
     <copyright>Copyright ©  懒得勤快</copyright>
     <tags>Masuit.Tools,工具库,Utility,Crypt,Extensions</tags>

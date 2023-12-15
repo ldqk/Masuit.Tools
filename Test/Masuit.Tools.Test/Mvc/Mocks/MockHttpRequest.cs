@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Web;
 using System.Web.Routing;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Test.Mvc.Mocks
 {
@@ -13,6 +14,7 @@ namespace Masuit.Tools.Test.Mvc.Mocks
         public override HttpFileCollectionBase Files { get; }
 
         public override RequestContext RequestContext => _context;
+
         public override string ApplicationPath => _applicationPath;
 
         public override System.IO.Stream InputStream
@@ -21,7 +23,7 @@ namespace Masuit.Tools.Test.Mvc.Mocks
             {
                 if (TestInput != null)
                 {
-                    var stream = new MemoryStream();
+                    var stream = new PooledMemoryStream();
                     var chars = TestInput.ToCharArray();
                     foreach (var c in chars)
                     {
@@ -29,11 +31,12 @@ namespace Masuit.Tools.Test.Mvc.Mocks
                     }
                     return stream;
                 }
-                return new MemoryStream();
+                return new PooledMemoryStream();
             }
         }
 
         public override string HttpMethod => TestHttpMethod;
+
         private readonly NameValueCollection _headers = new NameValueCollection();
         private readonly MockRequestContext _context = new MockRequestContext();
         private string _applicationPath;

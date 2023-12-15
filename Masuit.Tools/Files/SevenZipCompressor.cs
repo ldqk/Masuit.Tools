@@ -25,10 +25,10 @@ namespace Masuit.Tools.Files
         /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
         /// <param name="rootdir"></param>
         /// <returns>文件流</returns>
-        public static MemoryStream ZipStream(List<string> files, string rootdir = "")
+        public static PooledMemoryStream ZipStream(List<string> files, string rootdir = "")
         {
             using var archive = CreateZipArchive(files, rootdir);
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
@@ -47,7 +47,7 @@ namespace Masuit.Tools.Files
         /// <param name="archiveType"></param>
         /// <param name="disposeAllStreams">是否需要释放所有流</param>
         /// <returns>文件流</returns>
-        public static MemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+        public static PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
         {
             using var archive = ArchiveFactory.Create(archiveType);
             foreach (var pair in streams)
@@ -55,7 +55,7 @@ namespace Masuit.Tools.Files
                 archive.AddEntry(pair.Key, pair.Value, true);
             }
 
-            var ms = new MemoryStream();
+            var ms = new PooledMemoryStream();
             archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
             {
                 LeaveStreamOpen = true,
