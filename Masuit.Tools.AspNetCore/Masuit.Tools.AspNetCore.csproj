@@ -34,6 +34,7 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <Title>Masuit.Tools</Title>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
 
     <ItemGroup>
@@ -46,7 +47,6 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="FastExpressionCompiler" Version="4.0.1" />
-      <PackageReference Include="System.Net.Http.Json" Version="8.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -55,17 +55,22 @@
     
     <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1.32]" />
+      <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[5.0.17]" />
+      <PackageReference Include="System.Net.Http.Json" Version="5.0" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.24]" />
+      <PackageReference Include="System.Net.Http.Json" Version="6.0.1" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.13" />
+      <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0" />
+      <PackageReference Include="System.Net.Http.Json" Version="8.0" />
     </ItemGroup>
 </Project>

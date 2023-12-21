@@ -100,6 +100,11 @@ namespace Ganss.Xss
         }
 
         /// <summary>
+        /// Gets or sets the default <see cref="Action{IElement}"/> method that encodes literal text content.
+        /// </summary>
+        public Action<IElement> EncodeLiteralTextElementContent { get; set; } = DefaultEncodeLiteralTextElementContent;
+
+        /// <summary>
         /// Gets or sets the default value indicating whether to keep child nodes of elements that are removed. Default is false.
         /// </summary>
         public static bool DefaultKeepChildNodes { get; set; } = false;
@@ -465,6 +470,15 @@ namespace Ganss.Xss
             }
         }
 
+        private static void DefaultEncodeLiteralTextElementContent(IElement tag)
+        {
+            var escapedHtml = tag.InnerHtml.Replace("<", "&lt;").Replace(">", "&gt;");
+            if (escapedHtml != tag.InnerHtml)
+                tag.InnerHtml = escapedHtml;
+            if (tag.InnerHtml != escapedHtml) // setting InnerHtml does not work for noscript
+                tag.SetInnerText(escapedHtml);
+        }
+
         private void DoSanitize(IHtmlDocument dom, IParentNode context, string baseUrl = "")
         {
             // remove disallowed tags
@@ -479,11 +493,7 @@ namespace Ganss.Xss
                     && t.Flags.HasFlag(NodeFlags.LiteralText)
                     && !string.IsNullOrWhiteSpace(t.InnerHtml)))
             {
-                var escapedHtml = tag.InnerHtml.Replace("<", "&lt;").Replace(">", "&gt;");
-                if (escapedHtml != tag.InnerHtml)
-                    tag.InnerHtml = escapedHtml;
-                if (tag.InnerHtml != escapedHtml) // setting InnerHtml does not work for noscript
-                    tag.SetInnerText(escapedHtml);
+                EncodeLiteralTextElementContent(tag);
             }
 
             SanitizeStyleSheets(dom, baseUrl);

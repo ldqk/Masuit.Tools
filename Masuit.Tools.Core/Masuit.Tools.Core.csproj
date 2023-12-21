@@ -32,6 +32,7 @@ github：https://github.com/ldqk/Masuit.Tools
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <Title>Masuit.Tools</Title>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
 
     <ItemGroup>

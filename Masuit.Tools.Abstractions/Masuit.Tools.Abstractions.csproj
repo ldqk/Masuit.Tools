@@ -29,6 +29,7 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <Title>Masuit.Tools</Title>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
@@ -57,7 +58,7 @@
         <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
         <PackageReference Include="System.Management" Version="8.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.34.2" />
+        <PackageReference Include="SharpCompress" Version="0.35.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
