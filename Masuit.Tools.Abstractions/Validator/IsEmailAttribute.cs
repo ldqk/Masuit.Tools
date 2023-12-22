@@ -19,12 +19,12 @@ public class IsEmailAttribute : ValidationAttribute
     /// <summary>
     /// 域白名单
     /// </summary>
-    private string WhiteList { get; }
+    private string WhiteList { get; set; }
 
     /// <summary>
     /// 域黑名单
     /// </summary>
-    private string BlockList { get; }
+    private string BlockList { get; set; }
 
     /// <summary>
     /// 是否允许为空
@@ -38,8 +38,6 @@ public class IsEmailAttribute : ValidationAttribute
     /// <param name="customMessage">自定义错误消息</param>
     public IsEmailAttribute(bool valid = true, string customMessage = null)
     {
-        WhiteList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainWhiteList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
-        BlockList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainBlockList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
         _valid = valid;
         _customMessage = customMessage;
     }
@@ -51,6 +49,8 @@ public class IsEmailAttribute : ValidationAttribute
     /// <returns></returns>
     public override bool IsValid(object value)
     {
+        WhiteList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainWhiteList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
+        BlockList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainBlockList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
         if (AllowEmpty)
         {
             switch (value)
