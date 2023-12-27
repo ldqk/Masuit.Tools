@@ -4,6 +4,7 @@ using Masuit.Tools.Files;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
+using Masuit.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -67,47 +68,80 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     private static void RegisterServiceByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 && t.IsClass && !t.IsAbstract);
+        var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => (t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 || t.GetInterfaces().Intersect([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).Any()) && t.IsClass && !t.IsAbstract);
 
         foreach (var type in types)
         {
-            var typeInterface = type.GetInterfaces().FirstOrDefault();
+            var typeInterface = type.GetInterfaces().Except([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).FirstOrDefault();
             if (typeInterface == null)
             {
                 //服务非继承自接口的直接注入
-                switch (type.GetCustomAttribute<ServiceInjectAttribute>().Lifetime)
+                switch (type.GetCustomAttribute<ServiceInjectAttribute>()?.Lifetime)
                 {
                     case ServiceLifetime.Singleton:
-                        services.AddSingleton(type);
+                        services.TryAddSingleton(type);
                         break;
 
                     case ServiceLifetime.Scoped:
-                        services.AddScoped(type);
+                        services.TryAddScoped(type);
                         break;
 
                     case ServiceLifetime.Transient:
-                        services.AddTransient(type);
+                        services.TryAddTransient(type);
+                        break;
+
+                    default:
+                        if (type.IsImplementsOf(typeof(IScoped)))
+                        {
+                            services.TryAddScoped(type);
+                        }
+                        else if (type.IsImplementsOf(typeof(ISingleton)))
+                        {
+                            services.TryAddSingleton(type);
+                        }
+                        else if (type.IsImplementsOf(typeof(ITransient)))
+                        {
+                            services.TryAddTransient(type);
+                        }
                         break;
                 }
             }
             else
             {
                 //服务继承自接口的和接口一起注入
-                switch (type.GetCustomAttribute<ServiceInjectAttribute>().Lifetime)
+                switch (type.GetCustomAttribute<ServiceInjectAttribute>()?.Lifetime)
                 {
                     case ServiceLifetime.Singleton:
-                        services.AddSingleton(type);
-                        services.AddSingleton(typeInterface, type);
+                        services.TryAddSingleton(type);
+                        services.TryAddSingleton(typeInterface, type);
                         break;
 
                     case ServiceLifetime.Scoped:
-                        services.AddScoped(type);
-                        services.AddScoped(typeInterface, type);
+                        services.TryAddScoped(type);
+                        services.TryAddScoped(typeInterface, type);
                         break;
 
                     case ServiceLifetime.Transient:
-                        services.AddTransient(type);
-                        services.AddTransient(typeInterface, type);
+                        services.TryAddTransient(type);
+                        services.TryAddTransient(typeInterface, type);
+                        break;
+
+                    default:
+                        if (type.IsImplementsOf(typeof(IScoped)))
+                        {
+                            services.TryAddScoped(type);
+                            services.TryAddSingleton(typeInterface, type);
+                        }
+                        else if (type.IsImplementsOf(typeof(ISingleton)))
+                        {
+                            services.TryAddSingleton(type);
+                            services.TryAddSingleton(typeInterface, type);
+                        }
+                        else if (type.IsImplementsOf(typeof(ITransient)))
+                        {
+                            services.TryAddTransient(type);
+                            services.TryAddTransient(typeInterface, type);
+                        }
                         break;
                 }
             }
@@ -123,7 +157,7 @@ public static class ServiceCollectionExtensions
         var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => typeof(BackgroundService).IsAssignableFrom(t) && !t.IsAbstract);
         foreach (var type in types)
         {
-            services.AddSingleton(typeof(IHostedService), type);
+            services.TryAddSingleton(typeof(IHostedService), type);
         }
     }
 }
@@ -142,3 +176,9 @@ public class ServiceInjectAttribute : Attribute
 
     public ServiceLifetime Lifetime { get; set; } = ServiceLifetime.Transient;
 }
+
+public interface IScoped;
+
+public interface ITransient;
+
+public interface ISingleton;
