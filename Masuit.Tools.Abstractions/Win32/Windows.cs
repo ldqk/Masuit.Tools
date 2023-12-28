@@ -273,7 +273,7 @@ public class WindowsServer
             //获取硬盘ID
             using var mc = new ManagementClass("Win32_DiskDrive");
             using var moc = mc.GetInstances();
-            foreach (ManagementObject o in moc)
+            foreach (var o in moc)
             {
                 using (o)
                 {

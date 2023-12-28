@@ -7,9 +7,14 @@ using System.Reflection;
 using Masuit.Tools.Dynamics;
 using Masuit.Tools.Reflection;
 using Newtonsoft.Json.Linq;
+
+#if NETSTANDARD2_1_OR_GREATER
+
 using System.Text.Json;
 using Masuit.Tools.Systems;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+
+#endif
 
 namespace Masuit.Tools;
 
@@ -128,6 +133,7 @@ public static class ObjectExtensions
         return useJson ? InternalJsonCopy(original) : (T)InternalCopy(original, new Dictionary<object, object>(new ReferenceEqualityComparer()));
     }
 
+#if NETSTANDARD2_1_OR_GREATER
     private static T InternalJsonCopy<T>(T obj)
     {
         using var stream = new PooledMemoryStream();
@@ -137,6 +143,14 @@ public static class ObjectExtensions
         var reader = new Utf8JsonReader(stream.ToArray());
         return JsonSerializer.Deserialize<T>(ref reader);
     }
+#else
+
+    private static T InternalJsonCopy<T>(T obj)
+    {
+        return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
+    }
+
+#endif
 
     private static object InternalCopy(object originalObject, IDictionary<object, object> visited)
     {
