@@ -221,6 +221,17 @@ public static class DbContextExt
         return result;
     }
 
+    public static List<T> ToListWithNoLock<T>(this IQueryable<T> query)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.ToList();
+        scope.Complete();
+        return result;
+    }
+
     public static async Task<int> CountWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
@@ -228,6 +239,17 @@ public static class DbContextExt
             IsolationLevel = IsolationLevel.ReadUncommitted
         }, TransactionScopeAsyncFlowOption.Enabled);
         var result = await query.CountAsync(cancellationToken);
+        scope.Complete();
+        return result;
+    }
+
+    public static int CountWithNoLock<T>(this IQueryable<T> query)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.Count();
         scope.Complete();
         return result;
     }
@@ -243,6 +265,17 @@ public static class DbContextExt
         return result;
     }
 
+    public static int CountWithNoLock<T>(this IQueryable<T> query, Expression<Func<T, bool>> where)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.Count(where);
+        scope.Complete();
+        return result;
+    }
+
     public static async Task<bool> AnyWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
@@ -250,6 +283,17 @@ public static class DbContextExt
             IsolationLevel = IsolationLevel.ReadUncommitted
         }, TransactionScopeAsyncFlowOption.Enabled);
         var result = await query.AnyAsync(cancellationToken);
+        scope.Complete();
+        return result;
+    }
+
+    public static bool AnyWithNoLock<T>(this IQueryable<T> query)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.Any();
         scope.Complete();
         return result;
     }
@@ -265,6 +309,17 @@ public static class DbContextExt
         return result;
     }
 
+    public static bool AnyWithNoLock<T>(this IQueryable<T> query, Expression<Func<T, bool>> where)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.Any(where);
+        scope.Complete();
+        return result;
+    }
+
     public static async Task<T> FirstOrDefaultWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
@@ -276,9 +331,20 @@ public static class DbContextExt
         return result;
     }
 
-    public static async Task<T> FirstOrDefaultWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+    public static T FirstOrDefaultWithNoLock<T>(this IQueryable<T> query, Expression<Func<T, bool>> where)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.FirstOrDefault(where);
+        scope.Complete();
+        return result;
+    }
+
+    public static async Task<T> FirstOrDefaultWithNoLockAsync<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
         {
             IsolationLevel = IsolationLevel.ReadUncommitted
         }, TransactionScopeAsyncFlowOption.Enabled);
@@ -287,13 +353,35 @@ public static class DbContextExt
         return result;
     }
 
+    public static T FirstOrDefaultWithNoLock<T>(this IQueryable<T> query)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.FirstOrDefault();
+        scope.Complete();
+        return result;
+    }
+
     public static async Task<T> SingleOrDefaultWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = await query.SingleOrDefaultAsync(where, cancellationToken);
+        scope.Complete();
+        return result;
+    }
+
+    public static T SingleOrDefaultWithNoLock<T>(this IQueryable<T> query, Expression<Func<T, bool>> where)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
         {
             IsolationLevel = IsolationLevel.ReadUncommitted
         }, TransactionScopeAsyncFlowOption.Enabled);
-        var result = await query.SingleOrDefaultAsync(where, cancellationToken);
+        var result = query.SingleOrDefault(where);
         scope.Complete();
         return result;
     }
@@ -309,6 +397,17 @@ public static class DbContextExt
         return result;
     }
 
+    public static T SingleOrDefaultWithNoLock<T>(this IQueryable<T> query)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.SingleOrDefault();
+        scope.Complete();
+        return result;
+    }
+
     public static async Task<bool> AllWithNoLockAsync<T>(this IQueryable<T> query, Expression<Func<T, bool>> where, CancellationToken cancellationToken = default)
     {
         using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
@@ -316,6 +415,17 @@ public static class DbContextExt
             IsolationLevel = IsolationLevel.ReadUncommitted
         }, TransactionScopeAsyncFlowOption.Enabled);
         var result = await query.AllAsync(where, cancellationToken);
+        scope.Complete();
+        return result;
+    }
+
+    public static bool AllWithNoLock<T>(this IQueryable<T> query, Expression<Func<T, bool>> where)
+    {
+        using var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions()
+        {
+            IsolationLevel = IsolationLevel.ReadUncommitted
+        }, TransactionScopeAsyncFlowOption.Enabled);
+        var result = query.All(where);
         scope.Complete();
         return result;
     }
