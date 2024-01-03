@@ -538,7 +538,13 @@ public class MyClass
     [MinValue(0, ErrorMessage = "年龄最小为0岁"), MaxValue(100, ErrorMessage = "年龄最大100岁")]
     public int Age { get; set; }
 
-    [ComplexPassword]//密码复杂度校验
+    [ComplexPassword]//密码复杂度校验，默认最小长度6，最大长度30，必须包含数字、字母、特殊符号
+    public string Password { get; set; }
+  
+    [ComplexPassword(MustNumber=true,MustLetter=true,MustSymbol=true)]//密码复杂度校验，默认最小长度6，最大长度30，手动配置必须包含数字、字母、特殊符号
+    public string Password { get; set; }
+  
+    [ComplexPassword(4,12)]//密码复杂度校验，配置最小长度4，最大长度12
     public string Password { get; set; }
   
     [EnumOf] // 检测是否是有效枚举值

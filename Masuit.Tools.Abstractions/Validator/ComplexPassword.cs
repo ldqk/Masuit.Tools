@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Masuit.Tools.Core.Validator;
 
 /// <summary>
-/// 强密码验证
+/// 强密码验证，默认最小长度6，最大长度30，必须包含数字、字母、特殊符号
 /// </summary>
 public class ComplexPasswordAttribute : ValidationAttribute
 {
