@@ -589,8 +589,7 @@ public static class IDictionaryExtensions
         return @this.TryAdd(key, addValue) ? addValue : @this[key];
     }
 
-#if NETSTANDARD2_1_OR_GREATER
-#else
+#if !NETSTANDARD2_1_OR_GREATER
 
     public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey : notnull
     {

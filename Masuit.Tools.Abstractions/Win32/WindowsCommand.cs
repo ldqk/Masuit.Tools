@@ -24,15 +24,18 @@ public static class WindowsCommand
         if (!string.IsNullOrEmpty(dosCommand))
         {
             using var process = new Process();
-            var startinfo = new ProcessStartInfo(); //创建进程时使用的一组值，如下面的属性
-            startinfo.FileName = "cmd.exe"; //设定需要执行的命令程序
+            var startinfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe", //设定需要执行的命令程序
 
-            //以下是隐藏cmd窗口的方法
-            startinfo.Arguments = "/c" + dosCommand; //设定参数，要输入到命令程序的字符，其中"/c"表示执行完命令后马上退出
-            startinfo.UseShellExecute = false; //不使用系统外壳程序启动
-            startinfo.RedirectStandardInput = false; //不重定向输入
-            startinfo.RedirectStandardOutput = true; //重定向输出，而不是默认的显示在dos控制台上
-            startinfo.CreateNoWindow = true; //不创建窗口
+                //以下是隐藏cmd窗口的方法
+                Arguments = "/c" + dosCommand, //设定参数，要输入到命令程序的字符，其中"/c"表示执行完命令后马上退出
+                UseShellExecute = false, //不使用系统外壳程序启动
+                RedirectStandardInput = false, //不重定向输入
+                RedirectStandardOutput = true, //重定向输出，而不是默认的显示在dos控制台上
+                CreateNoWindow = true //不创建窗口
+            }; //创建进程时使用的一组值，如下面的属性
+
             process.StartInfo = startinfo;
             if (process.Start()) //开始进程
             {
