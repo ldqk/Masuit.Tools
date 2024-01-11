@@ -92,7 +92,7 @@ public static class ObjectExtensions
             sbyte s => s == 0,
             short s => s == 0,
             char s => s == 0,
-            bool s => s,
+            bool s => s == false,
             ushort s => s == 0,
             int s => s == 0,
             uint s => s == 0,
