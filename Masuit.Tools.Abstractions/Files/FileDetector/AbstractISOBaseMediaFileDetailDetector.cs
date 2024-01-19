@@ -22,15 +22,14 @@ public abstract class AbstractISOBaseMediaFileDetailDetector : IDetector
     public virtual bool Detect(Stream stream)
     {
         var reader = new BinaryReader(stream, Encoding.UTF8, true);
-        int offset = reader.ReadInt32();
-
+        _ = reader.ReadInt32();
         if (reader.ReadByte() == 0x66 && reader.ReadByte() == 0x74 && reader.ReadByte() == 0x79 && reader.ReadByte() == 0x70)
         {
             foreach (var ns in NextSignature)
             {
                 stream.Position = 8;
                 var readed = Encoding.GetEncoding("ascii").GetString(reader.ReadBytes(ns.Length), 0, ns.Length);
-                stream.Position = offset;
+                stream.Position = 0;
                 if (ns == readed)
                 {
                     return true;

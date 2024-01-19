@@ -163,13 +163,12 @@ namespace Masuit.Tools.Hardware
                         return (float)Math.Round(temp, 2);
                     }
                 }
+                return 0;
             }
             catch (Exception)
             {
-                return 0;
+                return -1;
             }
-
-            return 0;
         }
 
         /// <summary>
@@ -194,7 +193,7 @@ namespace Masuit.Tools.Hardware
             }
             catch (Exception)
             {
-                return 0;
+                return -1;
             }
         }
 
@@ -265,7 +264,7 @@ namespace Masuit.Tools.Hardware
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    return -1;
                 }
             }
         }
