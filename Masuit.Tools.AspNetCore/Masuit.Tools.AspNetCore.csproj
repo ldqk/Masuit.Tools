@@ -46,7 +46,7 @@
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="FastExpressionCompiler" Version="4.0.1" />
+        <PackageReference Include="FastExpressionCompiler" Version="4.1.0" />
     </ItemGroup>
 
     <ItemGroup>
