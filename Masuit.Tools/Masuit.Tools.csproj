@@ -173,6 +173,7 @@
     <Compile Include="NoSQL\RedisHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strings\ValidateCode.cs" />
+    <Compile Include="Systems\IDictionaryExtensions.cs" />
     <Compile Include="Systems\Lock.cs" />
     <Compile Include="Systems\RedisLock.cs" />
   </ItemGroup>
