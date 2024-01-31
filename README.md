@@ -510,6 +510,8 @@ string s = "123".SHA256();// 生成SHA256摘要
 // 零宽字符串，通常用作文章暗水印，以一种看不见的字符插入到文本中，使攻击者无法直接识别文本内容，从而起到保护文章的作用，可通过代码把水印还原出来取证。
 string pub="hello,world!";
 string hidden="ldqk";
+
+// 可用作文字暗水印
 var str = pub.InjectZeroWidthString(hidden); // 扩展函数调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
 var str = ZeroWidthCodec.Encrypt(pub,hidden); // 类调用：将"ldqk"以零宽字符串的方式隐藏在"hello,world!"中
 var dec = str.DecodeZeroWidthString(); // 扩展函数调用：将包含零宽字符串的密文解密出隐藏字符串"ldqk"
