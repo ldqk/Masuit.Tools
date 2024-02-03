@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Masuit.Tools.Hardware;
 using Xunit;
@@ -193,7 +194,7 @@ public class SystemInfo_UnitTest
     public void SystemInfo_GetMacAddress_IfNotWinPlatform()
     {
         var res = SystemInfo.GetMacAddress();
-        Assert.True(res.Count == 0);
+        Assert.True(!res.Any());
     }
 
     [Fact]

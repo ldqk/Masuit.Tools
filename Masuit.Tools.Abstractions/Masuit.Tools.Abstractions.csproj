@@ -3,7 +3,7 @@
         <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5;net6;net7;net8</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.6.9</Version>
+        <Version>2.6.9.1</Version>
         <Authors>懒得勤快</Authors>
         <Description>全龄段友好的C#万能工具库，码数吐司库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，Masuit.Tools基础公共库(适用于.NET4.6.1/.NET Standard2.0及以上项目)，包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。
             官网教程：https://tools.masuit.org

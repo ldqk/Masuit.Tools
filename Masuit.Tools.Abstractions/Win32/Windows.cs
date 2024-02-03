@@ -237,7 +237,7 @@ public class WindowsServer
         CpuId = cpuInfo[0].DeviceID;
         CpuCount = cpuInfo.Count;
         CpuMhz = cpuInfo.Select(c => c.CurrentClockSpeed).ToArray();
-        MacAddress = SystemInfo.GetMacAddress()[0];
+        MacAddress = SystemInfo.GetMacAddress().FirstOrDefault(a => a.GetAddressBytes().Length > 0)?.ToString();
         DiskId = GetDiskID();
         DiskSize = GetSizeOfDisk();
         IpAddress = SystemInfo.GetLocalUsedIP().ToString();

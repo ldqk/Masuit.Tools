@@ -502,36 +502,14 @@ namespace Masuit.Tools.Hardware
         /// 获取网卡硬件地址
         /// </summary>
         /// <returns></returns>
-        public static IList<string> GetMacAddress()
+        public static IEnumerable<PhysicalAddress> GetMacAddress()
         {
-            //获取网卡硬件地址
-            try
-            {
-                if (!IsWinPlatform) return new List<string>();
-
-                return Cache.GetOrAdd(nameof(GetMacAddress), () =>
-                {
-                    IList<string> list = new List<string>();
-                    using var mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                    using var moc = mc.GetInstances();
-                    foreach (var mo in moc)
-                    {
-                        using (mo)
-                        {
-                            if ((bool)mo["IPEnabled"])
-                            {
-                                list.Add(mo["MacAddress"].ToString());
-                            }
-                        }
-                    }
-
-                    return list;
-                });
-            }
-            catch (Exception)
-            {
-                return new List<string>();
-            }
+            return from adapter in NetworkInterface.GetAllNetworkInterfaces().Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up)
+                   let properties = adapter.GetIPProperties()
+                   let unicastAddresses = properties.UnicastAddresses
+                   where unicastAddresses.Any(temp => temp.Address.AddressFamily == AddressFamily.InterNetwork)
+                   select adapter.GetPhysicalAddress() into address
+                   select address;
         }
 
         /// <summary>

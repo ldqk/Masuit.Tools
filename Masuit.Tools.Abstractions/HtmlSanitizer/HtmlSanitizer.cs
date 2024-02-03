@@ -100,6 +100,11 @@ namespace Ganss.Xss
         }
 
         /// <summary>
+        /// Gets or sets the default <see cref="Action{IComment}"/> method that encodes comments.
+        /// </summary>
+        public Action<IComment> EncodeComment { get; set; } = DefaultEncodeComment;
+
+        /// <summary>
         /// Gets or sets the default <see cref="Action{IElement}"/> method that encodes literal text content.
         /// </summary>
         public Action<IElement> EncodeLiteralTextElementContent { get; set; } = DefaultEncodeLiteralTextElementContent;
@@ -458,9 +463,7 @@ namespace Ganss.Xss
         {
             foreach (var comment in GetAllNodes(context).OfType<IComment>().ToList())
             {
-                var escapedText = comment.TextContent.Replace("<", "&lt;").Replace(">", "&gt;");
-                if (escapedText != comment.TextContent)
-                    comment.TextContent = escapedText;
+                EncodeComment(comment);
 
                 var e = new RemovingCommentEventArgs(comment);
                 OnRemovingComment(e);
@@ -468,6 +471,13 @@ namespace Ganss.Xss
                 if (!e.Cancel)
                     comment.Remove();
             }
+        }
+
+        private static void DefaultEncodeComment(IComment comment)
+        {
+            var escapedText = comment.TextContent.Replace("<", "&lt;").Replace(">", "&gt;");
+            if (escapedText != comment.TextContent)
+                comment.TextContent = escapedText;
         }
 
         private static void DefaultEncodeLiteralTextElementContent(IElement tag)

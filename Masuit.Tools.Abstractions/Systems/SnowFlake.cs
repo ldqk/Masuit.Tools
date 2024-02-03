@@ -3,6 +3,9 @@ using Masuit.Tools.Strings;
 using System;
 using System.Linq;
 using System.Net.NetworkInformation;
+using Masuit.Tools.Hardware;
+using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace Masuit.Tools.Systems
 {
@@ -64,8 +67,21 @@ namespace Masuit.Tools.Systems
         /// </summary>
         static SnowFlake()
         {
-            var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
-            SetMachienId(bytes[4] << 2 | bytes[5]);
+            var mac = SystemInfo.GetMacAddress().FirstOrDefault(a => a.GetAddressBytes().Length > 0);
+            if (mac != null)
+            {
+                var bytes = mac.GetAddressBytes();
+                SetMachienId(bytes[4] << 2 | bytes[5]);
+            }
+            else
+            {
+                var ip = SystemInfo.GetLocalUsedIP();
+                if (ip != null)
+                {
+                    var bytes = ip.GetAddressBytes();
+                    SetMachienId(bytes[3]);
+                }
+            }
         }
 
         /// <summary>

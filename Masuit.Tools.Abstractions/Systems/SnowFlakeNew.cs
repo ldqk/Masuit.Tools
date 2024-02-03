@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.NetworkInformation;
 using Masuit.Tools.DateTimeExt;
+using Masuit.Tools.Hardware;
 using Masuit.Tools.Strings;
 
 namespace Masuit.Tools.Systems;
@@ -52,8 +53,21 @@ public class SnowFlakeNew
     /// </summary>
     static SnowFlakeNew()
     {
-        var bytes = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault().GetPhysicalAddress().GetAddressBytes();
-        _workerId = bytes[4] << 2 | bytes[5];
+        var mac = SystemInfo.GetMacAddress().FirstOrDefault(a => a.GetAddressBytes().Length > 0);
+        if (mac != null)
+        {
+            var bytes = mac.GetAddressBytes();
+            _workerId = bytes[4] << 2 | bytes[5];
+        }
+        else
+        {
+            var ip = SystemInfo.GetLocalUsedIP();
+            if (ip != null)
+            {
+                var bytes = ip.GetAddressBytes();
+                _workerId = bytes[3];
+            }
+        }
     }
 
     /// <summary>

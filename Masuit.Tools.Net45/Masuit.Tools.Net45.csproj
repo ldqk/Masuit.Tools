@@ -258,12 +258,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\SerializeIgnoreAttribute.cs">
       <Link>Systems\SerializeIgnoreAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlake.cs">
-      <Link>Systems\SnowFlake.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\SnowFlakeNew.cs">
-      <Link>Systems\SnowFlakeNew.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\StopwatchHelper.cs">
       <Link>Systems\StopwatchHelper.cs</Link>
     </Compile>
