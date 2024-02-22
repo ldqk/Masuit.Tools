@@ -1,31 +1,28 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xunit;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+﻿using Xunit;
 
 namespace Masuit.Tools.Test
 {
-    [TestClass]
     public class ExtensionMethodsTest
     {
-        [TestMethod]
+        [Fact]
         public void MatchUrl_True()
         {
             bool expect = "https://git.lug.us-tc.edu.cn/masuit/soft".MatchUrl();
-            Assert.AreEqual(true, expect);
+            Assert.Equal(true, expect);
         }
 
-        [TestMethod]
+        [Fact]
         public void MatchEmail()
         {
             var (expect, match) = "admin@sina.com.cn".MatchEmail();
-            Assert.AreEqual(true, expect);
+            Assert.Equal(true, expect);
         }
 
-        [TestMethod]
+        [Fact]
         public void MatchIdentifyCard_False()
         {
             bool expect = "513901199509120610".MatchIdentifyCard();
-            Assert.AreEqual(false, expect);
+            Assert.Equal(false, expect);
         }
 
         [Theory]

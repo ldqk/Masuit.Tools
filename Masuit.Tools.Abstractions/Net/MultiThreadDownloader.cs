@@ -319,7 +319,7 @@ public class MultiThreadDownloader
         var start = division * order;
         var end = start + division - 1;
         end += order == parts - 1 ? remaining : 0;
-        return new PartialDownloader(_url, TempFileDirectory, SnowFlake.NewId, start, end, true);
+        return new PartialDownloader(_url, TempFileDirectory, Guid.NewGuid().ToString(), start, end, true);
     }
 
     /// <summary>

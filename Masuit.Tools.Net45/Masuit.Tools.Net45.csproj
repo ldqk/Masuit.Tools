@@ -228,6 +228,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\FallbackJsonPropertyResolver.cs">
       <Link>Systems\FallbackJsonPropertyResolver.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\HighAccurateTimer.cs">
+      <Link>Systems\HighAccurateTimer.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\HiPerfTimer.cs">
       <Link>Systems\HiPerfTimer.cs</Link>
     </Compile>

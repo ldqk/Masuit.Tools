@@ -186,7 +186,7 @@ namespace Masuit.Tools.DateTimeExt
         /// <returns>天数</returns>
         public static int GetDaysOfMonth(this DateTime now)
         {
-            return now.Year switch
+            return now.Month switch
             {
                 1 => 31,
                 2 => DateTime.IsLeapYear(now.Year) ? 29 : 28,

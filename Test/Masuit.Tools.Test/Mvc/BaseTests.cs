@@ -1,6 +1,5 @@
 ﻿using Masuit.Tools.Test.Mvc.Mocks;
 using Moq;
-using NUnit.Framework;
 using System;
 using System.IO;
 using System.Web;
@@ -9,7 +8,6 @@ using System.Web.Routing;
 
 namespace Masuit.Tools.Test.Mvc
 {
-    [TestFixture]
     public abstract class BaseTests
     {
         protected internal MockHttpResponse Response { get; set; }
@@ -33,12 +31,6 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         protected BaseTests()
-        {
-            InitMocks();
-        }
-
-        [SetUp]
-        public void BaseTestsSetup()
         {
             InitMocks();
         }
