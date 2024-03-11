@@ -11,7 +11,7 @@
 全龄段友好的C#.NET万能工具库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，这个库包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
 **诸多功能集一身，代码量不到2MB！**
-[官网教程](https://masuit.com/55)
+[官网教程](https://www.masuit.tools)
 ![Masuit Tools](https://user-images.githubusercontent.com/20254980/208012013-28813c43-daa2-4b64-9e4a-78829325a7a4.png)
 
 项目开发模式：日常代码积累+网络搜集
@@ -710,14 +710,21 @@ new Email()
 ```csharp
 "base64".SaveDataUriAsImageFile();// 将Base64编码转换成图片
 
-Image image = Image.FromFile(@"D:\1.jpg");
-image.MakeThumbnail(@"D:\2.jpg", 120, 80, ThumbnailCutMode.LockWidth);//生成缩略图
+using Image image = Image.Load(@"D:\1.jpg");
+image.MakeThumbnail(@"D:\2.jpg", 120, 80,ResizeMode.BoxPad);//生成缩略图
 
-Bitmap bmp = new Bitmap(@"D:\1.jpg");
-Bitmap newBmp = bmp.BWPic(bmp.Width, bmp.Height);//转换成黑白
-Bitmap newBmp = bmp.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁剪并缩放
-bmp.RevPicLR(bmp.Width, bmp.Height);//左右镜像
-bmp.RevPicUD(bmp.Width, bmp.Height);//上下镜像
+var newBmp = image.BWPic(image.Width, image.Height);//转换成黑白
+var newBmp = image.CutImage(new Rectangle(0, 0, 1600, 900));//裁剪
+var newBmp = image.CutAndResize(new Rectangle(0, 0, 1600, 900), 160, 90);//裁剪并缩放
+var newBmp = image.ResizeImage(160, 90);//改变大小
+var newBmp = image.RevPicLR();//左右镜像
+var newBmp = image.RevPicUD();//上下镜像
+var newBmp =image.LDPic(10); //调整光暗
+var newBmp =image.RePic(); //反色处理
+var newBmp =image.Relief(); //浮雕处理
+
+var gif = Image.Load(@"D:\1.gif");
+gif.GetFrames(@"D:\frames\"); // 解压gif每帧图片
 
 var marker=ImageWatermarker(stream);
 stream=maker.AddWatermark("水印文字","字体文件",字体大小,color,水印位置,边距); // 给图片添加水印
