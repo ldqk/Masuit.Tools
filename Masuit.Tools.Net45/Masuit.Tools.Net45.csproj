@@ -75,6 +75,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Files\INIFile.cs">
       <Link>Files\INIFile.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\TextEncodingDetector.cs">
+      <Link>Files\TextEncodingDetector.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Linq\LinqExtension.cs">
       <Link>Linq\LinqExtension.cs</Link>
     </Compile>
