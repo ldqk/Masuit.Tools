@@ -1271,13 +1271,18 @@ var dis="12345678".HammingDistance("1234567");
 var dis=new SimHash("12345678").HammingDistance(new SimHash("1234567"));
 ```
 
-### 44. 真实文件类型探测
+### 44. 真实文件类型探测/文本编码检测
 
 ```csharp
+var encoding=new FileInfo(filepath).GetEncoding(); // 获取文件编码(扩展调用)
+var encoding=stream.GetEncoding(); // 获取流的编码(扩展调用)
+var encoding=TextEncodingDetector.GetEncoding(filepath); // 获取文件编码(类调用)
+
 // 多种方式，任君调用
-var detector=new FileInfo(filepath).DetectFiletype();
-//var detector=File.OpenRead(filepath).DetectFiletype();
-//var detector=FileSignatureDetector.DetectFiletype(filepath);
+var detector=new FileInfo(filepath).DetectFiletype(); // 扩展调用
+//var detector=File.OpenRead(filepath).DetectFiletype(); // 流扩展调用
+//var detector=FileSignatureDetector.DetectFiletype(filepath); // 类调用
+
 detector.Precondition;//基础文件类型
 detector.Extension;//真实扩展名
 detector.MimeType;//MimeType
