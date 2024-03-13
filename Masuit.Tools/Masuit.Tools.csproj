@@ -227,7 +227,7 @@
       <Version>2.7.33</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>8.0.2</Version>
+      <Version>8.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
