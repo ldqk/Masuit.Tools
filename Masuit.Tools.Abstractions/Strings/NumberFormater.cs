@@ -437,6 +437,11 @@ namespace Masuit.Tools.Strings
         public static string ToChineseMoney(IConvertible number)
         {
             var m = number.ConvertTo<decimal>();
+            if (m == 0)
+            {
+                return "零元整";
+            }
+
             /*
             #：用数字替换字符位置，如果数字小于对应值的位数，则在左侧填充零。
             L：将整数转换为一个字符串，并将其转换为小写字母形式。
@@ -465,7 +470,7 @@ namespace Masuit.Tools.Strings
             /*
              * 将其转换为对应的中文大写字符，例如将'1'转换为'壹'，将'2'转换为'贰'，以此类推。Lambda表达式中使用了一个映射表，通过字符的ASCII码值来查找对应的中文字符。
              */
-            return Regex.Replace(d, ".", m => "负元空零壹贰叁肆伍陆柒捌玖空空空空空空空分角拾佰仟萬億兆京垓秭穰"[m.Value[0] - '-'].ToString()).Next(x => m < 0 ? "负" + x : x);
+            return Regex.Replace(d, ".", t => "负元空零壹贰叁肆伍陆柒捌玖空空空空空空空分角拾佰仟萬億兆京垓秭穰"[t.Value[0] - '-'].ToString()).Next(x => m < 0 ? "负" + x : x);
         }
     }
 }

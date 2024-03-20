@@ -3,9 +3,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using static System.Net.WebRequestMethods;
-using Image = SixLabors.ImageSharp.Image;
-using Size = SixLabors.ImageSharp.Size;
 
 namespace Masuit.Tools.Media;
 
