@@ -45,9 +45,9 @@ public static class IConvertibleExtensions
                 return (T)value;
             }
 
-            if (type.IsNumeric())
+            if (type.IsEnum)
             {
-                return (T)value.ToType(type, new NumberFormatInfo());
+                return (T)Enum.Parse(type, value.ToString(CultureInfo.InvariantCulture));
             }
 
             if (value == DBNull.Value)
@@ -55,9 +55,9 @@ public static class IConvertibleExtensions
                 return default;
             }
 
-            if (type.IsEnum)
+            if (type.IsNumeric())
             {
-                return (T)Enum.Parse(type, value.ToString(CultureInfo.InvariantCulture));
+                return (T)value.ToType(type, new NumberFormatInfo());
             }
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
