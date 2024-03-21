@@ -829,9 +829,18 @@ list.AddRangeIfNotContains("1", "11"); // 将被添加元素中不包含的元�
 list.RemoveWhere(s => s.Length<1); // 将集合中长度小于1的元素移除
 list.InsertAfter(0, "2"); // 在第一个元素之后插入
 list.InsertAfter(s => s == "1", "2"); // 在元素"1"后插入
+
 var dic = list.ToDictionarySafety(s => s); // 安全的转换成字典类型，当键重复时只添加一个键
 var dic = list.ToConcurrentDictionary(s => s); // 转换成并发字典类型，当键重复时只添加一个键
 var dic = list.ToDictionarySafety(s => s, s => s.GetHashCode()); // 安全的转换成字典类型，当键重复时只添加一个键
+var v = dic[x=>x.Key.Contains("1")]; // 字典根据条件取值
+dic[x=>x.Key.Contains("1")]=2; // 字典根据条件赋值
+var v = dic[(key,value)=>key.Contains("1")]; // 字典根据条件取值
+dic[(key,value)=>key.Contains("1")]=2; // 字典根据条件赋值
+var v = dic[key=>key.Contains("1")]; // 字典根据key条件取值
+dic[key=>key.Contains("1")]=2; // 字典根据key条件赋值
+var v = dic[value=>value>0]; // 字典根据value条件取值
+dic[value=>value>0]=2; // 字典根据value条件赋值
 dic.AddOrUpdate("4", 4); // 添加或更新键值对
 dic.AddOrUpdate(new Dictionary<string, int>()
 {
@@ -842,6 +851,7 @@ dic.AddOrUpdate("5", 6, 666); // 如果是添加，则值为6，若更新则值�
 dic.GetOrAdd("7",77); // 字典获取或添加元素
 dic.GetOrAdd("7",()=>77); // 字典获取或添加元素
 dic.AsConcurrentDictionary(); // 普通字典转换成并发字典集合
+
 var table=list.ToDataTable(); // 转换成DataTable类型
 table.AddIdentityColumn(); //给DataTable增加一个自增列
 table.HasRows(); // 检查DataTable 是否有数据行
