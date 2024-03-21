@@ -1,5 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Masuit.Tools.Systems;
 
@@ -51,15 +53,95 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
         set => base[key] = value;
     }
 
-    ///// <summary>
-    /////
-    ///// </summary>
-    ///// <param name="key"></param>
-    //public virtual TValue this[TKey key]
-    //{
-    //    get => TryGetValue(key, out var value) ? value : FallbackValue;
-    //    set => base[key] = value;
-    //}
+    public virtual TValue this[Func<KeyValuePair<TKey, TValue>, bool> condition]
+    {
+        get
+        {
+            foreach (var pair in this.Where(pair => condition(new KeyValuePair<TKey, TValue>(pair.Key.Item, pair.Value))))
+            {
+                return pair.Value;
+            }
+
+            return FallbackValue;
+        }
+        set
+        {
+            foreach (var pair in this.Where(pair => condition(new KeyValuePair<TKey, TValue>(pair.Key.Item, pair.Value))))
+            {
+                this[pair.Key] = value;
+            }
+        }
+    }
+
+    public virtual TValue this[Func<TKey, TValue, bool> condition]
+    {
+        get
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Key.Item, pair.Value)))
+            {
+                return pair.Value;
+            }
+
+            return FallbackValue;
+        }
+        set
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Key.Item, pair.Value)))
+            {
+                this[pair.Key] = value;
+            }
+        }
+    }
+
+    public virtual TValue this[Func<TKey, bool> condition]
+    {
+        get
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Key.Item)))
+            {
+                return pair.Value;
+            }
+
+            return FallbackValue;
+        }
+        set
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Key.Item)))
+            {
+                this[pair.Key] = value;
+            }
+        }
+    }
+
+    public virtual TValue this[Func<TValue, bool> condition]
+    {
+        get
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Value)))
+            {
+                return pair.Value;
+            }
+
+            return FallbackValue;
+        }
+        set
+        {
+            foreach (var pair in this.Where(pair => condition(pair.Value)))
+            {
+                this[pair.Key] = value;
+            }
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="key"></param>
+    public virtual TValue this[TKey key]
+    {
+        get => TryGetValue(new NullObject<TKey>(key), out var value) ? value : FallbackValue;
+        set => base[new NullObject<TKey>(key)] = value;
+    }
 
     /// <summary>
     /// 隐式转换
