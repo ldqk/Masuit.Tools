@@ -86,8 +86,22 @@ namespace Masuit.Tools.Database
             {
                 foreach (var property in typeof(T).GetProperties())
                 {
-                    // 添加表头列，列名为属性名
-                    result.Columns.Add(property.Name, property.PropertyType);
+                    var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                    if (underlyingType != null)
+                    {
+                        // 如果该类型具有可为空性
+                        var column = new DataColumn(property.Name, underlyingType);
+                        column.AllowDBNull = true;
+                        // 添加表头列，列名为属性名
+                        result.Columns.Add(column);
+                    }
+                    else
+                    {
+                        // 没有可为空性
+                        var column = new DataColumn(property.Name, property.PropertyType);
+                        // 添加表头列，列名为属性名
+                        result.Columns.Add(column);
+                    }
                 }
                 return result;
             }
