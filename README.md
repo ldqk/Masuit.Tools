@@ -654,7 +654,6 @@ var dic2 = typeof(MyEnum).GetDescriptionAndValue();// 获取字符串表示和�
 string desc = MyEnum.Read.GetDescription();// 获取Description标签
 string display = MyEnum.Read.GetDisplay();// 获取Display标签的Name属性
 var value = typeof(MyEnum).GetValue("Read");//获取字符串表示值对应的枚举值
-string enumString = 0.ToEnumString(typeof(MyEnum));// 获取枚举值对应的字符串表示
 ```
 
 ```csharp
