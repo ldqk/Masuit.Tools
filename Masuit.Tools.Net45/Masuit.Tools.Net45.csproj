@@ -285,6 +285,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Validator\MinValueAttribute.cs">
       <Link>Validator\MinValueAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Validator\UnifiedSocialCreditCodeAttribute.cs">
+      <Link>Validator\UnifiedSocialCreditCodeAttribute.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Win32\WindowsCommand.cs">
       <Link>Win32\WindowsCommand.cs</Link>
     </Compile>

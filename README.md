@@ -152,6 +152,7 @@ bool isPhoneNumber = "15205201520".MatchPhoneNumber(); // 匹配手机号
 bool isLandline = "01088888888".MatchLandline(); // 匹配座机号
 bool isIdentifyCard = "312000199502230660".MatchIdentifyCard();// 校验中国大陆身份证号
 bool isCNPatentNumber = "200410018477.9".MatchCNPatentNumber(); // 校验中国专利申请号或专利号，是否带校验位，校验位前是否带“.”，都可以校验，待校验的号码前不要带CN、ZL字样的前缀
+bool isUSCC = "200410018477.9".MatchUSCC(); // 校验企业统一社会信用代码
 ```
 
 ### 2.硬件监测(仅支持Windows，部分函数仅支持物理机模式)
@@ -549,6 +550,9 @@ public class MyClass
   
     [MinItemsCount(1)] // 检测集合元素最少1个
     public List<string> Strs { get; set; }
+  
+    [UnifiedSocialCreditCode] // 校验企业统一社会信用代码
+    public string USCC { get; set; }
 }
 ```
 
@@ -1250,12 +1254,6 @@ public class ClassDto
 
 ```shell
 PM> Install-Package Masuit.Tools.AspNetCore
-```
-
-Startup配置：
-
-```csharp
-app.UseBodyOrDefaultModelBinder();
 ```
 
 在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：

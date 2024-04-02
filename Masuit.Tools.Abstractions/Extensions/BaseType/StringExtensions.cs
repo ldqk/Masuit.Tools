@@ -653,6 +653,16 @@ namespace Masuit.Tools
             return Regex.IsMatch(s, @"^0\d{2,3}(?:-?\d{8}|-?\d{7})$");
         }
 
+        /// <summary>
+        /// 匹配企业的统一社会信用代码
+        /// </summary>
+        /// <param name="s">源字符串</param>
+        /// <returns>是否匹配成功</returns>
+        public static bool MatchUSCC(this string s)
+        {
+            return Regex.IsMatch(s, @"^([0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}|[1-9]\d{14})$");
+        }
+
         #endregion 校验手机号码的正确性
 
         #region Url

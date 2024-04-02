@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Masuit.Tools.AspNetCore.ModelBinder;
 
@@ -75,32 +74,6 @@ internal static class ModelBindingContextExtension
 
         body.Position = 0;
         return bodyText;
-    }
-
-    /// <summary>
-    /// 尝试设置默认值
-    /// </summary>
-    /// <param name="bindingContext"></param>
-    public static bool TrySetDefaultValue(this ModelBindingContext bindingContext)
-    {
-        var attr = bindingContext.GetAttribute<FromBodyOrDefaultAttribute>();
-        if (attr.DefaultValue != null)
-        {
-            var targetValue = attr.DefaultValue.ChangeType(bindingContext.ModelType);
-            bindingContext.Result = ModelBindingResult.Success(targetValue);
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// 转换为对应类型
-    /// </summary>
-    /// <param name="this"></param>
-    public static T ConvertObjectTo<T>(this object @this)
-    {
-        return (T)ConvertObject(@this, typeof(T));
     }
 
     /// <summary>

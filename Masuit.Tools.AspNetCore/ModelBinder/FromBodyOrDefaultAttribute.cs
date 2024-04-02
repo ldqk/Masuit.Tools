@@ -55,8 +55,8 @@ namespace Masuit.Tools.AspNetCore.ModelBinder
         public IConvertible DefaultValue { get; set; } = defaultValue;
 
         /// <summary>
-		/// 取值方式
-		/// </summary>
-		public BindType Type { get; set; } = type;
+        /// 取值方式
+        /// </summary>
+        public BindType Type { get; set; } = type;
     }
 }
