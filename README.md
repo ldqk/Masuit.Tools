@@ -1255,6 +1255,12 @@ public class ClassDto
 PM> Install-Package Masuit.Tools.AspNetCore
 ```
 
+Startup配置：
+
+```csharp
+app.UseBodyOrDefaultModelBinder();
+```
+
 在action的参数模型前打上标记：`[FromBodyOrDefault]`即可，示例代码如下：
 
 ```csharp
