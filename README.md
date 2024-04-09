@@ -1044,7 +1044,7 @@ var s="ａａ".ToDBC(); // 转换为半角
 ### 35.INI配置文件操作(仅支持Windows)
 
 ```csharp
-INIFile ini=new INIFile("filename.ini");
+INIFile ini=new INIFile("X:\\filename.ini"); // 需要绝对路径，否则会写到C:\Windows目录下去
 ini.IniWriteValue(section,key,value); // 写值
 ini.IniReadValue(section,key); // 读值
 ini.ClearAllSection(); // 清空所有配置节
