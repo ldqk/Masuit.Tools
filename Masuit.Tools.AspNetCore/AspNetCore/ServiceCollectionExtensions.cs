@@ -68,11 +68,11 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     private static void RegisterServiceByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        var types = assemblies.SelectMany(t => t.GetTypes()).Where(t => (t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 || t.GetInterfaces().Intersect([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).Any()) && t.IsClass && !t.IsAbstract);
+        var types = assemblies.SelectMany(t => t.GetExportedTypes()).Where(t => (t.GetCustomAttributes(typeof(ServiceInjectAttribute), false).Length > 0 || t.GetInterfaces().Intersect([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).Any()) && t.IsClass && !t.IsAbstract);
 
         foreach (var type in types)
         {
-            var typeInterface = type.GetInterfaces().Except([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).FirstOrDefault();
+            var typeInterface = type.GetInterfaces().Except([typeof(IScoped), typeof(ITransient), typeof(ISingleton)]).OrderBy(t => t.Name.HammingDistance(type.Name)).FirstOrDefault();
             if (typeInterface == null)
             {
                 //服务非继承自接口的直接注入
