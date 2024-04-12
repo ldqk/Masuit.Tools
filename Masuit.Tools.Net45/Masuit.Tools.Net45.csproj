@@ -69,11 +69,11 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Extensions\Dynamics\*\*.*">
       <Link>Extensions\Dynamics\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Files\IniFile\*.*">
+      <Link>Files\IniFile\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\FileExt.cs">
       <Link>Files\FileExt.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\INIFile.cs">
-      <Link>Files\INIFile.cs</Link>
     </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Files\TextEncodingDetector.cs">
       <Link>Files\TextEncodingDetector.cs</Link>

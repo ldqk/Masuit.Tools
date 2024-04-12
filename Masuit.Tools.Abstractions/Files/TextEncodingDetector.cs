@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Masuit.Tools.Abstractions.Files;
+namespace Masuit.Tools.Files;
 
 /// <summary>
 /// 字节文本编码检测

@@ -1041,14 +1041,27 @@ var s="aa".ToSBC(); // 转换为全角
 var s="ａａ".ToDBC(); // 转换为半角
 ```
 
-### 35.INI配置文件操作(仅支持Windows)
+### 35.INI配置文件操作
 
 ```csharp
-INIFile ini=new INIFile("X:\\filename.ini"); // 需要绝对路径，否则会写到C:\Windows目录下去
-ini.IniWriteValue(section,key,value); // 写值
-ini.IniReadValue(section,key); // 读值
+IniFile ini=new IniFile("X:\\filename.ini"); // 需要绝对路径，否则会写到C:\Windows目录下去
+ini.SetValue(section,key,value); // 写值
+var value=ini.GetValue(section,key); // 读值
+var value=ini.GetValue<Enum>(section,key); // 读值并转换类型
+var sections=ini.GetSections(); // 获取所有配置节
+var section=ini.GetSection(section); // 获取配置节
+var myclass=ini.GetSection<MyClass>(section); // 获取指定配置节并绑定到对象
 ini.ClearAllSection(); // 清空所有配置节
 ini.ClearSection(section); // 清空配置节
+ini.Save(); // 保存ini文件
+ini.Reload(); // 重新加载ini文件
+
+
+class MyClass
+{
+    [IniProperty("str_value")] // 设置别名
+    public string StringValue { get; set; }
+}
 ```
 
 ### 36.雷达图计算引擎
