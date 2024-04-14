@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：https://github.com/ldqk/Masuit.Tools/issues
+        ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues)
   - type: dropdown
     id: version
     attributes:
