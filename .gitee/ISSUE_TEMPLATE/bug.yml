@@ -1,4 +1,4 @@
-name: BUG反馈🐛
+name: 🕷️ BUG反馈 🐛
 description: 当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。
 title: "[bug反馈]: "
 labels: ["bug"]
@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues/new?labels=bug&template=--bug--.md&title=%5BBUG%5D)
+        ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues/new?labels=bug&template=bug.yml&title=%5Bbug%E5%8F%8D%E9%A6%88%5D%3A+)
   - type: dropdown
     id: version
     attributes:
@@ -23,14 +23,14 @@ body:
       label: .NET SDK
       description: 请选择项目使用的 .NET SDK 版本？
       options:
-        - .NET Framework4.5
-        - .NET Framework4.6.2+
-        - .NET Standard
-        - .NET5
-        - .NET6
-        - .NET7
-        - .NET8
         - .NET9
+        - .NET8
+        - .NET7
+        - .NET6
+        - .NET5
+        - .NET Standard
+        - .NET Framework4.6.2+
+        - .NET Framework4.5
     validations:
       required: true
   - type: dropdown
@@ -41,13 +41,13 @@ body:
       options:
         - WebApi
         - Mvc
+        - Console
         - Razor Pages
         - Blazor Server
         - Blazor App (Auto)
         - MinApp
         - WinForm
         - WPF
-        - Console
     validations:
       required: true
   - type: dropdown
@@ -59,6 +59,7 @@ body:
         - Windows 11
         - Windows 10
         - Windows 8
+        - Windows 7
         - Ubuntu
         - CentOS
         - Debian
@@ -86,14 +87,15 @@ body:
       label: 应用托管程序
       description: 请选择应用托管程序软件？
       options:
+        - Kestrel
         - IIS
+        - Windows Service
         - Nginx
         - Docker
+        - k8s
         - PodMan
         - PM2
-        - Kestrel
         - 单文件
-        - Windows Service
     validations:
       required: true
   - type: textarea
