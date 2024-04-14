@@ -155,7 +155,7 @@ bool isCNPatentNumber = "200410018477.9".MatchCNPatentNumber(); // 校验中国�
 bool isUSCC = "200410018477.9".MatchUSCC(); // 校验企业统一社会信用代码
 ```
 
-### 2.硬件监测(仅支持Windows，部分函数仅支持物理机模式)
+### 2.硬件监测(需要管理员权限，仅支持Windows，部分函数仅支持物理机模式)
 
 ```csharp
 float load = SystemInfo.CpuLoad;// 获取CPU占用率
