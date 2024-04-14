@@ -1,6 +1,6 @@
 name: BUG反馈🐛
 description: 当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。
-title: "[bug]: "
+title: "[bug反馈]: "
 labels: ["bug"]
 body:
   - type: markdown
