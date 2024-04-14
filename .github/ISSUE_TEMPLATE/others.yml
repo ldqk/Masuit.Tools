@@ -1,0 +1,12 @@
+name: 其他意见或建议
+description: 对本项目提出其他意见或建议
+title: "[咨询]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    attributes:
+      label: 您想讨论关于什么？
+      placeholder: |
+        可在此处进行图片粘贴上传。
+    validations:
+      required: true
