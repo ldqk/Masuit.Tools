@@ -1,6 +1,6 @@
 name: 问题反馈
 description: 当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。
-title:
+title: "[bug]: "
 labels: ["bug"]
 body:
   - type: markdown
@@ -11,7 +11,7 @@ body:
     id: version
     attributes:
       label: 版本号
-      description: 请选择项目使用的 Furion 版本？
+      description: 请选择项目使用的包版本？
       options:
         - latest (最新的)
         - 其他版本（请升级）
