@@ -3,7 +3,10 @@ description: 对本项目提出其他意见或建议
 title: "[咨询]: "
 labels: ["enhancement"]
 body:
-  - type: markdown
+  - type: textarea
     attributes:
-      value: |
-        感谢提出功能建议，我们将仔细考虑！
+      label: 您想讨论关于什么？
+      placeholder: |
+        可在此处进行图片粘贴上传。
+    validations:
+      required: true
