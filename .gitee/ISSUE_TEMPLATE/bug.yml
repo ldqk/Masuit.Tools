@@ -1,4 +1,4 @@
-name: 问题反馈
+name: BUG反馈🐛
 description: 当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。
 title: "[bug]: "
 labels: ["bug"]
