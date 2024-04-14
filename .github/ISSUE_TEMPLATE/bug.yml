@@ -1,22 +1,22 @@
-name: "🕷️ Bug 反馈 🐛"
-description: 报告错误或意外行为，当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。 和预期不符？
-labels:
-- bug
+name: BUG反馈🐛
+description: 当你中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲。
+title: "[bug反馈]: "
+labels: ["bug"]
 body:
-- type: markdown
-  attributes:
-    value: ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 
-- type: dropdown
-  id: version
-  attributes:
-    label: 版本号
-    description: 请选择项目使用的包版本？
+  - type: markdown
+    attributes:
+      value: |
+        ## 💢 温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues/new?labels=bug&template=--bug--.md&title=%5BBUG%5D)
+  - type: dropdown
+    id: version
+    attributes:
+      label: 版本号
+      description: 请选择项目使用的包版本？
       options:
         - latest (最新的)
         - 其他版本（请升级）
-  validations:
-    required: true
-
+    validations:
+      required: true
   - type: dropdown
     id: net_sdk
     attributes:
@@ -135,6 +135,6 @@ body:
     attributes:
       label: Demo 地址（Git/网盘/SVN）
       description: 请提供复现错误的 Demo 下载
-      placeholder: https://github.com/your_id/your_test_project.git
+      placeholder: https://gitee.com/your_id/your_test_project.git
     validations:
       required: true
