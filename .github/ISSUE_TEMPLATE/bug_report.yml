@@ -11,9 +11,9 @@ body:
   attributes:
     label: 版本号
     description: 请选择项目使用的包版本？
-      options:
-        - latest (最新的)
-        - 其他版本（请升级）
+    options:
+      - latest (最新的)
+      - 其他版本（请升级）
   validations:
     required: true
 
