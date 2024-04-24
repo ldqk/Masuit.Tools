@@ -492,7 +492,7 @@ namespace Masuit.Tools.Mime
             new MimeMappingItem{Extension = "xht", MimeType = "application/xhtml+xml"},
             new MimeMappingItem{Extension = "xhtml", MimeType = "application/xhtml+xml"},
             new MimeMappingItem{Extension = "xls", MimeType = "application/vnd.ms-excel"},
-            new MimeMappingItem{Extension = "xlsx", MimeType = "application/vnd.ms-excel"},
+            new MimeMappingItem{Extension = "xlsx", MimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
             new MimeMappingItem{Extension = "xpm", MimeType = "image/x-xpixmap"},
             new MimeMappingItem{Extension = "xslt", MimeType = "application/xslt+xml"},
             new MimeMappingItem{Extension = "xwd", MimeType = "image/x-xwindowdump"},
