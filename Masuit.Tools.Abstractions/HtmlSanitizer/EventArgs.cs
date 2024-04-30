@@ -10,7 +10,10 @@ namespace Ganss.Xss
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.PostProcessDom"/> event.
     /// </summary>
-    public class PostProcessDomEventArgs : EventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="PostProcessDomEventArgs"/> class.
+    /// </remarks>
+    public class PostProcessDomEventArgs(IHtmlDocument document) : EventArgs
     {
         /// <summary>
         /// Gets the document.
@@ -18,21 +21,16 @@ namespace Ganss.Xss
         /// <value>
         /// The document.
         /// </value>
-        public IHtmlDocument Document { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PostProcessDomEventArgs"/> class.
-        /// </summary>
-        public PostProcessDomEventArgs(IHtmlDocument document)
-        {
-            Document = document;
-        }
+        public IHtmlDocument Document { get; private set; } = document;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.PostProcessNode"/> event.
     /// </summary>
-    public class PostProcessNodeEventArgs : EventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="PostProcessNodeEventArgs"/> class.
+    /// </remarks>
+    public class PostProcessNodeEventArgs(IHtmlDocument document, INode node) : EventArgs
     {
         /// <summary>
         /// Gets the document.
@@ -40,7 +38,7 @@ namespace Ganss.Xss
         /// <value>
         /// The document.
         /// </value>
-        public IHtmlDocument Document { get; private set; }
+        public IHtmlDocument Document { get; private set; } = document;
 
         /// <summary>
         /// Gets the DOM node to be processed.
@@ -48,7 +46,7 @@ namespace Ganss.Xss
         /// <value>
         /// The DOM node.
         /// </value>
-        public INode Node { get; private set; }
+        public INode Node { get; private set; } = node;
 
         /// <summary>
         /// Gets the replacement nodes. Leave empty if no replacement should occur.
@@ -56,23 +54,18 @@ namespace Ganss.Xss
         /// <value>
         /// The replacement nodes.
         /// </value>
-        public ICollection<INode> ReplacementNodes { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PostProcessNodeEventArgs"/> class.
-        /// </summary>
-        public PostProcessNodeEventArgs(IHtmlDocument document, INode node)
-        {
-            Document = document;
-            Node = node;
-            ReplacementNodes = new List<INode>();
-        }
+        public ICollection<INode> ReplacementNodes { get; private set; } = new List<INode>();
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingTag"/> event.
     /// </summary>
-    public class RemovingTagEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingTagEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The element to be removed.</param>
+    /// <param name="reason">The reason why the tag will be removed.</param>
+    public class RemovingTagEventArgs(IElement tag, RemoveReason reason) : CancelEventArgs
     {
         /// <summary>
         /// Gets the tag to be removed.
@@ -80,7 +73,7 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
+        public IElement Tag { get; private set; } = tag;
 
         /// <summary>
         /// Gets the reason why the tag will be removed.
@@ -88,24 +81,19 @@ namespace Ganss.Xss
         /// <value>
         /// The reason.
         /// </value>
-        public RemoveReason Reason { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingTagEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The element to be removed.</param>
-        /// <param name="reason">The reason why the tag will be removed.</param>
-        public RemovingTagEventArgs(IElement tag, RemoveReason reason)
-        {
-            Tag = tag;
-            Reason = reason;
-        }
+        public RemoveReason Reason { get; private set; } = reason;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingAttribute"/> event.
     /// </summary>
-    public class RemovingAttributeEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingAttributeEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The element containing the attribute.</param>
+    /// <param name="attribute">The attribute to be removed.</param>
+    /// <param name="reason">The reason why the attribute will be removed.</param>
+    public class RemovingAttributeEventArgs(IElement tag, IAttr attribute, RemoveReason reason) : CancelEventArgs
     {
         /// <summary>
         /// Gets the tag containing the attribute to be removed.
@@ -113,7 +101,7 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
+        public IElement Tag { get; private set; } = tag;
 
         /// <summary>
         /// Gets the attribute to be removed.
@@ -121,7 +109,7 @@ namespace Ganss.Xss
         /// <value>
         /// The attribute.
         /// </value>
-        public IAttr Attribute { get; private set; }
+        public IAttr Attribute { get; private set; } = attribute;
 
         /// <summary>
         /// Gets the reason why the attribute will be removed.
@@ -129,26 +117,19 @@ namespace Ganss.Xss
         /// <value>
         /// The reason.
         /// </value>
-        public RemoveReason Reason { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingAttributeEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The element containing the attribute.</param>
-        /// <param name="attribute">The attribute to be removed.</param>
-        /// <param name="reason">The reason why the attribute will be removed.</param>
-        public RemovingAttributeEventArgs(IElement tag, IAttr attribute, RemoveReason reason)
-        {
-            Tag = tag;
-            Attribute = attribute;
-            Reason = reason;
-        }
+        public RemoveReason Reason { get; private set; } = reason;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingStyle"/> event.
     /// </summary>
-    public class RemovingStyleEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingStyleEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The element containing the attribute.</param>
+    /// <param name="style">The style to be removed.</param>
+    /// <param name="reason">The reason why the attribute will be removed.</param>
+    public class RemovingStyleEventArgs(IElement tag, ICssProperty style, RemoveReason reason) : CancelEventArgs
     {
         /// <summary>
         /// Gets the tag containing the style to be removed.
@@ -156,7 +137,7 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
+        public IElement Tag { get; private set; } = tag;
 
         /// <summary>
         /// Gets the style to be removed.
@@ -164,7 +145,7 @@ namespace Ganss.Xss
         /// <value>
         /// The style.
         /// </value>
-        public ICssProperty Style { get; private set; }
+        public ICssProperty Style { get; private set; } = style;
 
         /// <summary>
         /// Gets the reason why the style will be removed.
@@ -172,26 +153,18 @@ namespace Ganss.Xss
         /// <value>
         /// The reason.
         /// </value>
-        public RemoveReason Reason { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingStyleEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The element containing the attribute.</param>
-        /// <param name="style">The style to be removed.</param>
-        /// <param name="reason">The reason why the attribute will be removed.</param>
-        public RemovingStyleEventArgs(IElement tag, ICssProperty style, RemoveReason reason)
-        {
-            Tag = tag;
-            Style = style;
-            Reason = reason;
-        }
+        public RemoveReason Reason { get; private set; } = reason;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingAtRule"/> event.
     /// </summary>
-    public class RemovingAtRuleEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingAtRuleEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The element containing the attribute.</param>
+    /// <param name="rule">The rule to be removed.</param>
+    public class RemovingAtRuleEventArgs(IElement tag, ICssRule rule) : CancelEventArgs
     {
         /// <summary>
         /// Gets the tag containing the at-rule to be removed.
@@ -199,7 +172,7 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
+        public IElement Tag { get; private set; } = tag;
 
         /// <summary>
         /// Gets the rule to be removed.
@@ -207,24 +180,17 @@ namespace Ganss.Xss
         /// <value>
         /// The rule.
         /// </value>
-        public ICssRule Rule { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingAtRuleEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The element containing the attribute.</param>
-        /// <param name="rule">The rule to be removed.</param>
-        public RemovingAtRuleEventArgs(IElement tag, ICssRule rule)
-        {
-            Tag = tag;
-            Rule = rule;
-        }
+        public ICssRule Rule { get; private set; } = rule;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingComment"/> event.
     /// </summary>
-    public class RemovingCommentEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingCommentEventArgs"/> class.
+    /// </remarks>
+    /// <param name="comment">The comment to be removed.</param>
+    public class RemovingCommentEventArgs(IComment comment) : CancelEventArgs
     {
         /// <summary>
         /// Gets the comment node to be removed.
@@ -232,22 +198,19 @@ namespace Ganss.Xss
         /// <value>
         /// The comment node.
         /// </value>
-        public IComment Comment { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingCommentEventArgs"/> class.
-        /// </summary>
-        /// <param name="comment">The comment to be removed.</param>
-        public RemovingCommentEventArgs(IComment comment)
-        {
-            Comment = comment;
-        }
+        public IComment Comment { get; private set; } = comment;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.RemovingCssClass"/> event.
     /// </summary>
-    public class RemovingCssClassEventArgs : CancelEventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="RemovingCssClassEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The element containing the attribute.</param>
+    /// <param name="cssClass">The CSS class to be removed.</param>
+    /// <param name="reason">The reason why the attribute will be removed.</param>
+    public class RemovingCssClassEventArgs(IElement tag, string cssClass, RemoveReason reason) : CancelEventArgs
     {
         /// <summary>
         /// Gets the tag containing the CSS class to be removed.
@@ -255,7 +218,7 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
+        public IElement Tag { get; private set; } = tag;
 
         /// <summary>
         /// Gets the CSS class to be removed.
@@ -263,7 +226,7 @@ namespace Ganss.Xss
         /// <value>
         /// The CSS class.
         /// </value>
-        public string CssClass { get; private set; }
+        public string CssClass { get; private set; } = cssClass;
 
         /// <summary>
         /// Gets the reason why the CSS class will be removed.
@@ -271,26 +234,19 @@ namespace Ganss.Xss
         /// <value>
         /// The reason.
         /// </value>
-        public RemoveReason Reason { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemovingCssClassEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The element containing the attribute.</param>
-        /// <param name="cssClass">The CSS class to be removed.</param>
-        /// <param name="reason">The reason why the attribute will be removed.</param>
-        public RemovingCssClassEventArgs(IElement tag, string cssClass, RemoveReason reason)
-        {
-            Tag = tag;
-            CssClass = cssClass;
-            Reason = reason;
-        }
+        public RemoveReason Reason { get; private set; } = reason;
     }
 
     /// <summary>
     /// Provides data for the <see cref="HtmlSanitizer.FilterUrl"/> event.
     /// </summary>
-    public class FilterUrlEventArgs: EventArgs
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="FilterUrlEventArgs"/> class.
+    /// </remarks>
+    /// <param name="tag">The tag containing the URI being sanitized.</param>
+    /// <param name="originalUrl">The original URL.</param>
+    /// <param name="sanitizedUrl">The sanitized URL.</param>
+    public class FilterUrlEventArgs(IElement tag, string originalUrl, string? sanitizedUrl = null) : EventArgs
     {
         /// <summary>
         /// Gets the original URL.
@@ -298,7 +254,7 @@ namespace Ganss.Xss
         /// <value>
         /// The original URL.
         /// </value>
-        public string OriginalUrl { get; private set; }
+        public string OriginalUrl { get; private set; } = originalUrl;
 
         /// <summary>
         /// Gets or sets the sanitized URL.
@@ -306,7 +262,7 @@ namespace Ganss.Xss
         /// <value>
         /// The sanitized URL. If it is null, it will be removed.
         /// </value>
-        public string? SanitizedUrl { get; set; }
+        public string? SanitizedUrl { get; set; } = sanitizedUrl;
 
         /// <summary>
         /// Gets the tag containing the URI being sanitized.
@@ -314,19 +270,6 @@ namespace Ganss.Xss
         /// <value>
         /// The tag.
         /// </value>
-        public IElement Tag { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilterUrlEventArgs"/> class.
-        /// </summary>
-        /// <param name="tag">The tag containing the URI being sanitized.</param>
-        /// <param name="originalUrl">The original URL.</param>
-        /// <param name="sanitizedUrl">The sanitized URL.</param>
-        public FilterUrlEventArgs(IElement tag, string originalUrl, string? sanitizedUrl = null)
-        {
-            OriginalUrl = originalUrl;
-            SanitizedUrl = sanitizedUrl;
-            Tag = tag;
-        }
+        public IElement Tag { get; private set; } = tag;
     }
 }

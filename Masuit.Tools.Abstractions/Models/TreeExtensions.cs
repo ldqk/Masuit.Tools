@@ -574,10 +574,11 @@ namespace Masuit.Tools.Models
         /// 递归取出所有下级
         /// </summary>
         /// <param name="t"></param>
+        /// <param name="selector"></param>
         /// <returns></returns>
         private static List<T> GetChildren<T>(T t, Func<T, IEnumerable<T>> selector)
         {
-            return selector(t).Union(selector(t).Where(c => selector(c).Any()).SelectMany(c => GetChildren(c, selector))).ToList();
+            return selector(t).Union(selector(t).Where(c => selector(c)?.Any() == true).SelectMany(c => GetChildren(c, selector))).ToList();
         }
 
         /// <summary>

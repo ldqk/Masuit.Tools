@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package>
     <metadata>
         <id>Masuit.Tools.Net</id>
-        <version>2024.1</version>
+        <version>2024.2</version>
         <title>Masuit.Tools</title>
         <authors>懒得勤快</authors>
         <owners>masuit.com</owners>

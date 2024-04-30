@@ -8,7 +8,12 @@ namespace Ganss.Xss
     /// <summary>
     /// Represents an Internationalized Resource Identifier.
     /// </summary>
-    public class Iri
+    /// <remarks>
+    /// Initializes a new instance of the <see cref="Iri"/> class.
+    /// </remarks>
+    /// <param name="value">The value.</param>
+    /// <param name="scheme">The scheme.</param>
+    public class Iri(string value, string? scheme = null)
     {
         /// <summary>
         /// Gets or sets the value of the IRI.
@@ -16,7 +21,7 @@ namespace Ganss.Xss
         /// <value>
         /// The value of the IRI.
         /// </value>
-        public string Value { get; private set; }
+        public string Value { get; private set; } = value;
 
         /// <summary>
         /// Gets a value indicating whether the IRI is absolute.
@@ -32,17 +37,6 @@ namespace Ganss.Xss
         /// <value>
         /// The scheme of the IRI.
         /// </value>
-        public string? Scheme { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Iri"/> class.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <param name="scheme">The scheme.</param>
-        public Iri(string value, string? scheme = null)
-        {
-            Value = value;
-            Scheme = scheme;
-        }
+        public string? Scheme { get; private set; } = scheme;
     }
 }

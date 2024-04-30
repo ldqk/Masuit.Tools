@@ -52,6 +52,8 @@ namespace Ganss.Xss
     /// </example>
     public class HtmlSanitizer : IHtmlSanitizer
     {
+        private const string StyleAttributeName = "style";
+
         // from http://genshi.edgewall.org/
         private static readonly Regex CssUnicodeEscapes = new(@"\\([0-9a-fA-F]{1,6})\s?|\\([^\r\n\f0-9a-fA-F'""{};:()#*])", RegexOptions.Compiled);
         private static readonly Regex CssComments = new(@"/\*.*?\*/", RegexOptions.Compiled);
@@ -529,7 +531,7 @@ namespace Ganss.Xss
                 }
 
                 // sanitize the style attribute
-                var oldStyleEmpty = string.IsNullOrEmpty(tag.GetAttribute("style"));
+                var oldStyleEmpty = string.IsNullOrEmpty(tag.GetAttribute(StyleAttributeName));
                 SanitizeStyle(tag, baseUrl);
 
                 // sanitize the value of the attributes
@@ -553,7 +555,7 @@ namespace Ganss.Xss
                             if (!tag.ClassList.Any())
                                 RemoveAttribute(tag, attribute, RemoveReason.ClassAttributeEmpty);
                         }
-                        else if (!oldStyleEmpty && attribute.Name == "style" && string.IsNullOrEmpty(attribute.Value))
+                        else if (!oldStyleEmpty && attribute.Name == StyleAttributeName && string.IsNullOrEmpty(attribute.Value))
                         {
                             RemoveAttribute(tag, attribute, RemoveReason.StyleAttributeEmpty);
                         }
@@ -574,8 +576,9 @@ namespace Ganss.Xss
             foreach (var styleSheet in dom.StyleSheets.OfType<ICssStyleSheet>())
             {
                 var styleTag = styleSheet.OwnerNode;
+                var i = 0;
 
-                for (int i = 0; i < styleSheet.Rules.Length;)
+                while (i < styleSheet.Rules.Length)
                 {
                     var rule = styleSheet.Rules[i];
                     if (!SanitizeStyleRule(rule, styleTag, baseUrl) && RemoveAtRule(styleTag, rule))
@@ -599,7 +602,9 @@ namespace Ganss.Xss
             {
                 if (rule is ICssGroupingRule groupingRule)
                 {
-                    for (int i = 0; i < groupingRule.Rules.Length;)
+                    var i = 0;
+
+                    while (i < groupingRule.Rules.Length)
                     {
                         var childRule = groupingRule.Rules[i];
                         if (!SanitizeStyleRule(childRule, styleTag, baseUrl) && RemoveAtRule(styleTag, childRule))
@@ -702,17 +707,17 @@ namespace Ganss.Xss
         {
             // filter out invalid CSS declarations
             // see https://github.com/AngleSharp/AngleSharp/issues/101
-            var attribute = element.GetAttribute("style");
+            var attribute = element.GetAttribute(StyleAttributeName);
             if (attribute == null)
                 return;
 
             if (element.GetStyle() == null)
             {
-                element.RemoveAttribute("style");
+                element.RemoveAttribute(StyleAttributeName);
                 return;
             }
 
-            element.SetAttribute("style", element.GetStyle().ToCss(StyleFormatter));
+            element.SetAttribute(StyleAttributeName, element.GetStyle().ToCss(StyleFormatter));
 
             var styles = element.GetStyle();
             if (styles == null || styles.Length == 0)
@@ -853,7 +858,12 @@ namespace Ganss.Xss
                 {
                     try
                     {
-                        return new Uri(baseUri, iri.Value).AbsoluteUri;
+                        var sanitizedUrl = new Uri(baseUri, iri.Value).AbsoluteUri;
+                        var ev = new FilterUrlEventArgs(element, url, sanitizedUrl);
+
+                        OnFilteringUrl(ev);
+
+                        return ev.SanitizedUrl;
                     }
                     catch (UriFormatException)
                     {

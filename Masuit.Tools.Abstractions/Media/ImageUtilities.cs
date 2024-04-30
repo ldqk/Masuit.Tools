@@ -73,12 +73,12 @@ namespace Masuit.Tools.Media
         /// <param name="mode">生成缩略图的方式</param>
         public static void MakeThumbnail(this Image originalImage, string thumbnailPath, int width, int height, ResizeMode mode)
         {
-            originalImage.Mutate(c => c.Resize(new ResizeOptions()
+            using var image = originalImage.Clone(c => c.Resize(new ResizeOptions()
             {
                 Size = new Size(width, height),
                 Mode = mode
             }));
-            originalImage.Save(thumbnailPath);
+            image.Save(thumbnailPath);
         }
 
         /// <summary>
@@ -90,12 +90,11 @@ namespace Masuit.Tools.Media
         /// <param name="mode">生成缩略图的方式</param>
         public static Image MakeThumbnail(this Image originalImage, int width, int height, ResizeMode mode)
         {
-            originalImage.Mutate(c => c.Resize(new ResizeOptions()
+            return originalImage.Clone(c => c.Resize(new ResizeOptions()
             {
                 Size = new Size(width, height),
                 Mode = mode
             }));
-            return originalImage;
         }
 
         #endregion 缩略图
