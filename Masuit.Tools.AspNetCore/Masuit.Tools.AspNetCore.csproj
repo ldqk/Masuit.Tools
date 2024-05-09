@@ -18,7 +18,7 @@
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
-        <Version>2024.3</Version>
+        <Version>2024.3.2</Version>
         <RepositoryType></RepositoryType>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <FileVersion>1.1.9</FileVersion>

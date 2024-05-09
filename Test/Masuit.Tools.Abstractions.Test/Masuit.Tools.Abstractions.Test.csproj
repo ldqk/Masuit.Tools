@@ -29,4 +29,8 @@
     <ProjectReference Include="..\..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tree\" />
+  </ItemGroup>
+
 </Project>

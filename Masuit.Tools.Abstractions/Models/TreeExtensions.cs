@@ -283,7 +283,7 @@ namespace Masuit.Tools.Models
 
             var pidFunc = pidSelector.Compile();
             var idFunc = idSelector.Compile();
-            return TransData(source.Where(t => t != null), idFunc, pidFunc, topValue).ToList();
+            return BuildTree(source.Where(t => t != null), idFunc, pidFunc, topValue).ToList();
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Masuit.Tools.Models
         /// <typeparam name="TKey"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static List<T> ToTree<T, TKey>(this IEnumerable<T> source) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
+        public static List<T> ToTree<T, TKey>(this IEnumerable<T> source, TKey? topValue = default) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
         {
             if (source is IQueryable<T> queryable)
             {
@@ -312,13 +312,7 @@ namespace Masuit.Tools.Models
             }
 
             source = source.Where(t => t != null).ToList();
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => item.ParentId is null || item.ParentId.Equals(default)))
-            {
-                temp.AddRange(TransData<T, TKey>(source, item));
-            }
-
-            return temp;
+            return BuildTree(source, topValue).ToList();
         }
 
         /// <summary>
@@ -341,16 +335,10 @@ namespace Masuit.Tools.Models
             var pidFunc = pidSelector.Compile();
             var idFunc = idSelector.Compile();
             source = source.Where(t => t != null).ToList();
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
-            {
-                temp.AddRange(TransData(source, item, idFunc, pidFunc));
-            }
-
-            return temp;
+            return BuildTree(source, idFunc, pidFunc, topValue).ToList();
         }
 
-        private static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, Func<T, TKey> idSelector, Func<T, TKey> pidSelector, TKey topValue = default) where T : ITreeChildren<T> where TKey : IComparable
+        private static IEnumerable<T> BuildTree<T, TKey>(IEnumerable<T> source, Func<T, TKey> idSelector, Func<T, TKey> pidSelector, TKey topValue = default) where T : ITreeChildren<T> where TKey : IComparable
         {
             // 创建一个字典，用于快速查找节点的子节点
             var childrenLookup = new Dictionary<TKey, List<T>>();
@@ -360,7 +348,7 @@ namespace Masuit.Tools.Models
             }
 
             // 构建树结构
-            foreach (var item in source.Where(item => Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item))))
+            foreach (var item in source.Where(item => !Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item))))
             {
                 childrenLookup[pidSelector(item)].Add(item);
             }
@@ -395,27 +383,28 @@ namespace Masuit.Tools.Models
                         }
                     }
                 }
+
                 yield return root;
             }
         }
 
-        internal static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, T parent) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
+        internal static IEnumerable<T> BuildTree<T, TKey>(IEnumerable<T> source, TKey? topValue = default) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
         {
             // 创建一个字典，用于快速查找节点的子节点
-            var childrenLookup = new Dictionary<TKey?, List<T>>();
+            var childrenLookup = new NullableDictionary<TKey, List<T>>();
             foreach (var item in source.Where(item => !childrenLookup.ContainsKey(item.Id)))
             {
                 childrenLookup[item.Id] = new List<T>();
             }
 
             // 构建树结构
-            foreach (var item in source.Where(item => Equals(item.ParentId, default(TKey)) && childrenLookup.ContainsKey(item.ParentId)))
+            foreach (var item in source.Where(item => (item.ParentId != null || !Equals(item.ParentId, default(TKey))) && childrenLookup.ContainsKey(item.ParentId ?? default)))
             {
-                childrenLookup[item.ParentId].Add(item);
+                childrenLookup[item.ParentId ?? default].Add(item);
             }
 
             // 找到根节点，即没有父节点的节点
-            foreach (var root in source.Where(x => Equals(x.ParentId, parent.Id)))
+            foreach (var root in source.Where(x => Equals(x.ParentId, topValue)))
             {
                 // 为根节点和所有子节点设置Children属性
                 // 使用队列来模拟递归过程
@@ -444,11 +433,12 @@ namespace Masuit.Tools.Models
                         }
                     }
                 }
+
                 yield return root;
             }
         }
 
-        internal static IEnumerable<T> TransData<T>(IEnumerable<T> source, T parent) where T : ITreeEntity<T>
+        internal static IEnumerable<T> BuildTree<T>(IEnumerable<T> source, string topValue = null) where T : ITreeEntity<T>
         {
             // 创建一个字典，用于快速查找节点的子节点
             var childrenLookup = new NullableDictionary<string, List<T>>();
@@ -458,13 +448,13 @@ namespace Masuit.Tools.Models
             }
 
             // 构建树结构
-            foreach (var item in source.Where(item => string.IsNullOrEmpty(item.ParentId) && childrenLookup.ContainsKey(item.ParentId)))
+            foreach (var item in source.Where(item => !string.IsNullOrEmpty(item.ParentId) && childrenLookup.ContainsKey(item.ParentId)))
             {
                 childrenLookup[item.ParentId].Add(item);
             }
 
             // 找到根节点，即没有父节点的节点
-            foreach (var root in source.Where(x => Equals(x.ParentId, parent.Id)))
+            foreach (var root in source.Where(x => Equals(x.ParentId, topValue)))
             {
                 // 为根节点和所有子节点设置Children属性
                 // 使用队列来模拟递归过程
@@ -497,7 +487,7 @@ namespace Masuit.Tools.Models
             }
         }
 
-        private static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey?> pidSelector) where T : ITreeChildren<T> where TKey : struct
+        private static IEnumerable<T> BuildTree<T, TKey>(IEnumerable<T> source, Func<T, TKey> idSelector, Func<T, TKey?> pidSelector, TKey? topValue = default) where T : ITreeChildren<T> where TKey : struct
         {
             // 创建一个字典，用于快速查找节点的子节点
             var childrenLookup = new NullableDictionary<TKey, List<T>>();
@@ -507,13 +497,13 @@ namespace Masuit.Tools.Models
             }
 
             // 构建树结构
-            foreach (var item in source.Where(item => Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item).Value)))
+            foreach (var item in source.Where(item => !Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item) ?? default)))
             {
-                childrenLookup[pidSelector(item).Value].Add(item);
+                childrenLookup[pidSelector(item) ?? default].Add(item);
             }
 
             // 找到根节点，即没有父节点的节点
-            foreach (var root in source.Where(x => Equals(pidSelector(x), idSelector(parent))))
+            foreach (var root in source.Where(x => Equals(pidSelector(x), topValue)))
             {
                 // 为根节点和所有子节点设置Children属性
                 // 使用队列来模拟递归过程
@@ -570,20 +560,20 @@ namespace Masuit.Tools.Models
             foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
             {
                 var parent = new Tree<T>(item);
-                TransData(source, parent, idFunc, pidFunc);
+                BuildTree(source, parent, idFunc, pidFunc);
                 temp.Add(parent);
             }
 
             return temp;
         }
 
-        private static void TransData<T, TKey>(IEnumerable<T> source, Tree<T> parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where TKey : IComparable
+        private static void BuildTree<T, TKey>(IEnumerable<T> source, Tree<T> parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where TKey : IComparable
         {
             var temp = new List<Tree<T>>();
             foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent.Value)) == true))
             {
                 var p = new Tree<T>(item);
-                TransData(source, p, idSelector, pidSelector);
+                BuildTree(source, p, idSelector, pidSelector);
                 p.Parent = parent.Value;
                 temp.Add(p);
             }
@@ -754,8 +744,9 @@ namespace Masuit.Tools.Models
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <param name="topValue"></param>
         /// <returns></returns>
-        public static List<T> ToTree<T>(this IEnumerable<T> source) where T : ITreeEntity<T>
+        public static List<T> ToTree<T>(this IEnumerable<T> source, string topValue = null) where T : ITreeEntity<T>
         {
             if (source is IQueryable<T> queryable)
             {
@@ -763,13 +754,7 @@ namespace Masuit.Tools.Models
             }
 
             source = source.Where(t => t != null).ToList();
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => item.ParentId is null || item.ParentId.Equals(default)))
-            {
-                temp.AddRange(TreeExtensions.TransData(source, item));
-            }
-
-            return temp;
+            return TreeExtensions.BuildTree(source, topValue).ToList();
         }
     }
 }
