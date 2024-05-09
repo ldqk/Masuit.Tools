@@ -127,6 +127,11 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
         set => base[new NullObject<TKey>(key)] = value;
     }
 
+    public bool ContainsKey(TKey key)
+    {
+        return base.ContainsKey(new NullObject<TKey>(key));
+    }
+
     /// <summary>
     /// 隐式转换
     /// </summary>

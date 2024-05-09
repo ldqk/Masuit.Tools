@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using Masuit.Tools.Reflection;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Models
 {
@@ -284,16 +283,7 @@ namespace Masuit.Tools.Models
 
             var pidFunc = pidSelector.Compile();
             var idFunc = idSelector.Compile();
-            source = source.Where(t => t != null);
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
-            {
-                item.Parent = default;
-                TransData(source, item, idFunc, pidFunc);
-                temp.Add(item);
-            }
-
-            return temp;
+            return TransData(source.Where(t => t != null), idFunc, pidFunc, topValue).ToList();
         }
 
         /// <summary>
@@ -321,12 +311,11 @@ namespace Masuit.Tools.Models
                 source = queryable.ToList();
             }
 
-            source = source.Where(t => t != null);
+            source = source.Where(t => t != null).ToList();
             var temp = new List<T>();
             foreach (var item in source.Where(item => item.ParentId is null || item.ParentId.Equals(default)))
             {
-                TransData<T, TKey>(source, item);
-                temp.Add(item);
+                temp.AddRange(TransData<T, TKey>(source, item));
             }
 
             return temp;
@@ -351,79 +340,210 @@ namespace Masuit.Tools.Models
 
             var pidFunc = pidSelector.Compile();
             var idFunc = idSelector.Compile();
-            source = source.Where(t => t != null);
+            source = source.Where(t => t != null).ToList();
             var temp = new List<T>();
             foreach (var item in source.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
             {
-                TransData(source, item, idFunc, pidFunc);
-                temp.Add(item);
+                temp.AddRange(TransData(source, item, idFunc, pidFunc));
             }
 
             return temp;
         }
 
-        private static void TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where T : ITreeChildren<T> where TKey : IComparable
+        private static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, Func<T, TKey> idSelector, Func<T, TKey> pidSelector, TKey topValue = default) where T : ITreeChildren<T> where TKey : IComparable
         {
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent)) == true))
+            // 创建一个字典，用于快速查找节点的子节点
+            var childrenLookup = new Dictionary<TKey, List<T>>();
+            foreach (var item in source.Where(item => !childrenLookup.ContainsKey(idSelector(item))))
             {
-                TransData(source, item, idSelector, pidSelector);
-                if (item is ITreeParent<T> c)
-                {
-                    c.Parent = parent;
-                }
-                temp.Add(item);
+                childrenLookup[idSelector(item)] = new List<T>();
             }
 
-            parent.Children = temp;
+            // 构建树结构
+            foreach (var item in source.Where(item => Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item))))
+            {
+                childrenLookup[pidSelector(item)].Add(item);
+            }
+
+            // 找到根节点，即没有父节点的节点
+            foreach (var root in source.Where(x => Equals(pidSelector(x), topValue)))
+            {
+                // 为根节点和所有子节点设置Children属性
+                // 使用队列来模拟递归过程
+                var queue = new Queue<T>();
+                queue.Enqueue(root);
+
+                while (queue.Count > 0)
+                {
+                    // 出队当前节点
+                    var current = queue.Dequeue();
+
+                    // 为当前节点设置子节点
+                    if (childrenLookup.TryGetValue(idSelector(current), out var children))
+                    {
+                        current.Children = children;
+                        foreach (var child in children)
+                        {
+                            // 如果子节点实现了ITreeParent接口，则设置其Parent属性
+                            if (child is ITreeParent<T> tree)
+                            {
+                                tree.Parent = current;
+                            }
+
+                            // 将子节点入队以继续处理
+                            queue.Enqueue(child);
+                        }
+                    }
+                }
+                yield return root;
+            }
         }
 
-        internal static void TransData<T, TKey>(IEnumerable<T> source, T parent) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
+        internal static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, T parent) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
         {
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => item.ParentId?.Equals(parent.Id) == true))
+            // 创建一个字典，用于快速查找节点的子节点
+            var childrenLookup = new Dictionary<TKey?, List<T>>();
+            foreach (var item in source.Where(item => !childrenLookup.ContainsKey(item.Id)))
             {
-                TransData<T, TKey>(source, item);
-                if (item is ITreeParent<T> c)
-                {
-                    c.Parent = parent;
-                }
-                temp.Add(item);
+                childrenLookup[item.Id] = new List<T>();
             }
 
-            parent.Children = temp;
+            // 构建树结构
+            foreach (var item in source.Where(item => Equals(item.ParentId, default(TKey)) && childrenLookup.ContainsKey(item.ParentId)))
+            {
+                childrenLookup[item.ParentId].Add(item);
+            }
+
+            // 找到根节点，即没有父节点的节点
+            foreach (var root in source.Where(x => Equals(x.ParentId, parent.Id)))
+            {
+                // 为根节点和所有子节点设置Children属性
+                // 使用队列来模拟递归过程
+                var queue = new Queue<T>();
+                queue.Enqueue(root);
+
+                while (queue.Count > 0)
+                {
+                    // 出队当前节点
+                    var current = queue.Dequeue();
+
+                    // 为当前节点设置子节点
+                    if (childrenLookup.TryGetValue(current.Id, out var children))
+                    {
+                        current.Children = children;
+                        foreach (var child in children)
+                        {
+                            // 如果子节点实现了ITreeParent接口，则设置其Parent属性
+                            if (child is ITreeParent<T> tree)
+                            {
+                                tree.Parent = current;
+                            }
+
+                            // 将子节点入队以继续处理
+                            queue.Enqueue(child);
+                        }
+                    }
+                }
+                yield return root;
+            }
         }
 
-        internal static void TransData<T>(IEnumerable<T> source, T parent) where T : ITreeEntity<T>
+        internal static IEnumerable<T> TransData<T>(IEnumerable<T> source, T parent) where T : ITreeEntity<T>
         {
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => item.ParentId?.Equals(parent.Id) == true))
+            // 创建一个字典，用于快速查找节点的子节点
+            var childrenLookup = new NullableDictionary<string, List<T>>();
+            foreach (var item in source.Where(item => !childrenLookup.ContainsKey(item.Id)))
             {
-                TransData(source, item);
-                if (item is ITreeParent<T> c)
-                {
-                    c.Parent = parent;
-                }
-                temp.Add(item);
+                childrenLookup[item.Id] = new List<T>();
             }
 
-            parent.Children = temp;
+            // 构建树结构
+            foreach (var item in source.Where(item => string.IsNullOrEmpty(item.ParentId) && childrenLookup.ContainsKey(item.ParentId)))
+            {
+                childrenLookup[item.ParentId].Add(item);
+            }
+
+            // 找到根节点，即没有父节点的节点
+            foreach (var root in source.Where(x => Equals(x.ParentId, parent.Id)))
+            {
+                // 为根节点和所有子节点设置Children属性
+                // 使用队列来模拟递归过程
+                var queue = new Queue<T>();
+                queue.Enqueue(root);
+
+                while (queue.Count > 0)
+                {
+                    // 出队当前节点
+                    var current = queue.Dequeue();
+
+                    // 为当前节点设置子节点
+                    if (childrenLookup.TryGetValue(current.Id, out var children))
+                    {
+                        current.Children = children;
+                        foreach (var child in children)
+                        {
+                            // 如果子节点实现了ITreeParent接口，则设置其Parent属性
+                            if (child is ITreeParent<T> tree)
+                            {
+                                tree.Parent = current;
+                            }
+
+                            // 将子节点入队以继续处理
+                            queue.Enqueue(child);
+                        }
+                    }
+                }
+                yield return root;
+            }
         }
 
-        private static void TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey?> pidSelector) where T : ITreeChildren<T> where TKey : struct
+        private static IEnumerable<T> TransData<T, TKey>(IEnumerable<T> source, T parent, Func<T, TKey> idSelector, Func<T, TKey?> pidSelector) where T : ITreeChildren<T> where TKey : struct
         {
-            var temp = new List<T>();
-            foreach (var item in source.Where(item => pidSelector(item)?.Equals(idSelector(parent)) == true))
+            // 创建一个字典，用于快速查找节点的子节点
+            var childrenLookup = new NullableDictionary<TKey, List<T>>();
+            foreach (var item in source.Where(item => !childrenLookup.ContainsKey(idSelector(item))))
             {
-                TransData(source, item, idSelector, pidSelector);
-                if (item is ITreeParent<T> c)
-                {
-                    c.Parent = parent;
-                }
-                temp.Add(item);
+                childrenLookup[idSelector(item)] = new List<T>();
             }
 
-            parent.Children = temp;
+            // 构建树结构
+            foreach (var item in source.Where(item => Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item).Value)))
+            {
+                childrenLookup[pidSelector(item).Value].Add(item);
+            }
+
+            // 找到根节点，即没有父节点的节点
+            foreach (var root in source.Where(x => Equals(pidSelector(x), idSelector(parent))))
+            {
+                // 为根节点和所有子节点设置Children属性
+                // 使用队列来模拟递归过程
+                var queue = new Queue<T>();
+                queue.Enqueue(root);
+
+                while (queue.Count > 0)
+                {
+                    // 出队当前节点
+                    var current = queue.Dequeue();
+
+                    // 为当前节点设置子节点
+                    if (childrenLookup.TryGetValue(idSelector(current), out var children))
+                    {
+                        current.Children = children;
+                        foreach (var child in children)
+                        {
+                            // 如果子节点实现了ITreeParent接口，则设置其Parent属性
+                            if (child is ITreeParent<T> tree)
+                            {
+                                tree.Parent = current;
+                            }
+
+                            // 将子节点入队以继续处理
+                            queue.Enqueue(child);
+                        }
+                    }
+                }
+                yield return root;
+            }
         }
 
         /// <summary>
@@ -642,12 +762,11 @@ namespace Masuit.Tools.Models
                 source = queryable.ToList();
             }
 
-            source = source.Where(t => t != null);
+            source = source.Where(t => t != null).ToList();
             var temp = new List<T>();
             foreach (var item in source.Where(item => item.ParentId is null || item.ParentId.Equals(default)))
             {
-                TreeExtensions.TransData(source, item);
-                temp.Add(item);
+                temp.AddRange(TreeExtensions.TransData(source, item));
             }
 
             return temp;

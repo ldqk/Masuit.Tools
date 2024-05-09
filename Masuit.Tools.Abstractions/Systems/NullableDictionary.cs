@@ -143,6 +143,11 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
         set => base[new NullObject<TKey>(key)] = value;
     }
 
+    public bool ContainsKey(TKey key)
+    {
+        return base.ContainsKey(new NullObject<TKey>(key));
+    }
+
     /// <summary>
     /// 隐式转换
     /// </summary>

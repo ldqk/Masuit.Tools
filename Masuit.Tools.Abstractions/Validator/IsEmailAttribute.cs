@@ -34,11 +34,11 @@ public class IsEmailAttribute : ValidationAttribute
     /// <summary>
     /// 可在配置文件AppSetting节中添加EmailDomainWhiteList配置邮箱域名白名单，EmailDomainBlockList配置邮箱域名黑名单，英文分号(;)或感叹号(!)或逗号(,)分隔，每个单独的元素支持正则表达式
     /// </summary>
-    /// <param name="valid">是否检查邮箱的有效性</param>
+    /// <param name="validDns">是否检查邮箱DNS记录的有效性</param>
     /// <param name="customMessage">自定义错误消息</param>
-    public IsEmailAttribute(bool valid = true, string customMessage = null)
+    public IsEmailAttribute(bool validDns = true, string customMessage = null)
     {
-        _valid = valid;
+        _valid = validDns;
         _customMessage = customMessage;
     }
 
