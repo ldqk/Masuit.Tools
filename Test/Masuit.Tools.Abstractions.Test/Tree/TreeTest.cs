@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Masuit.Tools.Models;
 using Xunit;
@@ -51,6 +52,15 @@ public class TreeTest
         Assert.Equal(tree[0].Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Id, 8);
         Assert.Equal(tree.Count, 2);
         Assert.Equal(tree[0].AllChildren().Count, 1498);
+        var a = tree.Filter(c => c.Id == 39999).ToList();
+        Assert.Equal(a[0].Id, 39999);
+        var raw = tree.Flatten().ToList();
+        Assert.Equal(raw.Count, list.Count);
+        var allParent = a[0].AllParent();
+        Assert.Equal(allParent[0].AllChildren().Count, 19999);
+        Assert.Equal(a[0].Root(), list[1]);
+        Assert.StartsWith("Root", a[0].Path());
+        Assert.Equal(a[0].Level(), 20000);
     }
 
     [Fact]
@@ -67,7 +77,7 @@ public class TreeTest
             new MyClass2
             {
                 Name = "Root",
-                Id = "2000"
+                Id = "20000"
             }
         };
         for (int i = 2; i < 1500; i++)
@@ -80,7 +90,7 @@ public class TreeTest
             });
         }
 
-        for (int i = 2001; i < 4000; i++)
+        for (int i = 20001; i < 40000; i++)
         {
             list.Add(new MyClass2
             {
@@ -97,6 +107,15 @@ public class TreeTest
         Assert.Equal(tree[0].Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Children.FirstOrDefault().Id, "8");
         Assert.Equal(tree.Count, 2);
         Assert.Equal(tree[0].AllChildren().Count, 1498);
+        var a = tree.Filter(c => c.Id == "39999").ToList();
+        Assert.Equal(a[0].Id, "39999");
+        var raw = tree.Flatten().ToList();
+        Assert.Equal(raw.Count, list.Count);
+        var allParent = a[0].AllParent();
+        Assert.Equal(allParent[0].AllChildren().Count, 19999);
+        Assert.Equal(a[0].Root(), list[1]);
+        Assert.StartsWith("Root", a[0].Path());
+        Assert.Equal(a[0].Level(), 20000);
     }
 }
 
