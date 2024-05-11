@@ -1097,6 +1097,7 @@ var tree=list.ToTree();//集合元素继承自ITreeEntity<T,TKey>或ITreeEntity<
 var tree=list.ToTree(c => c.Id, c => c.Pid);//集合元素继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
+![Tree结构性能跑分](https://foruda.gitee.com/images/1715417742882952476/d429d7c3_1534928.png "屏幕截图")
 
 ### 38.简单的Excel导出
 
