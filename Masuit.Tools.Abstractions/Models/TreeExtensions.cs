@@ -919,7 +919,6 @@ public static class TreeExtensions
 
         // 使用一个栈来存储节点，栈将逆序存储路径中的节点
         var stack = new Stack<T>();
-        stack.Push(c);
         var currentNode = c;
         while (currentNode != null)
         {
