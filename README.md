@@ -88,7 +88,7 @@ Excel导入导出的专用独立包
 
 mongodb的封装操作类独立包
 
-## 为工具库注册配置
+## 为工具库注册配置(可选的，按需配置)
 
 工具库需要用到外部配置节，.NET Framework项目配置在web.config/app.config的AppSettings配置节中，.NET Core项目配置在appsettings.json中：
 
