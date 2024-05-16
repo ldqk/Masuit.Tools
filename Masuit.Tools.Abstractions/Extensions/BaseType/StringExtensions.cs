@@ -1,4 +1,4 @@
-using DnsClient;
+﻿using DnsClient;
 using Masuit.Tools.DateTimeExt;
 using Masuit.Tools.Strings;
 using System;
@@ -400,7 +400,13 @@ namespace Masuit.Tools
         {
             var index = s.LastIndexOf("@");
             var oldValue = s.Substring(0, index);
-            return !MatchEmail(s).isMatch ? s : s.Replace(oldValue, Mask(oldValue, mask));
+            if (!MatchEmail(s).isMatch)
+            {
+                return s;
+            }
+
+            var newValue = Mask(oldValue, mask);
+            return newValue + s.Substring(index, s.Length - index);
         }
 
         #endregion Email

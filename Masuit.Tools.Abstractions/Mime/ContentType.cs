@@ -161,7 +161,7 @@ public static class ContentType
     public const string Xht = "application/xhtml+xml";
     public const string Xhtml = "application/xhtml+xml";
     public const string Xls = "application/vnd.ms-excel";
-    public const string Xlsx = "application/vnd.ms-excel";
+    public const string Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     public const string Xml = "application/xml";
     public const string Xpm = "image/x-xpixmap";
     public const string Xsl = "application/xml";

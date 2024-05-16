@@ -68,7 +68,7 @@
       <PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.5" />
       <PackageReference Include="System.Net.Http.Json" Version="8.0" />
     </ItemGroup>
 </Project>

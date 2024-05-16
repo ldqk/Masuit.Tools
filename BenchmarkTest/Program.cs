@@ -1,4 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
 using BenchmarkTest;
 
-BenchmarkRunner.Run<StreamTest>();
+BenchmarkRunner.Run<TreeTest>();
