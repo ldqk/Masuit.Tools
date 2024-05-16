@@ -8,7 +8,7 @@
 <a href="https://gitee.com/masuit/Masuit.Tools"><img src="https://gitee.com/static/images/logo-black.svg" height="24"></a>
 <a href="https://github.com/ldqk/Masuit.Tools"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Font_Awesome_5_brands_github.svg/54px-Font_Awesome_5_brands_github.svg.png" height="24"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/128px-GitHub_logo_2013.svg.png" height="24"></a>
 
-全龄段友好的C#.NET万能工具库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，这个库包含一些常用的操作类，大都是静态类，加密解密，反射操作，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
+全龄段友好的C#.NET万能工具库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，这个库包含一些常用的操作类，大都是静态类，加密解密，反射操作，树结构，文件探测，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展、Excel导出等常用封装。
 
 **诸多功能集一身，代码量不到2MB！**
 [官网教程](https://www.masuit.tools)
@@ -88,7 +88,7 @@ Excel导入导出的专用独立包
 
 mongodb的封装操作类独立包
 
-## 为工具库注册配置
+## 为工具库注册配置(可选的，按需配置)
 
 工具库需要用到外部配置节，.NET Framework项目配置在web.config/app.config的AppSettings配置节中，.NET Core项目配置在appsettings.json中：
 
@@ -1097,6 +1097,7 @@ var tree=list.ToTree();//集合元素继承自ITreeEntity<T,TKey>或ITreeEntity<
 var tree=list.ToTree(c => c.Id, c => c.Pid);//集合元素继承自ITreeParent<T>, ITreeChildren<T>的集合转换成树形结构
 var tree=list.ToTreeGeneral(c => c.Id, c => c.Pid);//一般的集合转换成树形结构
 ```
+![Tree结构性能跑分](https://foruda.gitee.com/images/1715417742882952476/d429d7c3_1534928.png "屏幕截图")
 
 ### 38.简单的Excel导出
 
