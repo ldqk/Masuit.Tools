@@ -1,10 +1,10 @@
 ﻿using Masuit.Tools.Systems;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 
 namespace Masuit.Tools.Models;
-#pragma warning disable 1591
 
 public class Email : Disposable
 {
@@ -57,7 +57,9 @@ public class Email : Disposable
     /// </summary>
     public List<Attachment> Attachments { get; set; } = new List<Attachment>();
 
-    private MailMessage MailMessage => GetClient();
+    private MailMessage _mailMessage;
+
+    private MailMessage MailMessage => _mailMessage ?? GetClient();
 
     /// <summary>
     /// 邮件消息对象
@@ -65,37 +67,37 @@ public class Email : Disposable
     private MailMessage GetClient()
     {
         if (string.IsNullOrEmpty(Tos)) return null;
-        var mailMessage = new MailMessage();
+        _mailMessage = new MailMessage();
 
         //多个接收者
         foreach (var str in Tos.Split(','))
         {
-            mailMessage.To.Add(str);
+            _mailMessage.To.Add(str);
         }
 
         foreach (var s in CC)
         {
-            mailMessage.CC.Add(s);
+            _mailMessage.CC.Add(s);
         }
 
         foreach (var s in BCC)
         {
-            mailMessage.Bcc.Add(s);
+            _mailMessage.Bcc.Add(s);
         }
 
-        mailMessage.From = new MailAddress(Username, Username);
-        mailMessage.Subject = Subject;
-        mailMessage.Body = Body;
-        mailMessage.IsBodyHtml = true;
-        mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
-        mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
-        mailMessage.Priority = MailPriority.High;
-        foreach (var item in Attachments.AsNotNull())
+        _mailMessage.From = new MailAddress(Username, Username);
+        _mailMessage.Subject = Subject;
+        _mailMessage.Body = Body;
+        _mailMessage.IsBodyHtml = true;
+        _mailMessage.BodyEncoding = System.Text.Encoding.UTF8;
+        _mailMessage.SubjectEncoding = System.Text.Encoding.UTF8;
+        _mailMessage.Priority = MailPriority.High;
+        foreach (var item in Attachments.AsNotNull().Where(a => a is not null))
         {
-            mailMessage.Attachments.Add(item);
+            _mailMessage.Attachments.Add(item);
         }
 
-        return mailMessage;
+        return _mailMessage;
     }
 
     private SmtpClient SmtpClient => new()
@@ -171,10 +173,8 @@ public class Email : Disposable
     /// <param name="disposing"></param>
     public override void Dispose(bool disposing)
     {
-        MailMessage?.Dispose();
+        _mailMessage?.Dispose();
         SmtpClient?.Dispose();
-        Attachments.ForEach(a => a.Dispose());
+        Attachments?.ForEach(a => a?.Dispose());
     }
 }
-
-#pragma warning restore 1591

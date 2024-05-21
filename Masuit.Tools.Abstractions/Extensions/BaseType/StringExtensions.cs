@@ -875,14 +875,15 @@ $", RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOption
         /// <returns></returns>
         public static int CharacterCount(this string str)
         {
-            var enumerator = StringInfo.GetTextElementEnumerator(str);
-            int length = 0;
-            while (enumerator.MoveNext())
-            {
-                length++;
-            }
+            return new StringInfo(str).LengthInTextElements;
+            //var enumerator = StringInfo.GetTextElementEnumerator(str);
+            //int length = 0;
+            //while (enumerator.MoveNext())
+            //{
+            //    length++;
+            //}
 
-            return length;
+            //return length;
         }
 
         /// <summary>
