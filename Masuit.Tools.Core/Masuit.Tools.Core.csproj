@@ -39,7 +39,7 @@ github：https://github.com/ldqk/Masuit.Tools
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.2.6]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[2.1.14]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.32]" />
@@ -48,13 +48,13 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5.0.17]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.26]" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.31" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />
