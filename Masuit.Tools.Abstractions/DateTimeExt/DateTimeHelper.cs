@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -67,7 +67,7 @@ namespace Masuit.Tools.DateTimeExt
         private static extern bool SetLocalTime(ref SystemTime time);
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct SystemTime
+        private record struct SystemTime
         {
             public short year;
             public short month;
@@ -391,6 +391,9 @@ namespace Masuit.Tools.DateTimeExt
         }
     }
 
+    /// <summary>
+    ///
+    /// </summary>
     public interface ITimePeriod
     {
         /// <summary>

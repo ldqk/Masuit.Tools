@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,7 @@ using Masuit.Tools.Mime;
 namespace Masuit.Tools.Files.FileDetector;
 
 [StructLayout(LayoutKind.Sequential)]
-public struct SignatureInformation
+public record struct SignatureInformation : IEquatable<SignatureInformation>
 {
     /// <summary>
     ///
@@ -24,6 +25,27 @@ public struct SignatureInformation
     ///
     /// </summary>
     public byte[] Presignature;
+
+    /// <summary>指示当前对象是否等于同一类型的另一个对象。</summary>
+    /// <param name="other">一个与此对象进行比较的对象。</param>
+    /// <returns>如果当前对象等于 <paramref name="other" /> 参数，则为 true；否则为 false。</returns>
+    public bool Equals(SignatureInformation other)
+    {
+        return Position == other.Position && Signature.SequenceEqual(other.Signature) && Presignature.SequenceEqual(other.Presignature);
+    }
+
+    /// <summary>返回此实例的哈希代码。</summary>
+    /// <returns>一个 32 位带符号整数，它是此实例的哈希代码。</returns>
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Position;
+            hashCode = (hashCode * 397) ^ (Signature != null ? Signature.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (Presignature != null ? Presignature.GetHashCode() : 0);
+            return hashCode;
+        }
+    }
 }
 
 public abstract class AbstractSignatureDetector : IDetector

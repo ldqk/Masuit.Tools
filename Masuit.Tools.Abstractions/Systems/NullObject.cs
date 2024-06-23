@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Masuit.Tools.Systems;
 
@@ -6,7 +7,7 @@ namespace Masuit.Tools.Systems;
 /// 可空对象
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public readonly record struct NullObject<T> : IComparable, IComparable<T>
+public readonly record struct NullObject<T> : IComparable, IComparable<T>, IEquatable<NullObject<T>>
 {
     public NullObject()
     {
@@ -77,18 +78,14 @@ public readonly record struct NullObject<T> : IComparable, IComparable<T>
 
     public override int GetHashCode()
     {
-        if (Item.IsDefaultValue())
-        {
-            return 0;
-        }
+        return EqualityComparer<T>.Default.GetHashCode(Item);
+    }
 
-        var result = Item.GetHashCode();
-
-        if (result >= 0)
-        {
-            result++;
-        }
-
-        return result;
+    /// <summary>指示当前对象是否等于同一类型的另一个对象。</summary>
+    /// <param name="other">一个与此对象进行比较的对象。</param>
+    /// <returns>如果当前对象等于 <paramref name="other" /> 参数，则为 true；否则为 false。</returns>
+    public bool Equals(NullObject<T> other)
+    {
+        return EqualityComparer<T>.Default.Equals(Item, other.Item);
     }
 }
