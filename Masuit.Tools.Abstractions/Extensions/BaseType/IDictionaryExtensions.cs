@@ -103,7 +103,7 @@ public static class IDictionaryExtensions
 
         return @this[key];
     }
-    
+
     /// <summary>
     /// 添加或更新键值对
     /// </summary>
@@ -1100,6 +1100,90 @@ public static class IDictionaryExtensions
             FallbackValue = defaultValue
         };
         await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        return dic;
+    }
+
+    /// <summary>
+    /// 转换为Lookup
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="keySelector">键选择器</param>
+    public static Dictionary<TKey, List<TSource>> ToLookupX<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    {
+        var items = source as IList<TSource> ?? source.ToList();
+        var dic = new Dictionary<TKey, List<TSource>>(items.Count);
+        foreach (var item in items)
+        {
+            var key = keySelector(item);
+            if (dic.TryGetValue(key, out var list))
+            {
+                list.Add(item);
+            }
+            else
+            {
+                dic.Add(key, new List<TSource> { item });
+            }
+        }
+
+        return dic;
+    }
+
+    /// <summary>
+    /// 转换为Lookup
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="keySelector">键选择器</param>
+    /// <param name="elementSelector">值选择器</param>
+    public static Dictionary<TKey, List<TElement>> ToLookupX<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+    {
+        var items = source as IList<TSource> ?? source.ToList();
+        var dic = new Dictionary<TKey, List<TElement>>(items.Count);
+        foreach (var item in items)
+        {
+            var key = keySelector(item);
+            if (dic.TryGetValue(key, out var list))
+            {
+                list.Add(elementSelector(item));
+            }
+            else
+            {
+                dic.Add(key, new List<TElement> { elementSelector(item) });
+            }
+        }
+
+        return dic;
+    }
+
+    /// <summary>
+    /// 转换为Lookup
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TElement"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="keySelector">键选择器</param>
+    /// <param name="elementSelector">值选择器</param>
+    public static async Task<ConcurrentDictionary<TKey, List<TElement>>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    {
+        var items = source as IList<TSource> ?? source.ToList();
+        var dic = new ConcurrentDictionary<TKey, List<TElement>>();
+        await items.ForeachAsync(async item =>
+        {
+            var key = keySelector(item);
+            if (dic.TryGetValue(key, out var list))
+            {
+                list.Add(await elementSelector(item));
+            }
+            else
+            {
+                dic.TryAdd(key, new List<TElement> { await elementSelector(item) });
+            }
+        });
         return dic;
     }
 
