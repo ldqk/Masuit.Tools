@@ -153,11 +153,6 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
         base.Add(new NullObject<TKey>(key), value);
     }
 
-    public bool Remove(TKey key, out TValue value)
-    {
-        return base.Remove(new NullObject<TKey>(key), out value);
-    }
-
     public bool Remove(TKey key)
     {
         return base.Remove(new NullObject<TKey>(key));

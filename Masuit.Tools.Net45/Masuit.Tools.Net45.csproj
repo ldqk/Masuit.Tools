@@ -243,6 +243,9 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\LimitedQueue.cs">
       <Link>Systems\LimitedQueue.cs</Link>
     </Compile>
+    <Compile Include="..\Masuit.Tools.Abstractions\Systems\LookupX.cs">
+      <Link>Systems\LookupX.cs</Link>
+    </Compile>
     <Compile Include="..\Masuit.Tools.Abstractions\Systems\MaskConverter.cs">
       <Link>Systems\MaskConverter.cs</Link>
     </Compile>

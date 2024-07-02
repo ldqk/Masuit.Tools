@@ -1110,10 +1110,10 @@ public static class IDictionaryExtensions
     /// <typeparam name="TKey"></typeparam>
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
-    public static NullableDictionary<TKey, List<TSource>> ToLookupX<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static LookupX<TKey, TSource> ToLookupX<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new NullableDictionary<TKey, List<TSource>>(items.Count) { FallbackValue = new List<TSource>() };
+        var dic = new Dictionary<TKey, List<TSource>>(items.Count);
         foreach (var item in items)
         {
             var key = keySelector(item);
@@ -1127,7 +1127,7 @@ public static class IDictionaryExtensions
             }
         }
 
-        return dic;
+        return new LookupX<TKey, TSource>(dic);
     }
 
     /// <summary>
@@ -1139,10 +1139,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static NullableDictionary<TKey, List<TElement>> ToLookupX<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+    public static LookupX<TKey, TElement> ToLookupX<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new NullableDictionary<TKey, List<TElement>>(items.Count) { FallbackValue = new List<TElement>() };
+        var dic = new Dictionary<TKey, List<TElement>>(items.Count);
         foreach (var item in items)
         {
             var key = keySelector(item);
@@ -1156,7 +1156,7 @@ public static class IDictionaryExtensions
             }
         }
 
-        return dic;
+        return new LookupX<TKey, TElement>(dic);
     }
 
     /// <summary>
@@ -1168,10 +1168,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<NullableConcurrentDictionary<TKey, List<TElement>>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    public static async Task<LookupX<TKey, TElement>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new NullableConcurrentDictionary<TKey, List<TElement>>(new List<TElement>());
+        var dic = new ConcurrentDictionary<TKey, List<TElement>>();
         await items.ForeachAsync(async item =>
         {
             var key = keySelector(item);
@@ -1184,7 +1184,7 @@ public static class IDictionaryExtensions
                 dic.TryAdd(key, new List<TElement> { await elementSelector(item) });
             }
         });
-        return dic;
+        return new LookupX<TKey, TElement>(dic);
     }
 
     /// <summary>
