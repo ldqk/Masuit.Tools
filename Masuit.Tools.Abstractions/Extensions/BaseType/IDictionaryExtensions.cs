@@ -1110,10 +1110,10 @@ public static class IDictionaryExtensions
     /// <typeparam name="TKey"></typeparam>
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
-    public static Dictionary<TKey, List<TSource>> ToLookupX<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+    public static NullableDictionary<TKey, List<TSource>> ToLookupX<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new Dictionary<TKey, List<TSource>>(items.Count);
+        var dic = new NullableDictionary<TKey, List<TSource>>(items.Count) { FallbackValue = new List<TSource>() };
         foreach (var item in items)
         {
             var key = keySelector(item);
@@ -1139,10 +1139,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static Dictionary<TKey, List<TElement>> ToLookupX<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+    public static NullableDictionary<TKey, List<TElement>> ToLookupX<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new Dictionary<TKey, List<TElement>>(items.Count);
+        var dic = new NullableDictionary<TKey, List<TElement>>(items.Count) { FallbackValue = new List<TElement>() };
         foreach (var item in items)
         {
             var key = keySelector(item);
@@ -1168,10 +1168,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<ConcurrentDictionary<TKey, List<TElement>>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    public static async Task<NullableConcurrentDictionary<TKey, List<TElement>>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
     {
         var items = source as IList<TSource> ?? source.ToList();
-        var dic = new ConcurrentDictionary<TKey, List<TElement>>();
+        var dic = new NullableConcurrentDictionary<TKey, List<TElement>>(new List<TElement>());
         await items.ForeachAsync(async item =>
         {
             var key = keySelector(item);

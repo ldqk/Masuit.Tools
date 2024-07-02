@@ -148,6 +148,26 @@ public class NullableDictionary<TKey, TValue> : Dictionary<NullObject<TKey>, TVa
         return base.ContainsKey(new NullObject<TKey>(key));
     }
 
+    public void Add(TKey key, TValue value)
+    {
+        base.Add(new NullObject<TKey>(key), value);
+    }
+
+    public bool Remove(TKey key, out TValue value)
+    {
+        return base.Remove(new NullObject<TKey>(key), out value);
+    }
+
+    public bool Remove(TKey key)
+    {
+        return base.Remove(new NullObject<TKey>(key));
+    }
+
+    public bool TryGetValue(TKey key, out TValue value)
+    {
+        return base.TryGetValue(new NullObject<TKey>(key), out value);
+    }
+
     /// <summary>
     /// 隐式转换
     /// </summary>

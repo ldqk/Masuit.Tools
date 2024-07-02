@@ -123,13 +123,33 @@ public class NullableConcurrentDictionary<TKey, TValue> : ConcurrentDictionary<N
     /// <param name="key"></param>
     public virtual TValue this[TKey key]
     {
-        get => TryGetValue(new NullObject<TKey>(key), out var value) ? value : FallbackValue;
+        get => base.TryGetValue(new NullObject<TKey>(key), out var value) ? value : FallbackValue;
         set => base[new NullObject<TKey>(key)] = value;
     }
 
     public bool ContainsKey(TKey key)
     {
         return base.ContainsKey(new NullObject<TKey>(key));
+    }
+
+    public bool TryAdd(TKey key, TValue value)
+    {
+        return base.TryAdd(new NullObject<TKey>(key), value);
+    }
+
+    public bool TryRemove(TKey key, out TValue value)
+    {
+        return base.TryRemove(new NullObject<TKey>(key), out value);
+    }
+
+    public bool TryUpdate(TKey key, TValue value, TValue comparisionValue)
+    {
+        return base.TryUpdate(new NullObject<TKey>(key), value, comparisionValue);
+    }
+
+    public bool TryGetValue(TKey key, out TValue value)
+    {
+        return base.TryGetValue(new NullObject<TKey>(key), out value);
     }
 
     /// <summary>
