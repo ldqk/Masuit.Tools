@@ -77,7 +77,7 @@ public class HiPerfTimer
     /// </summary>
     public double Duration => (_stopTime - _startTime) / (double)_exFreq;
 
-    public double DurationNanoseconds => _stopTime - _startTime;
+    public double DurationNanoseconds => (_stopTime - _startTime) * 100;
 
     /// <summary>
     /// 时器经过的总时间(单位：秒)
