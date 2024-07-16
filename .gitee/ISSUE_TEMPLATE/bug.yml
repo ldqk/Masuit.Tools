@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## 💢 ![问题解答价位表](https://pic1.zhimg.com/v2-95757ec9c290826a8298cd23a317a830_r.jpg)温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues/new?labels=bug&template=bug.yml&title=%5Bbug%E5%8F%8D%E9%A6%88%5D%3A+)
+        ## 💢 ![问题解答价位表](https://pic1.zhimg.com/v2-95757ec9c290826a8298cd23a317a830_r.jpg)  温馨提示：提交后请保证回复及时，若长时间未回复的issue，将在超过30天以后作关闭处理！ 由于gitee没有回复邮件通知，建议前往github仓库进行提交issue：[github issues](https://github.com/ldqk/Masuit.Tools/issues/new?labels=bug&template=bug.yml&title=%5Bbug%E5%8F%8D%E9%A6%88%5D%3A+)
   - type: dropdown
     id: version
     attributes:
