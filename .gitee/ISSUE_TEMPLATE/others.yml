@@ -3,6 +3,10 @@ description: 对本项目提出其他意见或建议
 title: "[咨询]: "
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 💢 ![问题解答价位表](https://pic1.zhimg.com/v2-95757ec9c290826a8298cd23a317a830_r.jpg)
   - type: textarea
     attributes:
       label: 您想讨论关于什么？
