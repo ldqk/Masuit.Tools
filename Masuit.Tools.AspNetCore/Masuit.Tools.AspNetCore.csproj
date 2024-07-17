@@ -14,7 +14,6 @@
         <PackageReleaseNotes>如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，
 详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
         <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
         <Product>Masuit.Tools.AspNetCore</Product>
         <PackageId>Masuit.Tools.AspNetCore</PackageId>
         <LangVersion>latest</LangVersion>
@@ -33,6 +32,7 @@
         <Title>Masuit.Tools</Title>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
