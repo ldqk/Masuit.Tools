@@ -7,25 +7,29 @@ namespace Masuit.Tools.Hardware;
 /// </summary>
 public class DiskInfo
 {
-    private static readonly List<DiskInfo> _locals = SystemInfo.GetDiskInfo();
+	internal int Index { get; set; }
 
-    /// <summary>
-    /// 本地实例
-    /// </summary>
-    public static List<DiskInfo> Locals => _locals;
+	private static readonly List<DiskInfo> _locals = SystemInfo.GetDiskInfo();
 
-    /// <summary>
-    /// 序列号
-    /// </summary>
-    public string SerialNumber { get; set; }
+	/// <summary>
+	/// 本地实例
+	/// </summary>
+	public static List<DiskInfo> Locals => _locals;
 
-    /// <summary>
-    /// 型号
-    /// </summary>
-    public string Model { get; set; }
+	/// <summary>
+	/// 序列号
+	/// </summary>
+	public string SerialNumber { get; set; }
 
-    /// <summary>
-    /// 总容量
-    /// </summary>
-    public float Total { get; set; }
+	/// <summary>
+	/// 型号
+	/// </summary>
+	public string Model { get; set; }
+
+	/// <summary>
+	/// 总容量
+	/// </summary>
+	public long Total { get; set; }
+
+	public string MediaType { get; set; }
 }

@@ -79,17 +79,17 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.3" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.3" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.3" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
