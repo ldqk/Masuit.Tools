@@ -232,6 +232,18 @@ namespace Masuit.Tools.Hardware
 			}
 		}
 
+#if NET5_0_OR_GREATER
+		public static string GetCpuId()
+		{
+			if (System.Runtime.Intrinsics.X86.X86Base.IsSupported)
+			{
+				var (eax, ebx, ecx, edx) = System.Runtime.Intrinsics.X86.X86Base.CpuId(1, 0);
+				return edx.ToString("X").PadLeft(8, '0') + eax.ToString("X").PadLeft(8, '0');
+			}
+			return null;
+		}
+#endif
+
 		#endregion CPU相关
 
 		#region 内存相关
@@ -278,7 +290,6 @@ namespace Masuit.Tools.Hardware
 		{
 			get
 			{
-				if (!IsWinPlatform) return 0;
 				using var process = Process.GetCurrentProcess();
 				return (long)GetCounterValue(IOCounter, "Process", "Working Set - Private", process.ProcessName);
 			}
@@ -322,7 +333,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static float GetUsageVirtualMemory()
 		{
-			if (!IsWinPlatform) return 0;
 			return GetCounterValue(IOCounter, "Memory", "% Committed Bytes In Use", null);
 		}
 
@@ -332,7 +342,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static float GetUsedVirtualMemory()
 		{
-			if (!IsWinPlatform) return 0;
 			return GetCounterValue(IOCounter, "Memory", "Committed Bytes", null);
 		}
 
@@ -342,7 +351,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static float GetTotalVirtualMemory()
 		{
-			if (!IsWinPlatform) return 0;
 			return GetCounterValue(IOCounter, "Memory", "Commit Limit", null);
 		}
 
@@ -384,7 +392,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static float GetFreePhysicalMemory()
 		{
-			if (!IsWinPlatform) return 0;
 			return GetCounterValue(IOCounter, "Memory", "Available Bytes", null);
 		}
 
@@ -408,7 +415,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static float GetDiskData(DiskData dd)
 		{
-			if (!IsWinPlatform) return 0;
 			return dd switch
 			{
 				DiskData.Read => GetCounterValue(IOCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total"),
@@ -563,8 +569,6 @@ namespace Masuit.Tools.Hardware
 		/// <returns></returns>
 		public static IPAddress GetLocalUsedIP(AddressFamily family)
 		{
-			if (!IsWinPlatform) return default;
-
 			return NetworkInterface.GetAllNetworkInterfaces().Where(c => c.NetworkInterfaceType != NetworkInterfaceType.Loopback && c.OperationalStatus == OperationalStatus.Up).OrderByDescending(c => c.Speed).Select(t => t.GetIPProperties()).Where(p => p.DhcpServerAddresses.Count > 0).SelectMany(p => p.UnicastAddresses).Select(p => p.Address).FirstOrDefault(p => !(p.IsIPv6Teredo || p.IsIPv6LinkLocal || p.IsIPv6Multicast || p.IsIPv6SiteLocal) && p.AddressFamily == family);
 		}
 
