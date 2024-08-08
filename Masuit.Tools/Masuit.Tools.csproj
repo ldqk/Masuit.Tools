@@ -193,7 +193,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
