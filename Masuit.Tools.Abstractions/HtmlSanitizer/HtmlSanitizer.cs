@@ -99,6 +99,8 @@ namespace Ganss.Xss
             AllowedClasses = new HashSet<string>(options.AllowedCssClasses, StringComparer.OrdinalIgnoreCase);
             AllowedCssProperties = new HashSet<string>(options.AllowedCssProperties, StringComparer.OrdinalIgnoreCase);
             AllowedAtRules = new HashSet<CssRuleType>(options.AllowedAtRules);
+            AllowCssCustomProperties = options.AllowCssCustomProperties;
+            AllowDataAttributes = options.AllowDataAttributes;
         }
 
         /// <summary>
@@ -203,6 +205,11 @@ namespace Ganss.Xss
         /// The allowed CSS properties.
         /// </value>
         public ISet<string> AllowedCssProperties { get; private set; }
+
+        /// <summary>
+        /// Allow all custom CSS properties (variables) prefixed with <c>--</c>.
+        /// </summary>
+        public bool AllowCssCustomProperties { get; set; }
 
         /// <summary>
         /// Gets or sets a regex that must not match for legal CSS property values.
@@ -726,6 +733,19 @@ namespace Ganss.Xss
             SanitizeStyleDeclaration(element, styles, baseUrl);
         }
 
+        /// <summary>
+        /// Verify if the given CSS property name is allowed. By default this will
+        /// check if the property is in the <see cref="AllowedCssProperties"/> set,
+        /// or if the property is a custom property and <see cref="AllowCssCustomProperties"/> is true.
+        /// </summary>
+        /// <param name="propertyName">The name of the CSS property.</param>
+        /// <returns>True if the property is allowed or not.</returns>
+        protected virtual bool IsAllowedCssProperty(string propertyName)
+        {
+            return AllowedCssProperties.Contains(propertyName)
+                || AllowCssCustomProperties && propertyName != null && propertyName.StartsWith("--");
+        }
+
         private void SanitizeStyleDeclaration(IElement element, ICssStyleDeclaration styles, string baseUrl)
         {
             var removeStyles = new List<Tuple<ICssProperty, RemoveReason>>();
@@ -736,7 +756,7 @@ namespace Ganss.Xss
                 var key = DecodeCss(style.Name);
                 var val = DecodeCss(style.Value);
 
-                if (!AllowedCssProperties.Contains(key))
+                if (!IsAllowedCssProperty(key))
                 {
                     removeStyles.Add(new Tuple<ICssProperty, RemoveReason>(style, RemoveReason.NotAllowedStyle));
                     continue;

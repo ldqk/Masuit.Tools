@@ -945,6 +945,9 @@ var type=DefaultMimeItems.Items.FirstOrDefault(t=>t.Extension=="jpg"); // image/
 ### 32.日期时间扩展
 
 ```csharp
+var weeks=DateTime.Now.GetWeekAmount(); // 获取当前所在年一共有多少周
+var week = DateTime.Now.WeekOfYear(); // 获取当前所在年的第几周
+var week = DateTime.Now.WeekOfYear(DayOfWeek.Monday); // 获取当前所在年的第几周,并指定星期几是每周第一天
 
 double milliseconds = DateTime.Now.GetTotalMilliseconds();// 获取毫秒级时间戳
 double microseconds = DateTime.Now.GetTotalMicroseconds();// 获取微秒级时间戳
@@ -964,6 +967,24 @@ range.Contains(DateTime.Parse("2020-8-3"), DateTime.Parse("2020-8-4"));//判断�
 
 range.GetUnionSet(List<DateTimeRange>); // 根据某个时间段查找在某批时间段中的最大并集
 range.GetMaxTimePeriod(List<DateTimeRange>); // 获取一批时间段内存在相互重叠的最大时间段
+
+var range = DateTime.Now.GetCurrentWeek(); // 获取当前时间所在周的时间区间：2024-08-05 00:00:00~2024-08-11 23:59:59
+var range = DateTime.Now.GetCurrentMonth(); // 获取当前时间所在月的时间区间：2024-08-01 00:00:00~2024-08-31 23:59:59
+var range = DateTime.Now.GetCurrentYear(); // 获取当前时间所在年的时间区间：2024-01-01 00:00:00~2024-12-31 23:59:59
+var range = DateTime.Now.GetCurrentQuarter(); // 获取当前时间所在季度的时间区间：2024-07-01 00:00:00~2024-09-30 23:59:59
+var range = DateTime.Now.GetCurrentLunarMonth(); // 获取当前时间所在农历月的时间区间：2024-08-04 00:00:00~2024-09-02 23:59:59
+var range = DateTime.Now.GetCurrentLunarQuarter(); // 获取当前时间所在农历季度的时间区间：2024-08-04 00:00:00~2024-10-31 23:59:59
+var range = DateTime.Now.GetCurrentLunarYaer(); // 获取当前时间所在农历年的时间区间：2024-02-10 00:00:00~2025-01-28 23:59:59
+var range = DateTime.Now.GetCurrentSolar(); // 获取当前时间所在季节的时间区间：2024-08-07 00:00:00~2024-11-06 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.Week); // 获取当前时间所在周的时间区间：2024-08-05 00:00:00~2024-08-11 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.Month); // 获取当前时间所在月的时间区间：2024-08-01 00:00:00~2024-08-31 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.Quarter); // 获取当前时间所在季度的时间区间：2024-07-01 00:00:00~2024-09-30 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.Year); // 获取当前时间所在年的时间区间：2024-01-01 00:00:00~2024-12-31 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.LunarMonth); // 获取当前时间所在农历月的时间区间：2024-08-04 00:00:00~2024-09-02 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.LunarQuarter); // 获取当前时间所在农历季度的时间区间：2024-08-04 00:00:00~2024-10-31 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.LunarYear); // 获取当前时间所在农历年的时间区间：2024-02-10 00:00:00~2025-01-28 23:59:59
+var range = DateTime.Now.GetCurrentRange(DateRangeType.Solar); // 获取当前时间所在季节的时间区间：2024-08-07 00:00:00~2024-11-06 23:59:59
+
 ...
 ```
 
@@ -1493,6 +1514,7 @@ var item=CurrentContext.GetData<T>();//获取值
 ```
 
 ### 51. ASP.NET Core自动扫描注册服务
+包：Masuit.Tools.AspNetCore  
 
 ```csharp
 // 自动扫描注册服务
@@ -1506,7 +1528,25 @@ public class MyClass:MyInterface{...}
 public class MyService{...}
 ```
 
-### 52. 房贷试算模型
+### 52. 文本对比(支持html和纯文本)
+包：Masuit.Tools.AspNetCore  
+集成案例：https://masuit.org/1889/history
+```csharp
+var text1 = "<h1>你好 UEditorPlus</h1><p>UEditorPlus 是基于 UEditor 二次开发的富文本编辑器，让 UEditor <span style=\"color: #E36C09;\">焕<span style=\"color: #0070C0;\">然</span><span style=\"color: #31859B;\"><span style=\"color: #00B050;\">一</span><span style=\"color: #FF0000;\">新</span></span></span></p><table data-sort=\"sortDisabled\"><tbody><tr class=\"firstRow\"><td valign=\"top\" style=\"word-break: break-all;\" rowspan=\"1\" colspan=\"3\">我是表格</td></tr><tr><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">如果</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">有一天</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">我离开了</td></tr><tr><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">怎么才能</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">证明我</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">曾经来过</td></tr></tbody></table><h2>公式支持</h2><p><img src=\"https://r.latexeasy.com/image.svg?%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\" data-formula-image=\"%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\"/></p><p><br/></p>";
+var text2 = "<p>UEditorPlus 是基于 UEditor 二次开发的富文本编辑器，让 UEditor <span style=\"color: #E36C09;\">焕<p style=\"color: #0070C0;\">然</p><span style=\"color: #31859B;\"><span style=\"color: #00B050;\">一</span><span style=\"color: #FF0000;\">新</span></span></span></p><table data-sort=\"sortDisabled\"><tbody><tr class=\"firstRow\"><td valign=\"top\" style=\"word-break: break-all;\" rowspan=\"1\" colspan=\"3\">我是表格</td></tr><tr><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">如果</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">有一天</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">我离开了</td></tr><tr><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">怎么才能</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">证明我</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">曾经来过</td></tr></tbody></table><pre class=\"brush:html;toolbar:false\">&lt;div&gt;\r\n&nbsp;&nbsp;&lt;span&gt;这里是HTML标签&lt;/span&gt;\r\n&lt;/div&gt;</pre><h2>公式支持23333333</h2><p><img src=\"https://r.latexeasy.com/image.svg?%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\" data-formula-image=\"%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\"/></p><p><br/></p>";
+
+var (html1, html2) = text1.HtmlDiff(text2); // 对比两段文本并分别生成差异
+var diffs = TextDiffer.Compute(text1, text2); // 对比两段文本并分别生成差异详细记录
+var patches = DiffPatch.FromDiffs(diffs); // 根据差异信息生成补丁
+patches.ToText(); // 根据补丁记录重建文本
+(string newText, bool[] results) = patches.Apply(text1); // 将变更补丁应用到原始文本1，并返回是否应用成功
+var text1 = diffs.Text1(); // 根据差异信息还原文本1
+var text2 = diffs.Text2(); // 根据差异信息还原文本2
+var delta = diffs.ToDelta(); // 根据差异信息生成类似于git差异的差分记录
+var diffs = text1.FromDelta(delta); // 根据差分信息生成差异记录
+```
+
+### 53. 房贷试算模型
 
 集成案例：https://masuit.org/tools/loan
 

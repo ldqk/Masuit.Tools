@@ -43,5 +43,15 @@ namespace Ganss.Xss
         /// Gets or sets the HTML attributes that can contain a URI such as "href".
         /// </summary>
         public ISet<string> UriAttributes { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Allow all custom CSS properties (variables) prefixed with <c>--</c>.
+        /// </summary>
+        public bool AllowCssCustomProperties { get; set; }
+
+        /// <summary>
+        /// Allow all HTML5 data attributes; the attributes prefixed with <c>data-</c>.
+        /// </summary>
+        public bool AllowDataAttributes { get; set; }
     }
 }
