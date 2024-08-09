@@ -294,9 +294,6 @@
     <Compile Include="..\Masuit.Tools.Abstractions\Win32\WindowsCommand.cs">
       <Link>Win32\WindowsCommand.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools\Config\CoreConfig.cs">
-      <Link>Config\CoreConfig.cs</Link>
-    </Compile>
     <Compile Include="..\Masuit.Tools\Mvc\ActionResults\ResumeActionResultBase.cs">
       <Link>Mvc\ActionResults\ResumeActionResultBase.cs</Link>
     </Compile>
@@ -330,12 +327,11 @@
     <Compile Include="..\Masuit.Tools\Net\CookieHelper.cs">
       <Link>Net\CookieHelper.cs</Link>
     </Compile>
-    <Compile Include="..\Masuit.Tools\Strings\ValidateCode.cs">
-      <Link>Strings\ValidateCode.cs</Link>
-    </Compile>
+    <Compile Include="Config\CoreConfig.cs" />
     <Compile Include="Media\ImageUtilities.cs" />
     <Compile Include="Media\ImageWatermarker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strings\ValidateCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core">

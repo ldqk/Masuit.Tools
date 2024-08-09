@@ -39,10 +39,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpCompress, Version=0.30.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Administrator\.nuget\packages\sharpcompress\0.30.0\lib\net5.0\SharpCompress.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -50,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChineseCalendarTest.cs" />
-    <Compile Include="CompressTest.cs" />
     <Compile Include="ExtensionMethodsTest.cs" />
     <Compile Include="HtmlToolsTest.cs" />
     <Compile Include="LinqExtensionTest.cs" />
@@ -73,6 +68,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj">
+      <Project>{74e7c0a2-499d-408f-a2e4-08878700c2de}</Project>
+      <Name>Masuit.Tools.Abstractions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Masuit.Tools\Masuit.Tools.csproj">
       <Project>{275d5a0d-c49c-497e-a4b5-f40285c2495f}</Project>
       <Name>Masuit.Tools</Name>
