@@ -1,233 +1,48 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{275D5A0D-C49C-497E-A4B5-F40285C2495F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Masuit.Tools</RootNamespace>
-    <AssemblyName>Masuit.Tools</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Debug\Masuit.Tools.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <CodeAnalysisRuleSet />
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\Masuit.Tools.XML</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <CodeAnalysisRuleSet />
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\Masuit.Tools.Abstractions\Database\*.*">
-      <Link>Database\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\DateTimeExt\*.*">
-      <Link>DateTimeExt\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\*\*.*">
-      <Link>Extensions\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Extensions\Dynamics\*\*.*">
-      <Link>Extensions\Dynamics\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*.*">
-      <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileDetector\*\*.*">
-      <Link>Files\FileDetector\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\IniFile\*.*">
-      <Link>Files\IniFile\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\FileExt.cs">
-      <Link>Files\FileExt.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Files\TextEncodingDetector.cs">
-      <Link>Files\TextEncodingDetector.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\BiosInfo.cs">
-      <Link>Hardware\BiosInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\CpuInfo.cs">
-      <Link>Hardware\CpuInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskData.cs">
-      <Link>Hardware\DiskData.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\DiskInfo.cs">
-      <Link>Hardware\DiskInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\NetData.cs">
-      <Link>Hardware\NetData.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\RamInfo.cs">
-      <Link>Hardware\RamInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\SystemInfo.cs">
-      <Link>Hardware\SystemInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Hardware\Unit.cs">
-      <Link>Hardware\Unit.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Logging\*.*">
-      <Link>Logging\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Maths\*.*">
-      <Link>Maths\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Media\*.*">
-      <Link>Media\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Mime\*.*">
-      <Link>Mime\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Models\*.*">
-      <Link>Models\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Html\HtmlTools.cs">
-      <Link>Html\HtmlTools.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Linq\LinqExtension.cs">
-      <Link>Linq\LinqExtension.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Net\MultiThreadDownloader.cs">
-      <Link>Net\MultiThreadDownloader.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Net\PartialDownloader.cs">
-      <Link>Net\PartialDownloader.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\RandomSelector\*.*">
-      <Link>RandomSelector\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Security\*.*">
-      <Link>Security\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Reflection\*.*">
-      <Link>Reflection\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Strings\NumberFormater.cs">
-      <Link>Strings\NumberFormater.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Strings\SimHash.cs">
-      <Link>Strings\SimHash.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Strings\Template.cs">
-      <Link>Strings\Template.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Strings\UnicodeFormater.cs">
-      <Link>Strings\UnicodeFormater.cs</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Systems\*.*">
-      <Link>Systems\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Validator\*.*">
-      <Link>Validator\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Win32\*.*">
-      <Link>Win32\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="..\Masuit.Tools.Abstractions\Win32\*\*.*">
-      <Link>Win32\%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </Compile>
-    <Compile Include="Config\CoreConfig.cs" />
-    <Compile Include="Files\SevenZipCompressor.cs" />
-    <Compile Include="Files\ExtensionAttach.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeActionResultBase.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeFileContentResult.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeFilePathResult.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeFileStreamResult.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeRequest.cs" />
-    <Compile Include="Mvc\ControllerExtension.cs" />
-    <Compile Include="Mvc\HttpHeaders.cs" />
-    <Compile Include="Mvc\Internal\ByteRange.cs" />
-    <Compile Include="Mvc\ActionResults\ResumeFileResult.cs" />
-    <Compile Include="Net\CacheHelper.cs" />
-    <Compile Include="Net\CookieHelper.cs" />
-    <Compile Include="Net\WebExtension.cs" />
-    <Compile Include="NoSQL\RedisConnectionManager.cs" />
-    <Compile Include="NoSQL\RedisHelper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strings\ValidateCode.cs" />
-    <Compile Include="Systems\IDictionaryExtensions.cs" />
-    <Compile Include="Systems\Lock.cs" />
-    <Compile Include="Systems\RedisLock.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="package.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Castle.Core">
-      <Version>5.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="DnsClient">
-      <Version>1.8.0</Version>
-    </PackageReference>
-    <PackageReference Include="HtmlSanitizer">
-      <Version>8.1.870</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNet.Mvc">
-      <Version>5.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="SharpCompress">
-      <Version>0.37.2</Version>
-    </PackageReference>
-    <PackageReference Include="SixLabors.ImageSharp.Drawing">
-      <Version>1.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="StackExchange.Redis">
-      <Version>2.8.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net461</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Authors>懒得勤快</Authors>
+        <Description>
+            全龄段友好的C#万能工具库，码数吐司库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，Masuit.Tools(适用于.NET Framework 4.6.1及以上项目)，包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。
+            官网教程：https://masuit.tools
+            github：https://github.com/ldqk/Masuit.Tools
+        </Description>
+        <Copyright>懒得勤快，长空X</Copyright>
+        <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+        <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
+        <PackageReleaseNotes>Masuit.Tools基础公共库，如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+        <Product>Masuit.Tools.Net</Product>
+        <PackageId>Masuit.Tools.Net</PackageId>
+        <RepositoryType></RepositoryType>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+        <FileVersion>2.5.9</FileVersion>
+        <Company>masuit.org</Company>
+        <AssemblyVersion>2.5.9</AssemblyVersion>
+        <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <Title>Masuit.Tools</Title>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <SonarQubeExclude>True</SonarQubeExclude>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
+        <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
+        <Reference Include="System.Web" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 </Project>
