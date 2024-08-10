@@ -101,9 +101,15 @@ public static class PatchExtension
 
 						yield return sign switch
 						{
+#if NETSTANDARD2_1_OR_GREATER
 							'+' => TextDiffer.Insert(line[1..].Replace("+", "%2b").UrlDecoded()),
 							'-' => TextDiffer.Delete(line[1..].Replace("+", "%2b").UrlDecoded()),
 							_ => TextDiffer.Equal(line[1..].Replace("+", "%2b").UrlDecoded())
+#else
+							'+' => TextDiffer.Insert(line[1..].Replace("+", "%2b").UrlDecoded().AsSpan()),
+							'-' => TextDiffer.Delete(line[1..].Replace("+", "%2b").UrlDecoded().AsSpan()),
+							_ => TextDiffer.Equal(line[1..].Replace("+", "%2b").UrlDecoded().AsSpan())
+#endif
 						};
 					}
 
@@ -258,7 +264,11 @@ public static class PatchExtension
 				var empty = true;
 				if (precontext.Length != 0)
 				{
+#if NETSTANDARD2_1_OR_GREATER
 					thediffs.Add(TextDiffer.Equal(precontext));
+#else
+					thediffs.Add(TextDiffer.Equal(precontext.AsSpan()));
+#endif
 				}
 
 				while (diffs.Any() && l1 < patchSize - patchMargin)
@@ -270,7 +280,11 @@ public static class PatchExtension
 					{
 						l2 += diffText.Length;
 						start2 += diffText.Length;
+#if NETSTANDARD2_1_OR_GREATER
 						thediffs.Add(TextDiffer.Insert(diffText));
+#else
+						thediffs.Add(TextDiffer.Insert(diffText.AsSpan()));
+#endif
 						diffs = diffs.RemoveAt(0);
 						empty = false;
 					}
@@ -278,7 +292,11 @@ public static class PatchExtension
 					{
 						l1 += diffText.Length;
 						start1 += diffText.Length;
+#if NETSTANDARD2_1_OR_GREATER
 						thediffs.Add(TextDiffer.Delete(diffText));
+#else
+						thediffs.Add(TextDiffer.Delete(diffText.AsSpan()));
+#endif
 						diffs = diffs.RemoveAt(0);
 						empty = false;
 					}
@@ -327,7 +345,11 @@ public static class PatchExtension
 					}
 					else
 					{
+#if NETSTANDARD2_1_OR_GREATER
 						thediffs.Add(TextDiffer.Equal(postcontext));
+#else
+						thediffs.Add(TextDiffer.Equal(postcontext.AsSpan()));
+#endif
 					}
 				}
 

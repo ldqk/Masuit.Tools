@@ -39,7 +39,11 @@ public record DiffPatch(int Start1, int Length1, int Start2, int Length2, Semant
 	{
 		if (!StartsWith(Equal))
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			builder.Insert(0, TextDiffer.Equal(padding));
+#else
+			builder.Insert(0, TextDiffer.Equal(padding.AsSpan()));
+#endif
 			return (s1 - padding.Length, l1 + padding.Length, s2 - padding.Length, l2 + padding.Length);
 		}
 
@@ -68,7 +72,11 @@ public record DiffPatch(int Start1, int Length1, int Start2, int Length2, Semant
 	{
 		if (!EndsWith(Equal))
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			builder.Add(TextDiffer.Equal(padding));
+#else
+			builder.Add(TextDiffer.Equal(padding.AsSpan()));
+#endif
 			return (s1, l1 + padding.Length, s2, l2 + padding.Length);
 		}
 
@@ -96,7 +104,11 @@ public record DiffPatch(int Start1, int Length1, int Start2, int Length2, Semant
 	public static SemanticsImmutableList<DiffPatch> Compute(string text1, string text2, float diffTimeout = 0, short diffEditCost = 4)
 	{
 		using var cts = diffTimeout <= 0 ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(diffTimeout));
+#if NETSTANDARD2_1_OR_GREATER
 		return Compute(text1, DiffAlgorithm.Compute(text1, text2, true, true, cts.Token).CleanupSemantic().CleanupEfficiency(diffEditCost)).ToImmutableList().WithValueSemantics();
+#else
+		return Compute(text1, DiffAlgorithm.Compute(text1.AsSpan(), text2.AsSpan(), true, true, cts.Token).CleanupSemantic().CleanupEfficiency(diffEditCost)).ToImmutableList().WithValueSemantics();
+#endif
 	}
 
 	/// <summary>

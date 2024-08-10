@@ -1529,7 +1529,6 @@ public class MyService{...}
 ```
 
 ### 52. 文本对比(支持html和纯文本)
-包：Masuit.Tools.AspNetCore  
 集成案例：https://masuit.org/1889/history
 ```csharp
 var text1 = "<h1>你好 UEditorPlus</h1><p>UEditorPlus 是基于 UEditor 二次开发的富文本编辑器，让 UEditor <span style=\"color: #E36C09;\">焕<span style=\"color: #0070C0;\">然</span><span style=\"color: #31859B;\"><span style=\"color: #00B050;\">一</span><span style=\"color: #FF0000;\">新</span></span></span></p><table data-sort=\"sortDisabled\"><tbody><tr class=\"firstRow\"><td valign=\"top\" style=\"word-break: break-all;\" rowspan=\"1\" colspan=\"3\">我是表格</td></tr><tr><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">如果</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">有一天</td><td width=\"273\" valign=\"top\" style=\"word-break: break-all;\">我离开了</td></tr><tr><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">怎么才能</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">证明我</td><td valign=\"top\" colspan=\"1\" rowspan=\"1\" style=\"word-break: break-all;\">曾经来过</td></tr></tbody></table><h2>公式支持</h2><p><img src=\"https://r.latexeasy.com/image.svg?%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\" data-formula-image=\"%5Cint%20%5Cfrac%7B1%7D%7Bx%7D%20dx%20%3D%20%5Cln%20%5Cleft%7C%20x%20%5Cright%7C%20%2B%20C\"/></p><p><br/></p>";

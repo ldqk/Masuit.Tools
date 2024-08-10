@@ -227,7 +227,11 @@ internal static class TextUtil
 			return -1;
 		}
 
+#if NETSTANDARD2_1_OR_GREATER
 		if (loc + pattern.Length <= text.Length && text.AsSpan(loc, pattern.Length).SequenceEqual(pattern))
+#else
+		if (loc + pattern.Length <= text.Length && text.AsSpan(loc, pattern.Length).SequenceEqual(pattern.AsSpan()))
+#endif
 		{
 			return loc;
 		}

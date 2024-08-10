@@ -31,8 +31,11 @@ public readonly record struct TextDiffer(DiffOperation Operation, string Text)
 		return Compute(text1, text2, checklines, timeoutInSeconds > 0, cts.Token);
 	}
 
-	public static ImmutableList<TextDiffer> Compute(string text1, string text2, bool checkLines, bool optimizeForSpeed, CancellationToken token)
-		=> DiffAlgorithm.Compute(text1, text2, checkLines, optimizeForSpeed, token).ToImmutableList();
+#if NETSTANDARD2_1_OR_GREATER
+	public static ImmutableList<TextDiffer> Compute(string text1, string text2, bool checkLines, bool optimizeForSpeed, CancellationToken token) => DiffAlgorithm.Compute(text1, text2, checkLines, optimizeForSpeed, token).ToImmutableList();
+#else
+	public static ImmutableList<TextDiffer> Compute(string text1, string text2, bool checkLines, bool optimizeForSpeed, CancellationToken token) => DiffAlgorithm.Compute(text1.AsSpan(), text2.AsSpan(), checkLines, optimizeForSpeed, token).ToImmutableList();
+#endif
 
 	public bool IsLargeDelete(int size) => Operation == DiffOperation.Delete && Text.Length > size;
 

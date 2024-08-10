@@ -14,6 +14,15 @@ namespace Masuit.Tools;
 /// </summary>
 public static class IEnumerableExtensions
 {
+#if NETFRAMEWORK
+
+	public static IEnumerable<T> Append<T>(this IEnumerable<T> source, T item)
+	{
+		return source.Concat([item]);
+	}
+
+#endif
+
 	/// <summary>
 	/// 按字段属性判等取交集
 	/// </summary>

@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using static Masuit.Tools.TextDiff.DiffOperation;
@@ -175,8 +177,13 @@ public static class DiffExtension
 						yield return lastEquality;
 					}
 
-					if (sbDelete.Length > 0) yield return TextDiffer.Delete(sbDelete.ToString());
-					if (sbInsert.Length > 0) yield return TextDiffer.Insert(sbInsert.ToString());
+#if NETSTANDARD2_1_OR_GREATER
+                    if (sbDelete.Length > 0) yield return TextDiffer.Delete(sbDelete.ToString());
+                    if (sbInsert.Length > 0) yield return TextDiffer.Insert(sbInsert.ToString());
+#else
+					if (sbDelete.Length > 0) yield return TextDiffer.Delete(sbDelete.ToString().AsSpan());
+					if (sbInsert.Length > 0) yield return TextDiffer.Insert(sbInsert.ToString().AsSpan());
+#endif
 					lastEquality = diff;
 					sbDelete.Clear();
 					sbInsert.Clear();
@@ -269,7 +276,11 @@ public static class DiffExtension
 		// 将编辑尽可能向左移动
 		public EditBetweenEqualities ShiftLeft()
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			var commonOffset = TextUtil.CommonSuffix(Equality1, Edit);
+#else
+			var commonOffset = TextUtil.CommonSuffix(Equality1.AsSpan(), Edit.AsSpan());
+#endif
 			if (commonOffset > 0)
 			{
 				var commonString = Edit[^commonOffset..];
@@ -295,9 +306,15 @@ public static class DiffExtension
 
 		public IEnumerable<TextDiffer> ToDiffs(DiffOperation edit)
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			yield return TextDiffer.Equal(Equality1);
 			yield return TextDiffer.Create(edit, Edit);
 			yield return TextDiffer.Equal(Equality2);
+#else
+			yield return TextDiffer.Equal(Equality1.AsSpan());
+			yield return TextDiffer.Create(edit, Edit);
+			yield return TextDiffer.Equal(Equality2.AsSpan());
+#endif
 		}
 	}
 
@@ -426,7 +443,11 @@ public static class DiffExtension
                  */
 				if ((lastEquality.Length != 0) && ((insertionBeforeLastEquality && deletionBeforeLastEquality && insertionAfterLastEquality && deletionAfterLastEquality) || ((lastEquality.Length < diffEditCost / 2) && (insertionBeforeLastEquality ? 1 : 0) + (deletionBeforeLastEquality ? 1 : 0) + (insertionAfterLastEquality ? 1 : 0) + (deletionAfterLastEquality ? 1 : 0) == 3)))
 				{
+#if NETSTANDARD2_1_OR_GREATER
 					diffs.Splice(equalities.Peek(), 1, TextDiffer.Delete(lastEquality), TextDiffer.Insert(lastEquality));
+#else
+					diffs.Splice(equalities.Peek(), 1, TextDiffer.Delete(lastEquality.AsSpan()), TextDiffer.Insert(lastEquality.AsSpan()));
+#endif
 					equalities.Pop();
 					lastEquality = string.Empty;
 					if (insertionBeforeLastEquality && deletionBeforeLastEquality)
@@ -513,7 +534,11 @@ public static class DiffExtension
 
 				if (lastEquality != null && (lastEquality.Length <= Math.Max(lengthInsertions1, lengthDeletions1)) && (lastEquality.Length <= Math.Max(lengthInsertions2, lengthDeletions2)))
 				{
+#if NETSTANDARD2_1_OR_GREATER
 					diffs.Splice(equalities.Peek(), 1, TextDiffer.Delete(lastEquality), TextDiffer.Insert(lastEquality));
+#else
+					diffs.Splice(equalities.Peek(), 1, TextDiffer.Delete(lastEquality.AsSpan()), TextDiffer.Insert(lastEquality.AsSpan()));
+#endif
 					equalities.Pop();
 					if (equalities.Count > 0)
 					{

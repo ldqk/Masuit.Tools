@@ -2,6 +2,7 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5;net6;net7;net8</TargetFrameworks>
         <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Authors>懒得勤快</Authors>
         <Description>全龄段友好的C#万能工具库，码数吐司库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，Masuit.Tools基础公共库(适用于.NET4.6.1/.NET Standard2.0及以上项目)，包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。
@@ -61,12 +62,18 @@
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="IndexRange" Version="1.0.3" />
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+        <PackageReference Include="System.Memory" Version="4.5.5" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
+        <PackageReference Include="IndexRange" Version="1.0.3" />
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+        <PackageReference Include="System.Memory" Version="4.5.5" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
@@ -94,6 +101,10 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
         <Reference Include="System.Web" />
+        <PackageReference Include="Castle.Core" Version="[4.4.1]" />
+        <PackageReference Include="IndexRange" Version="1.0.3" />
+        <PackageReference Include="System.Collections.Immutable" Version="[6.0.0]" />
+        <PackageReference Include="System.Memory" Version="4.5.5" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
         <PackageReference Include="System.Buffers" version="[4.5.1]" targetFramework="net461" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />

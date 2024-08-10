@@ -102,9 +102,16 @@ internal static class DiffAlgorithm
 			var result = TextUtil.HalfMatch(text1, text2);
 			if (!result.IsEmpty)
 			{
+#if NETSTANDARD2_1_OR_GREATER
 				var diffsA = Compute(result.Prefix1, result.Prefix2, checklines, true, token);
 				var diffsB = Compute(result.Suffix1, result.Suffix2, checklines, true, token);
 				return diffsA.Concat(TextDiffer.Equal(result.CommonMiddle)).Concat(diffsB);
+#else
+				var diffsA = Compute(result.Prefix1.AsSpan(), result.Prefix2.AsSpan(), checklines, true, token);
+				var diffsB = Compute(result.Suffix1.AsSpan(), result.Suffix2.AsSpan(), checklines, true, token);
+				return diffsA.Concat(TextDiffer.Equal(result.CommonMiddle.AsSpan())).Concat(diffsB);
+
+#endif
 			}
 		}
 
@@ -127,9 +134,13 @@ internal static class DiffAlgorithm
 	private static List<TextDiffer> DiffLines(ReadOnlySpan<char> text1, ReadOnlySpan<char> text2, bool optimized, CancellationToken token)
 	{
 		var compressor = new StringCompressor();
+#if NETSTANDARD2_1_OR_GREATER
 		text1 = compressor.Compress(text1, char.MaxValue * 2 / 3);
 		text2 = compressor.Compress(text2);
 		var diffs = Compute(text1, text2, false, optimized, token).Select(diff => diff.Replace(compressor.Decompress(diff.Text))).ToList().CleanupSemantic();
+#else
+		var diffs = Compute(compressor.Compress(text1, char.MaxValue * 2 / 3).AsSpan(), compressor.Compress(text2).AsSpan(), false, optimized, token).Select(diff => diff.Replace(compressor.Decompress(diff.Text))).ToList().CleanupSemantic();
+#endif
 
 		return RediffAfterDiffLines(diffs, optimized, token).ToList();
 	}
@@ -161,9 +172,15 @@ internal static class DiffAlgorithm
 
 			var consolidatedDiffsBeforeEqual = diff.Operation switch
 			{
+#if NETSTANDARD2_1_OR_GREATER
 				Equal when ins.Length > 0 && del.Length > 0 => Compute(del.ToString(), ins.ToString(), false, optimized, token),
 				Equal when del.Length > 0 => TextDiffer.Delete(del.ToString()).ItemAsEnumerable(),
 				Equal when ins.Length > 0 => TextDiffer.Insert(ins.ToString()).ItemAsEnumerable(),
+#else
+				Equal when ins.Length > 0 && del.Length > 0 => Compute(del.ToString().AsSpan(), ins.ToString().AsSpan(), false, optimized, token),
+				Equal when del.Length > 0 => TextDiffer.Delete(del.ToString().AsSpan()).ItemAsEnumerable(),
+				Equal when ins.Length > 0 => TextDiffer.Insert(ins.ToString().AsSpan()).ItemAsEnumerable(),
+#endif
 				_ => []
 			};
 

@@ -35,7 +35,11 @@ internal static class DifferBuilder
 		var prefix = text[begin1..start2];
 		if (prefix.Length != 0)
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			diffListBuilder.Insert(0, TextDiffer.Equal(prefix));
+#else
+			diffListBuilder.Insert(0, TextDiffer.Equal(prefix.AsSpan()));
+#endif
 		}
 
 		var begin2 = start2 + length1;
@@ -43,7 +47,11 @@ internal static class DifferBuilder
 		var suffix = text.Substring(begin2, length);
 		if (suffix.Length != 0)
 		{
+#if NETSTANDARD2_1_OR_GREATER
 			diffListBuilder.Add(TextDiffer.Equal(suffix));
+#else
+			diffListBuilder.Add(TextDiffer.Equal(suffix.AsSpan()));
+#endif
 		}
 
 		start1 -= prefix.Length;

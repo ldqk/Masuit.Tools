@@ -61,14 +61,19 @@ public static partial class Extensions
 
 		var regex = new Regex(@"<pre[\s\S]*?</pre>|<[^>]+>");
 		const string sep = "\f";
+#if NETSTANDARD2_1_OR_GREATER
 		var tags1 = regex.Matches(text1).Select(m => m.Value).Append("").ToArray();
 		var tags2 = regex.Matches(text2).Select(m => m.Value).Append("").ToArray();
+#else
+		var tags1 = regex.Matches(text1).Cast<Match>().Select(m => m.Value).Append("").ToArray();
+		var tags2 = regex.Matches(text2).Cast<Match>().Select(m => m.Value).Append("").ToArray();
+#endif
 		var html1 = regex.Replace(text1, sep);
 		var html2 = regex.Replace(text2, sep);
 		var diffs = TextDiffer.Compute(html1, html2);
-		var s1 = diffs.Where(d => d.Operation != DiffOperation.Insert).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep)).Join("");
-		var s2 = diffs.Where(d => d.Operation != DiffOperation.Delete).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep)).Join("");
-		return (s1.Split(sep).Select((s, i) => s + tags1[i]).Join(""), s2.Split(sep).Select((s, i) => s + tags2[i]).Join(""));
+		var s1 = diffs.Where(d => d.Operation != DiffOperation.Insert).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep)).Join("");
+		var s2 = diffs.Where(d => d.Operation != DiffOperation.Delete).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep)).Join("");
+		return (s1.Split(sep[0]).Select((s, i) => s + tags1[i]).Join(""), s2.Split(sep[0]).Select((s, i) => s + tags2[i]).Join(""));
 	}
 
 	public static string HtmlDiffMerge(this string text1, string text2)
@@ -85,8 +90,13 @@ public static partial class Extensions
 
 		var regex = new Regex(@"<pre[\s\S]*?</pre>|<[^>]+>");
 		const string sep = "\f";
+#if NETSTANDARD2_1_OR_GREATER
 		var tags1 = regex.Matches(text1).Select(m => m.Value).Append("").ToQueue();
 		var tags2 = regex.Matches(text2).Select(m => m.Value).Append("").ToQueue();
+#else
+		var tags1 = regex.Matches(text1).Cast<Match>().Select(m => m.Value).Append("").ToQueue();
+		var tags2 = regex.Matches(text2).Cast<Match>().Select(m => m.Value).Append("").ToQueue();
+#endif
 		var html1 = regex.Replace(text1, sep);
 		var html2 = regex.Replace(text2, sep);
 		var diffs = TextDiffer.Compute(html1, html2);
@@ -109,7 +119,7 @@ public static partial class Extensions
 
 				case DiffOperation.Delete:
 					{
-						var str = diff.Text.Split(sep).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep);
+						var str = diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep);
 						foreach (Match m in Regex.Matches(str, sep))
 						{
 							var tag = tags1.Dequeue();
@@ -121,7 +131,7 @@ public static partial class Extensions
 
 				case DiffOperation.Insert:
 					{
-						var str = diff.Text.Split(sep).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep);
+						var str = diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep);
 						foreach (Match m in Regex.Matches(str, sep))
 						{
 							var tag = tags2.Dequeue();
