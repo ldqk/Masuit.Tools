@@ -625,4 +625,16 @@ public static class ExcelExtension
     {
         return sheet.Column((int)NumberFormater.FromString(index));
     }
+
+    /// <summary>
+    /// 获取单元格值
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="cell"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static T GetValue<T>(this ExcelRangeBase cell, T defaultValue=default)
+    {
+        return cell.Value.ChangeTypeTo(defaultValue);
+    }
 }
