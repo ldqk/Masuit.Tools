@@ -228,6 +228,17 @@ public static class IConvertibleExtensions
     /// 对象类型转换
     /// </summary>
     /// <param name="this">当前值</param>
+    /// <param name="defaultValue">默认值</param>
+    /// <returns>转换后的对象</returns>
+    public static T ChangeTypeTo<T>(this object @this,T defaultValue)
+    {
+        return @this == null ? defaultValue : (T) ChangeType(@this, typeof(T));
+    }
+
+    /// <summary>
+    /// 对象类型转换
+    /// </summary>
+    /// <param name="this">当前值</param>
     /// <param name="type">指定类型的类型</param>
     /// <returns>转换后的对象</returns>
     public static object ChangeType(this object @this, Type type)

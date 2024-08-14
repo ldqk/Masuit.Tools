@@ -53,7 +53,7 @@
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+        <!--<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />-->
         <PackageReference Include="System.Management" Version="8.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.37.2" />

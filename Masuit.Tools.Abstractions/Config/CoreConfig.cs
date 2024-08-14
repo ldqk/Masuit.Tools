@@ -1,4 +1,4 @@
-﻿#if NET461
+﻿#if NETFRAMEWORK
 using System.Configuration;
 
 namespace Masuit.Tools.Config
