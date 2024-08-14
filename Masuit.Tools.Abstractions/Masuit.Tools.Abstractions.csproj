@@ -109,9 +109,9 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
         <Reference Include="System.Web" />
-        <PackageReference Include="Castle.Core" Version="[4.4.1]" />
+        <PackageReference Include="Castle.Core" Version="4.4.1" />
         <PackageReference Include="IndexRange" Version="1.0.3" />
-        <PackageReference Include="System.Collections.Immutable" Version="[6.0.0]" />
+        <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
         <PackageReference Include="System.Memory" Version="4.5.5" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
         <PackageReference Include="System.Buffers" version="[4.5.1]" targetFramework="net461" />

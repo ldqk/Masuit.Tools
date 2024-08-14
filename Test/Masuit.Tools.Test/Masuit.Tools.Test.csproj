@@ -78,9 +78,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Castle.Core">
-      <Version>5.1.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Mvc">
       <Version>5.3.0</Version>
     </PackageReference>
