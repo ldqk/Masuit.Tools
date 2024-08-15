@@ -24,6 +24,10 @@ internal sealed class EXEDetector : AbstractSignatureDetector
 
     public override bool Detect(Stream stream)
     {
+        if (stream.Length<100)
+        {
+            return false;
+        }
         if (base.Detect(stream))
         {
             stream.Position = 60;

@@ -10,17 +10,17 @@ public record struct SignatureInformation : IEquatable<SignatureInformation>
     /// <summary>
     ///
     /// </summary>
-    public int Position;
+    public int Position{get;set;}
 
     /// <summary>
     ///
     /// </summary>
-    public byte[] Signature;
+    public byte[] Signature{get;set;}
 
     /// <summary>
     ///
     /// </summary>
-    public byte[] Presignature;
+    public byte[] Presignature{get;set;}
 
     /// <summary>指示当前对象是否等于同一类型的另一个对象。</summary>
     /// <param name="other">一个与此对象进行比较的对象。</param>
@@ -95,6 +95,6 @@ public abstract class AbstractSignatureDetector : IDetector
         {
             return false;
         }
-        return a1.SequenceEqual(a2);
+        return a1.Zip(a2,(x, y) => (x,y)).All(t => t.x==t.y);
     }
 }

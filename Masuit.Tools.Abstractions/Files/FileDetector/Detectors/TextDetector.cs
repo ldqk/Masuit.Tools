@@ -24,7 +24,8 @@ internal sealed class TextDetector : IDetector
         Encoding.UTF8,
         Encoding.GetEncoding ( "utf-32" ),
         Encoding.Unicode,
-        Encoding.BigEndianUnicode
+        Encoding.BigEndianUnicode,
+        Encoding.ASCII, 
     };
 
     public string Extension => "txt";

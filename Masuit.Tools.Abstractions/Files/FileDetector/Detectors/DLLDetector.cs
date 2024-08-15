@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using Masuit.Tools.Mime;
 
@@ -9,28 +6,48 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 
 [FormatCategory(FormatCategory.System)]
 [FormatCategory(FormatCategory.Executable)]
-internal sealed class DLLDetector : IDetector
+internal sealed class DLLDetector : AbstractSignatureDetector
 {
-    public string Precondition => "exe";
+    public override string Precondition => "exe";
 
-    public string Extension => "dll";
-
-    public string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
-
-    public List<FormatCategory> FormatCategories => GetType().GetCustomAttributes<FormatCategoryAttribute>().Select(a => a.Category).ToList();
-
-    public bool Detect(Stream stream)
+    protected override SignatureInformation[] SignatureInformations { get; } =
     {
-        stream.Position = 60;
-        using var reader = new BinaryReader(stream, Encoding.UTF8, true);
-        var num = reader.ReadInt32();
-        if (num<0)
+        new()
+        {
+            Position = 0,
+            Signature = "MZ"u8.ToArray()
+        },
+    };
+
+    public override string Extension => "dll";
+
+    public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
+
+    public override List<FormatCategory> FormatCategories => GetType().GetCustomAttributes<FormatCategoryAttribute>().Select(a => a.Category).ToList();
+
+    public override bool Detect(Stream stream)
+    {
+        if (stream.Length < 100)
         {
             return false;
         }
-        stream.Position = num + 4 + 18;
-        short characteristics = reader.ReadInt16();
-        return (characteristics & 0x2000) != 0;
+
+        if (base.Detect(stream))
+        {
+            stream.Position = 60;
+            var reader = new BinaryReader(stream, Encoding.UTF8, true);
+            var num = reader.ReadInt32();
+            if (num < 0)
+            {
+                return false;
+            }
+
+            stream.Position = num + 4 + 18;
+            short characteristics = reader.ReadInt16();
+            return (characteristics & 0x2000) != 0;
+        }
+
+        return false;
     }
 
     public override string ToString() => "Windows Dynamic Linkage Library Detector";

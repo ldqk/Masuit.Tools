@@ -54,7 +54,7 @@ public static class FileSignatureDetector
 
     public static IDetector DetectFiletype(this Stream stream)
     {
-        if (stream.CanSeek)
+        if (stream.CanSeek&&stream.Length>0)
         {
             foreach (var detector in Detectors)
             {

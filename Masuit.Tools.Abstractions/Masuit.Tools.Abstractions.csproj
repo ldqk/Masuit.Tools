@@ -124,7 +124,6 @@
 
     <ItemGroup>
         <Folder Include="Extensions\Dynamics\" />
-        <Folder Include="Files\FileDetector\" />
     </ItemGroup>
 
     <ItemGroup>
