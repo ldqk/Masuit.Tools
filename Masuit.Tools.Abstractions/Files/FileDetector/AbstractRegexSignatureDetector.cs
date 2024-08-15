@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Masuit.Tools.Mime;
@@ -24,7 +21,6 @@ public abstract class AbstractRegexSignatureDetector : IDetector
     {
         int readBufferSize = Signature.ToString().Length * 8;
         char[] buffer = new char[readBufferSize];
-
         var encodings = new[]
         {
             Encoding.ASCII,

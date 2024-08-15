@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Masuit.Tools.Files.FileDetector;
 
-public class InstantDetector : IDetector
+internal class InstantDetector : IDetector
 {
     public string Description { get; }
 

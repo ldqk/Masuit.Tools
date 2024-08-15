@@ -1,6 +1,6 @@
 ﻿<Project>
  <PropertyGroup>
-   <Version>2024.5.3</Version>
+   <Version>2024.5.4</Version>
    <Deterministic>true</Deterministic>
  </PropertyGroup>
 </Project>

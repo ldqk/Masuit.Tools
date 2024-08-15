@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using Masuit.Tools.Mime;
 
@@ -73,49 +69,32 @@ public abstract class AbstractSignatureDetector : IDetector
         }
 
         byte[] buffer = new byte[_cachedLongestLength];
-
         byte[] preSignature = null;
-        bool correct = false;
-        while (true)
+        foreach (var siginfo in SignatureInformations.Where(si => CompareArray(si.Presignature, preSignature)).OrderBy(si => si.Position))
         {
-            bool found = false;
-            foreach (var siginfo in SignatureInformations.Where(si => CompareArray(si.Presignature, preSignature)).OrderBy(si => si.Position))
+            stream.Position = siginfo.Position;
+            _ = stream.Read(buffer, 0, _cachedLongestLength);
+            if (CompareArray(siginfo.Signature, buffer))
             {
-                correct = false;
-                stream.Position = siginfo.Position;
-                stream.Read(buffer, 0, _cachedLongestLength);
-                if (CompareArray(siginfo.Signature, buffer))
-                {
-                    preSignature = siginfo.Signature;
-                    correct = true;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                break;
+                preSignature = siginfo.Signature;
+                return true;
             }
         }
 
-        return correct;
+        return false;
     }
 
-    private bool CompareArray(byte[] a1, byte[] a2)
+    private static bool CompareArray(byte[] a1, byte[] a2)
     {
-        if (a1 == null && a2 == null) return true;
-        if (a1 == null || a2 == null) return false;
-
-        bool failed = false;
-        int min = a1.Length > a2.Length ? a2.Length : a1.Length;
-        for (int i = 0; i < min; ++i)
+        if (a1 == null && a2 == null)
         {
-            if (a1[i] != a2[i])
-            {
-                failed = true;
-                break;
-            }
+            return true;
         }
-        return !failed;
+
+        if (a1 == null || a2 == null)
+        {
+            return false;
+        }
+        return a1.SequenceEqual(a2);
     }
 }
