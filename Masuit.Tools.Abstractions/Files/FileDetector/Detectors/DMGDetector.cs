@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -10,7 +7,7 @@ namespace Masuit.Tools.Files.FileDetector.Detectors;
 internal sealed class DMGDetector : AbstractSignatureDetector
 {
     private static readonly SignatureInformation[] DmgSignatureInfo = {
-        new() { Position = 0, Signature = new byte [] { 0x78, 0x01, 0x73, 0x0D, 0x62, 0x62, 0x60 } },
+        new() { Position = 510, Signature = new byte [] { 0x55, 0xAA, 0x45, 0x46, 0x49, 0x20, 0x50,0x41,0x52,0x54 } },
     };
 
     public override string Extension => "dmg";

@@ -23,7 +23,12 @@ internal sealed class DLLDetector : IDetector
     {
         stream.Position = 60;
         using var reader = new BinaryReader(stream, Encoding.UTF8, true);
-        stream.Position = reader.ReadInt32() + 4 + 18;
+        var num = reader.ReadInt32();
+        if (num<0)
+        {
+            return false;
+        }
+        stream.Position = num + 4 + 18;
         short characteristics = reader.ReadInt16();
         return (characteristics & 0x2000) != 0;
     }
