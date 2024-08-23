@@ -14,6 +14,12 @@ namespace Masuit.Tools.Media;
 
 public static class ImageDetectExt
 {
+    public static bool IsImage(this FileInfo file)
+    {
+        using var stream = file.OpenRead();
+        return IsImage(stream);
+    }
+
     public static bool IsImage(this Stream s)
     {
         return GetImageType(s) != null;
@@ -70,28 +76,12 @@ public static class ImageDetectExt
 
         if (IsGZip(br))
         {
-            _ = ExtractImage(ToArray(ms), out ImageFormat? pt);
+            _ = ExtractImage(ms.ToArray(), out ImageFormat? pt);
             ms.Seek(0, SeekOrigin.Begin);
             return pt;
         }
 
         return null;
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    public static byte[] ToArray(Stream stream)
-    {
-        stream.Position = 0;
-        byte[] bytes = new byte[stream.Length];
-        stream.Read(bytes, 0, bytes.Length);
-
-        // 设置当前流的位置为流的开始
-        stream.Seek(0, SeekOrigin.Begin);
-        return bytes;
     }
 
     private static bool IsGZip(BinaryReader br)
@@ -125,8 +115,8 @@ public static class ImageDetectExt
                     {
                         msOut.Write(buffer, 0, size);
                     }
-                }
-                while (size == bufferSize);
+                } while (size == bufferSize);
+
                 msOut.Position = 0;
                 var br = new BinaryReader(msOut);
                 if (IsEmf(br))
@@ -141,6 +131,7 @@ public static class ImageDetectExt
                 {
                     type = null;
                 }
+
                 msOut.Position = 0;
                 return msOut.ToArray();
             }
@@ -150,6 +141,7 @@ public static class ImageDetectExt
                 return img;
             }
         }
+
         type = null;
         return img;
     }
