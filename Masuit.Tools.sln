@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+# 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools", "Masuit.Tools\Masuit.Tools.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Net", "Masuit.Tools\Masuit.Tools.Net.csproj", "{275D5A0D-C49C-497E-A4B5-F40285C2495F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masuit.Tools.Core", "Masuit.Tools.Core\Masuit.Tools.Core.csproj", "{149E6872-CE95-493B-B136-535E64C65A49}"
 EndProject
