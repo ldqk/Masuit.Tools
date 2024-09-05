@@ -56,7 +56,7 @@
         <!--<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />-->
         <PackageReference Include="System.Management" Version="8.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.37.2" />
+        <PackageReference Include="SharpCompress" Version="0.38.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
