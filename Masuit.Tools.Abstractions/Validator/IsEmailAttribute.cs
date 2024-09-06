@@ -85,7 +85,7 @@ public class IsEmailAttribute : ValidationAttribute
             return true;
         }
 
-        if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(new[] { '!', ';' }, StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
+        if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(['!', ';'], StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
         {
             ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
             return false;
@@ -96,7 +96,7 @@ public class IsEmailAttribute : ValidationAttribute
         {
             var nslookup = new LookupClient();
             var records = nslookup.Query(email.Split('@')[1], QueryType.MX).Answers.MxRecords().ToList();
-            if (!string.IsNullOrEmpty(BlockList) && records.Any(r => BlockList.Split('!').Any(item => Regex.IsMatch(r.Exchange.Value, item))))
+            if (!string.IsNullOrEmpty(BlockList) && records.Exists(r => BlockList.Split('!').Any(item => Regex.IsMatch(r.Exchange.Value, item))))
             {
                 ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;
@@ -106,7 +106,7 @@ public class IsEmailAttribute : ValidationAttribute
             {
                 if (t.IsCanceled || t.IsFaulted)
                 {
-                    return new[] { IPAddress.Loopback };
+                    return [IPAddress.Loopback];
                 }
 
                 return t.Result;
