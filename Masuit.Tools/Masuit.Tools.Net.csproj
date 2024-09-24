@@ -35,7 +35,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
-        <PackageReference Include="StackExchange.Redis" Version="2.8.12" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
         <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
         <Reference Include="System.Web" />
     </ItemGroup>
