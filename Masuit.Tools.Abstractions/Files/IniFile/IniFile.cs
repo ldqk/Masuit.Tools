@@ -94,7 +94,7 @@ public class IniFile
             else
             {
                 name = strs[0].Trim();
-                value = strs[1].Trim();
+                value = strs.Skip(1).Join("=").Trim();
             }
 
             if (name.Length <= 0)
