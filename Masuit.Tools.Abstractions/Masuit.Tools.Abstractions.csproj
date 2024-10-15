@@ -51,7 +51,7 @@
         <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.139" />
         <PackageReference Include="DnsClient" Version="1.8.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <!--<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />-->
         <PackageReference Include="System.Management" Version="8.0" />
@@ -102,7 +102,7 @@
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
+        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     </ItemGroup>
