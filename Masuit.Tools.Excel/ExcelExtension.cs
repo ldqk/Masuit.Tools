@@ -386,6 +386,13 @@ public static class ExcelExtension
             {
                 sheet.Cells[startRow, startColumn].LoadFromDataTable(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
                 sheet.Cells.Style.WrapText = true;
+                if (settings != null)
+                {
+                    foreach (var x in settings.ColumnTypes)
+                    {
+                        sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
+                    }
+                }
             }
         }
     }
@@ -609,6 +616,13 @@ public static class ExcelExtension
             {
                 sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
                 sheet.Cells.Style.WrapText = true;
+                if (settings != null)
+                {
+                    foreach (var x in settings.ColumnTypes)
+                    {
+                        sheet.Column(x.Key).Style.Numberformat.Format = x.Value;
+                    }
+                }
             }
         }
     }
@@ -633,7 +647,7 @@ public static class ExcelExtension
     /// <param name="cell"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T GetValue<T>(this ExcelRangeBase cell, T defaultValue=default)
+    public static T GetValue<T>(this ExcelRangeBase cell, T defaultValue = default)
     {
         return cell.Value.ChangeTypeTo(defaultValue);
     }
