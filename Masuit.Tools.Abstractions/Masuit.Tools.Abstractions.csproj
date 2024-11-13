@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net5;net6;net7;net8</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net6;net7;net8;net9</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -51,10 +51,10 @@
         <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.139" />
         <PackageReference Include="DnsClient" Version="1.8.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <!--<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />-->
-        <PackageReference Include="System.Management" Version="8.0" />
+        <PackageReference Include="System.Management" Version="9.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.38.0" />
     </ItemGroup>
@@ -62,8 +62,9 @@
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="IndexRange" Version="1.0.3" />
-        <PackageReference Include="System.Memory" Version="4.5.5" />
+        <PackageReference Include="System.Memory" Version="4.6" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.9]" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
@@ -72,17 +73,11 @@
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="IndexRange" Version="1.0.3" />
-        <PackageReference Include="System.Memory" Version="4.5.5" />
+        <PackageReference Include="System.Memory" Version="4.6" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.9]" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net5'">
-        <PackageReference Include="Castle.Core" Version="5.1.1" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     </ItemGroup>
 
@@ -107,14 +102,22 @@
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
     </ItemGroup>
 
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
+        <PackageReference Include="Castle.Core" Version="5.1.1" />
+        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.0" />
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    </ItemGroup>
+
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
         <Reference Include="System.Web" />
         <PackageReference Include="Castle.Core" Version="4.4.1" />
         <PackageReference Include="IndexRange" Version="1.0.3" />
         <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
-        <PackageReference Include="System.Memory" Version="4.5.5" />
+        <PackageReference Include="System.Memory" Version="4.6" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
-        <PackageReference Include="System.Buffers" version="[4.5.1]" targetFramework="net461" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.9]" />
+        <PackageReference Include="System.Buffers" version="[4.6]" targetFramework="net461" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[4.5]" />
         <PackageReference Include="System.Net.Http" Version="[4.3.4]" />
