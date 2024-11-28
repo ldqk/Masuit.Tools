@@ -96,6 +96,9 @@
     <PackageReference Include="SixLabors.ImageSharp">
       <Version>[2.1.9]</Version>
     </PackageReference>
+    <PackageReference Include="StackExchange.Redis">
+      <Version>2.8.22</Version>
+    </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>6.1.0</Version>
     </PackageReference>

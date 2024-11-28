@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net6;net7;net8;net9</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net6;net8;net9</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -53,7 +53,6 @@
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <!--<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />-->
         <PackageReference Include="System.Management" Version="9.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
         <PackageReference Include="SharpCompress" Version="0.38.0" />
@@ -82,13 +81,6 @@
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
-        <PackageReference Include="Castle.Core" Version="5.1.1" />
-        <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net7'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />

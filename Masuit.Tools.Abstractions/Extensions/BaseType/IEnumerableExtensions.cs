@@ -1002,10 +1002,48 @@ public static class IEnumerableExtensions
     /// <summary>
     /// 对比两个集合哪些是新增的、删除的、修改的
     /// </summary>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
+    /// <returns></returns>
+    public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T>(this IEnumerable<T> first, IEnumerable<T> second)
+    {
+        first ??= new List<T>();
+        second ??= new List<T>();
+        var firstSource = first as ICollection<T> ?? first.ToList();
+        var secondSource = second as ICollection<T> ?? second.ToList();
+        var add = firstSource.Except(secondSource).ToList();
+        var remove = secondSource.Except(firstSource).ToList();
+        var update = firstSource.Intersect(secondSource).ToList();
+        return (add, remove, update);
+    }
+
+    /// <summary>
+    /// 对比两个集合哪些是新增的、删除的、修改的
+    /// </summary>
+    /// <typeparam name="TKey">对比因素</typeparam>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
+    /// <param name="keySelector">对比因素(可唯一确定元素的字段)</param>
+    /// <returns></returns>
+    public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
+    {
+        first ??= new List<T>();
+        second ??= new List<T>();
+        var firstSource = first as ICollection<T> ?? first.ToList();
+        var secondSource = second as ICollection<T> ?? second.ToList();
+        var add = firstSource.ExceptBy(secondSource, keySelector).ToList();
+        var remove = secondSource.ExceptBy(firstSource, keySelector).ToList();
+        var update = firstSource.IntersectBy(secondSource, keySelector).ToList();
+        return (add, remove, update);
+    }
+
+    /// <summary>
+    /// 对比两个集合哪些是新增的、删除的、修改的
+    /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    /// <param name="first"></param>
-    /// <param name="second"></param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <param name="condition">对比因素条件</param>
     /// <returns></returns>
     public static (List<T1> adds, List<T2> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
@@ -1026,8 +1064,8 @@ public static class IEnumerableExtensions
     /// <typeparam name="T1">集合1</typeparam>
     /// <typeparam name="T2">集合2</typeparam>
     /// <typeparam name="TKey">对比因素</typeparam>
-    /// <param name="first">集合1</param>
-    /// <param name="second">集合2</param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <param name="firstKeySelector">集合1的对比因素(可唯一确定元素的字段)</param>
     /// <param name="secondKeySelector">集合2的对比因素(可唯一确定元素的字段)</param>
     /// <returns></returns>
@@ -1046,28 +1084,26 @@ public static class IEnumerableExtensions
     /// <summary>
     /// 对比两个集合哪些是新增的、删除的、修改的
     /// </summary>
-    /// <typeparam name="TKey">对比因素</typeparam>
-    /// <param name="first">集合1</param>
-    /// <param name="second">集合2</param>
-    /// <param name="keySelector">对比因素(可唯一确定元素的字段)</param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <returns></returns>
-    public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
+    public static (List<T> adds, List<T> remove, List<(T first, T second)> updates) CompareChangesPlus<T>(this IEnumerable<T> first, IEnumerable<T> second)
     {
         first ??= new List<T>();
         second ??= new List<T>();
         var firstSource = first as ICollection<T> ?? first.ToList();
         var secondSource = second as ICollection<T> ?? second.ToList();
-        var add = firstSource.ExceptBy(secondSource, keySelector).ToList();
-        var remove = secondSource.ExceptBy(firstSource, keySelector).ToList();
-        var update = firstSource.IntersectBy(secondSource, keySelector).ToList();
-        return (add, remove, update);
+        var add = firstSource.Except(secondSource).ToList();
+        var remove = secondSource.Except(firstSource).ToList();
+        var updates = firstSource.Intersect(secondSource).Select(t1 => (t1, secondSource.FirstOrDefault(t2 => t1.Equals(t2)))).ToList();
+        return (add, remove, updates);
     }
 
     /// <summary>
     /// 对比两个集合哪些是新增的、删除的、修改的
     /// </summary>
-    /// <param name="first"></param>
-    /// <param name="second"></param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <param name="keySelector">对比因素</param>
     /// <returns></returns>
     public static (List<T> adds, List<T> remove, List<(T first, T second)> updates) CompareChangesPlus<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
@@ -1087,8 +1123,8 @@ public static class IEnumerableExtensions
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    /// <param name="first"></param>
-    /// <param name="second"></param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <param name="condition">对比因素条件</param>
     /// <returns></returns>
     public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
@@ -1108,8 +1144,8 @@ public static class IEnumerableExtensions
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    /// <param name="first"></param>
-    /// <param name="second"></param>
+    /// <param name="first">新集合</param>
+    /// <param name="second">旧集合</param>
     /// <param name="firstKeySelector">集合1的对比因素(可唯一确定元素的字段)</param>
     /// <param name="secondKeySelector">集合2的对比因素(可唯一确定元素的字段)</param>
     /// <returns></returns>
