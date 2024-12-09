@@ -25,7 +25,7 @@ public class TreeTest
                 Id = 20000
             }
         };
-        for(int i = 2 ; i < 1500 ; i++)
+        for (int i = 2; i < 1500; i++)
         {
             list.Add(new MyClass
             {
@@ -35,7 +35,7 @@ public class TreeTest
             });
         }
 
-        for(int i = 20001 ; i < 40000 ; i++)
+        for (int i = 20001; i < 40000; i++)
         {
             list.Add(new MyClass
             {
@@ -80,7 +80,7 @@ public class TreeTest
                 Id = "20000"
             }
         };
-        for(int i = 2 ; i < 1500 ; i++)
+        for (int i = 2; i < 1500; i++)
         {
             list.Add(new MyClass2
             {
@@ -90,7 +90,7 @@ public class TreeTest
             });
         }
 
-        for(int i = 20001 ; i < 40000 ; i++)
+        for (int i = 20001; i < 40000; i++)
         {
             list.Add(new MyClass2
             {
@@ -159,11 +159,11 @@ public class TreeTest
         List<MyClass3> list = new() { tree0, tree1, tree2, tree3, tree4, tree5 };
 
         // 执行
-        List<Tree<MyClass3>> nodes = list.ToTreeGeneral(c => c.Id, c => c.ParentId, -1);
-
+        List<Tree<MyClass3>> nodes = list.ToTreeGeneral(c => c.Id, c => c.ParentId);
+        var count = nodes.Flatten().Count();
         //验证
         Assert.NotNull(nodes);
-        Assert.Equal(5, nodes.Flatten().Count());  // 错误，返回的节点数为 2
+        Assert.Equal(5, count);  // 错误，返回的节点数为 2
     }
 }
 
