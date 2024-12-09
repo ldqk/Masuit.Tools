@@ -196,32 +196,27 @@ public static class TreeExtensions
             yield break;
         }
 
-        // 使用一个队列来存储待处理的节点
-        var queue = new Queue<Tree<T>>();
-        // 首先将所有项加入队列
+        // 使用一个栈来存储待处理的节点
+        var stack = new Stack<Tree<T>>();
+        // 首先将所有项压入栈中
         foreach (var item in items)
         {
-            queue.Enqueue(item);
+            stack.Push(item);
         }
 
-        // 循环直到队列为空
-        while (queue.Count > 0)
+        // 循环直到栈为空
+        while (stack.Count > 0)
         {
-            // 从队列中取出当前节点
-            var currentItem = queue.Dequeue();
-
-            // 将当前节点返回
+            // 弹出栈顶的节点
+            var currentItem = stack.Pop();
             yield return currentItem;
 
-            // 获取当前节点的所有子节点，如果子节点列表不存在，则初始化为空列表
+            // 为当前节点设置子节点，如果optionAction不为空，则对每个子节点执行操作
             var children = currentItem.Children ?? new List<Tree<T>>();
-
-            // 将所有子节点加入队列
             foreach (var child in children)
             {
-                // 执行平铺时的操作（如果有的话）
                 optionAction?.Invoke(child, currentItem);
-                queue.Enqueue(child);
+                stack.Push(child); // 将子节点压入栈中
             }
         }
     }
@@ -722,46 +717,38 @@ public static class TreeExtensions
         var pidFunc = pidSelector.Compile();
         var idFunc = idSelector.Compile();
         var list = source.Where(t => t != null).ToList();
-        var temp = new List<Tree<T>>();
-        foreach (var item in list.Where(item => pidFunc(item) is null || pidFunc(item).Equals(topValue)))
-        {
-            var parent = new Tree<T>(item);
-            temp.AddRange(BuildTree(list, parent, idFunc, pidFunc));
-        }
-
-        return temp;
+        return BuildTreeGeneral(list, idFunc, pidFunc, topValue).ToList();
     }
 
-    private static IEnumerable<Tree<T>> BuildTree<T, TKey>(List<T> list, Tree<T> parent, Func<T, TKey> idSelector, Func<T, TKey> pidSelector) where TKey : IComparable
+    private static IEnumerable<Tree<T>> BuildTreeGeneral<T, TKey>(List<T> list, Func<T, TKey> idSelector, Func<T, TKey> pidSelector, TKey parent) where TKey : IComparable
     {
         // 创建一个字典，用于快速查找节点的子节点
-        var childrenLookup = new Dictionary<TKey, List<Tree<T>>>();
-        foreach (var item in list.Where(item => !childrenLookup.ContainsKey(idSelector(item))))
+        var lookup = new Dictionary<TKey, List<Tree<T>>>();
+        foreach (var item in list.Where(item => !lookup.ContainsKey(idSelector(item))))
         {
-            childrenLookup[idSelector(item)] = new List<Tree<T>>();
+            lookup[idSelector(item)] = new List<Tree<T>>();
         }
 
         // 构建树结构
-        foreach (var item in list.Where(item => !Equals(pidSelector(item), default(TKey)) && childrenLookup.ContainsKey(pidSelector(item))))
+        foreach (var item in list.Where(item => !Equals(pidSelector(item), default(TKey)) && lookup.ContainsKey(pidSelector(item))))
         {
-            childrenLookup[pidSelector(item)].Add(new Tree<T>(item));
+            lookup[pidSelector(item)].Add(new Tree<T>(item));
         }
 
         // 找到根节点，即没有父节点的节点
-        foreach (var root in list.Where(x => Equals(pidSelector(x), idSelector(parent.Value))))
+        foreach (var root in list.Where(x => Equals(pidSelector(x), parent)))
         {
             // 为根节点和所有子节点设置Children属性
-            // 使用队列来模拟递归过程
             var queue = new Queue<Tree<T>>();
-            queue.Enqueue(new Tree<T>(root));
-
+            var item = new Tree<T>(root);
+            queue.Enqueue(item);
             while (queue.Count > 0)
             {
                 // 出队当前节点
                 var current = queue.Dequeue();
 
                 // 为当前节点设置子节点
-                if (childrenLookup.TryGetValue(idSelector(current.Value), out var children))
+                if (lookup.TryGetValue(idSelector(current.Value), out var children))
                 {
                     current.Children = children;
                     foreach (var child in children)
@@ -773,7 +760,7 @@ public static class TreeExtensions
                 }
             }
 
-            yield return new Tree<T>(root);
+            yield return item;
         }
     }
 
