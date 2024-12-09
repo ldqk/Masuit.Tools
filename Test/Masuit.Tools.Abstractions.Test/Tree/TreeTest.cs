@@ -163,7 +163,7 @@ public class TreeTest
 
         //验证
         Assert.NotNull(nodes);
-        Assert.Equal(5, nodes.Flatten().Count());  //  错误，返回的节点数为 2
+        Assert.Equal(5, nodes.Flatten().Count());  // 错误，返回的节点数为 2
     }
 }
 
