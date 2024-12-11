@@ -16,6 +16,16 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 #endif
 
+#if NET5_0_OR_GREATER
+
+using System.Text.Json;
+using Masuit.Tools.Systems;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using System.Text.Encodings.Web;
+using System.Text.Json.Serialization;
+
+#endif
+
 namespace Masuit.Tools;
 
 /// <summary>
@@ -25,6 +35,25 @@ public static class ObjectExtensions
 {
     private static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
+#if NET5_0_OR_GREATER
+    /// <summary>
+    /// System.Text.Json 默认配置 支持中文
+    /// </summary>
+    private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+
+    /// <summary>
+    /// System.Text.Json 支持中文/忽略null值
+    /// </summary>
+    private static readonly JsonSerializerOptions IgnoreNullJsonSerializerOptions = new()
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
+#endif
     /// <summary>
     /// 是否是基本数据类型
     /// </summary>
@@ -118,7 +147,9 @@ public static class ObjectExtensions
     /// <returns></returns>
     public static object DeepClone(this object originalObject, bool useJson = false)
     {
-        return useJson ? InternalJsonCopy(originalObject) : InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
+        return useJson
+            ? InternalJsonCopy(originalObject)
+            : InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
     }
 
     /// <summary>
@@ -269,6 +300,51 @@ public static class ObjectExtensions
     {
         return string.IsNullOrEmpty(json) ? default : JsonConvert.DeserializeObject<T>(json, setting);
     }
+
+    #region System.Text.Json
+
+    #if NET5_0_OR_GREATER
+    
+    /// <summary>
+    /// 转换成json字符串
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="setting"></param>
+    /// <returns></returns>
+    public static string ToJson(this object obj, JsonSerializerOptions setting = null)
+    {
+        if (obj == null) return string.Empty;
+        setting ??= DefaultJsonSerializerOptions;
+        return JsonSerializer.Serialize(obj,setting);
+    }
+    
+    /// <summary>
+    /// 转换成json字符串并忽略Null值
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="setting"></param>
+    /// <returns></returns>
+    public static string ToJsonIgnoreNull(this object obj)
+    {
+        if (obj == null) return string.Empty;
+        return JsonSerializer.Serialize(obj,IgnoreNullJsonSerializerOptions);
+    }
+
+    /// <summary>
+    /// 反序列化
+    /// </summary>
+    /// <param name="json"></param>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public static T ToObject<T>(this string json, JsonSerializerOptions settings = null)
+    {
+        return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json, settings);
+    }
+
+    #endif
+
+    #endregion
+
 
     /// <summary>
     /// 链式操作
