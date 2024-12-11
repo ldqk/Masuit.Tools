@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -243,6 +244,77 @@ namespace Masuit.Tools.Hardware
             return null;
         }
 #endif
+        private static readonly ConcurrentDictionary<string, PerformanceCounter> Counters = [];
+
+        /// <summary>
+        /// 获取进程的实例名称
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static string GetInstanceName(this Process p)
+        {
+            try
+            {
+                var pcc = new PerformanceCounterCategory("Process");
+                var instances = pcc.GetInstanceNames();
+                foreach (string instance in instances)
+                {
+                    var counter = Counters.GetOrAdd(nameof(instance) + instance, () => new PerformanceCounter("Process", "ID Process", instance));
+                    if (Math.Abs(counter.NextValue() - p.Id) < 1e-8)
+                    {
+                        return instance;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 获取进程的CPU使用率
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<(Process process, float usage)> GetProcessCpuUsage(string name)
+        {
+            if (!IsWinPlatform) return [];
+
+            var processes = Process.GetProcessesByName(name);
+            return GetProcessCpuUsage(processes);
+        }
+
+        /// <summary>
+        /// 获取进程的CPU使用率
+        /// </summary>
+        /// <param name="processes"></param>
+        /// <returns></returns>
+        public static IEnumerable<(Process process, float usage)> GetProcessCpuUsage(this Process[] processes)
+        {
+            if (!IsWinPlatform) return [];
+            return processes.Select(GetProcessCpuUsage);
+        }
+
+        /// <summary>
+        /// 获取进程的CPU使用率
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public static (Process process, float usage) GetProcessCpuUsage(this Process process)
+        {
+            if (!IsWinPlatform) return (process, 0);
+            string instance = GetInstanceName(process);
+            if (instance != null)
+            {
+                var cpuCounter = Counters.GetOrAdd("Processor Time" + instance, new PerformanceCounter("Process", "% Processor Time", instance));
+                cpuCounter.NextValue();
+                Thread.Sleep(200); //等200ms(是测出能换取下个样本的最小时间间隔)，让后系统获取下一个样本,因为第一个样本无效
+                var usage = cpuCounter.NextValue() / Environment.ProcessorCount;
+                return (process, usage);
+            }
+            return (process, 0);
+        }
 
         #endregion CPU相关
 
@@ -402,6 +474,47 @@ namespace Masuit.Tools.Hardware
         public static float GetUsedPhysicalMemory()
         {
             return GetTotalPhysicalMemory() - GetFreePhysicalMemory();
+        }
+
+        /// <summary>
+        /// 获取进程的内存使用量，单位：MB
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static IEnumerable<(Process process, float usage)> GetProcessMemory(string name)
+        {
+            if (!IsWinPlatform) return [];
+            var processes = Process.GetProcessesByName(name);
+            return GetProcessMemory(processes);
+        }
+
+        /// <summary>
+        /// 获取进程的内存使用量，单位：MB
+        /// </summary>
+        /// <param name="processes"></param>
+        /// <returns></returns>
+        public static IEnumerable<(Process process, float usage)> GetProcessMemory(this Process[] processes)
+        {
+            if (!IsWinPlatform) return [];
+            return processes.Select(GetProcessMemory);
+        }
+
+        /// <summary>
+        /// 获取进程的内存使用量，单位：MB
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        public static (Process process, float usage) GetProcessMemory(this Process process)
+        {
+            if (!IsWinPlatform) return (process, 0);
+            string instance = GetInstanceName(process);
+            if (instance != null)
+            {
+                var ramCounter = Counters.GetOrAdd("Working Set" + instance, new PerformanceCounter("Process", "Working Set", instance));
+                var mb = ramCounter.NextValue() / 1024 / 1024;
+                return (process, mb);
+            }
+            return (process, 0);
         }
 
         #endregion 内存相关
