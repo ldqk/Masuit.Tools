@@ -275,12 +275,20 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 获取进程的CPU使用率
         /// </summary>
+        /// <returns></returns>
+        public static float GetProcessCpuUsage(int pid)
+        {
+            using var process = Process.GetProcessById(pid);
+            return GetProcessCpuUsage(process);
+        }
+
+        /// <summary>
+        /// 获取进程的CPU使用率
+        /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public static IEnumerable<(Process process, float usage)> GetProcessCpuUsage(string name)
         {
-            if (!IsWinPlatform) return [];
-
             var processes = Process.GetProcessesByName(name);
             return GetProcessCpuUsage(processes);
         }
@@ -292,8 +300,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IEnumerable<(Process process, float usage)> GetProcessCpuUsage(this Process[] processes)
         {
-            if (!IsWinPlatform) return [];
-            return processes.Select(GetProcessCpuUsage);
+            return processes.Select(p => (p, GetProcessCpuUsage(p)));
         }
 
         /// <summary>
@@ -301,19 +308,19 @@ namespace Masuit.Tools.Hardware
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
-        public static (Process process, float usage) GetProcessCpuUsage(this Process process)
+        public static float GetProcessCpuUsage(this Process process)
         {
-            if (!IsWinPlatform) return (process, 0);
+            if (!IsWinPlatform) return 0;
             string instance = GetInstanceName(process);
             if (instance != null)
             {
-                var cpuCounter = Counters.GetOrAdd("Processor Time" + instance, new PerformanceCounter("Process", "% Processor Time", instance));
+                var cpuCounter = Counters.GetOrAdd("Processor Time" + instance, () => new PerformanceCounter("Process", "% Processor Time", instance));
                 cpuCounter.NextValue();
                 Thread.Sleep(200); //等200ms(是测出能换取下个样本的最小时间间隔)，让后系统获取下一个样本,因为第一个样本无效
                 var usage = cpuCounter.NextValue() / Environment.ProcessorCount;
-                return (process, usage);
+                return usage;
             }
-            return (process, 0);
+            return 0;
         }
 
         #endregion CPU相关
@@ -479,11 +486,20 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 获取进程的内存使用量，单位：MB
         /// </summary>
+        /// <returns></returns>
+        public static float GetProcessMemory(int pid)
+        {
+            using var process = Process.GetProcessById(pid);
+            return GetProcessMemory(process);
+        }
+
+        /// <summary>
+        /// 获取进程的内存使用量，单位：MB
+        /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public static IEnumerable<(Process process, float usage)> GetProcessMemory(string name)
         {
-            if (!IsWinPlatform) return [];
             var processes = Process.GetProcessesByName(name);
             return GetProcessMemory(processes);
         }
@@ -495,8 +511,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static IEnumerable<(Process process, float usage)> GetProcessMemory(this Process[] processes)
         {
-            if (!IsWinPlatform) return [];
-            return processes.Select(GetProcessMemory);
+            return processes.Select(p => (p, GetProcessMemory(p)));
         }
 
         /// <summary>
@@ -504,17 +519,17 @@ namespace Masuit.Tools.Hardware
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
-        public static (Process process, float usage) GetProcessMemory(this Process process)
+        public static float GetProcessMemory(this Process process)
         {
-            if (!IsWinPlatform) return (process, 0);
+            if (!IsWinPlatform) return 0;
             string instance = GetInstanceName(process);
             if (instance != null)
             {
-                var ramCounter = Counters.GetOrAdd("Working Set" + instance, new PerformanceCounter("Process", "Working Set", instance));
+                var ramCounter = Counters.GetOrAdd("Working Set" + instance, () => new PerformanceCounter("Process", "Working Set", instance));
                 var mb = ramCounter.NextValue() / 1024 / 1024;
-                return (process, mb);
+                return mb;
             }
-            return (process, 0);
+            return 0;
         }
 
         #endregion 内存相关

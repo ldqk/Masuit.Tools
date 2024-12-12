@@ -54,7 +54,7 @@ public class TreeTest
         Assert.Equal(tree[0].AllChildren().Count, 1498);
         List<MyClass> a = tree.Filter(c => c.Id == 39999).ToList();
         Assert.Equal(a[0].Id, 39999);
-        List<MyClass> raw = tree.Flatten().ToList();
+        List<MyClass> raw = tree.Flatten(c => c.Children).ToList();
         Assert.Equal(raw.Count, list.Count);
         List<MyClass> allParent = a[0].AllParent();
         Assert.Equal(allParent[0].AllChildren().Count, 19999);

@@ -9,15 +9,12 @@ using Masuit.Tools.Reflection;
 using Newtonsoft.Json.Linq;
 
 #if NETSTANDARD2_1_OR_GREATER
-
 using System.Text.Json;
 using Masuit.Tools.Systems;
 using JsonSerializer = System.Text.Json.JsonSerializer;
-
 #endif
 
 #if NET5_0_OR_GREATER
-
 using System.Text.Json;
 using Masuit.Tools.Systems;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -54,6 +51,7 @@ public static class ObjectExtensions
     };
 
 #endif
+
     /// <summary>
     /// 是否是基本数据类型
     /// </summary>
@@ -147,9 +145,7 @@ public static class ObjectExtensions
     /// <returns></returns>
     public static object DeepClone(this object originalObject, bool useJson = false)
     {
-        return useJson
-            ? InternalJsonCopy(originalObject)
-            : InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
+        return useJson ? InternalJsonCopy(originalObject) : InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
     }
 
     /// <summary>
@@ -258,8 +254,7 @@ public static class ObjectExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static bool IsNullOrEmpty<T>(this T value)
-        where T : class
+    public static bool IsNullOrEmpty<T>(this T value) where T : class
     {
         return value switch
         {
@@ -303,31 +298,30 @@ public static class ObjectExtensions
 
     #region System.Text.Json
 
-    #if NET5_0_OR_GREATER
-    
+#if NET5_0_OR_GREATER
+
     /// <summary>
     /// 转换成json字符串
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="setting"></param>
     /// <returns></returns>
-    public static string ToJson(this object obj, JsonSerializerOptions setting = null)
+    public static string ToJsonString(this object obj, JsonSerializerOptions setting)
     {
         if (obj == null) return string.Empty;
         setting ??= DefaultJsonSerializerOptions;
-        return JsonSerializer.Serialize(obj,setting);
+        return JsonSerializer.Serialize(obj, setting);
     }
-    
+
     /// <summary>
     /// 转换成json字符串并忽略Null值
     /// </summary>
     /// <param name="obj"></param>
-    /// <param name="setting"></param>
     /// <returns></returns>
     public static string ToJsonIgnoreNull(this object obj)
     {
         if (obj == null) return string.Empty;
-        return JsonSerializer.Serialize(obj,IgnoreNullJsonSerializerOptions);
+        return JsonSerializer.Serialize(obj, IgnoreNullJsonSerializerOptions);
     }
 
     /// <summary>
@@ -336,15 +330,14 @@ public static class ObjectExtensions
     /// <param name="json"></param>
     /// <param name="settings"></param>
     /// <returns></returns>
-    public static T ToObject<T>(this string json, JsonSerializerOptions settings = null)
+    public static T FromJson<T>(this string json, JsonSerializerOptions settings)
     {
         return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json, settings);
     }
 
-    #endif
+#endif
 
-    #endregion
-
+    #endregion System.Text.Json
 
     /// <summary>
     /// 链式操作
@@ -373,6 +366,7 @@ public static class ObjectExtensions
                 {
                     dictionary.Add(e.Key.ToString(), e.Value);
                 }
+
                 return dictionary;
             }
 
@@ -425,13 +419,9 @@ public static class ObjectExtensions
     /// <param name="others"></param>
     public static T Merge<T>(this T a, T b, params T[] others) where T : class
     {
-        foreach (var item in new[] { b }.Concat(others))
+        foreach (var p in new[] { b }.Concat(others).Select(item => item.ToDictionary()).SelectMany(dic => dic.Where(p => a.GetProperty(p.Key).IsDefaultValue())))
         {
-            var dic = item.ToDictionary();
-            foreach (var p in dic.Where(p => a.GetProperty(p.Key).IsDefaultValue()))
-            {
-                a.SetProperty(p.Key, p.Value);
-            }
+            a.SetProperty(p.Key, p.Value);
         }
 
         return a;
@@ -453,13 +443,9 @@ public static class ObjectExtensions
                 return list[0];
         }
 
-        foreach (var item in list.Skip(1))
+        foreach (var p in list.Skip(1).Select(item => item.ToDictionary()).SelectMany(dic => dic.Where(p => list[0].GetProperty(p.Key).IsDefaultValue())))
         {
-            var dic = item.ToDictionary();
-            foreach (var p in dic.Where(p => list[0].GetProperty(p.Key).IsDefaultValue()))
-            {
-                list[0].SetProperty(p.Key, p.Value);
-            }
+            list[0].SetProperty(p.Key, p.Value);
         }
 
         return list[0];
@@ -505,6 +491,7 @@ internal static class ArrayExtensions
             {
                 _maxLengths[i] = array.GetLength(i) - 1;
             }
+
             Position = new int[array.Rank];
         }
 
@@ -519,9 +506,11 @@ internal static class ArrayExtensions
                     {
                         Position[j] = 0;
                     }
+
                     return true;
                 }
             }
+
             return false;
         }
     }

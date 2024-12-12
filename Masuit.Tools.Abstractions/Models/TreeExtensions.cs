@@ -109,32 +109,10 @@ public static class TreeExtensions
     {
         if (p == null)
         {
-            yield break;
+            return [];
         }
 
-        // 使用一个队列来存储待处理的节点
-        var queue = new Queue<T>();
-        queue.Enqueue(p);
-
-        while (queue.Count > 0)
-        {
-            // 从队列中出队一个节点
-            var currentItem = queue.Dequeue();
-
-            // 将当前节点返回
-            yield return currentItem;
-
-            // 获取当前节点的子节点，如果子节点列表不存在，则初始化为空列表
-            var children = currentItem.Children ?? new List<T>();
-
-            // 将所有子节点入队
-            foreach (var child in children)
-            {
-                // 执行平铺时的操作（如果有的话）
-                optionAction?.Invoke(child, currentItem);
-                queue.Enqueue(child);
-            }
-        }
+        return Flatten([p], t => t.Children, optionAction);
     }
 
     /// <summary>
@@ -193,32 +171,10 @@ public static class TreeExtensions
     {
         if (items == null)
         {
-            yield break;
+            return [];
         }
 
-        // 使用一个栈来存储待处理的节点
-        var stack = new Stack<Tree<T>>();
-        // 首先将所有项压入栈中
-        foreach (var item in items)
-        {
-            stack.Push(item);
-        }
-
-        // 循环直到栈为空
-        while (stack.Count > 0)
-        {
-            // 弹出栈顶的节点
-            var currentItem = stack.Pop();
-            yield return currentItem;
-
-            // 为当前节点设置子节点，如果optionAction不为空，则对每个子节点执行操作
-            var children = currentItem.Children ?? new List<Tree<T>>();
-            foreach (var child in children)
-            {
-                optionAction?.Invoke(child, currentItem);
-                stack.Push(child); // 将子节点压入栈中
-            }
-        }
+        return Flatten(items, t => t.Children, optionAction);
     }
 
     /// <summary>
@@ -232,33 +188,10 @@ public static class TreeExtensions
     {
         if (p == null)
         {
-            yield break;
+            return [];
         }
 
-        // 使用一个队列来存储待处理的节点
-        var queue = new Queue<Tree<T>>();
-        queue.Enqueue(p);
-
-        // 遍历队列直到它为空
-        while (queue.Count > 0)
-        {
-            // 从队列中取出当前节点
-            var currentItem = queue.Dequeue();
-
-            // 将当前节点返回
-            yield return currentItem;
-
-            // 获取当前节点的子节点列表，如果为空则初始化为空列表
-            var children = currentItem.Children ?? new List<Tree<T>>();
-
-            // 将所有子节点添加到队列中
-            foreach (var child in children)
-            {
-                // 执行平铺时的操作（如果有的话）
-                optionAction?.Invoke(child, currentItem);
-                queue.Enqueue(child);
-            }
-        }
+        return Flatten([p], t => t.Children, optionAction);
     }
 
     /// <summary>
@@ -499,102 +432,12 @@ public static class TreeExtensions
 
     internal static IEnumerable<T> BuildTree<T, TKey>(IEnumerable<T> source, TKey? topValue = default) where T : ITreeEntity<T, TKey> where TKey : struct, IComparable
     {
-        // 创建一个字典，用于快速查找节点的子节点
-        var childrenLookup = new NullableDictionary<TKey, List<T>>();
-        var list = source as ICollection<T> ?? source.ToList();
-        foreach (var item in list.Where(item => !childrenLookup.ContainsKey(item.Id)))
-        {
-            childrenLookup[item.Id] = new List<T>();
-        }
-
-        // 构建树结构
-        foreach (var item in list.Where(item => (item.ParentId != null || !Equals(item.ParentId, default(TKey))) && childrenLookup.ContainsKey(item.ParentId ?? default)))
-        {
-            childrenLookup[item.ParentId ?? default].Add(item);
-        }
-
-        // 找到根节点，即没有父节点的节点
-        foreach (var root in list.Where(x => Equals(x.ParentId, topValue)))
-        {
-            // 为根节点和所有子节点设置Children属性
-            // 使用队列来模拟递归过程
-            var queue = new Queue<T>();
-            queue.Enqueue(root);
-            while (queue.Count > 0)
-            {
-                // 出队当前节点
-                var current = queue.Dequeue();
-
-                // 为当前节点设置子节点
-                if (childrenLookup.TryGetValue(current.Id, out var children))
-                {
-                    current.Children = children;
-                    foreach (var child in children)
-                    {
-                        // 如果子节点实现了ITreeParent接口，则设置其Parent属性
-                        if (child is ITreeParent<T> tree)
-                        {
-                            tree.Parent = current;
-                        }
-
-                        // 将子节点入队以继续处理
-                        queue.Enqueue(child);
-                    }
-                }
-            }
-
-            yield return root;
-        }
+        return BuildTree(source, t => t.Id, t => t.ParentId, topValue);
     }
 
     internal static IEnumerable<T> BuildTree<T>(IEnumerable<T> source, string topValue = null) where T : ITreeEntity<T>
     {
-        // 创建一个字典，用于快速查找节点的子节点
-        var childrenLookup = new NullableDictionary<string, List<T>>();
-        var list = source as ICollection<T> ?? source.ToList();
-        foreach (var item in list.Where(item => !childrenLookup.ContainsKey(item.Id)))
-        {
-            childrenLookup[item.Id] = new List<T>();
-        }
-
-        // 构建树结构
-        foreach (var item in list.Where(item => !string.IsNullOrEmpty(item.ParentId) && childrenLookup.ContainsKey(item.ParentId)))
-        {
-            childrenLookup[item.ParentId].Add(item);
-        }
-
-        // 找到根节点，即没有父节点的节点
-        foreach (var root in list.Where(x => Equals(x.ParentId, topValue)))
-        {
-            // 为根节点和所有子节点设置Children属性
-            // 使用队列来模拟递归过程
-            var queue = new Queue<T>();
-            queue.Enqueue(root);
-            while (queue.Count > 0)
-            {
-                // 出队当前节点
-                var current = queue.Dequeue();
-
-                // 为当前节点设置子节点
-                if (childrenLookup.TryGetValue(current.Id, out var children))
-                {
-                    current.Children = children;
-                    foreach (var child in children)
-                    {
-                        // 如果子节点实现了ITreeParent接口，则设置其Parent属性
-                        if (child is ITreeParent<T> tree)
-                        {
-                            tree.Parent = current;
-                        }
-
-                        // 将子节点入队以继续处理
-                        queue.Enqueue(child);
-                    }
-                }
-            }
-
-            yield return root;
-        }
+        return BuildTree(source, t => t.Id, t => t.ParentId, topValue);
     }
 
     internal static IEnumerable<T> BuildTree<T>(IEnumerable<T> source, T parent) where T : ITreeEntity<T>
