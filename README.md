@@ -177,6 +177,19 @@ var cpuInfos = CpuInfo.Locals; // 快速获取CPU的信息
 var ramInfo = RamInfo.Local; // 快速获取内存的信息
 var diskInfos = DiskInfo.Locals; // 快速获取硬盘的信息
 var biosInfo = BiosInfo.Local; // 快速获取主板的信息
+
+// 获取进程的CPU和内存占用率
+var process = Process.GetProcessById(1234); // pid获取
+var cpuUsage = process.GetProcessCpuUsage();
+var memory = process.GetProcessMemory();
+
+var processes = Process.GetProcessesByName("msedge"); // 进程名获取
+foreach (var p in processes)
+{
+    var cpu = p.GetProcessCpuUsage();
+    var mem = p.GetProcessMemory();
+    Console.WriteLine($"Process {p.ProcessName} CPU: {cpu}%, Memory: {mem}MB");
+}
 ```
 
 ### 3.html的防XSS处理：
