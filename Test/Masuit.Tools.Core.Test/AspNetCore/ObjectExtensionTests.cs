@@ -27,7 +27,7 @@ namespace Masuit.Tools.Core.Test.AspNetCore
                 remarks = new List<string> { "Deep  Dark  Fantastic", "爱玩游戏♂" },
             };
 
-            var json = obj.ToJson();
+            var json = obj.ToJsonString(new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
 
             Assert.Equal(
                 "{\"Id\":1,\"name\":\"van\",\"addressInfo\":{\"street\":\"123 Main St\",\"city\":\"zcvz\"},\"remarks\":[\"Deep  Dark  Fantastic\",\"爱玩游戏\u2642\"]}",
@@ -55,13 +55,12 @@ namespace Masuit.Tools.Core.Test.AspNetCore
         {
             var json = "{\"Name\":\"van\",\"Age\":52}";
 
-            var obj = json.ToObject<People>();
+            var obj = json.FromJson<People>(new JsonSerializerOptions() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
 
             Assert.Equal(
                 "van",
                 obj.Name);
         }
-
 
         [Fact]
         public void SerializeSortByNameTest()
@@ -72,7 +71,7 @@ namespace Masuit.Tools.Core.Test.AspNetCore
                 Age = 52,
             };
 
-            var json = obj.ToJson(new JsonSerializerOptions
+            var json = obj.ToJsonString(new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 TypeInfoResolver = new SerializeSortByNameResolver()
@@ -82,7 +81,6 @@ namespace Masuit.Tools.Core.Test.AspNetCore
                 "{\"Age\":52,\"Name\":\"van\"}",
                 json);
         }
-
 
         private class People
         {
