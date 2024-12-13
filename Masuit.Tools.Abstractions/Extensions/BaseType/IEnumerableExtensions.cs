@@ -376,6 +376,64 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
+    /// 符合条件则添加一个元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="value"></param>
+    public static ICollection<T> AppendIf<T>(this ICollection<T> @this, Func<bool> predicate, T value)
+    {
+        if (predicate())
+        {
+            @this.Add(value);
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加一个元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="value"></param>
+    public static ICollection<T> AppendIf<T>(this ICollection<T> @this, bool predicate, T value)
+    {
+        if (predicate)
+        {
+            @this.Add(value);
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加一个元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="value"></param>
+    public static IEnumerable<T> AppendIf<T>(this IEnumerable<T> @this, Func<bool> predicate, T value)
+    {
+        return predicate() ? @this.Append(value) : @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加一个元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="value"></param>
+    public static IEnumerable<T> AppendIf<T>(this IEnumerable<T> @this, bool predicate, T value)
+    {
+        return predicate ? @this.Append(value) : @this;
+    }
+
+    /// <summary>
     /// 移除符合条件的元素
     /// </summary>
     /// <typeparam name="T"></typeparam>
