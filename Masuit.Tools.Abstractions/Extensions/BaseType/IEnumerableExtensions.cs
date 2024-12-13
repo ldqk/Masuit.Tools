@@ -359,6 +359,126 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ICollection<T> AddRangeIf<T>(this ICollection<T> @this, Func<bool> predicate, IEnumerable<T> values)
+    {
+        if (predicate())
+        {
+            foreach (var value in values)
+            {
+                @this.Add(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ICollection<T> AddRangeIf<T>(this ICollection<T> @this, bool predicate, IEnumerable<T> values)
+    {
+        if (predicate)
+        {
+            foreach (var value in values)
+            {
+                @this.Add(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ConcurrentBag<T> AddRangeIf<T>(this ConcurrentBag<T> @this, Func<bool> predicate, IEnumerable<T> values)
+    {
+        if (predicate())
+        {
+            foreach (var value in values)
+            {
+                @this.Add(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ConcurrentBag<T> AddRangeIf<T>(this ConcurrentBag<T> @this, bool predicate, IEnumerable<T> values)
+    {
+        if (predicate)
+        {
+            foreach (var value in values)
+            {
+                @this.Add(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ConcurrentQueue<T> AddRangeIf<T>(this ConcurrentQueue<T> @this, Func<bool> predicate, IEnumerable<T> values)
+    {
+        if (predicate())
+        {
+            foreach (var value in values)
+            {
+                @this.Enqueue(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
+    /// 符合条件则添加元素
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="predicate"></param>
+    /// <param name="values"></param>
+    public static ConcurrentQueue<T> AddRangeIf<T>(this ConcurrentQueue<T> @this, bool predicate, IEnumerable<T> values)
+    {
+        if (predicate)
+        {
+            foreach (var value in values)
+            {
+                @this.Enqueue(value);
+            }
+        }
+
+        return @this;
+    }
+
+    /// <summary>
     /// 添加不重复的元素
     /// </summary>
     /// <typeparam name="T"></typeparam>
