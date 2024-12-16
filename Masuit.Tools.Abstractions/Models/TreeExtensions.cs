@@ -1,6 +1,8 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Collections.Generic;
 using System.Linq;
+#endif
 using System.Linq.Expressions;
 using Masuit.Tools.Systems;
 
@@ -867,6 +869,9 @@ public static class TreeExtensions
     }
 }
 
+/// <summary>
+/// 树形数据扩展 long
+/// </summary>
 public static class TreeExtensionLong
 {
     /// <summary>
@@ -881,6 +886,9 @@ public static class TreeExtensionLong
     }
 }
 
+/// <summary>
+/// 树形数据扩展 guid
+/// </summary>
 public static class TreeExtensionGuid
 {
     /// <summary>
@@ -895,6 +903,9 @@ public static class TreeExtensionGuid
     }
 }
 
+/// <summary>
+/// 树形数据扩展 string
+/// </summary>
 public static class TreeExtensionString
 {
     /// <summary>
