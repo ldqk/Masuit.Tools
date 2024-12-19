@@ -633,6 +633,30 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
+    /// 转SortedSet
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source)
+    {
+        return [.. source];
+    }
+
+    /// <summary>
+    /// 转SortedSet
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="selector"></param>
+    /// <returns></returns>
+    public static SortedSet<TResult> ToSortedSet<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector)
+    {
+        return [.. source.Select(selector)];
+    }
+
+    /// <summary>
     /// 转Queue
     /// </summary>
     /// <typeparam name="T"></typeparam>

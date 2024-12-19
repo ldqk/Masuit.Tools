@@ -97,7 +97,7 @@
       <Version>[2.1.9]</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.8.22</Version>
+      <Version>2.8.24</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>6.1.0</Version>
@@ -115,7 +115,7 @@
       <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="xunit.analyzers">
-      <Version>1.17.0</Version>
+      <Version>1.18.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
