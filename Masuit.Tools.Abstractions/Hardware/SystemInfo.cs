@@ -1,19 +1,13 @@
 ﻿using Masuit.Tools.Logging;
 using Microsoft.Win32;
-using SixLabors.ImageSharp.Drawing;
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Masuit.Tools.Hardware
 {
@@ -29,15 +23,9 @@ namespace Masuit.Tools.Hardware
         private const int GwlStyle = -16;
         private const int WsVisible = 268435456;
         private const int WsBorder = 8388608;
-        private static readonly PerformanceCounter PcCpuLoad; //CPU计数器
-
-        private static readonly PerformanceCounter IOCounter;
-
-        private static readonly string[] InstanceNames = { };
-        private static readonly PerformanceCounter[] NetRecvCounters;
-        private static readonly PerformanceCounter[] NetSentCounters;
+        private static readonly string[] InstanceNames = [];
         private static readonly Dictionary<string, dynamic> Cache = new();
-
+        private static readonly ConcurrentDictionary<string, PerformanceCounter> Counters = [];
         public static bool IsWinPlatform => Environment.OSVersion.Platform is PlatformID.Win32Windows or PlatformID.Win32S or PlatformID.WinCE or PlatformID.Win32NT;
 
         #endregion 字段
@@ -51,14 +39,12 @@ namespace Masuit.Tools.Hardware
         {
             if (IsWinPlatform)
             {
-                IOCounter = new PerformanceCounter();
-
                 //初始化CPU计数器
-                PcCpuLoad = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+                Counters["CpuCounter"] = new PerformanceCounter("Processor", "% Processor Time", "_Total")
                 {
                     MachineName = "."
                 };
-                PcCpuLoad.NextValue();
+                Counters["CpuCounter"].NextValue();
 
                 //获得物理内存
                 try
@@ -72,21 +58,13 @@ namespace Masuit.Tools.Hardware
                             if (mo["TotalPhysicalMemory"] != null)
                             {
                                 PhysicalMemory = mo["TotalPhysicalMemory"].ChangeTypeTo<long>();
+                                break;
                             }
                         }
                     }
 
                     var cat = new PerformanceCounterCategory("Network Interface");
                     InstanceNames = cat.GetInstanceNames();
-                    NetRecvCounters = new PerformanceCounter[InstanceNames.Length];
-                    NetSentCounters = new PerformanceCounter[InstanceNames.Length];
-                    for (int i = 0; i < InstanceNames.Length; i++)
-                    {
-                        NetRecvCounters[i] = new PerformanceCounter();
-                        NetSentCounters[i] = new PerformanceCounter();
-                    }
-
-                    CompactFormat = false;
                 }
                 catch (Exception e)
                 {
@@ -112,7 +90,14 @@ namespace Masuit.Tools.Hardware
         /// <summary>
         /// 获取CPU占用率 %
         /// </summary>
-        public static float CpuLoad => PcCpuLoad?.NextValue() ?? 0;
+        public static float CpuLoad
+        {
+            get
+            {
+                if (!IsWinPlatform) return 0;
+                return Counters["CpuCounter"].NextValue();
+            }
+        }
 
         /// <summary>
         /// 获取当前进程的CPU使用率（至少需要0.5s）
@@ -130,16 +115,6 @@ namespace Masuit.Tools.Hardware
             var cpuUsedMs = (endCpuUsage - startCpuUsage).TotalMilliseconds;
             var totalMsPassed = (endTime - startTime).TotalMilliseconds;
             return cpuUsedMs / (Environment.ProcessorCount * totalMsPassed) * 100;
-        }
-
-        /// <summary>
-        /// WMI接口获取CPU使用率
-        /// </summary>
-        /// <returns></returns>
-        public static string GetProcessorData()
-        {
-            var d = GetCounterValue(IOCounter, "Processor", "% Processor Time", "_Total");
-            return CompactFormat ? (int)d + "%" : d.ToString("F") + "%";
         }
 
         /// <summary>
@@ -244,7 +219,6 @@ namespace Masuit.Tools.Hardware
             return null;
         }
 #endif
-        private static readonly ConcurrentDictionary<string, PerformanceCounter> Counters = [];
 
         /// <summary>
         /// 获取进程的实例名称
@@ -314,11 +288,14 @@ namespace Masuit.Tools.Hardware
             string instance = GetInstanceName(process);
             if (instance != null)
             {
-                var cpuCounter = Counters.GetOrAdd("Processor Time" + instance, () => new PerformanceCounter("Process", "% Processor Time", instance));
-                cpuCounter.NextValue();
-                Thread.Sleep(200); //等200ms(是测出能换取下个样本的最小时间间隔)，让后系统获取下一个样本,因为第一个样本无效
-                var usage = cpuCounter.NextValue() / Environment.ProcessorCount;
-                return usage;
+                var cpuCounter = Counters.GetOrAdd("Processor Time" + instance, () =>
+                {
+                    var counter = new PerformanceCounter("Process", "% Processor Time", instance);
+                    counter.NextValue();
+                    return counter;
+                });
+                //Thread.Sleep(200); //等200ms(是测出能换取下个样本的最小时间间隔)，让后系统获取下一个样本,因为第一个样本无效
+                return cpuCounter.NextValue() / Environment.ProcessorCount;
             }
             return 0;
         }
@@ -328,7 +305,7 @@ namespace Masuit.Tools.Hardware
         #region 内存相关
 
         /// <summary>
-        /// 获取可用内存
+        /// 获取可用内存(单位：Byte)
         /// </summary>
         public static long MemoryAvailable
         {
@@ -361,18 +338,9 @@ namespace Masuit.Tools.Hardware
         }
 
         /// <summary>
-        /// 获取物理内存
+        /// 获取物理内存(单位：Byte)
         /// </summary>
         public static long PhysicalMemory { get; }
-
-        public static long CurrentProcessMemory
-        {
-            get
-            {
-                using var process = Process.GetCurrentProcess();
-                return (long)GetCounterValue(IOCounter, "Process", "Working Set - Private", process.ProcessName);
-            }
-        }
 
         /// <summary>
         /// 获取内存信息
@@ -398,11 +366,11 @@ namespace Masuit.Tools.Hardware
         public static string GetMemoryVData()
         {
             if (!IsWinPlatform) return "";
-            float d = GetCounterValue(IOCounter, "Memory", "% Committed Bytes In Use", null);
+            float d = GetCounterValue("Memory", "% Committed Bytes In Use", null);
             var str = d.ToString("F") + "% (";
-            d = GetCounterValue(IOCounter, "Memory", "Committed Bytes", null);
+            d = GetCounterValue("Memory", "Committed Bytes", null);
             str += FormatBytes(d) + " / ";
-            d = GetCounterValue(IOCounter, "Memory", "Commit Limit", null);
+            d = GetCounterValue("Memory", "Commit Limit", null);
             return str + FormatBytes(d) + ") ";
         }
 
@@ -412,7 +380,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetUsageVirtualMemory()
         {
-            return GetCounterValue(IOCounter, "Memory", "% Committed Bytes In Use", null);
+            return GetCounterValue("Memory", "% Committed Bytes In Use", null);
         }
 
         /// <summary>
@@ -421,7 +389,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetUsedVirtualMemory()
         {
-            return GetCounterValue(IOCounter, "Memory", "Committed Bytes", null);
+            return GetCounterValue("Memory", "Committed Bytes", null);
         }
 
         /// <summary>
@@ -430,7 +398,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetTotalVirtualMemory()
         {
-            return GetCounterValue(IOCounter, "Memory", "Commit Limit", null);
+            return GetCounterValue("Memory", "Commit Limit", null);
         }
 
         /// <summary>
@@ -444,7 +412,7 @@ namespace Masuit.Tools.Hardware
             if (string.IsNullOrEmpty(s)) return "";
 
             var totalphysicalmemory = Convert.ToSingle(s);
-            var d = GetCounterValue(IOCounter, "Memory", "Available Bytes", null);
+            var d = GetCounterValue("Memory", "Available Bytes", null);
             d = totalphysicalmemory - d;
             s = CompactFormat ? "%" : "% (" + FormatBytes(d) + " / " + FormatBytes(totalphysicalmemory) + ")";
             d /= totalphysicalmemory;
@@ -471,7 +439,7 @@ namespace Masuit.Tools.Hardware
         /// <returns></returns>
         public static float GetFreePhysicalMemory()
         {
-            return GetCounterValue(IOCounter, "Memory", "Available Bytes", null);
+            return GetCounterValue("Memory", "Available Bytes", null);
         }
 
         /// <summary>
@@ -532,6 +500,15 @@ namespace Masuit.Tools.Hardware
             return 0;
         }
 
+        public static long CurrentProcessMemory
+        {
+            get
+            {
+                using var process = Process.GetCurrentProcess();
+                return (long)GetCounterValue("Process", "Working Set - Private", process.ProcessName);
+            }
+        }
+
         #endregion 内存相关
 
         #region 硬盘相关
@@ -545,9 +522,9 @@ namespace Masuit.Tools.Hardware
         {
             return dd switch
             {
-                DiskData.Read => GetCounterValue(IOCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total"),
-                DiskData.Write => GetCounterValue(IOCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total"),
-                DiskData.ReadAndWrite => GetCounterValue(IOCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") + GetCounterValue(IOCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total"),
+                DiskData.Read => GetCounterValue("PhysicalDisk", "Disk Read Bytes/sec", "_Total"),
+                DiskData.Write => GetCounterValue("PhysicalDisk", "Disk Write Bytes/sec", "_Total"),
+                DiskData.ReadAndWrite => GetCounterValue("PhysicalDisk", "Disk Read Bytes/sec", "_Total") + GetCounterValue("PhysicalDisk", "Disk Write Bytes/sec", "_Total"),
                 _ => 0
             };
         }
@@ -611,8 +588,8 @@ namespace Masuit.Tools.Hardware
             float d = 0;
             for (int i = 0; i < InstanceNames.Length; i++)
             {
-                float receied = GetCounterValue(NetRecvCounters[i], "Network Interface", "Bytes Received/sec", InstanceNames[i]);
-                float send = GetCounterValue(NetSentCounters[i], "Network Interface", "Bytes Sent/sec", InstanceNames[i]);
+                float receied = GetCounterValue("Network Interface", "Bytes Received/sec", InstanceNames[i]);
+                float send = GetCounterValue("Network Interface", "Bytes Sent/sec", InstanceNames[i]);
                 switch (nd)
                 {
                     case NetData.Received:
@@ -960,14 +937,11 @@ namespace Masuit.Tools.Hardware
             return s + (Unit)unit;
         }
 
-        private static float GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
+        private static float GetCounterValue(string categoryName, string counterName, string instanceName)
         {
             if (!IsWinPlatform) return 0;
-
-            pc.CategoryName = categoryName;
-            pc.CounterName = counterName;
-            pc.InstanceName = instanceName;
-            return pc.NextValue();
+            var counter = Counters.GetOrAdd(categoryName + ":" + counterName + ":" + instanceName, () => new PerformanceCounter(categoryName, counterName, instanceName));
+            return counter.NextValue();
         }
 
         #endregion 公共函数
