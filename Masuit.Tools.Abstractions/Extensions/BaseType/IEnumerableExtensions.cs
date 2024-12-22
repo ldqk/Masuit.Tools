@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -638,9 +639,9 @@ public static class IEnumerableExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source)
+    public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source, IComparer<T> comparer = null)
     {
-        return [.. source];
+        return comparer == null ? [.. source] : new SortedSet<T>(source, comparer);
     }
 
     /// <summary>
@@ -651,9 +652,9 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <returns></returns>
-    public static SortedSet<TResult> ToSortedSet<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector)
+    public static SortedSet<TResult> ToSortedSet<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector, IComparer<TResult> comparer = null)
     {
-        return [.. source.Select(selector)];
+        return comparer == null ? [.. source.Select(selector)] : new SortedSet<TResult>(source.Select(selector), comparer);
     }
 
     /// <summary>
