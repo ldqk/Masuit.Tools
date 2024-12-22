@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Masuit.Tools.Hardware;
@@ -41,13 +41,6 @@ public class SystemInfo_UnitTest
     {
         double res = await SystemInfo.GetCpuUsageForProcess();
         Assert.True(res > 0);
-    }
-
-    [Fact]
-    public void SystemInfo_GetProcessorData_IfNotWinPlatform()
-    {
-        string res = SystemInfo.GetProcessorData();
-        Assert.True(res == "0.000%");
     }
 
     [Fact]

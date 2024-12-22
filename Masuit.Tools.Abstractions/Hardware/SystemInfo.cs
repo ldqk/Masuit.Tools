@@ -2,12 +2,15 @@
 using Microsoft.Win32;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO.MemoryMappedFiles;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml.Linq;
+using Masuit.Tools.Abstractions.Hardware;
 
 namespace Masuit.Tools.Hardware
 {
@@ -965,5 +968,56 @@ namespace Masuit.Tools.Hardware
 #pragma warning restore 1591
 
         #endregion Win32API声明
+
+        #region AIDA64
+
+        /// <summary>
+        /// 获取AIDA64传感器值，需要AIDA64开启共享内存
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<SensorValue> GetAida64Values()
+        {
+            using var mmf = MemoryMappedFile.OpenExisting("AIDA64_SensorValues");
+            using var stream = mmf.CreateViewStream();
+            using BinaryReader binReader = new BinaryReader(stream);
+            var sb = new StringBuilder((int)stream.Length);
+            sb.Append("<root>");
+            var c = binReader.ReadChar();
+            while (c != '\0')
+            {
+                sb.Append(c);
+                c = binReader.ReadChar();
+            }
+            sb.Append("</root>");
+            var sharedMemString = sb.ToString();
+            var document = XDocument.Parse(sharedMemString);
+            foreach (var element in document.Root.Elements())
+            {
+                var v = new SensorValue
+                {
+                    Type = SensorTypeStrings.GetTypeFromStringCode(element.Name.LocalName)
+                };
+
+                foreach (var childElement in element.Elements())
+                {
+                    if (childElement.Name.LocalName == "id")
+                    {
+                        v.Identifier = childElement.Value;
+                    }
+                    else if (childElement.Name.LocalName == "label")
+                    {
+                        v.Name = childElement.Value;
+                    }
+                    else if (childElement.Name.LocalName == "value")
+                    {
+                        v.Value = childElement.Value;
+                    }
+                }
+
+                yield return v;
+            }
+        }
+
+        #endregion AIDA64
     }
 }
