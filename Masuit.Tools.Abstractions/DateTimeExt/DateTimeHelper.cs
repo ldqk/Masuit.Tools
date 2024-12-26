@@ -58,7 +58,7 @@ namespace Masuit.Tools.DateTimeExt
         {
             var dt = new DateTime(now.Year, 1, 1);
             dt += new TimeSpan((nNumWeek - 1) * 7, 0, 0, 0);
-            return new DateTimeRange(dt.AddDays(-(int)dt.DayOfWeek + (int)DayOfWeek.Monday), dt.AddDays((int)DayOfWeek.Saturday - (int)dt.DayOfWeek + 1));
+            return GetCurrentWeek(dt);
         }
 
         /// <summary>
@@ -67,7 +67,19 @@ namespace Masuit.Tools.DateTimeExt
         /// <param name="dt"></param>
         public static DateTimeRange GetCurrentWeek(this DateTime dt)
         {
-            return new DateTimeRange(dt.AddDays(-(int)dt.DayOfWeek + (int)DayOfWeek.Monday).Date, dt.AddDays((int)DayOfWeek.Saturday - (int)dt.DayOfWeek + 1).Date.AddSeconds(86399));
+            CultureInfo culture = CultureInfo.CurrentCulture;
+            DayOfWeek firstDayOfWeek = culture.DateTimeFormat.FirstDayOfWeek;
+
+            // 计算星期的起始日期（第一天）
+            DateTime startOfWeek = dt;
+            while (startOfWeek.DayOfWeek != firstDayOfWeek)
+            {
+                startOfWeek = startOfWeek.AddDays(-1);
+            }
+
+            // 计算星期的结束日期（最后一天）
+            DateTime endOfWeek = startOfWeek.AddDays(6).AddSeconds(86399);
+            return new DateTimeRange(startOfWeek, endOfWeek);
         }
 
         /// <summary>
@@ -279,21 +291,21 @@ namespace Masuit.Tools.DateTimeExt
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalMinutes(this in DateTime dt) => new DateTimeOffset(dt).Offset.TotalMinutes;
+        public static long GetTotalMinutes(this in DateTime dt) => GetTotalSeconds(dt) / 60;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01T00:00:00Z的小时数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalHours(this in DateTime dt) => new DateTimeOffset(dt).Offset.TotalHours;
+        public static long GetTotalHours(this in DateTime dt) => GetTotalSeconds(dt) / 3600;
 
         /// <summary>
         /// 获取该时间相对于1970-01-01T00:00:00Z的天数
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static double GetTotalDays(this in DateTime dt) => new DateTimeOffset(dt).Offset.TotalDays;
+        public static long GetTotalDays(this in DateTime dt) => GetTotalSeconds(dt) / 86400;
 
         /// <summary>本年有多少天</summary>
         /// <param name="dt">日期</param>

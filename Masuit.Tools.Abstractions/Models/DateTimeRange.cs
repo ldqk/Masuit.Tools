@@ -159,4 +159,14 @@ public class DateTimeRange : ITimePeriod
     {
         return $"{Start:yyyy-MM-dd HH:mm:ss}~{End:yyyy-MM-dd HH:mm:ss}";
     }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is DateTimeRange range)
+        {
+            return Start.Date == range.Start.Date && End.Date == range.End.Date;
+        }
+
+        return false;
+    }
 }

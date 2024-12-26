@@ -140,7 +140,7 @@ public static class IConvertibleExtensions
         }
         catch
         {
-            result = default;
+            result = null;
             return false;
         }
     }
@@ -155,7 +155,7 @@ public static class IConvertibleExtensions
     {
         if (value == null)
         {
-            return default;
+            return null;
         }
 
         if (value.GetType() == type)
@@ -230,9 +230,9 @@ public static class IConvertibleExtensions
     /// <param name="this">当前值</param>
     /// <param name="defaultValue">默认值</param>
     /// <returns>转换后的对象</returns>
-    public static T ChangeTypeTo<T>(this object @this,T defaultValue)
+    public static T ChangeTypeTo<T>(this object @this, T defaultValue)
     {
-        return @this == null ? defaultValue : (T) ChangeType(@this, typeof(T));
+        return @this == null ? defaultValue : (T)ChangeType(@this, typeof(T));
     }
 
     /// <summary>

@@ -75,37 +75,37 @@ public class UnicodeFormater
 
 #if NET5_0_OR_GREATER
 
-		/// <summary>
-		/// 数制格式化器
-		/// </summary>
-		/// <param name="characters">符号集</param>
-		/// <param name="offset">起始值偏移</param>
-		public UnicodeFormater(ReadOnlySpan<byte> characters, byte offset = 0)
-		{
-			if (characters == null || characters.Length == 0)
-			{
-				throw new ArgumentException("符号集不能为空");
-			}
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public UnicodeFormater(ReadOnlySpan<byte> characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
 
-			Characters = Encoding.UTF8.GetString(characters).Select(c => c.ToString()).ToList();
-			_offset = offset;
-		}
+            Characters = Encoding.UTF8.GetString(characters).Select(c => c.ToString()).ToList();
+            _offset = offset;
+        }
 
-		/// <summary>
-		/// 数制格式化器
-		/// </summary>
-		/// <param name="characters">符号集</param>
-		/// <param name="offset">起始值偏移</param>
-		public UnicodeFormater(ReadOnlySpan<char> characters, byte offset = 0)
-		{
-			if (characters == null || characters.Length == 0)
-			{
-				throw new ArgumentException("符号集不能为空");
-			}
+        /// <summary>
+        /// 数制格式化器
+        /// </summary>
+        /// <param name="characters">符号集</param>
+        /// <param name="offset">起始值偏移</param>
+        public UnicodeFormater(ReadOnlySpan<char> characters, byte offset = 0)
+        {
+            if (characters == null || characters.Length == 0)
+            {
+                throw new ArgumentException("符号集不能为空");
+            }
 
-			Characters = characters.ToString().Select(c => c.ToString()).ToList();
-			_offset = offset;
-		}
+            Characters = characters.ToString().Select(c => c.ToString()).ToList();
+            _offset = offset;
+        }
 
 #endif
 
