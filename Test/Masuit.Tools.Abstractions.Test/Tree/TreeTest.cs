@@ -61,6 +61,8 @@ public class TreeTest
         Assert.Equal(a[0].Root(), list[1]);
         Assert.StartsWith("Root", a[0].Path());
         Assert.Equal(a[0].Level(), 20000);
+        Assert.True(tree[0].IsRoot());
+        Assert.True(list[1499].IsLeaf());
     }
 
     [Fact]
@@ -116,6 +118,8 @@ public class TreeTest
         Assert.Equal(a[0].Root(), list[1]);
         Assert.StartsWith("Root", a[0].Path());
         Assert.Equal(a[0].Level(), 20000);
+        Assert.True(tree[0].IsRoot());
+        Assert.True(list[1499].IsLeaf());
     }
 
     [Fact]

@@ -1311,14 +1311,7 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static (List<T> adds, List<T> remove, List<(T first, T second)> updates) CompareChangesPlus<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
     {
-        first ??= new List<T>();
-        second ??= new List<T>();
-        var firstSource = first as ICollection<T> ?? first.ToList();
-        var secondSource = second as ICollection<T> ?? second.ToList();
-        var add = firstSource.ExceptBy(secondSource, keySelector).ToList();
-        var remove = secondSource.ExceptBy(firstSource, keySelector).ToList();
-        var updates = firstSource.IntersectBy(secondSource, keySelector).Select(t1 => (t1, secondSource.FirstOrDefault(t2 => keySelector(t1).Equals(keySelector(t2))))).ToList();
-        return (add, remove, updates);
+        return CompareChangesPlus(first, second, keySelector, keySelector);
     }
 
     /// <summary>
@@ -1356,17 +1349,17 @@ public static class IEnumerableExtensions
     {
         first ??= new List<T1>();
         second ??= new List<T2>();
-        var firstDict = first.ToLookup(firstKeySelector);
-        var secondDict = second.ToLookup(secondKeySelector);
+        var lookup1 = first.ToLookup(firstKeySelector);
+        var lookup2 = second.ToLookup(secondKeySelector);
         var add = new List<T1>();
         var remove = new List<T2>();
         var updates = new List<(T1 first, T2 second)>();
 
-        foreach (var x in firstDict)
+        foreach (var x in lookup1)
         {
-            if (secondDict.Contains(x.Key))
+            if (lookup2.Contains(x.Key))
             {
-                updates.Add((x.First(), secondDict[x.Key].First()));
+                updates.Add((x.First(), lookup2[x.Key].First()));
             }
             else
             {
@@ -1374,7 +1367,7 @@ public static class IEnumerableExtensions
             }
         }
 
-        foreach (var x in secondDict.Where(x => !firstDict.Contains(x.Key)))
+        foreach (var x in lookup2.Where(x => !lookup1.Contains(x.Key)))
         {
             remove.AddRange(x);
         }
