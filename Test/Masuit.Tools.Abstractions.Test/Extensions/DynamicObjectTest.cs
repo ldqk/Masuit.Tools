@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Masuit.Tools.Dynamics;
 using Xunit;
 
@@ -43,5 +44,41 @@ public class DynamicObjectTest
         Assert.Equal(obj.Name, obj["Name"]);
         Assert.Equal(obj["MyClass"]["X"], obj.MyClass.X);
         Assert.IsType<Clay>(obj.Prop);
+    }
+
+    [Fact]
+    public void NewObject_ShouldCreateDynamicObject()
+    {
+        dynamic obj = DynamicFactory.NewObject();
+        obj.Name = "Test";
+        Assert.Equal("Test", obj.Name);
+    }
+
+    [Fact]
+    public void WithObject_ShouldWrapExistingObject()
+    {
+        var existingObject = new { Name = "Test" };
+        dynamic obj = DynamicFactory.WithObject(existingObject);
+        Assert.Equal("Test", obj.Name);
+    }
+
+    [Fact]
+    public void NewObject_ShouldAllowAddingProperties()
+    {
+        dynamic obj = DynamicFactory.NewObject();
+        obj.Name = "Test";
+        obj.Age = 30;
+        Assert.Equal("Test", obj.Name);
+        Assert.Equal(30, obj.Age);
+    }
+
+    [Fact]
+    public void WithObject_ShouldAllowAddingPropertiesToExistingObject()
+    {
+        var existingObject = new { Name = "Test" };
+        dynamic obj = DynamicFactory.WithObject(existingObject);
+        obj.Age = 30;
+        Assert.Equal("Test", obj.Name);
+        Assert.Equal(30, obj.Age);
     }
 }

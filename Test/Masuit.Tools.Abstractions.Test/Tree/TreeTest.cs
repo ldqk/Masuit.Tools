@@ -197,6 +197,15 @@ internal class MyClass : ITree<MyClass>, ITreeEntity<MyClass, int>
     /// 父级id
     /// </summary>
     public int? ParentId { get; set; }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is MyClass m)
+        {
+            return m.Id == Id;
+        }
+        return false;
+    }
 }
 
 internal class MyClass2 : ITree<MyClass2>, ITreeEntity<MyClass2>
@@ -227,7 +236,7 @@ internal class MyClass2 : ITree<MyClass2>, ITreeEntity<MyClass2>
     public string ParentId { get; set; }
 }
 
-internal class MyClass3
+internal record MyClass3
 {
     public long Id { get; set; }
 

@@ -42,7 +42,7 @@ namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             }); //解决razor视图中中文被编码的问题
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest).AddControllersAsServices();
+            services.AddMvc().AddControllersAsServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

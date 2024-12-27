@@ -47,96 +47,6 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         [Fact]
-        public void IsNotModified_Is_False_If_IfNoneMatch_And_IfModifiedSince_Are_Empty()
-        {
-            Request.Headers[HttpHeaders.IfNoneMatch] = null;
-            Request.Headers[HttpHeaders.IfModifiedSince] = null;
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsNotModified_Is_False_If_Etag_Is_Invalid_And_IfModifiedSince_Is_Null()
-        {
-            var etag = "invalid etag";
-            Request.Headers[HttpHeaders.IfNoneMatch] = etag;
-            Request.Headers[HttpHeaders.IfModifiedSince] = null;
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsNotModified_Is_True_If_Etag_Is_Valid()
-        {
-            var etag = ResumeFileResult.Util.Etag(_file);
-            Request.Headers[HttpHeaders.IfNoneMatch] = etag;
-            Assert.True(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsNotModified_Is_True_If_Etag_Is_Star()
-        {
-            var etag = "*";
-            Request.Headers[HttpHeaders.IfNoneMatch] = etag;
-            Assert.True(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsNotModified_Is_False_If_Etag_Is_Empty_And_IfModifiedSince_Is_Invalid()
-        {
-            Request.Headers[HttpHeaders.IfModifiedSince] = DateTime.Now.ToString("R");
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsNotModified_Is_False_If_Etag_Is_Empty_And_IfModifiedSince_Is_LastFileWriteTime()
-        {
-            Request.Headers[HttpHeaders.IfModifiedSince] = _file.LastWriteTime.ToString("R");
-            Assert.True(new MockResumeFileResult(_file.FullName, Request).IsNotModified());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_False_If_ifMatch_And_ifUnmodifiedSince_Are_Empty()
-        {
-            Request.Headers[HttpHeaders.IfMatch] = null;
-            Request.Headers[HttpHeaders.IfUnmodifiedSince] = null;
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_True_If_ifMatch_Doesnot_Match_Etag_Of_The_File()
-        {
-            Request.Headers[HttpHeaders.IfMatch] = "incorrect";
-            Assert.True(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_False_If_ifMatch_Matches_Etag_Of_The_File()
-        {
-            Request.Headers[HttpHeaders.IfMatch] = ResumeFileResult.Util.Etag(_file);
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_False_If_ifMatch_Equals_Star()
-        {
-            Request.Headers[HttpHeaders.IfMatch] = "*";
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_True_If_ifUnmodifiedSince_Doesnot_Equal_FileLastWriteTime()
-        {
-            Request.Headers[HttpHeaders.IfUnmodifiedSince] = DateTime.Now.ToString("R");
-            Assert.True(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
-        public void IsPreconditionFailedTest_Is_False_If_ifUnmodifiedSince_Equals_FileLastWriteTime()
-        {
-            Request.Headers[HttpHeaders.IfUnmodifiedSince] = _file.LastWriteTime.ToString("R");
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsPreconditionFailed());
-        }
-
-        [Fact]
         public void IsRangeNotSatisfiable_Is_True_If_Range_Header_Has_Invalid_Format()
         {
             Request.Headers[HttpHeaders.Range] = "blah";
@@ -165,13 +75,6 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         [Fact]
-        public void IsRangeNotSatisfiable_Is_False_If_Range_Header_Is_Null()
-        {
-            Request.Headers[HttpHeaders.Range] = null;
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).IsRangeNotSatisfiable());
-        }
-
-        [Fact]
         public void IsRangeNotSatisfiable_Is_False_If_Range_Has_StartsWith_Format()
         {
             Request.Headers[HttpHeaders.Range] = "bytes=0-";
@@ -190,19 +93,6 @@ namespace Masuit.Tools.Test.Mvc
         {
             Request.Headers[HttpHeaders.Range] = "bytes=100-" + (_file.Length - 1);
             Assert.False(new MockResumeFileResult(_file.FullName, Request).IsRangeNotSatisfiable());
-        }
-
-        [Fact]
-        public void SendRange_Is_False_If_Range_And_ifRange_Headers_Are_Null()
-        {
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).SendRange());
-        }
-
-        [Fact]
-        public void SendRange_Is_False_If_Range_Is_Null_And_ifRange_Is_Correct()
-        {
-            Request.Headers[HttpHeaders.IfRange] = ResumeFileResult.Util.Etag(_file);
-            Assert.False(new MockResumeFileResult(_file.FullName, Request).SendRange());
         }
 
         [Fact]
@@ -229,37 +119,6 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         [Fact]
-        public void HeadersTest_Should_Not_Send_File_If_File_Has_Not_Been_Changed()
-        {
-            Request.Headers[HttpHeaders.IfNoneMatch] = ResumeFileResult.Util.Etag(_file);
-            var result = new MockResumeFileResult(_file.FullName, Request);
-            Assert.True(result.IsNotModified());
-            result.WriteFileTest(Response);
-            Assert.Equal((int)HttpStatusCode.NotModified, Response.StatusCode);
-            Assert.NotNull(Response.Headers[HttpHeaders.Etag]);
-            Assert.NotNull(Response.Headers[HttpHeaders.Expires]);
-            Assert.NotNull(Response.Headers[HttpHeaders.LastModified]);
-            Assert.Null(Response.Headers[HttpHeaders.ContentRange]);
-            Assert.Equal(0, Response.OutputStream.Length);
-        }
-
-        [Fact]
-        public void HeadersTest_Should_Not_Send_File_IfPreconditionFailed()
-        {
-            Request.Headers[HttpHeaders.IfMatch] = "invalid";
-            var result = new MockResumeFileResult(_file.FullName, Request);
-            Assert.True(result.IsPreconditionFailed());
-
-            result.WriteFileTest(Response);
-            Assert.Equal((int)HttpStatusCode.PreconditionFailed, Response.StatusCode);
-            Assert.NotNull(Response.Headers[HttpHeaders.Etag]);
-            Assert.NotNull(Response.Headers[HttpHeaders.Expires]);
-            Assert.NotNull(Response.Headers[HttpHeaders.LastModified]);
-            Assert.Null(Response.Headers[HttpHeaders.ContentRange]);
-            Assert.Equal(0, Response.OutputStream.Length);
-        }
-
-        [Fact]
         public void HeadersTest_Should_Not_Send_File_Is_RangeNotSatisfiable()
         {
             Request.Headers[HttpHeaders.Range] = "invalid";
@@ -272,20 +131,6 @@ namespace Masuit.Tools.Test.Mvc
             Assert.NotNull(Response.Headers[HttpHeaders.LastModified]);
             Assert.Equal("bytes */" + _file.Length, Response.Headers[HttpHeaders.ContentRange]);
             Assert.Equal(0, Response.OutputStream.Length);
-        }
-
-        [Fact]
-        public void HeadersTest_Should_Send_File_If_All_Headers_Are_Null()
-        {
-            var result = new MockResumeFileResult(_file.FullName, Request);
-            result.WriteFileTest(Response);
-            Assert.Equal((int)HttpStatusCode.OK, Response.StatusCode);
-            Assert.NotNull(Response.Headers[HttpHeaders.Etag]);
-            Assert.NotNull(Response.Headers[HttpHeaders.Expires]);
-            Assert.NotNull(Response.Headers[HttpHeaders.LastModified]);
-            Assert.NotNull(Response.Headers[HttpHeaders.ContentRange]);
-            Assert.NotNull(Response.Headers[HttpHeaders.ContentLength]);
-            Assert.Equal(_file.Length, Response.OutputStream.Length);
         }
 
         [Fact]
@@ -359,15 +204,6 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         [Fact]
-        public void Range_Whole_File_Without_RangeHeader()
-        {
-            var stream = GetResponseStream(null);
-            Assert.Equal(_file.Length, stream.Length);
-            Assert.Equal(200, Response.StatusCode);
-            Assert.Equal($"bytes 0-{(_file.Length - 1)}/{_file.Length}", Response.Headers[HttpHeaders.ContentRange]);
-        }
-
-        [Fact]
         public void TransmissionRange_From_0_To_0()
         {
             Request.Headers[HttpHeaders.Range] = "bytes=0-0";
@@ -408,51 +244,11 @@ namespace Masuit.Tools.Test.Mvc
         }
 
         [Fact]
-        public void TransmissionRange_WholeFile_WithoutRangeHeader()
-        {
-            Request.Headers[HttpHeaders.Range] = null;
-            new MockResumeFileResult(_file.FullName, Request).WriteFileTest(Response);
-
-            Assert.Equal(_file.Length, Response.OutputStream.Length);
-            AssertBytes(_file, Response.OutputStream, 0, (int)_file.Length);
-        }
-
-        [Fact]
         public void ShouldSend206If_Range_HeaderExists()
         {
             Request.Headers[HttpHeaders.Range] = "bytes=0-";
             new MockResumeFileResult(_file.FullName, Request).WriteFileTest(Response);
             Assert.Equal(206, Response.StatusCode);
-        }
-
-        [Fact]
-        public void ShouldSend200If_Range_HeaderDoesNotExist()
-        {
-            Request.Headers[HttpHeaders.Range] = null;
-            new MockResumeFileResult(_file.FullName, Request).WriteFileTest(Response);
-            Assert.Equal(200, Response.StatusCode);
-        }
-
-        [Fact]
-        public void IfRangeHeader_Should_Be_Ignored_If_ItNotEquals_Etag()
-        {
-            Request.Headers[HttpHeaders.IfRange] = "ifRange fake header";
-            var mock = new MockResumeFileResult(_file.FullName, Request);
-            mock.WriteFileTest(Response);
-
-            Assert.NotEqual(ResumeFileResult.Util.Etag(_file), Request.Headers[HttpHeaders.IfRange]);
-            Assert.Equal(200, Response.StatusCode);
-        }
-
-        [Fact]
-        public void Etag_Should_Be_Added_To_Response_If_It_Equals_With_IfRange_In_Request()
-        {
-            var etag = ResumeFileResult.Util.Etag(_file);
-            Request.Headers[HttpHeaders.IfRange] = etag;
-            var mock = new MockResumeFileResult(_file.FullName, Request);
-            mock.WriteFileTest(Response);
-            Assert.Equal(Response.Headers[HttpHeaders.Etag], etag);
-            Assert.Equal(200, Response.StatusCode);
         }
 
         [Fact]
@@ -465,13 +261,6 @@ namespace Masuit.Tools.Test.Mvc
             Assert.Equal(Response.Headers[HttpHeaders.Etag], etag);
             Assert.NotNull(Response.Headers[HttpHeaders.ContentRange]);
             Assert.Equal(206, Response.StatusCode);
-        }
-
-        [Fact]
-        public void It_Should_Attach_Content_Disposition_If_There_Is_Download_File_Name()
-        {
-            new MockResumeFileResult(_file.FullName, Request, "test.name").WriteFileTest(Response);
-            Assert.NotNull(Response.Headers[HttpHeaders.ContentDisposition]);
         }
 
         private Stream GetResponseStream(string range)

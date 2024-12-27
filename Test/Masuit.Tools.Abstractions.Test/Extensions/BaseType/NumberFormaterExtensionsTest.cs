@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Masuit.Tools.Strings;
 using Xunit;
 
@@ -18,5 +19,19 @@ public class NumberFormaterExtensionsTest
         Assert.Equal(formater.ToString(1234567890), "😁😃😶😍😀🤔😚");
         Assert.Equal(formater.FromString("😁😃😶😍😀🤔😚"), 1234567890);
         Assert.Equal(formater.FromStringBig("😁😃😶😍😀🤔😚"), 1234567890);
+    }
+
+    [Fact]
+    public void GetBytes_ShouldReturnCorrectByteArray()
+    {
+        // Arrange
+        int value = 123456;
+        byte[] expected = BitConverter.GetBytes(value);
+
+        // Act
+        byte[] result = value.GetBytes();
+
+        // Assert
+        Assert.Equal(expected, result);
     }
 }

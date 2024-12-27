@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -31,6 +32,11 @@
 
   <ItemGroup>
     <Folder Include="Tree\" />
+    <Folder Include="Files\" />
+    <Folder Include="Html\" />
+    <Folder Include="Linq\" />
+    <Folder Include="Media\" />
+    <Folder Include="TextDiff\" />
   </ItemGroup>
 
 </Project>
