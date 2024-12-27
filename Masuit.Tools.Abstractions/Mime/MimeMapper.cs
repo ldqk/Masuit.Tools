@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Masuit.Tools.Systems;
 
@@ -27,7 +28,7 @@ public class MimeMapper : IMimeMapper
     static MimeMapper()
     {
         ExtTypes = DefaultMimeItems.Items.ToLookupX(x => x.MimeType, x => "." + x.Extension);
-        MimeTypes = DefaultMimeItems.Items.ToDictionary(x => "." + x.Extension, x => x.MimeType);
+        MimeTypes = DefaultMimeItems.Items.ToDictionarySafety(x => "." + x.Extension, x => x.MimeType);
     }
 
     /// <summary>
