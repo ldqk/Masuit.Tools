@@ -1230,14 +1230,7 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static (List<T> adds, List<T> remove, List<T> updates) CompareChanges<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
     {
-        first ??= new List<T>();
-        second ??= new List<T>();
-        var firstSource = first as ICollection<T> ?? first.ToList();
-        var secondSource = second as ICollection<T> ?? second.ToList();
-        var add = firstSource.ExceptBy(secondSource, keySelector).ToList();
-        var remove = secondSource.ExceptBy(firstSource, keySelector).ToList();
-        var update = firstSource.IntersectBy(secondSource, keySelector).ToList();
-        return (add, remove, update);
+        return CompareChanges(first, second, keySelector, keySelector);
     }
 
     /// <summary>
@@ -1252,14 +1245,30 @@ public static class IEnumerableExtensions
     [Obsolete("大数据集时性能不佳，请考虑使用其他重载")]
     public static (List<T1> adds, List<T2> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
     {
-        first ??= new List<T1>();
-        second ??= new List<T2>();
-        var firstSource = first as ICollection<T1> ?? first.ToList();
-        var secondSource = second as ICollection<T2> ?? second.ToList();
-        var add = firstSource.ExceptBy(secondSource, condition).ToList();
-        var remove = secondSource.ExceptBy(firstSource, (s, f) => condition(f, s)).ToList();
-        var update = firstSource.IntersectBy(secondSource, condition).ToList();
-        return (add, remove, update);
+        if (first == null) throw new ArgumentNullException(nameof(first));
+        if (second == null) throw new ArgumentNullException(nameof(second));
+        if (condition == null) throw new ArgumentNullException(nameof(condition));
+
+        var adds = new List<T1>();
+        var removes = new List<T2>();
+        var updates = new List<T1>();
+        var secondSet = new HashSet<T2>(second);
+        foreach (var item in first)
+        {
+            var match = secondSet.FirstOrDefault(s => condition(item, s));
+            if (match != null)
+            {
+                updates.Add(item);
+                secondSet.Remove(match);
+            }
+            else
+            {
+                adds.Add(item);
+            }
+        }
+
+        removes.AddRange(secondSet);
+        return (adds, removes, updates);
     }
 
     /// <summary>
@@ -1277,11 +1286,30 @@ public static class IEnumerableExtensions
     {
         first ??= new List<T1>();
         second ??= new List<T2>();
+
         var firstLookup = first.ToLookup(firstKeySelector);
         var secondLookup = second.ToLookup(secondKeySelector);
-        var adds = firstLookup.Where(kvp => !secondLookup.Contains(kvp.Key)).SelectMany(kvp => kvp).ToList();
-        var removes = secondLookup.Where(kvp => !firstLookup.Contains(kvp.Key)).SelectMany(kvp => kvp).ToList();
-        var updates = firstLookup.Where(kvp => secondLookup.Contains(kvp.Key)).SelectMany(kvp => kvp).ToList();
+        var adds = new List<T1>();
+        var removes = new List<T2>();
+        var updates = new List<T1>();
+
+        foreach (var kvp in firstLookup)
+        {
+            if (secondLookup.Contains(kvp.Key))
+            {
+                updates.AddRange(kvp);
+            }
+            else
+            {
+                adds.AddRange(kvp);
+            }
+        }
+
+        foreach (var kvp in secondLookup.Where(kvp => !firstLookup.Contains(kvp.Key)))
+        {
+            removes.AddRange(kvp);
+        }
+
         return (adds, removes, updates);
     }
 
@@ -1325,16 +1353,35 @@ public static class IEnumerableExtensions
     /// <param name="condition">对比因素条件</param>
     /// <returns></returns>
     [Obsolete("大数据集时性能不佳，请考虑使用其他重载")]
-    public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
+    public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(
+        this IEnumerable<T1> first,
+        IEnumerable<T2> second,
+        Func<T1, T2, bool> condition)
     {
-        first ??= new List<T1>();
-        second ??= new List<T2>();
-        var firstSource = first as ICollection<T1> ?? first.ToList();
-        var secondSource = second as ICollection<T2> ?? second.ToList();
-        var add = firstSource.ExceptBy(secondSource, condition).ToList();
-        var remove = secondSource.ExceptBy(firstSource, (s, f) => condition(f, s)).ToList();
-        var updates = firstSource.IntersectBy(secondSource, condition).Select(t1 => (t1, secondSource.FirstOrDefault(t2 => condition(t1, t2)))).ToList();
-        return (add, remove, updates);
+        if (first == null) throw new ArgumentNullException(nameof(first));
+        if (second == null) throw new ArgumentNullException(nameof(second));
+        if (condition == null) throw new ArgumentNullException(nameof(condition));
+
+        var adds = new List<T1>();
+        var removes = new List<T2>();
+        var updates = new List<(T1 first, T2 second)>();
+        var secondSet = new HashSet<T2>(second);
+        foreach (var item in first)
+        {
+            var match = secondSet.FirstOrDefault(s => condition(item, s));
+            if (match != null)
+            {
+                updates.Add((item, match));
+                secondSet.Remove(match);
+            }
+            else
+            {
+                adds.Add(item);
+            }
+        }
+
+        removes.AddRange(secondSet);
+        return (adds, removes, updates);
     }
 
     /// <summary>

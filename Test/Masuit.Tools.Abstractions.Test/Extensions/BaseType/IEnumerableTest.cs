@@ -65,7 +65,11 @@ public class IEnumerableTest
             new MyClass3()
             {
                 Id = 1,
-            }
+            },
+            new MyClass3()
+            {
+                Id = 2,
+            },
         };
         var list2 = new List<MyClass3>()
         {
@@ -76,6 +80,14 @@ public class IEnumerableTest
             new MyClass3()
             {
                 Id = 2,
+            },
+            new MyClass3()
+            {
+                Id = 3
+            },
+            new MyClass3()
+            {
+                Id = 4
             },
         };
 
@@ -91,9 +103,9 @@ public class IEnumerableTest
 
         // assert
         Assert.True(new[] { adds, adds1, adds2, adds3, adds4, adds5, adds6, adds7 }.All(x => x.Count == 1));
-        Assert.True(new[] { remove, remove1, remove2, remove3, remove4, remove5, remove6, remove7 }.All(x => x.Count == 1));
-        Assert.True(new[] { updates, updates1, updates2, updates3 }.All(x => x.Count == 1));
-        Assert.True(new[] { updates4, updates5, updates6, updates7 }.All(x => x.Count == 1));
+        Assert.True(new[] { remove, remove1, remove2, remove3, remove4, remove5, remove6, remove7 }.All(x => x.Count == 2));
+        Assert.True(new[] { updates, updates1, updates2, updates3 }.All(x => x.Count == 2));
+        Assert.True(new[] { updates4, updates5, updates6, updates7 }.All(x => x.Count == 2));
     }
 
     [Fact]
