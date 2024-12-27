@@ -155,9 +155,12 @@ public static class IEnumerableExtensions
     /// <returns></returns>
     public static IEnumerable<T> ExceptBy<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> keySelector)
     {
+        // 将 second 集合转换为 HashSet 以提高查找效率
+        var keys = new HashSet<TKey>(second.Select(keySelector));
+
+        // 使用 Lookup 来分组 first 集合，并过滤掉 second 集合中存在的元素
         var firstLookup = first.ToLookup(keySelector);
-        var secondLookup = second.ToLookup(keySelector);
-        return firstLookup.Where(kvp => !secondLookup.Contains(kvp.Key)).SelectMany(kvp => kvp).ToList();
+        return firstLookup.Where(g => !keys.Contains(g.Key)).SelectMany(grouping => grouping);
     }
 
 #if NET6_0_OR_GREATER
@@ -487,12 +490,9 @@ public static class IEnumerableExtensions
     /// <param name="values"></param>
     public static void AddRangeIfNotContains<T>(this ICollection<T> @this, params T[] values)
     {
-        foreach (T obj in values)
+        foreach (var obj in values.Where(obj => !@this.Contains(obj)))
         {
-            if (!@this.Contains(obj))
-            {
-                @this.Add(obj);
-            }
+            @this.Add(obj);
         }
     }
 
@@ -1241,7 +1241,7 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
-    /// 对比两个集合哪些是新增的、删除的、修改的
+    /// 对比两个集合哪些是新增的、删除的、修改的(大数据集时性能不佳，请考虑使用其他重载)
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -1249,6 +1249,7 @@ public static class IEnumerableExtensions
     /// <param name="second">旧集合</param>
     /// <param name="condition">对比因素条件</param>
     /// <returns></returns>
+    [Obsolete("大数据集时性能不佳，请考虑使用其他重载")]
     public static (List<T1> adds, List<T2> remove, List<T1> updates) CompareChanges<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
     {
         first ??= new List<T1>();
@@ -1315,7 +1316,7 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
-    /// 对比两个集合哪些是新增的、删除的、修改的
+    /// 对比两个集合哪些是新增的、删除的、修改的(大数据集时性能不佳，请考虑使用其他重载)
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -1323,6 +1324,7 @@ public static class IEnumerableExtensions
     /// <param name="second">旧集合</param>
     /// <param name="condition">对比因素条件</param>
     /// <returns></returns>
+    [Obsolete("大数据集时性能不佳，请考虑使用其他重载")]
     public static (List<T1> adds, List<T2> remove, List<(T1 first, T2 second)> updates) CompareChangesPlus<T1, T2>(this IEnumerable<T1> first, IEnumerable<T2> second, Func<T1, T2, bool> condition)
     {
         first ??= new List<T1>();

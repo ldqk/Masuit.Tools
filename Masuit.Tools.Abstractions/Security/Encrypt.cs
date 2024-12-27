@@ -735,7 +735,7 @@ public static class Encrypt
     /// <returns>MD5摘要字符串</returns>
     public static string MDFile(this string fileName)
     {
-        using var fs = new BufferedStream(File.Open(fileName, FileMode.Open, FileAccess.Read), 1048576);
+        var fs = new BufferedStream(File.Open(fileName, FileMode.Open, FileAccess.Read), 1048576);
         using MD5 md5 = MD5.Create();
         byte[] bytes = md5.ComputeHash(fs);
         return GetHexString(bytes);
@@ -748,7 +748,7 @@ public static class Encrypt
     /// <returns></returns>
     public static string SHA256(this Stream stream)
     {
-        using var fs = new BufferedStream(stream, 1048576);
+        var fs = new BufferedStream(stream, 1048576);
         using var sha = System.Security.Cryptography.SHA256.Create();
         byte[] checksum = sha.ComputeHash(fs);
         return BitConverter.ToString(checksum).Replace("-", string.Empty);
@@ -761,7 +761,7 @@ public static class Encrypt
     /// <returns>MD5摘要字符串</returns>
     public static string MDString(this Stream stream)
     {
-        using var fs = new BufferedStream(stream, 1048576);
+        var fs = new BufferedStream(stream, 1048576);
         using MD5 md5 = MD5.Create();
         byte[] bytes = md5.ComputeHash(fs);
         var mdstr = GetHexString(bytes);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Masuit.Tools.Systems;
 
 namespace Masuit.Tools.Mime;
 
@@ -14,11 +15,6 @@ public class MimeMapper : IMimeMapper
     public const string DefaultMime = "application/octet-stream";
 
     /// <summary>
-    /// 在文件路径中搜索文件扩展名的默认正则表达式
-    /// </summary>
-    private readonly Regex _pathExtensionPattern = new(@"\.(\w*)$");
-
-    /// <summary>
     /// Mime类型与扩展名的映射字典(扩展名:mimetype)
     /// </summary>
     public static Dictionary<string, string> MimeTypes { get; } = new();
@@ -26,15 +22,12 @@ public class MimeMapper : IMimeMapper
     /// <summary>
     /// mime类型与扩展名的映射关系(mimetype:扩展名)
     /// </summary>
-    public static Dictionary<string, string> ExtTypes { get; } = new();
+    public static LookupX<string, string> ExtTypes { get; }
 
     static MimeMapper()
     {
-        foreach (var item in DefaultMimeItems.Items)
-        {
-            MimeTypes["." + item.Extension] = item.MimeType;
-            ExtTypes[item.MimeType] = "." + item.Extension;
-        }
+        ExtTypes = DefaultMimeItems.Items.ToLookupX(x => x.MimeType, x => "." + x.Extension);
+        MimeTypes = DefaultMimeItems.Items.ToDictionary(x => "." + x.Extension, x => x.MimeType);
     }
 
     /// <summary>
@@ -65,7 +58,7 @@ public class MimeMapper : IMimeMapper
             foreach (var mapping in extensions)
             {
                 MimeTypes[mapping.Extension] = mapping.MimeType;
-                ExtTypes[mapping.MimeType] = mapping.Extension;
+                ExtTypes[mapping.MimeType].Add(mapping.Extension);
             }
         }
         return this;
@@ -87,10 +80,14 @@ public class MimeMapper : IMimeMapper
     /// </summary>
     /// <param name="mime"></param>
     /// <returns></returns>
-    public string GetExtensionFromMime(string mime)
+    public List<string> GetExtensionFromMime(string mime)
     {
         mime = (mime ?? string.Empty).ToLower();
-        return ExtTypes.TryGetValue(mime, out var type) ? type : "";
+        if (ExtTypes.Contains(mime))
+        {
+            return ExtTypes[mime];
+        }
+        return [];
     }
 
     /// <summary>
@@ -100,18 +97,7 @@ public class MimeMapper : IMimeMapper
     /// <returns></returns>
     public string GetMimeFromPath(string path)
     {
-        var extension = GetExtension(path);
+        var extension = Path.GetExtension(path);
         return GetMimeFromExtension(extension);
-    }
-
-    /// <summary>
-    /// 获取扩展名
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    protected string GetExtension(string path)
-    {
-        var match = _pathExtensionPattern.Match(path ?? string.Empty);
-        return match.Groups.Count > 1 ? match.Groups[1].Value : null;
     }
 }
