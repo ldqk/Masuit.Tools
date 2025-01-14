@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Masuit.Tools.Systems;
 
-public class LookupX<TKey, TElement> : IEnumerable<List<TElement>>
+public class LookupX<TKey, TElement> : IEnumerable<KeyValuePair<TKey, List<TElement>>>
 {
     private readonly IDictionary<TKey, List<TElement>> _dictionary;
 
@@ -18,9 +19,9 @@ public class LookupX<TKey, TElement> : IEnumerable<List<TElement>>
         _dictionary = dic;
     }
 
-    public IEnumerator<List<TElement>> GetEnumerator()
+    public IEnumerator<KeyValuePair<TKey, List<TElement>>> GetEnumerator()
     {
-        return _dictionary.Values.GetEnumerator();
+        return _dictionary.Select(pair => pair).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

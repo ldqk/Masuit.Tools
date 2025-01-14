@@ -47,7 +47,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AngleSharp" Version="1.1.2" />
+        <PackageReference Include="AngleSharp" Version="1.2.0" />
         <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.144" />
         <PackageReference Include="DnsClient" Version="1.8.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -84,21 +84,21 @@
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
         <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.0" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.0" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
