@@ -203,6 +203,20 @@ public class IDictionaryExtensionsTests
     }
 
     [Fact]
+    public void ToLookupX_ShouldConvertToLookup2()
+    {
+        // Arrange
+        var list = new List<string> { "a", "b", "a" };
+
+        // Act
+        var lookup = list.ToLookupX(x => x, s => list.IndexOf(s));
+
+        // Assert
+        Assert.Equal(2, lookup["a"].Count);
+        Assert.Single(lookup["b"]);
+    }
+
+    [Fact]
     public async Task ToLookupAsync_ShouldConvertToLookup()
     {
         // Arrange

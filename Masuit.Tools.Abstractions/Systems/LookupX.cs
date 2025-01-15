@@ -61,7 +61,7 @@ public class Grouping<TKey, TElement> : IEnumerable<TElement>
 
     public TKey Key { get; }
 
-    public void Deconstruct(out TKey key, out IEnumerable<TElement> elements)
+    public void Deconstruct(out TKey key, out List<TElement> elements)
     {
         key = Key;
         elements = _list;
