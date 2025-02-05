@@ -46,6 +46,11 @@ namespace Masuit.Tools.Files
         public static void SaveFile(this Stream ms, string filename)
         {
             ms.Seek(0, SeekOrigin.Begin);
+            var dir = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
             using var fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
             var stream = new BufferedStream(ms, 1048576);
             stream.CopyTo(fs);
@@ -60,6 +65,11 @@ namespace Masuit.Tools.Files
         public static async Task SaveFileAsync(this Stream ms, string filename)
         {
             ms.Seek(0, SeekOrigin.Begin);
+            var dir = Path.GetDirectoryName(filename);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
             using var fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
             var stream = new BufferedStream(ms, 1048576);
             await stream.CopyToAsync(fs);
