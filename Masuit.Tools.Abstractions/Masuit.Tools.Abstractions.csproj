@@ -47,8 +47,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AngleSharp" Version="1.2.0" />
-        <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.144" />
+        <PackageReference Include="AngleSharp" Version="1.3.0-beta.468" />
+        <PackageReference Include="AngleSharp.Css" Version="1.0.0-beta.151" />
         <PackageReference Include="DnsClient" Version="1.8.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
