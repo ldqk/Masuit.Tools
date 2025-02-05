@@ -55,7 +55,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="System.Management" Version="9.0.1" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-        <PackageReference Include="SharpCompress" Version="0.38.0" />
+        <PackageReference Include="SharpCompress" Version="0.39.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
