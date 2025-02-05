@@ -7,6 +7,7 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using System;
 using System.IO;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Masuit.Tools.Media
 {
@@ -88,7 +89,7 @@ namespace Masuit.Tools.Media
         {
             var imageFormat = Image.DetectFormat(_stream);
             _stream.Seek(0, SeekOrigin.Begin);
-            using var img = Image.Load(_stream);
+            using var img = Image.Load<Rgba32>(_stream);
             var textMeasure = TextMeasurer.MeasureSize(watermarkText, new TextOptions(font));
             if (SkipWatermarkForSmallImages && (img.Height < Math.Sqrt(SmallImagePixelsThreshold) || img.Width < Math.Sqrt(SmallImagePixelsThreshold) || img.Width <= textMeasure.Width))
             {
@@ -98,6 +99,7 @@ namespace Masuit.Tools.Media
             if (img.Width / font.Size > 50)
             {
                 font = font.Family.CreateFont(img.Width * 1f / 50);
+                textMeasure = TextMeasurer.MeasureSize(watermarkText, new TextOptions(font));
             }
 
             float x, y;
@@ -154,7 +156,7 @@ namespace Masuit.Tools.Media
         /// <returns></returns>
         public PooledMemoryStream AddWatermark(Stream watermarkImage, float opacity = 1f, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int padding = 20)
         {
-            using var img = Image.Load(_stream);
+            using var img = Image.Load<Rgba32>(_stream);
             var height = img.Height;
             var width = img.Width;
             if (SkipWatermarkForSmallImages && (height < Math.Sqrt(SmallImagePixelsThreshold) || width < Math.Sqrt(SmallImagePixelsThreshold)))
@@ -162,7 +164,7 @@ namespace Masuit.Tools.Media
                 return _stream as PooledMemoryStream ?? _stream.SaveAsMemoryStream();
             }
 
-            var watermark = Image.Load(watermarkImage);
+            var watermark = Image.Load<Rgba32>(watermarkImage);
             watermark.Mutate(c => c.Resize(new ResizeOptions()
             {
                 Size = new Size
@@ -212,6 +214,11 @@ namespace Masuit.Tools.Media
             img.SaveAsWebp(ms);
             ms.Position = 0;
             return ms;
+        }
+
+        public static ImageWatermarker FromStream(Stream stream)
+        {
+            return new ImageWatermarker(stream);
         }
     }
 }
