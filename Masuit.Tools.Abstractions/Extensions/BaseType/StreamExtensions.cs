@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 #if NET5_0_OR_GREATER
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Buffers;
 using System.Runtime.InteropServices;
@@ -341,19 +343,25 @@ public static class StreamExtensions
 
 #if NET5_0_OR_GREATER
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public static async Task<byte[]> ToArrayAsync(this Stream stream, CancellationToken cancellationToken = default)
-        {
-            stream.Position = 0;
-            byte[] bytes = new byte[stream.Length];
-            await stream.ReadAsync(bytes, cancellationToken);
-            stream.Seek(0, SeekOrigin.Begin);
-            return bytes;
-        }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task<byte[]> ToArrayAsync(this Stream stream, CancellationToken cancellationToken = default)
+    {
+        stream.Position = 0;
+        byte[] bytes = new byte[stream.Length];
+        await stream.ReadAsync(bytes, cancellationToken);
+        stream.Seek(0, SeekOrigin.Begin);
+        return bytes;
+    }
+
+    public static Image<Rgba32> AsImage(this Stream stream)
+    {
+        return Image.Load<Rgba32>(stream);
+    }
+
 #endif
 }

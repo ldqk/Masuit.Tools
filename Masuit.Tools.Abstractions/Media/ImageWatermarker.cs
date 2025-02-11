@@ -87,7 +87,7 @@ namespace Masuit.Tools.Media
         /// <param name="font">字体</param>
         public PooledMemoryStream AddWatermark(string watermarkText, Font font, Color color, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int textPadding = 10)
         {
-            var imageFormat = Image.DetectFormat(_stream);
+            var format = Image.DetectFormat(_stream);
             _stream.Seek(0, SeekOrigin.Begin);
             using var img = Image.Load<Rgba32>(_stream);
             var textMeasure = TextMeasurer.MeasureSize(watermarkText, new TextOptions(font));
@@ -136,7 +136,7 @@ namespace Masuit.Tools.Media
             var ms = new PooledMemoryStream();
             if (ImageEncoder == null)
             {
-                img.Save(ms, imageFormat);
+                img.Save(ms, format);
             }
             else
             {
@@ -150,12 +150,14 @@ namespace Masuit.Tools.Media
         /// 添加水印
         /// </summary>
         /// <param name="watermarkImage">水印图片</param>
-        /// <param name="opacity">水印图片</param>
+        /// <param name="opacity">透明度</param>
         /// <param name="watermarkPosition">水印位置</param>
         /// <param name="padding">水印边距</param>
         /// <returns></returns>
         public PooledMemoryStream AddWatermark(Stream watermarkImage, float opacity = 1f, WatermarkPosition watermarkPosition = WatermarkPosition.BottomRight, int padding = 20)
         {
+            var format = Image.DetectFormat(_stream);
+            _stream.Seek(0, SeekOrigin.Begin);
             using var img = Image.Load<Rgba32>(_stream);
             var height = img.Height;
             var width = img.Width;
@@ -211,7 +213,15 @@ namespace Masuit.Tools.Media
                 watermark.Dispose();
             });
             var ms = new PooledMemoryStream();
-            img.SaveAsWebp(ms);
+            if (ImageEncoder == null)
+            {
+                img.Save(ms, format);
+            }
+            else
+            {
+                img.Save(ms, ImageEncoder);
+            }
+
             ms.Position = 0;
             return ms;
         }
