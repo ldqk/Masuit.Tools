@@ -99,9 +99,16 @@ public class MultiThreadDownloader
     {
         get
         {
-            lock (this)
+            try
             {
-                return PartialDownloaderList.Sum(t => t.SpeedInBytes);
+                lock (this)
+                {
+                    return PartialDownloaderList.Sum(t => t.SpeedInBytes);
+                }
+            }
+            catch (Exception e)
+            {
+                return 0;
             }
         }
     }
@@ -174,9 +181,10 @@ public class MultiThreadDownloader
     /// 多线程下载管理器
     /// </summary>
     /// <param name="sourceUrl"></param>
-    /// <param name="numOfParts"></param>
-    public MultiThreadDownloader(string sourceUrl, int numOfParts) : this(sourceUrl, null, numOfParts)
+    /// <param name="savePath"></param>
+    public MultiThreadDownloader(string sourceUrl, string savePath) : this(sourceUrl, savePath, Environment.ProcessorCount * 2)
     {
+        TempFileDirectory = Environment.GetEnvironmentVariable("temp");
     }
 
     #endregion 下载管理器
@@ -281,7 +289,7 @@ public class MultiThreadDownloader
         int mergeProgress = 0;
         foreach (var item in mergeOrderedList)
         {
-            using var pdi = File.OpenRead(item.FullPath);
+            var pdi = File.OpenRead(item.FullPath);
             byte[] buffer = new byte[4096 * 1024];
             int read;
             while ((read = pdi.Read(buffer, 0, buffer.Length)) > 0)
@@ -295,9 +303,9 @@ public class MultiThreadDownloader
                     _aop.Post(_ => FileMergeProgressChanged(this, temp), null);
                 }
             }
-
             try
             {
+                pdi.Dispose();
                 File.Delete(item.FullPath);
             }
             catch
