@@ -106,12 +106,12 @@ namespace Masuit.Tools.Hardware
         /// 获取当前进程的CPU使用率（至少需要0.5s）
         /// </summary>
         /// <returns></returns>
-        public static async Task<double> GetCpuUsageForProcess()
+        public static async Task<double> GetCpuUsageForProcess(CancellationToken cancellationToken = default)
         {
             var startTime = DateTime.UtcNow;
             using var p1 = Process.GetCurrentProcess();
             var startCpuUsage = p1.TotalProcessorTime;
-            await Task.Delay(500);
+            await Task.Delay(500, cancellationToken);
             var endTime = DateTime.UtcNow;
             using var p2 = Process.GetCurrentProcess();
             var endCpuUsage = p2.TotalProcessorTime;

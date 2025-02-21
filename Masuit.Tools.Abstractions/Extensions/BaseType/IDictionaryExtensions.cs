@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools;
@@ -329,9 +330,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
+        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -342,9 +343,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateAsync<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateAsync<TKey, TValue>(this NullableDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
+        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -355,9 +356,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateAsync<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateAsync<TKey, TValue>(this NullableConcurrentDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory));
+        return that.ForeachAsync(item => AddOrUpdateAsync(@this, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -512,9 +513,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, IDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
+        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -525,9 +526,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
+        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -538,9 +539,9 @@ public static class IDictionaryExtensions
     /// <param name="this"></param>
     /// <param name="that">另一个字典集</param>
     /// <param name="updateValueFactory">更新时的操作</param>
-    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableConcurrentDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory)
+    public static Task AddOrUpdateToAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, NullableConcurrentDictionary<TKey, TValue> that, Func<TKey, TValue, Task<TValue>> updateValueFactory, CancellationToken cancellationToken = default)
     {
-        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory));
+        return @this.ForeachAsync(item => AddOrUpdateAsync(that, item.Key, item.Value, updateValueFactory), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -620,9 +621,9 @@ public static class IDictionaryExtensions
     /// </summary>
     /// <param name="dic"></param>
     /// <param name="action">回调方法</param>
-    public static Task ForEachAsync<TKey, TValue>(this IDictionary<TKey, TValue> dic, Func<TKey, TValue, Task> action)
+    public static Task ForEachAsync<TKey, TValue>(this IDictionary<TKey, TValue> dic, Func<TKey, TValue, Task> action, CancellationToken cancellationToken = default)
     {
-        return dic.ForeachAsync(x => action(x.Key, x.Value));
+        return dic.ForeachAsync(x => action(x.Key, x.Value), cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -722,11 +723,11 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<NullableDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    public static async Task<NullableDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, CancellationToken cancellationToken = default)
     {
         var items = source as IList<TSource> ?? source.ToList();
         var dic = new NullableDictionary<TKey, TElement>(items.Count);
-        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -740,14 +741,14 @@ public static class IDictionaryExtensions
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
     /// <param name="defaultValue">键未找到时的默认值</param>
-    public static async Task<NullableDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue)
+    public static async Task<NullableDictionary<TKey, TElement>> ToDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue, CancellationToken cancellationToken = default)
     {
         var items = source as IList<TSource> ?? source.ToList();
         var dic = new NullableDictionary<TKey, TElement>(items.Count)
         {
             FallbackValue = defaultValue
         };
-        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -848,11 +849,11 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<DisposableDictionary<TKey, TElement>> ToDisposableDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector) where TElement : IDisposable
+    public static async Task<DisposableDictionary<TKey, TElement>> ToDisposableDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, CancellationToken cancellationToken = default) where TElement : IDisposable
     {
         var items = source as IList<TSource> ?? source.ToList();
         var dic = new DisposableDictionary<TKey, TElement>(items.Count);
-        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -866,14 +867,14 @@ public static class IDictionaryExtensions
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
     /// <param name="defaultValue">键未找到时的默认值</param>
-    public static async Task<DisposableDictionary<TKey, TElement>> ToDisposableDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue) where TElement : IDisposable
+    public static async Task<DisposableDictionary<TKey, TElement>> ToDisposableDictionarySafetyAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue, CancellationToken cancellationToken = default) where TElement : IDisposable
     {
         var items = source as IList<TSource> ?? source.ToList();
         var dic = new DisposableDictionary<TKey, TElement>(items.Count)
         {
             FallbackValue = defaultValue
         };
-        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await items.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -970,10 +971,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, CancellationToken cancellationToken = default)
     {
         var dic = new ConcurrentDictionary<TKey, TElement>();
-        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -987,13 +988,13 @@ public static class IDictionaryExtensions
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
     /// <param name="defaultValue">键未找到时的默认值</param>
-    public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue)
+    public static async Task<NullableConcurrentDictionary<TKey, TElement>> ToConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue, CancellationToken cancellationToken = default)
     {
         var dic = new NullableConcurrentDictionary<TKey, TElement>
         {
             FallbackValue = defaultValue
         };
-        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -1079,10 +1080,10 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<DisposableConcurrentDictionary<TKey, TElement>> ToDisposableConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector) where TElement : IDisposable
+    public static async Task<DisposableConcurrentDictionary<TKey, TElement>> ToDisposableConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, CancellationToken cancellationToken = default) where TElement : IDisposable
     {
         var dic = new DisposableConcurrentDictionary<TKey, TElement>();
-        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -1093,13 +1094,13 @@ public static class IDictionaryExtensions
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
     /// <param name="defaultValue">键未找到时的默认值</param>
-    public static async Task<DisposableConcurrentDictionary<TKey, TElement>> ToDisposableConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue) where TElement : IDisposable
+    public static async Task<DisposableConcurrentDictionary<TKey, TElement>> ToDisposableConcurrentDictionaryAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, TElement defaultValue, CancellationToken cancellationToken = default) where TElement : IDisposable
     {
         var dic = new DisposableConcurrentDictionary<TKey, TElement>()
         {
             FallbackValue = defaultValue
         };
-        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item));
+        await source.ForeachAsync(async item => dic[keySelector(item)] = await elementSelector(item), cancellationToken: cancellationToken);
         return dic;
     }
 
@@ -1168,7 +1169,7 @@ public static class IDictionaryExtensions
     /// <param name="source"></param>
     /// <param name="keySelector">键选择器</param>
     /// <param name="elementSelector">值选择器</param>
-    public static async Task<LookupX<TKey, TElement>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector)
+    public static async Task<LookupX<TKey, TElement>> ToLookupAsync<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, Task<TElement>> elementSelector, CancellationToken cancellationToken = default)
     {
         var items = source as IList<TSource> ?? source.ToList();
         var dic = new ConcurrentDictionary<TKey, List<TElement>>();
@@ -1183,7 +1184,7 @@ public static class IDictionaryExtensions
             {
                 dic.TryAdd(key, new List<TElement> { await elementSelector(item) });
             }
-        });
+        }, cancellationToken: cancellationToken);
         return new LookupX<TKey, TElement>(dic);
     }
 

@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Masuit.Tools.Systems;
 
@@ -915,7 +916,7 @@ namespace Masuit.Tools.Media
         /// <param name="bmpp">原始图片</param>
         /// <param name="newW">新的宽度</param>
         /// <param name="newH">新的高度</param>
-        public static async Task<Bitmap> ResizeImageAsync(this Bitmap bmpp, int newW, int newH)
+        public static async Task<Bitmap> ResizeImageAsync(this Bitmap bmpp, int newW, int newH, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -926,7 +927,7 @@ namespace Masuit.Tools.Media
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                     g.DrawImage(bap, new Rectangle(0, 0, newW, newH), new Rectangle(0, 0, bap.Width, bap.Height), GraphicsUnit.Pixel);
                     return bap;
-                }).ConfigureAwait(false);
+                }, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception)
             {

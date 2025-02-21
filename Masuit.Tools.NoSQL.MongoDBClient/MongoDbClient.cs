@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Masuit.Tools.NoSQL.MongoDBClient
@@ -103,9 +104,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <typeparam name="T"></typeparam>
         /// <param name="collection">表名</param>
         /// <param name="t">数据</param>
-        public Task InsertOneAsync<T>(string collection, T t)
+        public Task InsertOneAsync<T>(string collection, T t, CancellationToken cancellationToken = default)
         {
-            return Database.GetCollection<T>(collection).InsertOneAsync(t);
+            return Database.GetCollection<T>(collection).InsertOneAsync(t, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -113,9 +114,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// </summary>
         /// <param name="collection">表名</param>
         /// <param name="doc">文档</param>
-        public Task InsertOneAsync(string collection, BsonDocument doc)
+        public Task InsertOneAsync(string collection, BsonDocument doc, CancellationToken cancellationToken = default)
         {
-            return Database.GetCollection<BsonDocument>(collection).InsertOneAsync(doc);
+            return Database.GetCollection<BsonDocument>(collection).InsertOneAsync(doc, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -145,9 +146,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <typeparam name="T"></typeparam>
         /// <param name="collection">表名</param>
         /// <param name="list">集合</param>
-        public Task InsertManyAsync<T>(string collection, IEnumerable<T> list)
+        public Task InsertManyAsync<T>(string collection, IEnumerable<T> list, CancellationToken cancellationToken = default)
         {
-            return Database.GetCollection<T>(collection).InsertManyAsync(list);
+            return Database.GetCollection<T>(collection).InsertManyAsync(list, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -155,9 +156,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// </summary>
         /// <param name="collection">表名</param>
         /// <param name="list">Bson集合</param>
-        public Task InsertManyAsync(string collection, IEnumerable<BsonDocument> list)
+        public Task InsertManyAsync(string collection, IEnumerable<BsonDocument> list, CancellationToken cancellationToken = default)
         {
-            return Database.GetCollection<BsonDocument>(collection).InsertManyAsync(list);
+            return Database.GetCollection<BsonDocument>(collection).InsertManyAsync(list, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -192,9 +193,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">表名</param>
         /// <param name="list">数据集合</param>
         /// <returns></returns>
-        public async Task<List<WriteModel<T>>> BulkInsertAsync<T>(string collection, IEnumerable<WriteModel<T>> list)
+        public async Task<List<WriteModel<T>>> BulkInsertAsync<T>(string collection, IEnumerable<WriteModel<T>> list, CancellationToken cancellationToken = default)
         {
-            BulkWriteResult<T> result = await Database.GetCollection<T>(collection).BulkWriteAsync(list);
+            BulkWriteResult<T> result = await Database.GetCollection<T>(collection).BulkWriteAsync(list, cancellationToken: cancellationToken);
             return result.ProcessedRequests.ToList();
         }
 
@@ -204,9 +205,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">表名</param>
         /// <param name="list">Bson数据集合</param>
         /// <returns></returns>
-        public async Task<List<WriteModel<BsonDocument>>> BulkInsertAsync(string collection, IEnumerable<WriteModel<BsonDocument>> list)
+        public async Task<List<WriteModel<BsonDocument>>> BulkInsertAsync(string collection, IEnumerable<WriteModel<BsonDocument>> list, CancellationToken cancellationToken = default)
         {
-            BulkWriteResult<BsonDocument> result = await Database.GetCollection<BsonDocument>(collection).BulkWriteAsync(list);
+            BulkWriteResult<BsonDocument> result = await Database.GetCollection<BsonDocument>(collection).BulkWriteAsync(list, cancellationToken: cancellationToken);
             return result.ProcessedRequests.ToList();
         }
 
@@ -256,12 +257,12 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="update">更新的数据</param>
         /// <param name="upsert">如果它不存在是否插入文档</param>
         /// <returns></returns>
-        public async Task<UpdateResult> UpdateOneAsync<T>(string collection, Expression<Func<T, bool>> filter, UpdateDefinition<T> update, bool upsert)
+        public async Task<UpdateResult> UpdateOneAsync<T>(string collection, Expression<Func<T, bool>> filter, UpdateDefinition<T> update, bool upsert, CancellationToken cancellationToken = default)
         {
             return await Database.GetCollection<T>(collection).UpdateOneAsync(filter, update, new UpdateOptions()
             {
                 IsUpsert = upsert
-            });
+            }, cancellationToken);
         }
 
         /// <summary>
@@ -272,12 +273,12 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="update">更新的数据</param>
         /// <param name="upsert">如果它不存在是否插入文档</param>
         /// <returns></returns>
-        public async Task<UpdateResult> UpdateOneAsync(string collection, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update, bool upsert)
+        public async Task<UpdateResult> UpdateOneAsync(string collection, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update, bool upsert, CancellationToken cancellationToken = default)
         {
             return await Database.GetCollection<BsonDocument>(collection).UpdateOneAsync(filter, update, new UpdateOptions()
             {
                 IsUpsert = upsert
-            });
+            }, cancellationToken);
         }
 
         /// <summary>
@@ -323,12 +324,12 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="update">修改结果</param>
         /// <param name="upsert">是否插入新文档（filter条件满足就更新，否则插入新文档）</param>
         /// <returns></returns>
-        public async Task<long> UpdateManyAsync<T>(string collName, Expression<Func<T, bool>> filter, UpdateDefinition<T> update, bool upsert = false)
+        public async Task<long> UpdateManyAsync<T>(string collName, Expression<Func<T, bool>> filter, UpdateDefinition<T> update, bool upsert = false, CancellationToken cancellationToken = default)
         {
             UpdateResult result = await Database.GetCollection<T>(collName).UpdateManyAsync(filter, update, new UpdateOptions
             {
                 IsUpsert = upsert
-            });
+            }, cancellationToken);
             return result.ModifiedCount;
         }
 
@@ -340,12 +341,12 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="update">修改结果</param>
         /// <param name="upsert">是否插入新文档（filter条件满足就更新，否则插入新文档）</param>
         /// <returns></returns>
-        public async Task<long> UpdateManyAsync(string collName, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update, bool upsert = false)
+        public async Task<long> UpdateManyAsync(string collName, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update, bool upsert = false, CancellationToken cancellationToken = default)
         {
             UpdateResult result = await Database.GetCollection<BsonDocument>(collName).UpdateManyAsync(filter, update, new UpdateOptions
             {
                 IsUpsert = upsert
-            });
+            }, cancellationToken);
             return result.ModifiedCount;
         }
 
@@ -384,10 +385,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="filter">条件</param>
         /// <param name="update">更新后的数据</param>
         /// <returns></returns>
-        public async Task<T> UpdateOneAsync<T>(string collName, Expression<Func<T, bool>> filter, UpdateDefinition<T> update)
+        public Task<T> UpdateOneAsync<T>(string collName, Expression<Func<T, bool>> filter, UpdateDefinition<T> update, CancellationToken cancellationToken = default)
         {
-            T result = await Database.GetCollection<T>(collName).FindOneAndUpdateAsync(filter, update);
-            return result;
+            return Database.GetCollection<T>(collName).FindOneAndUpdateAsync(filter, update, cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -397,10 +397,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="filter">条件</param>
         /// <param name="update">更新后的Bson数据</param>
         /// <returns></returns>
-        public async Task<BsonDocument> UpdateOneAsync(string collName, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update)
+        public Task<BsonDocument> UpdateOneAsync(string collName, Expression<Func<BsonDocument, bool>> filter, UpdateDefinition<BsonDocument> update, CancellationToken cancellationToken = default)
         {
-            BsonDocument result = await Database.GetCollection<BsonDocument>(collName).FindOneAndUpdateAsync(filter, update);
-            return result;
+            return Database.GetCollection<BsonDocument>(collName).FindOneAndUpdateAsync(filter, update, cancellationToken: cancellationToken);
         }
 
         #endregion 更新
@@ -461,9 +460,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync<T>(string collection, BsonDocument document)
+        public async Task<long> DeleteAsync<T>(string collection, BsonDocument document, CancellationToken cancellationToken = default)
         {
-            DeleteResult result = await Database.GetCollection<T>(collection).DeleteOneAsync(document);
+            DeleteResult result = await Database.GetCollection<T>(collection).DeleteOneAsync(document, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -473,9 +472,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync<T>(string collection, BsonDocument document)
+        public async Task<long> DeleteManyAsync<T>(string collection, BsonDocument document, CancellationToken cancellationToken = default)
         {
-            DeleteResult result = await Database.GetCollection<T>(collection).DeleteManyAsync(document);
+            DeleteResult result = await Database.GetCollection<T>(collection).DeleteManyAsync(document, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -485,9 +484,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync(string collection, BsonDocument document)
+        public async Task<long> DeleteAsync(string collection, BsonDocument document, CancellationToken cancellationToken = default)
         {
-            DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteOneAsync(document);
+            DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteOneAsync(document, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -497,9 +496,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名称</param>
         /// <param name="document">文档</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync(string collection, BsonDocument document)
+        public async Task<long> DeleteManyAsync(string collection, BsonDocument document, CancellationToken cancellationToken = default)
         {
-            DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteManyAsync(document);
+            DeleteResult result = await Database.GetCollection<BsonDocument>(collection).DeleteManyAsync(document, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -569,9 +568,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="json">json字符串</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync<T>(string collName, string json)
+        public async Task<long> DeleteManyAsync<T>(string collName, string json, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(json);
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(json, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -581,9 +580,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="json">json字符串</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync(string collName, string json)
+        public async Task<long> DeleteAsync(string collName, string json, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(json);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(json, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -593,9 +592,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="json">json字符串</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync(string collName, string json)
+        public async Task<long> DeleteManyAsync(string collName, string json, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(json);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(json, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -653,9 +652,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync<T>(string collName, Expression<Func<T, bool>> predicate)
+        public async Task<long> DeleteAsync<T>(string collName, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<T>(collName).DeleteOneAsync(predicate);
+            var result = await Database.GetCollection<T>(collName).DeleteOneAsync(predicate, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -665,9 +664,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync<T>(string collName, Expression<Func<T, bool>> predicate)
+        public async Task<long> DeleteManyAsync<T>(string collName, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(predicate);
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(predicate, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -677,9 +676,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync(string collName, Expression<Func<BsonDocument, bool>> predicate)
+        public async Task<long> DeleteAsync(string collName, Expression<Func<BsonDocument, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(predicate);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(predicate, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -689,9 +688,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="predicate">条件表达式</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync(string collName, Expression<Func<BsonDocument, bool>> predicate)
+        public async Task<long> DeleteManyAsync(string collName, Expression<Func<BsonDocument, bool>> predicate, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(predicate);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(predicate, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -754,9 +753,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync<T>(string collName, FilterDefinition<T> filter)
+        public async Task<long> DeleteAsync<T>(string collName, FilterDefinition<T> filter, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<T>(collName).DeleteOneAsync(filter);
+            var result = await Database.GetCollection<T>(collName).DeleteOneAsync(filter, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -767,9 +766,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync<T>(string collName, FilterDefinition<T> filter)
+        public async Task<long> DeleteManyAsync<T>(string collName, FilterDefinition<T> filter, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(filter);
+            var result = await Database.GetCollection<T>(collName).DeleteManyAsync(filter, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -780,9 +779,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<long> DeleteAsync(string collName, FilterDefinition<BsonDocument> filter)
+        public async Task<long> DeleteAsync(string collName, FilterDefinition<BsonDocument> filter, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(filter);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteOneAsync(filter, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -793,9 +792,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">集合名称</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<long> DeleteManyAsync(string collName, FilterDefinition<BsonDocument> filter)
+        public async Task<long> DeleteManyAsync(string collName, FilterDefinition<BsonDocument> filter, CancellationToken cancellationToken = default)
         {
-            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(filter);
+            var result = await Database.GetCollection<BsonDocument>(collName).DeleteManyAsync(filter, cancellationToken);
             return result.DeletedCount;
         }
 
@@ -831,9 +830,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<T> DeleteOneAsync<T>(string collName, Expression<Func<T, bool>> filter)
+        public async Task<T> DeleteOneAsync<T>(string collName, Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)
         {
-            T result = await Database.GetCollection<T>(collName).FindOneAndDeleteAsync(filter);
+            T result = await Database.GetCollection<T>(collName).FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken);
             return result;
         }
 
@@ -843,9 +842,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<BsonDocument> DeleteOneAsync(string collName, Expression<Func<BsonDocument, bool>> filter)
+        public async Task<BsonDocument> DeleteOneAsync(string collName, Expression<Func<BsonDocument, bool>> filter, CancellationToken cancellationToken = default)
         {
-            BsonDocument result = await Database.GetCollection<BsonDocument>(collName).FindOneAndDeleteAsync(filter);
+            BsonDocument result = await Database.GetCollection<BsonDocument>(collName).FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken);
             return result;
         }
 
@@ -905,10 +904,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<T> GetAsync<T>(string collName, FilterDefinition<T> filter)
+        public async Task<T> GetAsync<T>(string collName, FilterDefinition<T> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter);
-            return await find.FirstOrDefaultAsync();
+            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter, cancellationToken: cancellationToken);
+            return await find.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -917,10 +916,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<BsonDocument> GetAsync(string collName, FilterDefinition<BsonDocument> filter)
+        public async Task<BsonDocument> GetAsync(string collName, FilterDefinition<BsonDocument> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter);
-            return await find.FirstOrDefaultAsync();
+            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter, cancellationToken: cancellationToken);
+            return await find.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -955,9 +954,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> GetManyAsync<T>(string collName, FilterDefinition<T> filter)
+        public async Task<IEnumerable<T>> GetManyAsync<T>(string collName, FilterDefinition<T> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter);
+            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter, cancellationToken: cancellationToken);
             return find.ToEnumerable();
         }
 
@@ -967,9 +966,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<IEnumerable<BsonDocument>> GetManyAsync(string collName, FilterDefinition<BsonDocument> filter)
+        public async Task<IEnumerable<BsonDocument>> GetManyAsync(string collName, FilterDefinition<BsonDocument> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter);
+            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter, cancellationToken: cancellationToken);
             return find.ToEnumerable();
         }
 
@@ -1004,10 +1003,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<bool> AnyAsync<T>(string collName, FilterDefinition<T> filter)
+        public async Task<bool> AnyAsync<T>(string collName, FilterDefinition<T> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter);
-            return await find.AnyAsync();
+            IAsyncCursor<T> find = await Database.GetCollection<T>(collName).FindAsync(filter, cancellationToken: cancellationToken);
+            return await find.AnyAsync(cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -1016,10 +1015,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collName">表名</param>
         /// <param name="filter">条件</param>
         /// <returns></returns>
-        public async Task<bool> AnyAsync(string collName, FilterDefinition<BsonDocument> filter)
+        public async Task<bool> AnyAsync(string collName, FilterDefinition<BsonDocument> filter, CancellationToken cancellationToken = default)
         {
-            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter);
-            return await find.AnyAsync();
+            IAsyncCursor<BsonDocument> find = await Database.GetCollection<BsonDocument>(collName).FindAsync(filter, cancellationToken: cancellationToken);
+            return await find.AnyAsync(cancellationToken: cancellationToken);
         }
 
         #endregion 查询
@@ -1055,15 +1054,15 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="index">索引键</param>
         /// <param name="asc"></param>
         /// <returns></returns>
-        public async Task<string> CreateIndexAsync(string collection, string index, bool asc = true)
+        public async Task<string> CreateIndexAsync(string collection, string index, bool asc = true, CancellationToken cancellationToken = default)
         {
             IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
-            var list = mgr.List();
-            while (list.MoveNext())
+            var list = await mgr.ListAsync(cancellationToken);
+            while (await list.MoveNextAsync(cancellationToken))
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
+                    return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])), cancellationToken: cancellationToken);
                 }
             }
 
@@ -1090,10 +1089,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="index">索引键</param>
         /// <param name="asc"></param>
         /// <returns></returns>
-        public async Task<string> UpdateIndexAsync(string collection, string index, bool asc = true)
+        public async Task<string> UpdateIndexAsync(string collection, string index, bool asc = true, CancellationToken cancellationToken = default)
         {
             IMongoIndexManager<BsonDocument> mgr = Database.GetCollection<BsonDocument>(collection).Indexes;
-            return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])));
+            return await mgr.CreateOneAsync(new CreateIndexModel<BsonDocument>(asc ? Builders<BsonDocument>.IndexKeys.Ascending(doc => doc[index]) : Builders<BsonDocument>.IndexKeys.Descending(doc => doc[index])), cancellationToken: cancellationToken);
         }
 
         /// <summary>
@@ -1113,9 +1112,9 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="collection">集合名</param>
         /// <param name="index">索引键</param>
         /// <returns></returns>
-        public Task DropIndexAsync(string collection, string index)
+        public Task DropIndexAsync(string collection, string index, CancellationToken cancellationToken = default)
         {
-            return Database.GetCollection<BsonDocument>(collection).Indexes.DropOneAsync(index);
+            return Database.GetCollection<BsonDocument>(collection).Indexes.DropOneAsync(index, cancellationToken);
         }
 
         /// <summary>
@@ -1149,15 +1148,15 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="key"></param>
         /// <param name="asc"></param>
         /// <returns></returns>
-        public async Task<string> CreateIndexAsync<T>(string collection, string index, Expression<Func<T, object>> key, bool asc = true)
+        public async Task<string> CreateIndexAsync<T>(string collection, string index, Expression<Func<T, object>> key, bool asc = true, CancellationToken cancellationToken = default)
         {
             IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
-            var list = mgr.List();
-            while (list.MoveNext())
+            var list = await mgr.ListAsync(cancellationToken);
+            while (await list.MoveNextAsync(cancellationToken))
             {
                 if (!list.Current.Any(doc => doc["name"].AsString.StartsWith(index)))
                 {
-                    return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
+                    return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)), cancellationToken: cancellationToken);
                 }
             }
 
@@ -1184,10 +1183,10 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
         /// <param name="key"></param>
         /// <param name="asc"></param>
         /// <returns></returns>
-        public async Task<string> UpdateIndexAsync<T>(string collection, Expression<Func<T, object>> key, bool asc = true)
+        public async Task<string> UpdateIndexAsync<T>(string collection, Expression<Func<T, object>> key, bool asc = true, CancellationToken cancellationToken = default)
         {
             IMongoIndexManager<T> mgr = Database.GetCollection<T>(collection).Indexes;
-            return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)));
+            return await mgr.CreateOneAsync(new CreateIndexModel<T>(asc ? Builders<T>.IndexKeys.Ascending(key) : Builders<T>.IndexKeys.Descending(key)), cancellationToken: cancellationToken);
         }
 
         #endregion 索引

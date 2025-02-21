@@ -361,7 +361,7 @@ namespace Masuit.Tools
         /// <param name="s">源字符串</param>
         /// <param name="valid">是否验证有效性</param>
         /// <returns>匹配对象；是否匹配成功，若返回true，则会得到一个Match对象，否则为null</returns>
-        public static async Task<(bool isMatch, Match match)> MatchEmailAsync(this string s, bool valid = false)
+        public static async Task<(bool isMatch, Match match)> MatchEmailAsync(this string s, bool valid = false, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(s) || s.Length < 7)
             {
@@ -374,7 +374,7 @@ namespace Masuit.Tools
             {
                 var nslookup = new LookupClient();
                 using var cts = new CancellationTokenSource(100);
-                var query = await nslookup.QueryAsync(s.Split('@')[1], QueryType.MX, cancellationToken: cts.Token);
+                var query = await nslookup.QueryAsync(s.Split('@')[1], QueryType.MX, cancellationToken: cancellationToken);
                 var result = await query.Answers.MxRecords().SelectAsync(r => Dns.GetHostAddressesAsync(r.Exchange.Value).ContinueWith(t =>
                 {
                     if (t.IsCanceled || t.IsFaulted)
