@@ -853,6 +853,106 @@ public static class IEnumerableExtensions
     }
 
     /// <summary>
+    /// 异步SelectMany
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="selector"></param>
+    /// <returns></returns>
+    public static Task<IEnumerable<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<IEnumerable<TResult>>> selector)
+    {
+        return Task.WhenAll(source.Select(selector)).ContinueWith(t => t.Result.SelectMany(_ => _));
+    }
+
+    /// <summary>
+    /// 异步SelectMany
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="selector"></param>
+    /// <returns></returns>
+    public static Task<IEnumerable<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<IEnumerable<TResult>>> selector)
+    {
+        return Task.WhenAll(source.Select(selector)).ContinueWith(t => t.Result.SelectMany(_ => _));
+    }
+
+    /// <summary>
+    /// 异步SelectMany
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="selector"></param>
+    /// <param name="maxParallelCount">最大并行数</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task<List<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<IEnumerable<TResult>>> selector, int maxParallelCount, CancellationToken cancellationToken = default)
+    {
+        var results = new List<TResult>();
+        var tasks = new List<Task<IEnumerable<TResult>>>();
+        foreach (var item in source)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+
+            var task = selector(item);
+            tasks.Add(task);
+            if (tasks.Count >= maxParallelCount)
+            {
+                await Task.WhenAny(tasks);
+                var completedTasks = tasks.Where(t => t.IsCompleted).ToArray();
+                results.AddRange(completedTasks.SelectMany(t => t.Result));
+                tasks.RemoveWhere(t => completedTasks.Contains(t));
+            }
+        }
+
+        results.AddRange(await Task.WhenAll(tasks).ContinueWith(t => t.Result.SelectMany(_ => _), cancellationToken));
+        return results;
+    }
+
+    /// <summary>
+    /// 异步SelectMany
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="selector"></param>
+    /// <param name="maxParallelCount">最大并行数</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task<List<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<IEnumerable<TResult>>> selector, int maxParallelCount, CancellationToken cancellationToken = default)
+    {
+        var results = new List<TResult>();
+        var tasks = new List<Task<IEnumerable<TResult>>>();
+        int index = 0;
+        foreach (var item in source)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+
+            var task = selector(item, index);
+            tasks.Add(task);
+            Interlocked.Add(ref index, 1);
+            if (tasks.Count >= maxParallelCount)
+            {
+                await Task.WhenAny(tasks);
+                var completedTasks = tasks.Where(t => t.IsCompleted).ToArray();
+                results.AddRange(completedTasks.SelectMany(t => t.Result));
+                tasks.RemoveWhere(t => completedTasks.Contains(t));
+            }
+        }
+
+        results.AddRange(await Task.WhenAll(tasks).ContinueWith(t => t.Result.SelectMany(_ => _), cancellationToken));
+        return results;
+    }
+
+    /// <summary>
     /// 异步For
     /// </summary>
     /// <typeparam name="T"></typeparam>
