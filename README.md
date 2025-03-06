@@ -1181,15 +1181,19 @@ var allchanges=dbContext.GetAllChanges();//获取增删改的实体字段信息
 
 #### nolock查询
 
-sqlserver：
+SQL Server：
 
 上下文注入Interceptor即可在任何查询时使用nolock查询
 
 ```csharp
-services.AddDbContext<TContext>(opt => opt.UseSqlserver("ConnString", builder => builder.AddInterceptors(new QueryWithNoLockDbCommandInterceptor()));
+services.AddDbContext<TContext>(opt => opt.UseSqlserver("ConnString", builder => builder.AddInterceptors(new WithNoLockInterceptor(true))); // 启用全局nolock查询
+services.AddDbContext<TContext>(opt => opt.UseSqlserver("ConnString", builder => builder.AddInterceptors(new WithNoLockInterceptor())); // 按需启用全局nolock查询
+
+// 按需启用全局nolock查询，执行单个nolock查询
+await dbContext.Users.Where(x=>x.Name=="aaa").WithNolock().ToListAsync();
 ```
 
-通用数据库：
+其他通用数据库：
 
 nolock本质是开启一个 `读未提交`级别的事务，此时的查询性能最好，但有可能会读取到脏数据。
 
