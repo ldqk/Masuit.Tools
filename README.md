@@ -761,7 +761,7 @@ var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 
 var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
-最佳实践案例：https://github.com/ldqk/ImageSearch
+最佳实践案例，以图搜图：https://github.com/ldqk/ImageSearch
 ### 26.随机数
 
 ```csharp
