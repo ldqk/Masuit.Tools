@@ -26,26 +26,6 @@ internal static class ModelBindingContextExtension
     }
 
     /// <summary>
-    /// 判断该次请求体Body是否是Json内容类型
-    /// </summary>
-    /// <param name="httpContext"></param>
-    /// <param name="charSet"></param>
-    /// <returns></returns>
-    public static bool IsJsonContent(this HttpContext httpContext, out string charSet)
-    {
-        string strContentType = httpContext.Request.ContentType;
-        if (string.IsNullOrEmpty(strContentType))
-        {
-            charSet = null;
-            return false;
-        }
-
-        var contentType = new ContentType(strContentType);
-        charSet = contentType.CharSet;
-        return contentType.MediaType.ToLower() == "application/json";
-    }
-
-    /// <summary>
     /// 获取请求体Body字符串内容
     /// </summary>
     /// <param name="context"></param>

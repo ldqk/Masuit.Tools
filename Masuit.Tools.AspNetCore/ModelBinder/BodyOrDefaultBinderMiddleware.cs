@@ -21,13 +21,21 @@ public sealed class BodyOrDefaultBinderMiddleware(RequestDelegate next, ILogger<
         }
         else
         {
-            var type = new ContentType(contentType);
-            if (!string.IsNullOrWhiteSpace(type.CharSet))
+            try
             {
-                charSet = type.CharSet;
-            }
+                var type = new ContentType(contentType);
+                if (!string.IsNullOrWhiteSpace(type.CharSet))
+                {
+                    charSet = type.CharSet;
+                }
 
-            mediaType = type.MediaType.ToLower();
+                mediaType = type.MediaType.ToLower();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Parsing contentType failed:" + contentType);
+                mediaType = "multipart/form-data";
+            }
         }
 
         var encoding = Encoding.GetEncoding(charSet);

@@ -202,7 +202,8 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, ex.Message, context.Request.ContentType);
+                logger.LogError(ex, "Parsing contentType failed:" + context.Request.ContentType);
+                mediaType = "multipart/form-data";
             }
         }
 

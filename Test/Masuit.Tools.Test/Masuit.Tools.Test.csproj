@@ -94,16 +94,16 @@
       <Version>4.20.72</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.8.24</Version>
+      <Version>2.8.31</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>6.1.0</Version>
+      <Version>6.1.2</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.6.0</Version>
+      <Version>4.6.3</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="xunit">
       <Version>2.9.3</Version>
@@ -112,7 +112,7 @@
       <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="xunit.analyzers">
-      <Version>1.20.0</Version>
+      <Version>1.21.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
