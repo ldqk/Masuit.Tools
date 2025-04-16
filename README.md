@@ -745,7 +745,8 @@ gif.GetFrames(@"D:\frames\"); // 解压gif每帧图片
 var marker=ImageWatermarker(stream);
 stream=maker.AddWatermark("水印文字","字体文件",字体大小,color,水印位置,边距); // 给图片添加水印
 stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体); // 给图片添加水印
-
+```
+```csharp
 // 图像相似度对比
 var hasher = new ImageHasher();
 var hash1 = hasher.DifferenceHash256("图片1"); // 使用差分哈希算法计算图像的256位哈希
@@ -760,7 +761,7 @@ var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 
 var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
-
+最佳实践案例，以图搜图：https://github.com/ldqk/ImageSearch
 ### 26.随机数
 
 ```csharp
