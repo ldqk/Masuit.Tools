@@ -17,14 +17,14 @@ public static class ExcelExtension
 {
     static ExcelExtension()
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        ExcelPackage.License.SetNonCommercialPersonal("Test");
     }
 
 #if NET5_0_OR_GREATER
     [System.Runtime.CompilerServices.ModuleInitializer]
     internal static void Init()
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        ExcelPackage.License.SetNonCommercialPersonal("Test");
     }
 #endif
 

@@ -559,7 +559,7 @@ public class HtmlSanitizer : IHtmlSanitizer
                         foreach (var removedClass in removedClasses)
                             RemoveCssClass(tag, removedClass, RemoveReason.NotAllowedCssClass);
 
-                        if (!tag.ClassList.Any())
+                        if (tag.ClassList.Length == 0)
                             RemoveAttribute(tag, attribute, RemoveReason.ClassAttributeEmpty);
                     }
                     else if (!oldStyleEmpty && attribute.Name == StyleAttributeName && string.IsNullOrEmpty(attribute.Value))
@@ -658,7 +658,7 @@ public class HtmlSanitizer : IHtmlSanitizer
                 {
                     var e = new PostProcessNodeEventArgs(dom, node);
                     OnPostProcessNode(e);
-                    if (e.ReplacementNodes.Any())
+                    if (e.ReplacementNodes.Count != 0)
                     {
                         ((IChildNode)node).Replace([.. e.ReplacementNodes]);
                     }
@@ -874,7 +874,7 @@ public class HtmlSanitizer : IHtmlSanitizer
         if (iri != null && !iri.IsAbsolute && !string.IsNullOrEmpty(baseUrl))
         {
             // resolve relative URI
-            if (Uri.TryCreate(baseUrl, UriKind.Absolute, out Uri baseUri))
+            if (Uri.TryCreate(baseUrl, UriKind.Absolute, out Uri? baseUri))
             {
                 try
                 {
