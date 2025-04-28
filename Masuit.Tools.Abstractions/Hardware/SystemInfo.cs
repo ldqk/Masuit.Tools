@@ -195,19 +195,31 @@ namespace Masuit.Tools.Hardware
                 return CpuObjects.Value.Select(mo => new CpuInfo
                 {
                     NumberOfLogicalProcessors = ProcessorCount,
-                    CurrentClockSpeed = mo["CurrentClockSpeed"].ToString(),
-                    Manufacturer = mo["Manufacturer"].ToString(),
-                    MaxClockSpeed = mo["MaxClockSpeed"].ToString(),
-                    Type = mo["Name"].ToString(),
-                    DataWidth = mo["DataWidth"].ToString(),
-                    SerialNumber = mo["ProcessorId"].ToString(),
-                    DeviceID = mo["DeviceID"].ToString(),
+                    CurrentClockSpeed = mo["CurrentClockSpeed"]?.ToString(),
+                    Manufacturer = mo["Manufacturer"]?.ToString(),
+                    MaxClockSpeed = mo["MaxClockSpeed"]?.ToString(),
+                    Type = mo["Name"]?.ToString(),
+                    DataWidth = mo["DataWidth"]?.ToString(),
+                    SerialNumber = mo["ProcessorId"]?.ToString(),
+                    DeviceID = mo["DeviceID"]?.ToString(),
                     NumberOfCores = mo["NumberOfCores"].ChangeTypeTo<int>()
                 }).ToList();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return [];
+                return [new CpuInfo
+                    {
+                        DeviceID = null,
+                        Type = e.Message,
+                        Manufacturer = null,
+                        MaxClockSpeed = null,
+                        CurrentClockSpeed = null,
+                        NumberOfCores = 0,
+                        NumberOfLogicalProcessors = 0,
+                        DataWidth = null,
+                        SerialNumber = null
+                    }
+                ];
             }
         }
 
