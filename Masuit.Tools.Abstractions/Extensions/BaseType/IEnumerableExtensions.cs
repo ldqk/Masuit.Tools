@@ -562,7 +562,8 @@ public static class IEnumerableExtensions
     /// <param name="where"></param>
     public static void RemoveWhere<T>(this ICollection<T> @this, Func<T, bool> @where)
     {
-        foreach (var obj in @this.Where(where).ToList())
+        var list = @this.Where(where).ToList();
+        foreach (var obj in list)
         {
             @this.Remove(obj);
         }
@@ -638,6 +639,7 @@ public static class IEnumerableExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
+    /// <param name="comparer"></param>
     /// <returns></returns>
     public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> source, IComparer<T> comparer = null)
     {
@@ -651,6 +653,7 @@ public static class IEnumerableExtensions
     /// <typeparam name="TResult"></typeparam>
     /// <param name="source"></param>
     /// <param name="selector"></param>
+    /// <param name="comparer"></param>
     /// <returns></returns>
     public static SortedSet<TResult> ToSortedSet<T, TResult>(this IEnumerable<T> source, Func<T, TResult> selector, IComparer<TResult> comparer = null)
     {
@@ -788,6 +791,7 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <param name="maxParallelCount">最大并行数</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector, int maxParallelCount, CancellationToken cancellationToken = default)
     {
@@ -823,6 +827,7 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <param name="maxParallelCount">最大并行数</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<TResult>> selector, int maxParallelCount, CancellationToken cancellationToken = default)
     {
@@ -1334,6 +1339,7 @@ public static class IEnumerableExtensions
     /// 对比两个集合哪些是新增的、删除的、修改的
     /// </summary>
     /// <typeparam name="TKey">对比因素</typeparam>
+    /// <typeparam name="T"></typeparam>
     /// <param name="first">新集合</param>
     /// <param name="second">旧集合</param>
     /// <param name="keySelector">对比因素(可唯一确定元素的字段)</param>
@@ -1499,6 +1505,7 @@ public static class IEnumerableExtensions
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     /// <param name="first">新集合</param>
     /// <param name="second">旧集合</param>
     /// <param name="firstKeySelector">集合1的对比因素(可唯一确定元素的字段)</param>
