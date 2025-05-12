@@ -71,7 +71,7 @@ namespace Masuit.Tools.DateTimeExt
             DayOfWeek firstDayOfWeek = culture.DateTimeFormat.FirstDayOfWeek;
 
             // 计算星期的起始日期（第一天）
-            DateTime startOfWeek = dt;
+            DateTime startOfWeek = dt.Date;
             while (startOfWeek.DayOfWeek != firstDayOfWeek)
             {
                 startOfWeek = startOfWeek.AddDays(-1);
