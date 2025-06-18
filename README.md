@@ -745,6 +745,9 @@ gif.GetFrames(@"D:\frames\"); // 解压gif每帧图片
 var marker=ImageWatermarker(stream);
 stream=maker.AddWatermark("水印文字","字体文件",字体大小,color,水印位置,边距); // 给图片添加水印
 stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体); // 给图片添加水印
+
+var borderInfo=ImageBorderRemover.DetectBorders(原始图片); // 检测图片是否包含纯色边框
+ImageBorderRemover.RemoveBorders(原始图片,保存图片); // 移除图片的纯色边框并另存为
 ```
 ```csharp
 // 图像相似度对比
