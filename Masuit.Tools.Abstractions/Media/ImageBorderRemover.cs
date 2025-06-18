@@ -3,6 +3,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
+// ReSharper disable AccessToDisposedClosure
+
 namespace Masuit.Tools.Media;
 
 /// <summary>
@@ -68,10 +70,12 @@ public class ImageBorderRemover
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="tolerance">颜色容差(0-100)，默认10</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public static void RemoveBorders(string inputPath, int tolerance = 10, int maxLayers = 3)
+    public static void RemoveBorders(string inputPath, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
     {
-        RemoveBorders(inputPath, inputPath, tolerance, maxLayers);
+        RemoveBorders(inputPath, inputPath, tolerance, maxLayers, useDownscaling, downscaleFactor);
     }
 
     /// <summary>
