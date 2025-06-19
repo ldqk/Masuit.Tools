@@ -745,9 +745,18 @@ gif.GetFrames(@"D:\frames\"); // 解压gif每帧图片
 var marker=ImageWatermarker(stream);
 stream=maker.AddWatermark("水印文字","字体文件",字体大小,color,水印位置,边距); // 给图片添加水印
 stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体); // 给图片添加水印
+```
 
-var borderInfo=ImageBorderRemover.DetectBorders(原始图片); // 检测图片是否包含纯色边框
-ImageBorderRemover.RemoveBorders(原始图片,保存图片); // 移除图片的纯色边框并另存为
+```csharp
+var borderInfo=new ImageBorderRemover(ToleranceMode.Channel).DetectBorders(原始图片); // 检测图片是否包含纯色边框
+new ImageBorderRemover(ToleranceMode.Channel).RemoveBorders(原始图片,保存图片); // 移除图片的纯色边框并另存为
+```
+
+```csharp
+var delta = ColorDeltaE.CIE1976(color1,color2); // 计算两个颜色的CIE1976色差
+var delta = ColorDeltaE.CIE1994(color1,color2); // 计算两个颜色的CIE1994色差
+var delta = ColorDeltaE.CIE2000(color1,color2); // 计算两个颜色的CIE2000色差
+var delta = ColorDeltaE.CMC(color1,color2); // 计算两个颜色的CMC(l:c)色差
 ```
 ```csharp
 // 图像相似度对比

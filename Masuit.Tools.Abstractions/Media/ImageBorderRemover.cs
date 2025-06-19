@@ -13,34 +13,50 @@ namespace Masuit.Tools.Media;
 public class ImageBorderRemover
 {
     /// <summary>
+    /// 容差模式
+    /// </summary>
+    private ToleranceMode ToleranceMode { get; set; }
+
+    private int CroppedBorderCount { get; set; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="mode">容差模式</param>
+    /// <param name="croppedBorderCount">达到边框个数则裁剪</param>
+    public ImageBorderRemover(ToleranceMode mode, int croppedBorderCount = 2)
+    {
+        ToleranceMode = mode;
+        CroppedBorderCount = croppedBorderCount;
+    }
+
+    /// <summary>
     /// 检测图片边框信息（支持多色边框）
     /// </summary>
     /// <param name="imagePath">图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，默认10</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>边框检测结果</returns>
-    public static BorderDetectionResult DetectBorders(string imagePath, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
+    public BorderDetectionResult DetectBorders(string imagePath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        using (Image<Rgba32> image = Image.Load<Rgba32>(imagePath))
-        {
-            return DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
-        }
+        using var image = Image.Load<Rgba32>(imagePath);
+        return DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
     }
 
     /// <summary>
     /// 检测图片边框信息（从已加载的图像）
     /// </summary>
     /// <param name="image">已加载的图像</param>
-    /// <param name="tolerance">颜色容差(0-100)，默认10</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>边框检测结果</returns>
-    public static BorderDetectionResult DetectBorders(Image<Rgba32> image, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
+    public BorderDetectionResult DetectBorders(Image<Rgba32> image, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        var result = new BorderDetectionResult
+        var result = new BorderDetectionResult(CroppedBorderCount)
         {
             ImageWidth = image.Width,
             ImageHeight = image.Height,
@@ -68,12 +84,12 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，默认10</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public static void RemoveBorders(string inputPath, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
+    public void RemoveBorders(string inputPath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
     {
         RemoveBorders(inputPath, inputPath, tolerance, maxLayers, useDownscaling, downscaleFactor);
     }
@@ -83,12 +99,12 @@ public class ImageBorderRemover
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="outputPath">输出图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，默认10</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public static void RemoveBorders(string inputPath, string outputPath, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
+    public void RemoveBorders(string inputPath, string outputPath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
     {
         using Image<Rgba32> image = Image.Load<Rgba32>(inputPath);
         var hasCropped = RemoveBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
@@ -104,12 +120,12 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
     /// </summary>
     /// <param name="input">输入图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，默认10</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认true</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public static PooledMemoryStream RemoveBorders(Stream input, int tolerance = 10, int maxLayers = 3, bool useDownscaling = true, int downscaleFactor = 4)
+    public PooledMemoryStream RemoveBorders(Stream input, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
     {
         var format = Image.DetectFormat(input);
         input.Seek(0, SeekOrigin.Begin);
@@ -120,7 +136,7 @@ public class ImageBorderRemover
         return stream;
     }
 
-    private static bool RemoveBorders(Image<Rgba32> image, int tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
+    private bool RemoveBorders(Image<Rgba32> image, int tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
     {
         // 保存原始尺寸用于比较
         int originalWidth = image.Width;
@@ -564,72 +580,4 @@ public class ImageBorderRemover
         // 精确比较
         return diffR <= tolerance && diffG <= tolerance && diffB <= tolerance;
     }
-}
-
-/// <summary>
-/// 边框检测结果（包含多层边框信息）
-/// </summary>
-public struct BorderDetectionResult
-{
-    /// <summary>原始图片宽度</summary>
-    public int ImageWidth { get; set; }
-
-    /// <summary>原始图片高度</summary>
-    public int ImageHeight { get; set; }
-
-    /// <summary>内容上边界位置</summary>
-    public int ContentTop { get; set; }
-
-    /// <summary>内容下边界位置</summary>
-    public int ContentBottom { get; set; }
-
-    /// <summary>内容左边界位置</summary>
-    public int ContentLeft { get; set; }
-
-    /// <summary>内容右边界位置</summary>
-    public int ContentRight { get; set; }
-
-    /// <summary>检测到的边框层数</summary>
-    public int BorderLayers { get; set; }
-
-    /// <summary>边框颜色层次（从外到内）</summary>
-    public List<Rgba32> BorderColors { get; set; }
-
-    /// <summary>顶部边框总宽度（像素）</summary>
-    public int TopBorderWidth => ContentTop;
-
-    /// <summary>底部边框总宽度（像素）</summary>
-    public int BottomBorderWidth => ImageHeight - 1 - ContentBottom;
-
-    /// <summary>左侧边框总宽度（像素）</summary>
-    public int LeftBorderWidth => ContentLeft;
-
-    /// <summary>右侧边框总宽度（像素）</summary>
-    public int RightBorderWidth => ImageWidth - 1 - ContentRight;
-
-    /// <summary>是否有顶部边框</summary>
-    public bool HasTopBorder => TopBorderWidth > 0;
-
-    /// <summary>是否有底部边框</summary>
-    public bool HasBottomBorder => BottomBorderWidth > 0;
-
-    /// <summary>是否有左侧边框</summary>
-    public bool HasLeftBorder => LeftBorderWidth > 0;
-
-    /// <summary>是否有右侧边框</summary>
-    public bool HasRightBorder => RightBorderWidth > 0;
-
-    /// <summary>是否有任意边框</summary>
-    public bool HasAnyBorder => BorderCount > 0;
-
-    /// <summary>是否满足裁剪条件（至少两个边）</summary>
-    public bool CanBeCropped => BorderCount >= 2;
-
-    public int BorderCount => (HasTopBorder ? 1 : 0) + (HasBottomBorder ? 1 : 0) + (HasLeftBorder ? 1 : 0) + (HasRightBorder ? 1 : 0);
-
-    /// <summary>内容区域宽度</summary>
-    public int ContentWidth => ContentRight - ContentLeft + 1;
-
-    /// <summary>内容区域高度</summary>
-    public int ContentHeight => ContentBottom - ContentTop + 1;
 }

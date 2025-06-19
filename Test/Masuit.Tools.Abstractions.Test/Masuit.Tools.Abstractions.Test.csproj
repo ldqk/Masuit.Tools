@@ -35,7 +35,6 @@
     <Folder Include="Files\" />
     <Folder Include="Html\" />
     <Folder Include="Linq\" />
-    <Folder Include="Media\" />
     <Folder Include="TextDiff\" />
   </ItemGroup>
 
