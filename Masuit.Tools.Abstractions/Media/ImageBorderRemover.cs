@@ -2,6 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Color = System.Drawing.Color;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -15,9 +16,9 @@ public class ImageBorderRemover
     /// <summary>
     /// 容差模式
     /// </summary>
-    private ToleranceMode ToleranceMode { get; set; }
+    private ToleranceMode ToleranceMode { get; }
 
-    private int CroppedBorderCount { get; set; }
+    private int CroppedBorderCount { get; }
 
     /// <summary>
     ///
@@ -163,7 +164,7 @@ public class ImageBorderRemover
     /// <summary>
     /// 查找内容边界（支持多层边框检测）
     /// </summary>
-    private static (int top, int bottom, int left, int right, int layers, List<Rgba32> colors) FindContentBordersWithLayers(Image<Rgba32> image, byte tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
+    private (int top, int bottom, int left, int right, int layers, List<Rgba32> colors) FindContentBordersWithLayers(Image<Rgba32> image, byte tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
     {
         // 如果启用缩小采样且图像足够大
         Image<Rgba32> workingImage;
@@ -295,7 +296,7 @@ public class ImageBorderRemover
     /// <summary>
     /// 检测顶部边框层（优化版）
     /// </summary>
-    private static int DetectLayerBorderTop(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
+    private int DetectLayerBorderTop(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
     {
         int newTop = currentTop;
         Rgba32? detectedColor = null;
@@ -365,7 +366,7 @@ public class ImageBorderRemover
     /// <summary>
     /// 检测底部边框层（优化版）
     /// </summary>
-    private static int DetectLayerBorderBottom(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
+    private int DetectLayerBorderBottom(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
     {
         int newBottom = currentBottom;
         Rgba32? detectedColor = null;
@@ -432,7 +433,7 @@ public class ImageBorderRemover
     /// <summary>
     /// 检测左侧边框层（优化版）
     /// </summary>
-    private static int DetectLayerBorderLeft(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
+    private int DetectLayerBorderLeft(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
     {
         int newLeft = currentLeft;
         Rgba32? detectedColor = null;
@@ -499,7 +500,7 @@ public class ImageBorderRemover
     /// <summary>
     /// 检测右侧边框层（优化版）
     /// </summary>
-    private static int DetectLayerBorderRight(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
+    private int DetectLayerBorderRight(Image<Rgba32> image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref Rgba32? borderColor)
     {
         int newRight = currentRight;
         Rgba32? detectedColor = null;
@@ -566,18 +567,28 @@ public class ImageBorderRemover
     /// <summary>
     /// 颜色相似度比较（SIMD优化）
     /// </summary>
-    private static bool IsSimilarColor(Rgba32 color1, Rgba32 color2, byte tolerance)
+    private bool IsSimilarColor(Rgba32 color1, Rgba32 color2, byte tolerance)
     {
-        // 使用快速比较算法
-        int diffR = Math.Abs(color1.R - color2.R);
-        int diffG = Math.Abs(color1.G - color2.G);
-        int diffB = Math.Abs(color1.B - color2.B);
+        switch (ToleranceMode)
+        {
+            case ToleranceMode.Channel:
+                // 使用快速比较算法
+                int diffR = Math.Abs(color1.R - color2.R);
+                int diffG = Math.Abs(color1.G - color2.G);
+                int diffB = Math.Abs(color1.B - color2.B);
 
-        // 快速路径：如果任一通道差异超过容差
-        if (diffR > tolerance || diffG > tolerance || diffB > tolerance)
-            return false;
+                // 快速路径：如果任一通道差异超过容差
+                if (diffR > tolerance || diffG > tolerance || diffB > tolerance)
+                    return false;
 
-        // 精确比较
-        return diffR <= tolerance && diffG <= tolerance && diffB <= tolerance;
+                // 精确比较
+                return diffR <= tolerance && diffG <= tolerance && diffB <= tolerance;
+
+            case ToleranceMode.DeltaE:
+                return ColorDeltaE.CIE2000(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }
