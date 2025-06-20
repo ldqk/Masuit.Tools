@@ -12,7 +12,7 @@
 
 **诸多功能集一身，代码量不到2MB！**
 [官网教程](https://www.masuit.tools)
-![Masuit Tools](https://user-images.githubusercontent.com/20254980/208012013-28813c43-daa2-4b64-9e4a-78829325a7a4.png)
+![Masuit Tools](https://github.com/user-attachments/assets/ea9fb2f2-6095-46e3-bd4a-e18c99a743df)
 
 项目开发模式：日常代码积累+网络搜集
 

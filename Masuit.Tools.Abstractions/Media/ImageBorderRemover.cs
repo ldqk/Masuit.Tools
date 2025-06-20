@@ -35,7 +35,7 @@ public class ImageBorderRemover
     /// 检测图片边框信息（支持多色边框）
     /// </summary>
     /// <param name="imagePath">图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
@@ -50,7 +50,7 @@ public class ImageBorderRemover
     /// 检测图片边框信息（从已加载的图像）
     /// </summary>
     /// <param name="image">已加载的图像</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
@@ -85,7 +85,7 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
@@ -100,7 +100,7 @@ public class ImageBorderRemover
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="outputPath">输出图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
@@ -121,7 +121,7 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
     /// </summary>
     /// <param name="input">输入图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
@@ -158,6 +158,7 @@ public class ImageBorderRemover
                 hasCropped = true;
             }
         }
+
         return hasCropped;
     }
 
@@ -572,23 +573,78 @@ public class ImageBorderRemover
         switch (ToleranceMode)
         {
             case ToleranceMode.Channel:
-                // 使用快速比较算法
-                int diffR = Math.Abs(color1.R - color2.R);
-                int diffG = Math.Abs(color1.G - color2.G);
-                int diffB = Math.Abs(color1.B - color2.B);
+                return CompareColors(color1, color2, tolerance, true);
 
-                // 快速路径：如果任一通道差异超过容差
-                if (diffR > tolerance || diffG > tolerance || diffB > tolerance)
-                    return false;
-
-                // 精确比较
-                return diffR <= tolerance && diffG <= tolerance && diffB <= tolerance;
-
-            case ToleranceMode.DeltaE:
+            case ToleranceMode.DeltaE2000:
                 return ColorDeltaE.CIE2000(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+
+            case ToleranceMode.DeltaE1976:
+                return ColorDeltaE.CIE1976(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+
+            case ToleranceMode.DeltaE1994:
+                return ColorDeltaE.CIE1994(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+
+            case ToleranceMode.DeltaECMC:
+                return ColorDeltaE.CMC(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+
+            case ToleranceMode.EuclideanDistance:
+                return CompareWithEuclideanDistance(color1, color2, tolerance, true);
 
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    /// <summary>
+    /// 比较两个颜色是否在容差范围内相等
+    /// </summary>
+    /// <param name="color1">第一个颜色</param>
+    /// <param name="color2">第二个颜色</param>
+    /// <param name="tolerance">容差值 (0-255)</param>
+    /// <param name="compareAlpha">是否比较Alpha通道</param>
+    /// <returns>是否匹配</returns>
+    private static bool CompareColors(Rgba32 color1, Rgba32 color2, int tolerance = 10, bool compareAlpha = false)
+    {
+        // 检查R通道
+        if (Math.Abs(color1.R - color2.R) > tolerance)
+            return false;
+
+        // 检查G通道
+        if (Math.Abs(color1.G - color2.G) > tolerance)
+            return false;
+
+        // 检查B通道
+        if (Math.Abs(color1.B - color2.B) > tolerance)
+            return false;
+
+        // 可选检查Alpha通道
+        if (compareAlpha && Math.Abs(color1.A - color2.A) > tolerance)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// 使用欧几里得距离比较颜色
+    /// </summary>
+    /// <param name="color1">第一个颜色</param>
+    /// <param name="color2">第二个颜色</param>
+    /// <param name="maxDistance">最大允许距离 (0-442之间)</param>
+    /// <param name="compareAlpha">是否包含Alpha通道</param>
+    /// <returns>是否匹配</returns>
+    private static bool CompareWithEuclideanDistance(Rgba32 color1, Rgba32 color2, double maxDistance = 20.0, bool compareAlpha = false)
+    {
+        // 计算各分量平方差之和
+        double sum = Math.Pow(color1.R - color2.R, 2) + Math.Pow(color1.G - color2.G, 2) + Math.Pow(color1.B - color2.B, 2);
+
+        // 可选添加Alpha通道
+        if (compareAlpha)
+        {
+            sum += Math.Pow(color1.A - color2.A, 2);
+        }
+
+        // 计算欧几里得距离
+        double distance = Math.Sqrt(sum);
+        return distance <= maxDistance;
     }
 }
