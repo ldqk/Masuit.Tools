@@ -82,7 +82,7 @@ public class ImageBorderRemover
     }
 
     /// <summary>
-    /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
+    /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
@@ -96,7 +96,7 @@ public class ImageBorderRemover
     }
 
     /// <summary>
-    /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
+    /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="outputPath">输出图片路径</param>
@@ -118,7 +118,7 @@ public class ImageBorderRemover
     }
 
     /// <summary>
-    /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
+    /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="input">输入图片路径</param>
     /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
@@ -137,7 +137,16 @@ public class ImageBorderRemover
         return stream;
     }
 
-    private bool RemoveBorders(Image<Rgba32> image, int tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
+    /// <summary>
+    /// 自动移除图片的多层边框
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="maxLayers">最大检测边框层数，默认3</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
+    /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
+    /// <returns>是否执行了裁剪操作</returns>
+    public bool RemoveBorders(Image<Rgba32> image, int tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
     {
         // 保存原始尺寸用于比较
         int originalWidth = image.Width;
@@ -576,16 +585,16 @@ public class ImageBorderRemover
                 return CompareColors(color1, color2, tolerance, true);
 
             case ToleranceMode.DeltaE2000:
-                return ColorDeltaE.CIE2000(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+                return Color.FromArgb(color1.A, color1.R, color1.G, color1.B).CIE2000(Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
 
             case ToleranceMode.DeltaE1976:
-                return ColorDeltaE.CIE1976(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+                return Color.FromArgb(color1.A, color1.R, color1.G, color1.B).CIE1976(Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
 
             case ToleranceMode.DeltaE1994:
-                return ColorDeltaE.CIE1994(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+                return Color.FromArgb(color1.A, color1.R, color1.G, color1.B).CIE1994(Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
 
             case ToleranceMode.DeltaECMC:
-                return ColorDeltaE.CMC(Color.FromArgb(color1.A, color1.R, color1.G, color1.B), Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
+                return Color.FromArgb(color1.A, color1.R, color1.G, color1.B).CMC(Color.FromArgb(color2.A, color2.R, color2.G, color2.B)) <= tolerance;
 
             case ToleranceMode.EuclideanDistance:
                 return CompareWithEuclideanDistance(color1, color2, tolerance, true);
@@ -646,5 +655,41 @@ public class ImageBorderRemover
         // 计算欧几里得距离
         double distance = Math.Sqrt(sum);
         return distance <= maxDistance;
+    }
+}
+
+public static class ImageBorderRemoverExt
+{
+    /// <summary>
+    /// 检测图片边框信息（从已加载的图像）
+    /// </summary>
+    /// <param name="image">已加载的图像</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="toleranceMode">容差模式</param>
+    /// <param name="maxLayers">最大检测边框层数，默认3</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
+    /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
+    /// <returns>边框检测结果</returns>
+    public static BorderDetectionResult DetectBorders(this Image<Rgba32> image, int tolerance, ToleranceMode toleranceMode, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
+    {
+        var remover = new ImageBorderRemover(toleranceMode);
+        return remover.DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
+    }
+
+    /// <summary>
+    /// 自动移除图片的多层边框（仅当至少有两边存在边框时才裁剪）
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="toleranceMode">容差模式</param>
+    /// <param name="maxLayers">最大检测边框层数，默认3</param>
+    /// <param name="cropBorderCount">最少边框数</param>
+    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
+    /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
+    /// <returns>是否执行了裁剪操作</returns>
+    public static bool RemoveBorders(this Image<Rgba32> image, int tolerance, ToleranceMode toleranceMode, int maxLayers = 3, int cropBorderCount = 2, bool useDownscaling = false, int downscaleFactor = 4)
+    {
+        var remover = new ImageBorderRemover(toleranceMode, cropBorderCount);
+        return remover.RemoveBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
     }
 }
