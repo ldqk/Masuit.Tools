@@ -1,12 +1,16 @@
-﻿using System;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.PixelFormats;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Masuit.Tools.Media;
 
+/// <summary>
+/// 图像hash机算器
+/// </summary>
 public class ImageHasher
 {
     private readonly IImageTransformer _transformer;
@@ -38,8 +42,18 @@ public class ImageHasher
     /// <returns>64位hash值</returns>
     public ulong AverageHash64(string pathToImage)
     {
-        using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return AverageHash64(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, pathToImage);
+#else
+        using var image = Image.Load<L8>(pathToImage);
+#endif
+        return AverageHash64(image);
     }
 
     /// <summary>
@@ -70,7 +84,18 @@ public class ImageHasher
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong AverageHash64(Image<Rgba32> image)
+    public ulong AverageHash64(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return AverageHash64(source);
+    }
+
+    /// <summary>
+    /// 使用平均值算法计算图像的64位哈希
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong AverageHash64(Image<L8> image)
     {
         var pixels = _transformer.TransformImage(image, 8, 8);
         var average = pixels.Sum(b => b) / 64;
@@ -96,8 +121,18 @@ public class ImageHasher
     /// <returns>64位hash值</returns>
     public ulong MedianHash64(string pathToImage)
     {
-        using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return MedianHash64(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, pathToImage);
+#else
+        using var image = Image.Load<L8>(pathToImage);
+#endif
+        return MedianHash64(image);
     }
 
     /// <summary>
@@ -136,7 +171,19 @@ public class ImageHasher
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong MedianHash64(Image<Rgba32> image)
+    public ulong MedianHash64(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return MedianHash64(source);
+    }
+
+    /// <summary>
+    /// 使用中值算法计算给定图像的64位哈希
+    /// 将图像转换为8x8灰度图像，从中查找中值像素值，然后在结果哈希中将值大于中值的所有像素标记为1。与基于平均值的实现相比，更能抵抗非线性图像编辑。
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong MedianHash64(Image<L8> image)
     {
         var pixels = _transformer.TransformImage(image, 8, 8);
 
@@ -168,8 +215,18 @@ public class ImageHasher
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
     public ulong[] MedianHash256(string pathToImage)
     {
-        using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return MedianHash256(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, pathToImage);
+#else
+        using var image = Image.Load<L8>(pathToImage);
+#endif
+        return MedianHash256(image);
     }
 
     /// <summary>
@@ -214,7 +271,19 @@ public class ImageHasher
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
-    public ulong[] MedianHash256(Image<Rgba32> image)
+    public ulong[] MedianHash256(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return MedianHash256(source);
+    }
+
+    /// <summary>
+    /// 使用中值算法计算给定图像的256位哈希
+    /// 将图像转换为16x16的灰度图像，从中查找中值像素值，然后在结果哈希中将值大于中值的所有像素标记为1。与基于平均值的实现相比，更能抵抗非线性图像编辑。
+    /// </summary>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>256位hash值，生成一个4长度的数组返回</returns>
+    public ulong[] MedianHash256(Image<L8> image)
     {
         var pixels = _transformer.TransformImage(image, 16, 16);
 
@@ -252,8 +321,18 @@ public class ImageHasher
     /// <returns>64位hash值</returns>
     public ulong DifferenceHash64(string pathToImage)
     {
-        using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return DifferenceHash64(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, pathToImage);
+#else
+        using var image = Image.Load<L8>(pathToImage);
+#endif
+        return DifferenceHash64(image);
     }
 
     /// <summary>
@@ -292,7 +371,19 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong DifferenceHash64(Image<Rgba32> image)
+    public ulong DifferenceHash64(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return DifferenceHash64(source);
+    }
+
+    /// <summary>
+    /// 使用差分哈希算法计算图像的64位哈希。
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong DifferenceHash64(Image<L8> image)
     {
         var pixels = _transformer.TransformImage(image, 9, 8);
 
@@ -324,8 +415,18 @@ public class ImageHasher
     /// <returns>256位hash值</returns>
     public ulong[] DifferenceHash256(string pathToImage)
     {
-        using var stream = new FileStream(pathToImage, FileMode.Open, FileAccess.Read);
-        return DifferenceHash256(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true,
+        };
+        using var image = Image.Load<L8>(decoderOptions, pathToImage);
+#else
+        using var image = Image.Load<L8>(pathToImage);
+#endif
+        return DifferenceHash256(image);
     }
 
     /// <summary>
@@ -373,7 +474,19 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>256位hash值</returns>
-    public ulong[] DifferenceHash256(Image<Rgba32> image)
+    public ulong[] DifferenceHash256(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return DifferenceHash256(source);
+    }
+
+    /// <summary>
+    /// 使用差分哈希算法计算图像的64位哈希。
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>256位hash值</returns>
+    public ulong[] DifferenceHash256(Image<L8> image)
     {
         var pixels = _transformer.TransformImage(image, 17, 16);
 
@@ -471,7 +584,19 @@ public class ImageHasher
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public ulong DctHash(Image<Rgba32> image)
+    public ulong DctHash(Image image)
+    {
+        using var source = image.CloneAs<L8>();
+        return DctHash(source);
+    }
+
+    /// <summary>
+    /// 使用DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash(Image<L8> image)
     {
         lock (_dctMatrixLockObject)
         {

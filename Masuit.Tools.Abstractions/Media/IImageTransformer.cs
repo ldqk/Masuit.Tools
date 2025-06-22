@@ -25,5 +25,5 @@ public interface IImageTransformer
     /// <param name="width">给定宽度</param>
     /// <param name="height">给定高度</param>
     /// <returns>包含转换图像的8位像素值的字节数组。</returns>
-    byte[] TransformImage(Image<Rgba32> image, int width, int height);
+    byte[] TransformImage(Image<L8> image, int width, int height);
 }

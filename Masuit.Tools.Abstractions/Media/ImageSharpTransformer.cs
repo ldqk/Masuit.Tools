@@ -1,8 +1,9 @@
-﻿using System.IO;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using System.IO;
 
 namespace Masuit.Tools.Media;
 
@@ -11,13 +12,28 @@ namespace Masuit.Tools.Media;
 /// </summary>
 public class ImageSharpTransformer : IImageTransformer
 {
+#if NET6_0_OR_GREATER
     public byte[] TransformImage(Stream stream, int width, int height)
     {
-        using var image = Image.Load<Rgba32>(stream);
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(144),
+            SkipMetadata = true,
+        };
+        using var image = Image.Load<L8>(decoderOptions, stream);
+        return TransformImage(image, width, height);
+    }
+#else
+
+    public byte[] TransformImage(Stream stream, int width, int height)
+    {
+        using var image = Image.Load<L8>(stream);
         return TransformImage(image, width, height);
     }
 
-    public byte[] TransformImage(Image<Rgba32> image, int width, int height)
+#endif
+
+    public byte[] TransformImage(Image<L8> image, int width, int height)
     {
         image.Mutate(x => x.Resize(new ResizeOptions()
         {
@@ -28,14 +44,14 @@ public class ImageSharpTransformer : IImageTransformer
             },
             Mode = ResizeMode.Stretch,
             Sampler = new BicubicResampler()
-        }).Grayscale());
+        }));
         image.DangerousTryGetSinglePixelMemory(out var pixelSpan);
         var pixelArray = pixelSpan.ToArray();
         var pixelCount = width * height;
         var bytes = new byte[pixelCount];
         for (var i = 0; i < pixelCount; i++)
         {
-            bytes[i] = pixelArray[i].B;
+            bytes[i] = pixelArray[i].PackedValue;
         }
 
         return bytes;
@@ -49,7 +65,7 @@ public static class ImageHashExt
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public static ulong AverageHash64(this Image<Rgba32> image)
+    public static ulong AverageHash64(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.AverageHash64(image);
@@ -61,7 +77,7 @@ public static class ImageHashExt
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public static ulong MedianHash64(this Image<Rgba32> image)
+    public static ulong MedianHash64(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.MedianHash64(image);
@@ -73,7 +89,7 @@ public static class ImageHashExt
     /// </summary>
     /// <param name="image">读取到的图片流</param>
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
-    public static ulong[] MedianHash256(this Image<Rgba32> image)
+    public static ulong[] MedianHash256(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.MedianHash256(image);
@@ -85,7 +101,7 @@ public static class ImageHashExt
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public static ulong DifferenceHash64(this Image<Rgba32> image)
+    public static ulong DifferenceHash64(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.DifferenceHash64(image);
@@ -97,7 +113,7 @@ public static class ImageHashExt
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>256位hash值</returns>
-    public static ulong[] DifferenceHash256(this Image<Rgba32> image)
+    public static ulong[] DifferenceHash256(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.DifferenceHash256(image);
@@ -109,7 +125,7 @@ public static class ImageHashExt
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
     /// <returns>64位hash值</returns>
-    public static ulong DctHash(this Image<Rgba32> image)
+    public static ulong DctHash(this Image image)
     {
         var hasher = new ImageHasher();
         return hasher.DctHash(image);
@@ -121,7 +137,7 @@ public static class ImageHashExt
     /// <param name="image1">图像1</param>
     /// <param name="image2">图像2</param>
     /// <returns>相似度范围：[0,1]</returns>
-    public static float Compare(this Image<Rgba32> image1, Image<Rgba32> image2)
+    public static float Compare(this Image image1, Image image2)
     {
         var hasher = new ImageHasher();
         var hash1 = hasher.DifferenceHash256(image1);
@@ -135,7 +151,7 @@ public static class ImageHashExt
     /// <param name="image1">图像1的hash</param>
     /// <param name="image2path">图像2的路径</param>
     /// <returns>相似度范围：[0,1]</returns>
-    public static float Compare(this Image<Rgba32> image1, string image2path)
+    public static float Compare(this Image image1, string image2path)
     {
         var hasher = new ImageHasher();
         var hash1 = hasher.DifferenceHash256(image1);
