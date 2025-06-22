@@ -5,72 +5,72 @@ namespace Masuit.Tools.Media;
 public static class ColorDeltaE
 {
     // CIE1976 (ΔE*ab)
-    public static double CIE1976(Color color1, Color color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this Color color1, Color color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(CMYColor color1, CMYColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this CMYColor color1, CMYColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(CMYKColor color1, CMYKColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this CMYKColor color1, CMYKColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(HSLColor color1, HSLColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this HSLColor color1, HSLColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(LabColor color1, LabColor color2) => CalculateDeltaE1976(color1, color2);
+    public static double CIE1976(this LabColor color1, LabColor color2) => CalculateDeltaE1976(color1, color2);
 
-    public static double CIE1976(LCHColor color1, LCHColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this LCHColor color1, LCHColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(XYZColor color1, XYZColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
+    public static double CIE1976(this XYZColor color1, XYZColor color2) => CalculateDeltaE1976(color1.ToLab(), color2.ToLab());
 
-    public static double CIE1976(YXZColor color1, YXZColor color2) => CalculateDeltaE1976(color1.YxzToLab(), color2.YxzToLab());
+    public static double CIE1976(this YXZColor color1, YXZColor color2) => CalculateDeltaE1976(color1.YxzToLab(), color2.YxzToLab());
 
     // CIE1994 (ΔE94)
-    public static double CIE1994(Color color1, Color color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this Color color1, Color color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(CMYColor color1, CMYColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this CMYColor color1, CMYColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(CMYKColor color1, CMYKColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this CMYKColor color1, CMYKColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(HSLColor color1, HSLColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this HSLColor color1, HSLColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(LabColor color1, LabColor color2, bool textile = false) => CalculateDeltaE1994(color1, color2, textile);
+    public static double CIE1994(this LabColor color1, LabColor color2, bool textile = false) => CalculateDeltaE1994(color1, color2, textile);
 
-    public static double CIE1994(LCHColor color1, LCHColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this LCHColor color1, LCHColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(XYZColor color1, XYZColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
+    public static double CIE1994(this XYZColor color1, XYZColor color2, bool textile = false) => CalculateDeltaE1994(color1.ToLab(), color2.ToLab(), textile);
 
-    public static double CIE1994(YXZColor color1, YXZColor color2, bool textile = false) => CalculateDeltaE1994(color1.YxzToLab(), color2.YxzToLab(), textile);
+    public static double CIE1994(this YXZColor color1, YXZColor color2, bool textile = false) => CalculateDeltaE1994(color1.YxzToLab(), color2.YxzToLab(), textile);
 
     // CIE2000 (ΔE00)
-    public static double CIE2000(Color color1, Color color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this Color color1, Color color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(CMYColor color1, CMYColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this CMYColor color1, CMYColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(CMYKColor color1, CMYKColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this CMYKColor color1, CMYKColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(HSLColor color1, HSLColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this HSLColor color1, HSLColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(LabColor color1, LabColor color2) => CalculateDeltaE2000(color1, color2);
+    public static double CIE2000(this LabColor color1, LabColor color2) => CalculateDeltaE2000(color1, color2);
 
-    public static double CIE2000(LCHColor color1, LCHColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this LCHColor color1, LCHColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(XYZColor color1, XYZColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
+    public static double CIE2000(this XYZColor color1, XYZColor color2) => CalculateDeltaE2000(color1.ToLab(), color2.ToLab());
 
-    public static double CIE2000(YXZColor color1, YXZColor color2) => CalculateDeltaE2000(color1.YxzToLab(), color2.YxzToLab());
+    public static double CIE2000(this YXZColor color1, YXZColor color2) => CalculateDeltaE2000(color1.YxzToLab(), color2.YxzToLab());
 
     // CMC (ΔEcmc)
-    public static double CMC(Color color1, Color color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this Color color1, Color color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(CMYColor color1, CMYColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this CMYColor color1, CMYColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(CMYKColor color1, CMYKColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this CMYKColor color1, CMYKColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(HSLColor color1, HSLColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this HSLColor color1, HSLColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(LabColor color1, LabColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1, color2, l, c);
+    public static double CMC(this LabColor color1, LabColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1, color2, l, c);
 
-    public static double CMC(LCHColor color1, LCHColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this LCHColor color1, LCHColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(XYZColor color1, XYZColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
+    public static double CMC(this XYZColor color1, XYZColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.ToLab(), color2.ToLab(), l, c);
 
-    public static double CMC(YXZColor color1, YXZColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.YxzToLab(), color2.YxzToLab(), l, c);
+    public static double CMC(this YXZColor color1, YXZColor color2, double l = 2.0, double c = 1.0) => CalculateDeltaECMC(color1.YxzToLab(), color2.YxzToLab(), l, c);
 
     #region Core Calculation Methods
 
