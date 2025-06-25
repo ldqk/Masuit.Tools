@@ -656,8 +656,18 @@ public class ImageHasher
     /// <returns>64位hash值</returns>
     public ulong DctHash(string path)
     {
-        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        return DctHash(stream);
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(128),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, path);
+#else
+        using var image = Image.Load<L8>(path);
+#endif
+        return DctHash(image);
     }
 
     /// <summary>
