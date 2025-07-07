@@ -953,6 +953,11 @@ list.ChangeIndex(item,3); // 将元素item的索引位置变为第3个
 list.ChangeIndex(t=>t.Id=="123",2); // 将id为123的元素的索引位置变为第2个
 
 var item=list.Percentile(50); // 取第50%分位数的元素
+
+// 比较两个集合的差异
+var (adds,updates,removes)=list1.CompareChanges(list2,x=>x.Id); // 按Id字段比较两个集合的差异，返回新增、更新、删除的元素
+var (adds,updates,removes)=list1.CompareChanges(list2,x=>x.Id+x.Name); // 按Id和Name字段比较两个集合的差异，返回新增、更新、删除的元素
+var (adds,updates,removes)=list1.CompareChangesPlus(list2,x=>x.Id+x.Name); // 按Id和Name字段比较两个集合的差异，返回新增、更新、删除的元素，其中updates返回的每个元素包含了旧值和新值
 ```
 
 ### 31.Mime类型
