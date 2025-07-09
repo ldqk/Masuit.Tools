@@ -131,8 +131,8 @@ namespace Masuit.Tools.Strings
             {
                 <= 2 => "01",
                 > 2 and < 65 => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".Substring(0, @base),
-                >= 65 and <= 95 => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!-._\"#$%&'()*+,/:;<=>?@[\\]^`{|}~".Substring(0, @base),
-                _ => throw new ArgumentException("默认进制最大支持95进制")
+                >= 65 and <= 94 => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!-._\"#$%&'()*+,/:;<=>?@[\\]^`{|}~".Substring(0, @base),
+                _ => throw new ArgumentException("默认进制最大支持94进制")
             };
 
             if (offset >= @base)
