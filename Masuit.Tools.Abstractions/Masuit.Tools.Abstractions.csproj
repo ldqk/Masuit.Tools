@@ -63,7 +63,7 @@
         <PackageReference Include="IndexRange" Version="1.1.0" />
         <PackageReference Include="System.Memory" Version="4.6.3" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.10]" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.11]" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[7.0.0]" />
@@ -74,7 +74,7 @@
         <PackageReference Include="IndexRange" Version="1.1.0" />
         <PackageReference Include="System.Memory" Version="4.6.3" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.10]" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.11]" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[7.0.0]" />
@@ -84,24 +84,24 @@
         <PackageReference Include="Castle.Core" Version="5.1.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[7.0.0]" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
         <PackageReference Include="Castle.Core" Version="5.2.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.7" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
         <PackageReference Include="Castle.Core" Version="5.2.1" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.7" />
         <PackageReference Include="System.Collections.Immutable" Version="9.0.7" />
-        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
@@ -111,7 +111,7 @@
         <PackageReference Include="System.Collections.Immutable" Version="[6.0.0]" />
         <PackageReference Include="System.Memory" Version="[4.6]" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="[1.0.0]" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.10]" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="[2.1.11]" />
         <PackageReference Include="System.Buffers" version="[4.6]" targetFramework="net461" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="[4.5]" />
