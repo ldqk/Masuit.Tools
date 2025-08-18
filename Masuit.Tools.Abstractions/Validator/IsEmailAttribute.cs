@@ -1,6 +1,5 @@
 ﻿using DnsClient;
 using Masuit.Tools.Config;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
@@ -19,12 +18,12 @@ public class IsEmailAttribute : ValidationAttribute
     /// <summary>
     /// 域白名单
     /// </summary>
-    private string WhiteList { get; set; }
+    private string[] WhiteList { get; set; }
 
     /// <summary>
     /// 域黑名单
     /// </summary>
-    private string BlockList { get; set; }
+    private string[] BlockList { get; set; }
 
     /// <summary>
     /// 是否允许为空
@@ -49,8 +48,8 @@ public class IsEmailAttribute : ValidationAttribute
     /// <returns></returns>
     public override bool IsValid(object value)
     {
-        WhiteList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainWhiteList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
-        BlockList = Regex.Replace(ConfigHelper.GetConfigOrDefault("EmailDomainBlockList"), @"(\w)\.([a-z]+),?", @"$1\.$2!").Trim('!');
+        WhiteList = ConfigHelper.Get<string[]>("EmailDomainWhiteList") ?? [];
+        BlockList = ConfigHelper.Get<string[]>("EmailDomainBlockList") ?? [];
         if (AllowEmpty)
         {
             switch (value)
@@ -80,12 +79,12 @@ public class IsEmailAttribute : ValidationAttribute
             return false;
         }
 
-        if (!string.IsNullOrEmpty(WhiteList) && WhiteList.Split('!').Any(item => Regex.IsMatch(email, item)))
+        if (WhiteList.Any(item => Regex.IsMatch(email, item)))
         {
             return true;
         }
 
-        if (!string.IsNullOrEmpty(BlockList) && BlockList.Split(['!', ';'], StringSplitOptions.RemoveEmptyEntries).Any(item => Regex.IsMatch(email, item)))
+        if (BlockList.Any(item => Regex.IsMatch(email, item)))
         {
             ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
             return false;
@@ -96,7 +95,7 @@ public class IsEmailAttribute : ValidationAttribute
         {
             var nslookup = new LookupClient();
             var records = nslookup.Query(email.Split('@')[1], QueryType.MX).Answers.MxRecords().ToList();
-            if (!string.IsNullOrEmpty(BlockList) && records.Exists(r => BlockList.Split('!').Any(item => Regex.IsMatch(r.Exchange.Value, item))))
+            if (records.Exists(r => BlockList.Any(item => Regex.IsMatch(r.Exchange.Value, item))))
             {
                 ErrorMessage = _customMessage ?? "您输入的邮箱无效，请使用真实有效的邮箱地址！";
                 return false;

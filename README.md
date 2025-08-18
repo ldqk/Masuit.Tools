@@ -92,8 +92,8 @@ mongodb的封装操作类独立包
 
 工具库需要用到外部配置节，.NET Framework项目配置在web.config/app.config的AppSettings配置节中，.NET Core项目配置在appsettings.json中：
 
-1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名，英文逗号分隔，每个元素支持正则表达式，若未配置，则不启用邮箱校验白名单，示例: `"^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com"`
-2. EmailDomainBlockList，邮箱校验需要用到的黑名单域名，英文逗号分隔，每个元素支持正则表达式，且黑名单优先级高于白名单，若未配置，则不启用邮箱校验黑白名单
+1. EmailDomainWhiteList，邮箱校验需要用到的白名单域名正则表达式，数组形式，每个元素支持正则表达式，若未配置，则不启用邮箱校验白名单，示例: `["^\\w{1,5}@qq.com","^\\w{1,5}@163.com","^\\w{1,5}@gmail.com","^\\w{1,5}@outlook.com"]`
+2. EmailDomainBlockList，邮箱校验需要用到的黑名单域名正则表达式，数组形式，每个元素支持正则表达式，且黑名单优先级高于白名单，若未配置，则不启用邮箱校验黑白名单
 
 ```csharp
 public Startup(IConfiguration configuration)
@@ -145,7 +145,7 @@ https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 ### 1. 检验字符串是否是Email、手机号、URL、IP地址、身份证号等
 
 ```csharp
-var (isMatch, match) = "337845818@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单，逗号分隔，如"EmailDomainBlockList": "^\\w{1,5}@qq.com,^\\w{1,5}@163.com,^\\w{1,5}@gmail.com,^\\w{1,5}@outlook.com",
+var (isMatch, match) = "337845818@qq.com".MatchEmail(); // 可在appsetting.json中添加EmailDomainWhiteList和EmailDomainBlockList配置邮箱域名黑白名单正则表达式数组，如"EmailDomainBlockList": ["^\\w{1,5}@qq.com","^\\w{1,5}@163.com","^\\w{1,5}@gmail.com","^\\w{1,5}@outlook.com"]
 bool isInetAddress = "114.114.114.114".MatchInetAddress(); // 匹配IP地址
 bool isUrl = "http://masuit.org/20/history".MatchUrl(); // 匹配url
 bool isPhoneNumber = "15205201520".MatchPhoneNumber(); // 匹配手机号
