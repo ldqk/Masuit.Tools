@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenchmarkTest", "BenchmarkT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.DigtalWatermarker", "Masuit.Tools.DigtalWatermarker\Masuit.Tools.DigtalWatermarker.csproj", "{2CB82B76-8F91-4826-A40B-B30FBB9A5108}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.DigitalWatermarker.Test", "Masuit.Tools.DigitalWatermarker.Test\Masuit.Tools.DigitalWatermarker.Test.csproj", "{C4224795-2CA3-439D-9B52-A0C76764F6CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Masuit.Tools.DigitalWatermarker.Test", "Test\Masuit.Tools.DigitalWatermarker.Test\Masuit.Tools.DigitalWatermarker.Test.csproj", "{4AA0AE41-A460-832A-A001-E440E294BF54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +97,10 @@ Global
 		{2CB82B76-8F91-4826-A40B-B30FBB9A5108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CB82B76-8F91-4826-A40B-B30FBB9A5108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CB82B76-8F91-4826-A40B-B30FBB9A5108}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4224795-2CA3-439D-9B52-A0C76764F6CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4224795-2CA3-439D-9B52-A0C76764F6CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4224795-2CA3-439D-9B52-A0C76764F6CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4224795-2CA3-439D-9B52-A0C76764F6CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AA0AE41-A460-832A-A001-E440E294BF54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AA0AE41-A460-832A-A001-E440E294BF54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AA0AE41-A460-832A-A001-E440E294BF54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AA0AE41-A460-832A-A001-E440E294BF54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,7 +111,7 @@ Global
 		{99185F12-DFAD-4DB8-A2C4-C7E9700C0A31} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{AB9F4635-0ACB-4E5E-8E1B-431E0818CF60} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 		{0599ACF0-8495-4E72-AB5E-B7446A5C413A} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
-		{C4224795-2CA3-439D-9B52-A0C76764F6CB} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
+		{4AA0AE41-A460-832A-A001-E440E294BF54} = {E0B8FBD1-A28A-4420-9DE2-6BD06035CBAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B57FDA8F-95CF-478B-A0A8-7FF0F01CCFAB}
