@@ -774,6 +774,13 @@ var sim=ImageHasher.Compare(hash1,hash2); // 图片的相似度，范围：[0,1]
 var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 ```
 最佳实践案例，以图搜图：https://github.com/ldqk/ImageSearch
+
+#### 图像添加盲水印
+```bash
+Install-Package Masuit.Tools.DigitalWatermarker
+Install-Package OpenCvSharp4.runtime.win
+```
+用法参阅：[Masuit.Tools.DigitalWatermarker](./Masuit.Tools.DigitalWatermarker/README-DigitalWatermarker.md)
 ### 26.随机数
 
 ```csharp
