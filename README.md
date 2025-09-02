@@ -780,7 +780,7 @@ var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 Install-Package Masuit.Tools.DigitalWatermarker
 Install-Package OpenCvSharp4.runtime.win
 ```
-用法参阅：[Masuit.Tools.DigitalWatermarker](./Masuit.Tools.DigitalWatermarker/README-DigitalWatermarker.md)
+用法参阅：[Masuit.Tools.DigitalWatermarker](./Masuit.Tools.DigtalWatermarker/README-DigitalWatermarker.md)
 ### 26.随机数
 
 ```csharp
