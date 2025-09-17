@@ -68,7 +68,8 @@ public class ImageBorderRemover
         byte toleranceValue = (byte)(tolerance * 2.55);
 
         // 使用多层边框检测算法
-        var (top, bottom, left, right, layers, colors) = FindContentBordersWithLayers(image, toleranceValue, maxLayers, useDownscaling, downscaleFactor);
+        using var clone = image.Clone(c => c.Grayscale());
+        var (top, bottom, left, right, layers, colors) = FindContentBordersWithLayers(clone, toleranceValue, maxLayers, useDownscaling, downscaleFactor);
 
         // 设置内容边界
         result.ContentTop = top;

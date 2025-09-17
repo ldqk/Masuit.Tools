@@ -537,12 +537,12 @@ namespace Masuit.Tools.DateTimeExt
         /// <summary>
         /// 起始时间
         /// </summary>
-        public DateTime Start { get; set; }
+        public DateTime? Start { get; set; }
 
         /// <summary>
         /// 终止时间
         /// </summary>
-        public DateTime End { get; set; }
+        public DateTime? End { get; set; }
     }
 
     /// <summary>
