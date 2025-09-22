@@ -30,6 +30,7 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
         var field = attr?.FieldName ?? bindingContext.FieldName;
         var modelType = bindingContext.ModelType;
         object value = null;
+        Exception exception = null;
         if (attr != null)
         {
             if (modelType.IsSimpleType() || modelType.IsSimpleArrayType() || modelType.IsSimpleListType())
@@ -65,7 +66,14 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
                     {
                         if (json.TryGetValue(field, StringComparison.OrdinalIgnoreCase, out var jtoken))
                         {
-                            value = jtoken.ToObject(modelType);
+                            if (jtoken.Type is JTokenType.String)
+                            {
+                                jtoken.Value<string>().TryConvertTo(modelType, out value);
+                            }
+                            else
+                            {
+                                value = jtoken.ToObject(modelType);
+                            }
                         }
                         else
                         {
@@ -82,6 +90,7 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
                         catch (Exception e)
                         {
                             logger.LogError(e, e.Message, json.ToString());
+                            exception = e;
                         }
                     }
                 }
@@ -151,6 +160,11 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
         if (value != null)
         {
             bindingContext.Result = ModelBindingResult.Success(value);
+        }
+
+        if (exception != null)
+        {
+            throw exception;
         }
 
         return Task.CompletedTask;
