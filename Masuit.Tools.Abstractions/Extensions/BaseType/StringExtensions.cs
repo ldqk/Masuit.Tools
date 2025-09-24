@@ -398,13 +398,13 @@ namespace Masuit.Tools
         /// <returns></returns>
         public static string MaskEmail(this string s, char mask = '*')
         {
-            var index = s.LastIndexOf("@");
-            var oldValue = s.Substring(0, index);
             if (!MatchEmail(s).isMatch)
             {
                 return s;
             }
 
+            var index = s.LastIndexOf("@");
+            var oldValue = s.Substring(0, index);
             var newValue = Mask(oldValue, mask);
             return newValue + s.Substring(index, s.Length - index);
         }
