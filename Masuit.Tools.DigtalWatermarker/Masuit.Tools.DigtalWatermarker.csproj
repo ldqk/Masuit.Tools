@@ -24,7 +24,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <Title>Masuit.Tools.DigtalWatermarker</Title>
-        <PackageReadmeFile>README-DigitalWatermarker.md</PackageReadmeFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <NeutralLanguage>zh-CN</NeutralLanguage>
     </PropertyGroup>
 
@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="README-DigitalWatermarker.md">
+    <None Update="README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
