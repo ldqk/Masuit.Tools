@@ -11,7 +11,7 @@ namespace Masuit.Tools.Core;
 /// <param name="enableGlobalNolock">全局启用，无需手动调用WithNolock扩展</param>
 public class WithNoLockInterceptor(bool enableGlobalNolock = false) : DbCommandInterceptor
 {
-    private static readonly Regex TableRegex = new Regex(@"(?<table>\[\w+\] AS \[[a-zA-Z]\w*\](?! WITH \(NOLOCK\)))", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex TableRegex = new Regex(@"(FROM|JOIN) \[[a-zA-Z]\w*\] AS \[[a-zA-Z]\w*\](?! WITH \(NOLOCK\))", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public override InterceptionResult<object> ScalarExecuting(DbCommand command, CommandEventData eventData, InterceptionResult<object> result)
     {
@@ -62,6 +62,7 @@ CancellationToken cancellationToken = new CancellationToken())
         AddWithNoLock(command);
         return base.ReaderExecutingAsync(command, eventData, result, cancellationToken);
     }
+
 #endif
 
     private void AddWithNoLock(DbCommand command)
@@ -69,7 +70,7 @@ CancellationToken cancellationToken = new CancellationToken())
         // 检查查询是否有标记
         if (enableGlobalNolock || command.CommandText.StartsWith("-- NOLOCK"))
         {
-            command.CommandText = TableRegex.Replace(command.CommandText, "${table} WITH (NOLOCK)");
+            command.CommandText = TableRegex.Replace(command.CommandText, "$0 WITH (NOLOCK)");
         }
     }
 }
