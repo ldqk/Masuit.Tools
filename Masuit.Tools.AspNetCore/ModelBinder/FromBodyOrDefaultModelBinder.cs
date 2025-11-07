@@ -85,7 +85,21 @@ public class FromBodyOrDefaultModelBinder(ILogger<FromBodyOrDefaultModelBinder> 
                         // 可能是 字典或者实体 类型,尝试将modeltype 当初整个请求参数对象
                         try
                         {
-                            value = json.ToObject(modelType);
+                            if (json.TryGetValue(field, StringComparison.OrdinalIgnoreCase, out var jtoken))
+                            {
+                                if (jtoken.Type is JTokenType.String)
+                                {
+                                    jtoken.Value<string>().TryConvertTo(modelType, out value);
+                                }
+                                else
+                                {
+                                    value = jtoken.ToObject(modelType);
+                                }
+                            }
+                            else
+                            {
+                                value = json.ToObject(modelType);
+                            }
                         }
                         catch (Exception e)
                         {
