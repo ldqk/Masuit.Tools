@@ -56,6 +56,35 @@ public class ImageSharpTransformer : IImageTransformer
 
         return bytes;
     }
+
+    public byte[,] GetPixelData(Image<L8> image, int width, int height)
+    {
+        image.Mutate(x => x.Resize(new ResizeOptions()
+        {
+            Size = new Size
+            {
+                Width = width,
+                Height = height
+            },
+            Mode = ResizeMode.Stretch,
+            Sampler = new BicubicResampler()
+        }));
+        var grayscalePixels = new byte[width, height];
+        image.ProcessPixelRows(accessor =>
+        {
+            for (int y = 0; y < width; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (int x = 0; x < height; x++)
+                {
+                    var pixel = row[x];
+                    grayscalePixels[y, x] = pixel.PackedValue;
+                }
+            }
+        });
+
+        return grayscalePixels;
+    }
 }
 
 public static class ImageHashExt

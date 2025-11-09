@@ -523,136 +523,7 @@ public class ImageHasher
     /// 使用DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
-    /// <param name="sourceStream">读取到的图片流</param>
-    /// <returns>64位hash值</returns>
-    public ulong DctHash(Stream sourceStream)
-    {
-        lock (_dctMatrixLockObject)
-        {
-            if (!_isDctMatrixInitialized)
-            {
-                _dctMatrix = GenerateDctMatrix(32);
-                _isDctMatrixInitialized = true;
-            }
-        }
-
-        var pixels = _transformer.TransformImage(sourceStream, 32, 32);
-
-        // 将像素转换成float类型数组
-        var fPixels = new float[1024];
-        for (var i = 0; i < 1024; i++)
-        {
-            fPixels[i] = pixels[i] / 255.0f;
-        }
-
-        // 计算 dct 矩阵
-        var dctPixels = ComputeDct(fPixels, _dctMatrix);
-
-        // 从矩阵中1,1到8,8获得8x8的区域，忽略最低频率以提高检测
-        var dctHashPixels = new float[64];
-        for (var x = 0; x < 8; x++)
-        {
-            for (var y = 0; y < 8; y++)
-            {
-                dctHashPixels[x + y * 8] = dctPixels[x + 1][y + 1];
-            }
-        }
-
-        // 计算中值
-        var pixelList = new List<float>(dctHashPixels);
-        pixelList.Sort();
-
-        // 中间像素的平均值
-        var median = (pixelList[31] + pixelList[32]) / 2;
-
-        // 遍历所有像素，如果超过中值，则将其设置为1，如果低于中值，则将其设置为0。
-        var hash = 0UL;
-        for (var i = 0; i < 64; i++)
-        {
-            if (dctHashPixels[i] > median)
-            {
-                hash |= 1UL << i;
-            }
-        }
-
-        return hash;
-    }
-
-    /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
-    /// </summary>
-    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
-    /// <param name="image">读取到的图片流</param>
-    /// <returns>64位hash值</returns>
-    public ulong DctHash(Image image)
-    {
-        using var source = image.CloneAs<L8>();
-        return DctHash(source);
-    }
-
-    /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
-    /// </summary>
-    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
-    /// <param name="image">读取到的图片流</param>
-    /// <returns>64位hash值</returns>
-    public ulong DctHash(Image<L8> image)
-    {
-        lock (_dctMatrixLockObject)
-        {
-            if (!_isDctMatrixInitialized)
-            {
-                _dctMatrix = GenerateDctMatrix(32);
-                _isDctMatrixInitialized = true;
-            }
-        }
-
-        var pixels = _transformer.TransformImage(image, 32, 32);
-
-        // 将像素转换成float类型数组
-        var fPixels = new float[1024];
-        for (var i = 0; i < 1024; i++)
-        {
-            fPixels[i] = pixels[i] / 255.0f;
-        }
-
-        // 计算 dct 矩阵
-        var dctPixels = ComputeDct(fPixels, _dctMatrix);
-
-        // 从矩阵中1,1到8,8获得8x8的区域，忽略最低频率以提高检测
-        var dctHashPixels = new float[64];
-        for (var x = 0; x < 8; x++)
-        {
-            for (var y = 0; y < 8; y++)
-            {
-                dctHashPixels[x + y * 8] = dctPixels[x + 1][y + 1];
-            }
-        }
-
-        // 计算中值
-        var pixelList = new List<float>(dctHashPixels);
-        pixelList.Sort();
-
-        // 中间像素的平均值
-        var median = (pixelList[31] + pixelList[32]) / 2;
-
-        // 遍历所有像素，如果超过中值，则将其设置为1，如果低于中值，则将其设置为0。
-        var hash = 0UL;
-        for (var i = 0; i < 64; i++)
-        {
-            if (dctHashPixels[i] > median)
-            {
-                hash |= 1UL << i;
-            }
-        }
-
-        return hash;
-    }
-
-    /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
-    /// </summary>
-    /// <param name="path">图片的文件路径</param>
+    /// <param name="path">图片路径</param>
     /// <returns>64位hash值</returns>
     public ulong DctHash(string path)
     {
@@ -660,7 +531,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(128),
+            TargetSize = new Size(160),
             SkipMetadata = true
         };
         using var image = Image.Load<L8>(decoderOptions, path);
@@ -671,105 +542,161 @@ public class ImageHasher
     }
 
     /// <summary>
+    /// 使用DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash(Image image)
+    {
+        using var clone = image.CloneAs<L8>();
+        return DctHash(clone);
+    }
+
+    /// <summary>
+    /// 使用DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash(Image<L8> image)
+    {
+        var grayscalePixels = _transformer.GetPixelData(image, 32, 32);
+        var dctMatrix = ComputeDct(grayscalePixels, 32);
+        var topLeftBlock = ExtractTopLeftBlock(dctMatrix, 8);
+        var median = CalculateMedian(topLeftBlock);
+        var hash = GenerateHash(topLeftBlock, median);
+        return hash;
+    }
+
+    /// <summary>
     /// 计算图像的DCT矩阵
     /// </summary>
-    /// <param name="image">用于计算dct的图像</param>
-    /// <param name="dctMatrix">DCT系数矩阵</param>
-    /// <returns>图像的DCT矩阵</returns>
-    private static float[][] ComputeDct(float[] image, float[][] dctMatrix)
+    /// <param name="input"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    private double[,] ComputeDct(byte[,] input, int size)
     {
-        // dct矩阵的大小，图像的大小与DCT矩阵相同
-        var size = dctMatrix.GetLength(0);
-
-        // 降图像转换成矩阵
-        var imageMat = new float[size][];
-        for (var i = 0; i < size; i++)
+        var output = new double[size, size];
+        var rowDCT = new double[size, size];
+        for (int y = 0; y < size; y++)
         {
-            imageMat[i] = new float[size];
-        }
-
-        for (var y = 0; y < size; y++)
-        {
-            for (var x = 0; x < size; x++)
+            for (int x = 0; x < size; x++)
             {
-                imageMat[y][x] = image[x + y * size];
+                rowDCT[y, x] = input[y, x];
             }
         }
 
-        return Multiply(Multiply(dctMatrix, imageMat), Transpose(dctMatrix));
-    }
-
-    /// <summary>
-    /// 生成DCT系数矩阵
-    /// </summary>
-    /// <param name="size">矩阵的大小</param>
-    /// <returns>DCT系数矩阵</returns>
-    private static float[][] GenerateDctMatrix(int size)
-    {
-        var matrix = new float[size][];
-        for (int i = 0; i < size; i++)
+        for (int y = 0; y < size; y++)
         {
-            matrix[i] = new float[size];
-        }
-
-        var c1 = Math.Sqrt(2.0f / size);
-        for (var j = 0; j < size; j++)
-        {
-            matrix[0][j] = (float)Math.Sqrt(1.0d / size);
-        }
-
-        for (var j = 0; j < size; j++)
-        {
-            for (var i = 1; i < size; i++)
+            var row = new double[size];
+            for (int x = 0; x < size; x++)
             {
-                matrix[i][j] = (float)(c1 * Math.Cos(((2 * j + 1) * i * Math.PI) / (2.0d * size)));
+                row[x] = rowDCT[y, x];
+            }
+            var dctRow = DCT1D(row);
+            for (int x = 0; x < size; x++)
+            {
+                rowDCT[y, x] = dctRow[x];
             }
         }
 
-        return matrix;
-    }
-
-    /// <summary>
-    /// 矩阵的乘法运算
-    /// </summary>
-    /// <param name="a">矩阵a</param>
-    /// <param name="b">矩阵b</param>
-    /// <returns>Result matrix.</returns>
-    private static float[][] Multiply(float[][] a, float[][] b)
-    {
-        var n = a[0].Length;
-        var c = new float[n][];
-        for (var i = 0; i < n; i++)
+        for (int x = 0; x < size; x++)
         {
-            c[i] = new float[n];
-        }
-
-        for (var i = 0; i < n; i++)
-            for (var k = 0; k < n; k++)
-                for (var j = 0; j < n; j++)
-                    c[i][j] += a[i][k] * b[k][j];
-        return c;
-    }
-
-    /// <summary>
-    /// 矩阵转置
-    /// </summary>
-    /// <param name="mat">待转换的矩阵</param>
-    /// <returns>转换后的矩阵</returns>
-    private static float[][] Transpose(float[][] mat)
-    {
-        var size = mat[0].Length;
-        var transpose = new float[size][];
-        for (var i = 0; i < size; i++)
-        {
-            transpose[i] = new float[size];
-            for (var j = 0; j < size; j++)
+            var col = new double[size];
+            for (int y = 0; y < size; y++)
             {
-                transpose[i][j] = mat[j][i];
+                col[y] = rowDCT[y, x];
+            }
+            var dctCol = DCT1D(col);
+            for (int y = 0; y < size; y++)
+            {
+                output[y, x] = dctCol[y];
             }
         }
 
-        return transpose;
+        return output;
+    }
+
+    private double[] DCT1D(double[] input)
+    {
+        int n = input.Length;
+        var output = new double[n];
+
+        for (int u = 0; u < n; u++)
+        {
+            double sum = 0.0;
+            double cu = u == 0 ? 1.0 / Math.Sqrt(2.0) : 1.0;
+
+            for (int x = 0; x < n; x++)
+            {
+                sum += input[x] * Math.Cos((Math.PI / n) * (x + 0.5) * u);
+            }
+
+            output[u] = cu * sum * Math.Sqrt(2.0 / n);
+        }
+
+        return output;
+    }
+
+    private double[,] ExtractTopLeftBlock(double[,] matrix, int blockSize)
+    {
+        var block = new double[blockSize, blockSize];
+
+        for (int y = 0; y < blockSize; y++)
+        {
+            for (int x = 0; x < blockSize; x++)
+            {
+                block[y, x] = matrix[y, x];
+            }
+        }
+
+        return block;
+    }
+
+    private double CalculateMedian(double[,] matrix)
+    {
+        int height = matrix.GetLength(0);
+        int width = matrix.GetLength(1);
+
+        var flatArray = new double[height * width];
+        int index = 0;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                flatArray[index++] = matrix[y, x];
+            }
+        }
+
+        Array.Sort(flatArray);
+
+        if (flatArray.Length % 2 == 0)
+        {
+            return (flatArray[flatArray.Length / 2 - 1] + flatArray[flatArray.Length / 2]) / 2.0;
+        }
+
+        return flatArray[flatArray.Length / 2];
+    }
+
+    private ulong GenerateHash(double[,] block, double median)
+    {
+        ulong hash = 0UL;
+        int bitPosition = 0;
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                if (block[y, x] >= median)
+                {
+                    hash |= (1UL << bitPosition);
+                }
+                bitPosition++;
+            }
+        }
+
+        return hash;
     }
 
     /// <summary>

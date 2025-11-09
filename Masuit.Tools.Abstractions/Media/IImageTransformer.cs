@@ -26,4 +26,6 @@ public interface IImageTransformer
     /// <param name="height">给定高度</param>
     /// <returns>包含转换图像的8位像素值的字节数组。</returns>
     byte[] TransformImage(Image<L8> image, int width, int height);
+
+    public byte[,] GetPixelData(Image<L8> image, int width, int height);
 }
