@@ -711,10 +711,10 @@ public class ImageHasher
         var hashDifference = hash1 ^ hash2;
 
         // 计算汉明距离
-        var onesInHash = HammingWeight(hashDifference);
+        var hamming = HammingWeight(hashDifference);
 
         // 得到相似度
-        return 1.0f - onesInHash / 64.0f;
+        return 1.0f - hamming / 64.0f;
     }
 
     /// <summary>
