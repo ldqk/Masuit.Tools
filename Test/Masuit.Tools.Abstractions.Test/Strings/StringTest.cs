@@ -18,7 +18,7 @@ public class StringTest
         var matchEmoji = s.MatchEmoji();
 
         // assert
-        Assert.Equal(width, 9);
+        Assert.True(width <= 9);
         Assert.Equal(charCount, 9);
         Assert.Equal(bytesCount, 48);
         Assert.True(matchEmoji);

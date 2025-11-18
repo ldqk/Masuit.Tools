@@ -18,9 +18,10 @@ namespace Masuit.Tools.Test
         [Fact]
         public void Can_EncryptAuto()
         {
+            var (publicKey, privateKey) = RsaCrypt.GenerateRsaKeys();
             string origin = "123456";
-            string enc = origin.RSAEncrypt();
-            string dec = enc.RSADecrypt();
+            string enc = origin.RSAEncrypt(publicKey);
+            string dec = enc.RSADecrypt(privateKey);
             Assert.Equal(dec, origin);
         }
     }

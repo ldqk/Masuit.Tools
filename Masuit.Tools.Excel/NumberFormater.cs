@@ -55,6 +55,8 @@ internal class NumberFormater
     public long FromString(string str)
     {
         int j = 0;
-        return new string(str.ToCharArray().Reverse().ToArray()).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + _offset) * (long)Math.Pow(Length, j++));
+        var array = str.ToCharArray();
+        array.Reverse();
+        return new string(array).Where(ch => Characters.Contains(ch)).Sum(ch => (Characters.IndexOf(ch) + _offset) * (long)Math.Pow(Length, j++));
     }
 }

@@ -7,7 +7,7 @@ namespace Masuit.Tools.Test
         [Fact]
         public void MatchUrl_True()
         {
-            bool expect = "https://git.lug.us-tc.edu.cn/masuit/soft".MatchUrl();
+            bool expect = "https://www.baidu.com/soft".MatchUrl();
             Assert.Equal(true, expect);
         }
 

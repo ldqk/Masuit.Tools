@@ -6,10 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
-using Microsoft.OpenApi.Models;
 using System;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
+using Microsoft.OpenApi;
 
 namespace Masuit.Tools.AspNetCore.ResumeFileResults.WebTest
 {

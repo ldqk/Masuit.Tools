@@ -184,8 +184,8 @@ internal class RsaPem
             Array.Copy(bigb, 0, c, 1, bigb.Length);
             bigb = c;
         }
-
-        return new BigInteger(bigb.Reverse().ToArray()); //C#的二进制是反的
+        bigb.Reverse();
+        return new BigInteger(bigb);
     }
 
     /// <summary>
@@ -193,15 +193,16 @@ internal class RsaPem
     /// </summary>
     public static byte[] BigB(BigInteger bigx)
     {
-        byte[] val = bigx.ToByteArray().Reverse().ToArray(); //C#的二进制是反的
-        if (val[0] == 0)
+        var bytes = bigx.ToByteArray();
+        bytes.Reverse();
+        if (bytes[0] == 0)
         {
-            byte[] c = new byte[val.Length - 1];
-            Array.Copy(val, 1, c, 0, c.Length);
-            val = c;
+            byte[] c = new byte[bytes.Length - 1];
+            Array.Copy(bytes, 1, c, 0, c.Length);
+            bytes = c;
         }
 
-        return val;
+        return bytes;
     }
 
     /// <summary>

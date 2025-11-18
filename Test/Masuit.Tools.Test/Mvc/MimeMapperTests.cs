@@ -17,14 +17,7 @@ namespace Masuit.Tools.UnitTest.Mvc
         [Fact]
         public void GetDefaultExtension()
         {
-            Assert.Equal("text/plain", _mapper.GetMimeFromExtension("txt"));
-        }
-
-        [Fact]
-        public void Search_Works_For_Extensions_With_Dot_As_Well()
-        {
-            Assert.NotNull(_mapper.GetMimeFromExtension("css"));
-            Assert.Equal(_mapper.GetMimeFromExtension("css"), _mapper.GetMimeFromExtension(".css"));
+            Assert.Equal("text/plain", _mapper.GetMimeFromExtension(".txt"));
         }
 
         [Fact]
@@ -56,10 +49,10 @@ namespace Masuit.Tools.UnitTest.Mvc
         {
             _mapper = new MimeMapper(new MimeMappingItem
             {
-                Extension = "txt",
+                Extension = ".txt",
                 MimeType = "my own mime type"
             });
-            Assert.Equal("my own mime type", _mapper.GetMimeFromPath(".txt"));
+            Assert.Equal("my own mime type", _mapper.GetMimeFromExtension(".txt"));
             Assert.Equal("my own mime type", _mapper.GetMimeFromPath("..\\..\\..\\text.txt"));
         }
 

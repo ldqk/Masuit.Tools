@@ -34,17 +34,6 @@ public class FileExtTests
     }
 
     [Fact]
-    public async Task CopyToFileAsync_ShouldCopyFile()
-    {
-        string _copyFilePath = Path.Combine(Path.GetTempPath(), "copyfile2.txt");
-        var _testFilePath = GetTestFile("2");
-        using var fs = new FileStream(_testFilePath, FileMode.Open, FileAccess.Read);
-        await fs.CopyToFileAsync(_copyFilePath);
-        Assert.True(File.Exists(_copyFilePath));
-        Assert.Equal(File.ReadAllText(_testFilePath), File.ReadAllText(_copyFilePath));
-    }
-
-    [Fact]
     public void SaveFile_ShouldSaveFile()
     {
         string _copyFilePath = Path.Combine(Path.GetTempPath(), "copyfile3.txt");

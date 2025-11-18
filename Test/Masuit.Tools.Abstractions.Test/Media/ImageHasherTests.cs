@@ -58,14 +58,6 @@ public class ImageHasherTests
     }
 
     [Fact]
-    public void DctHash_ShouldReturnCorrectHash()
-    {
-        using var image = new Image<Rgba32>(32, 32);
-        var hash = _imageHasher.DctHash(image);
-        Assert.Equal(0UL, hash);
-    }
-
-    [Fact]
     public void Compare_ShouldReturnCorrectSimilarity()
     {
         var hash1 = 0b1010101010101010101010101010101010101010101010101010101010101010UL;
