@@ -17,24 +17,36 @@ public class ImageSharpTransformer : IImageTransformer
     {
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true,
         };
         using var image = Image.Load<L8>(decoderOptions, stream);
-        return TransformImage(image, width, height);
+        image.Mutate(x => x.Resize(new ResizeOptions()
+        {
+            Size = new Size
+            {
+                Width = width,
+                Height = height
+            },
+            Mode = ResizeMode.Stretch,
+            Sampler = new BicubicResampler()
+        }));
+        image.DangerousTryGetSinglePixelMemory(out var pixelSpan);
+        var pixelArray = pixelSpan.ToArray();
+        var pixelCount = width * height;
+        var bytes = new byte[pixelCount];
+        for (var i = 0; i < pixelCount; i++)
+        {
+            bytes[i] = pixelArray[i].PackedValue;
+        }
+
+        return bytes;
     }
 #else
 
     public byte[] TransformImage(Stream stream, int width, int height)
     {
         using var image = Image.Load<L8>(stream);
-        return TransformImage(image, width, height);
-    }
-
-#endif
-
-    public byte[] TransformImage(Image<L8> image, int width, int height)
-    {
         image.Mutate(x => x.Resize(new ResizeOptions()
         {
             Size = new Size
@@ -57,9 +69,35 @@ public class ImageSharpTransformer : IImageTransformer
         return bytes;
     }
 
+#endif
+
+    public byte[] TransformImage(Image<L8> image, int width, int height)
+    {
+        using var clone = image.Clone(x => x.Resize(new ResizeOptions()
+        {
+            Size = new Size
+            {
+                Width = width,
+                Height = height
+            },
+            Mode = ResizeMode.Stretch,
+            Sampler = new BicubicResampler()
+        }));
+        clone.DangerousTryGetSinglePixelMemory(out var pixelSpan);
+        var pixelArray = pixelSpan.ToArray();
+        var pixelCount = width * height;
+        var bytes = new byte[pixelCount];
+        for (var i = 0; i < pixelCount; i++)
+        {
+            bytes[i] = pixelArray[i].PackedValue;
+        }
+
+        return bytes;
+    }
+
     public byte[,] GetPixelData(Image<L8> image, int width, int height)
     {
-        image.Mutate(x => x.Resize(new ResizeOptions()
+        using var clone = image.Clone(x => x.Resize(new ResizeOptions()
         {
             Size = new Size
             {
@@ -70,7 +108,7 @@ public class ImageSharpTransformer : IImageTransformer
             Sampler = new BicubicResampler()
         }));
         var grayscalePixels = new byte[width, height];
-        image.ProcessPixelRows(accessor =>
+        clone.ProcessPixelRows(accessor =>
         {
             for (int y = 0; y < width; y++)
             {
@@ -89,6 +127,8 @@ public class ImageSharpTransformer : IImageTransformer
 
 public static class ImageHashExt
 {
+    private static readonly ImageHasher Hasher = new();
+
     /// <summary>
     /// 使用平均值算法计算图像的64位哈希
     /// </summary>
@@ -96,8 +136,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong AverageHash64(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.AverageHash64(image);
+        return Hasher.AverageHash64(image);
     }
 
     /// <summary>
@@ -107,8 +146,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong AverageHash64(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.AverageHash64(image);
+        return Hasher.AverageHash64(image);
     }
 
     /// <summary>
@@ -119,8 +157,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong MedianHash64(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.MedianHash64(image);
+        return Hasher.MedianHash64(image);
     }
 
     /// <summary>
@@ -131,8 +168,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong MedianHash64(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.MedianHash64(image);
+        return Hasher.MedianHash64(image);
     }
 
     /// <summary>
@@ -143,8 +179,7 @@ public static class ImageHashExt
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
     public static ulong[] MedianHash256(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.MedianHash256(image);
+        return Hasher.MedianHash256(image);
     }
 
     /// <summary>
@@ -155,8 +190,7 @@ public static class ImageHashExt
     /// <returns>256位hash值，生成一个4长度的数组返回</returns>
     public static ulong[] MedianHash256(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.MedianHash256(image);
+        return Hasher.MedianHash256(image);
     }
 
     /// <summary>
@@ -167,8 +201,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong DifferenceHash64(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DifferenceHash64(image);
+        return Hasher.DifferenceHash64(image);
     }
 
     /// <summary>
@@ -179,8 +212,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong DifferenceHash64(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DifferenceHash64(image);
+        return Hasher.DifferenceHash64(image);
     }
 
     /// <summary>
@@ -191,8 +223,7 @@ public static class ImageHashExt
     /// <returns>256位hash值</returns>
     public static ulong[] DifferenceHash256(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DifferenceHash256(image);
+        return Hasher.DifferenceHash256(image);
     }
 
     /// <summary>
@@ -203,8 +234,7 @@ public static class ImageHashExt
     /// <returns>256位hash值</returns>
     public static ulong[] DifferenceHash256(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DifferenceHash256(image);
+        return Hasher.DifferenceHash256(image);
     }
 
     /// <summary>
@@ -215,8 +245,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong DctHash(this Image image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DctHash(image);
+        return Hasher.DctHash(image);
     }
 
     /// <summary>
@@ -227,8 +256,7 @@ public static class ImageHashExt
     /// <returns>64位hash值</returns>
     public static ulong DctHash(this Image<L8> image)
     {
-        var hasher = new ImageHasher();
-        return hasher.DctHash(image);
+        return Hasher.DctHash(image);
     }
 
     /// <summary>
@@ -240,13 +268,12 @@ public static class ImageHashExt
     /// <returns>相似度范围：[0,1]</returns>
     public static float Compare(this Image image1, Image image2, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
-        var hasher = new ImageHasher();
         return algorithm switch
         {
-            ImageHashAlgorithm.Average => ImageHasher.Compare(hasher.AverageHash64(image1), hasher.AverageHash64(image2)),
-            ImageHashAlgorithm.Medium => ImageHasher.Compare(hasher.MedianHash256(image1), hasher.MedianHash256(image2)),
-            ImageHashAlgorithm.Difference => ImageHasher.Compare(hasher.DifferenceHash256(image1), hasher.DifferenceHash256(image2)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(hasher.DctHash(image1), hasher.DctHash(image2)),
+            ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2)),
+            ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2)),
+            ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2)),
+            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -260,13 +287,12 @@ public static class ImageHashExt
     /// <returns>相似度范围：[0,1]</returns>
     public static float Compare(this Image<L8> image1, Image<L8> image2, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
-        var hasher = new ImageHasher();
         return algorithm switch
         {
-            ImageHashAlgorithm.Average => ImageHasher.Compare(hasher.AverageHash64(image1), hasher.AverageHash64(image2)),
-            ImageHashAlgorithm.Medium => ImageHasher.Compare(hasher.MedianHash256(image1), hasher.MedianHash256(image2)),
-            ImageHashAlgorithm.Difference => ImageHasher.Compare(hasher.DifferenceHash256(image1), hasher.DifferenceHash256(image2)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(hasher.DctHash(image1), hasher.DctHash(image2)),
+            ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2)),
+            ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2)),
+            ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2)),
+            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -280,13 +306,12 @@ public static class ImageHashExt
     /// <returns>相似度范围：[0,1]</returns>
     public static float Compare(this Image image1, string image2path, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
-        var hasher = new ImageHasher();
         return algorithm switch
         {
-            ImageHashAlgorithm.Average => ImageHasher.Compare(hasher.AverageHash64(image1), hasher.AverageHash64(image2path)),
-            ImageHashAlgorithm.Medium => ImageHasher.Compare(hasher.MedianHash256(image1), hasher.MedianHash256(image2path)),
-            ImageHashAlgorithm.Difference => ImageHasher.Compare(hasher.DifferenceHash256(image1), hasher.DifferenceHash256(image2path)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(hasher.DctHash(image1), hasher.DctHash(image2path)),
+            ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2path)),
+            ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2path)),
+            ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2path)),
+            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -300,13 +325,12 @@ public static class ImageHashExt
     /// <returns>相似度范围：[0,1]</returns>
     public static float Compare(this Image<L8> image1, string image2path, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
-        var hasher = new ImageHasher();
         return algorithm switch
         {
-            ImageHashAlgorithm.Average => ImageHasher.Compare(hasher.AverageHash64(image1), hasher.AverageHash64(image2path)),
-            ImageHashAlgorithm.Medium => ImageHasher.Compare(hasher.MedianHash256(image1), hasher.MedianHash256(image2path)),
-            ImageHashAlgorithm.Difference => ImageHasher.Compare(hasher.DifferenceHash256(image1), hasher.DifferenceHash256(image2path)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(hasher.DctHash(image1), hasher.DctHash(image2path)),
+            ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2path)),
+            ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2path)),
+            ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2path)),
+            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }

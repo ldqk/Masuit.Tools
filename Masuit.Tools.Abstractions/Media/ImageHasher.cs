@@ -43,7 +43,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true
         };
         using var image = Image.Load<L8>(decoderOptions, pathToImage);
@@ -122,7 +122,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true
         };
         using var image = Image.Load<L8>(decoderOptions, pathToImage);
@@ -216,7 +216,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true
         };
         using var image = Image.Load<L8>(decoderOptions, pathToImage);
@@ -322,7 +322,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true
         };
         using var image = Image.Load<L8>(decoderOptions, pathToImage);
@@ -416,7 +416,7 @@ public class ImageHasher
 
         var decoderOptions = new DecoderOptions
         {
-            TargetSize = new Size(144),
+            TargetSize = new Size(160),
             SkipMetadata = true,
         };
         using var image = Image.Load<L8>(decoderOptions, pathToImage);
