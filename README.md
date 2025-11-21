@@ -118,7 +118,11 @@ https://replit.com/@ldqk/MasuitToolsDemo?v=1#main.cs
 
 `ConcurrentLimitedQueue`：定长并发队列，特点是长度是固定的，用法与ConcurrentQueue一致
 
+`ConcurrentHashQueue`：线程安全的唯一队列，特点是元素是唯一的，用法与ConcurrentQueue一致
+
 `LimitedQueue`：定长队列，特点是长度是固定的，用法与Queue一致
+
+`HashQueue`：唯一队列，特点是元素是唯一的，用法与Queue一致
 
 `LargeMemoryStream`：超大内存流，最大可支持1TB数据，推荐当数据流大于2GB时使用，用法与MemoryStream一致
 
@@ -678,8 +682,9 @@ var op=MyEnum.Read|MyEnum.Write|MyEnum.Delete;
 var enums=op.Split(); // 拆分枚举值，得到枚举数组，这个函数建议使用在按位定值的枚举
 ```
 
-### 22.定长队列和ConcurrentHashSet实现
+### 22.Queue和HashSet
 
+定长队列：  
 `如果是.NET5及以上，推荐使用框架自带的Channel实现该功能`
 
 ```csharp
@@ -687,10 +692,50 @@ LimitedQueue<string> queue = new LimitedQueue<string>(32);// 声明一个容量�
 ConcurrentLimitedQueue<string> queue = new ConcurrentLimitedQueue<string>(32);// 声明一个容量为32个元素的线程安全的定长队列
 ```
 
+线程安全的HashSet：
 ```csharp
 var set = new ConcurrentHashSet<string>(); // 用法和hashset保持一致
 ```
 
+唯一队列(入队时自动去重)，用法和Queue一致：
+```csharp
+var queue = new HashQueue<int>();
+
+// 入队操作
+Console.WriteLine(queue.Enqueue(1)); // True
+Console.WriteLine(queue.Enqueue(2)); // True
+Console.WriteLine(queue.Enqueue(1)); // False (重复元素)
+
+// 查看队列状态
+Console.WriteLine($"Count: {queue.Count}"); // 2
+Console.WriteLine($"Contains 2: {queue.Contains(2)}"); // True
+
+// 出队操作
+Console.WriteLine(queue.Dequeue()); // 1
+Console.WriteLine(queue.Dequeue()); // 2
+
+// 批量操作
+var items = new[] { 1, 2, 3, 2, 4, 1 };
+queue.EnqueueRange(items);
+Console.WriteLine($"Count after EnqueueRange: {queue.Count}"); // 4
+
+// 使用限制大小的队列
+var limitedQueue = new HashQueue<string>();
+limitedQueue.EnqueueWithLimit("A", 3);
+limitedQueue.EnqueueWithLimit("B", 3);
+limitedQueue.EnqueueWithLimit("C", 3);
+limitedQueue.EnqueueWithLimit("D", 3); // 会自动移除"A"
+
+foreach (var item in limitedQueue)
+{
+    Console.WriteLine(item); // 输出: B, C, D
+}
+```
+
+线程安全的唯一队列：
+```csharp
+var set = new ConcurrentHashQueue<string>(); // 用法同上
+```
 ### 23.反射操作
 
 ```csharp
