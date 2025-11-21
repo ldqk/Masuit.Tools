@@ -517,7 +517,7 @@ public class ImageHasher
     }
 
     /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
+    /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="path">图片路径</param>
@@ -539,7 +539,7 @@ public class ImageHasher
     }
 
     /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
+    /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片</param>
@@ -551,7 +551,7 @@ public class ImageHasher
     }
 
     /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
+    /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片</param>
@@ -564,6 +564,51 @@ public class ImageHasher
         var median = CalculateMedian(topLeftBlock);
         var hash = GenerateHash(topLeftBlock, median);
         return hash;
+    }
+
+    /// <summary>
+    /// 使用64分辨率精度DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="path">图片路径</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash64(string path)
+    {
+#if NET6_0_OR_GREATER
+
+        var decoderOptions = new DecoderOptions
+        {
+            TargetSize = new Size(160),
+            SkipMetadata = true
+        };
+        using var image = Image.Load<L8>(decoderOptions, path);
+#else
+        using var image = Image.Load<L8>(path);
+#endif
+        return DctHash64(image);
+    }
+
+    /// <summary>
+    /// 使用64分辨率精度DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash64(Image image)
+    {
+        using var clone = image.CloneAs<L8>();
+        return DctHash64(clone);
+    }
+
+    /// <summary>
+    /// 使用64分辨率精度DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>64位hash值</returns>
+    public ulong DctHash64(Image<L8> image)
+    {
+        return DctHasher.Compute(image);
     }
 
     /// <summary>
