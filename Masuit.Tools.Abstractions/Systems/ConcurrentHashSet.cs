@@ -36,6 +36,7 @@ public sealed class ConcurrentHashSet<T> : ISet<T>, IDisposable
     }
 
     public bool IsReadOnly => false;
+    public IEqualityComparer<T> Comparer => _hashSet.Comparer;
 
     public ConcurrentHashSet()
     {
