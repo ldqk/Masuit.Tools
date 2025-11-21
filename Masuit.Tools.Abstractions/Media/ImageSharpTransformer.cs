@@ -238,7 +238,7 @@ public static class ImageHashExt
     }
 
     /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
+    /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
@@ -249,7 +249,7 @@ public static class ImageHashExt
     }
 
     /// <summary>
-    /// 使用DCT算法计算图像的64位哈希
+    /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
     /// <param name="image">读取到的图片流</param>
@@ -257,6 +257,28 @@ public static class ImageHashExt
     public static ulong DctHash(this Image<L8> image)
     {
         return Hasher.DctHash(image);
+    }
+
+    /// <summary>
+    /// 使用64分辨率精度DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public static ulong DctHash64(this Image image)
+    {
+        return Hasher.DctHash64(image);
+    }
+
+    /// <summary>
+    /// 使用64分辨率精度DCT算法计算图像的64位哈希
+    /// </summary>
+    /// <see cref="https://segmentfault.com/a/1190000038308093"/>
+    /// <param name="image">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public static ulong DctHash64(this Image<L8> image)
+    {
+        return Hasher.DctHash64(image);
     }
 
     /// <summary>
@@ -273,7 +295,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2)),
             ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2)),
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
+            ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
+            ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -292,7 +315,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2)),
             ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2)),
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
+            ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
+            ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -311,7 +335,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2path)),
             ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2path)),
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2path)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
+            ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
+            ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -330,7 +355,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Average => ImageHasher.Compare(Hasher.AverageHash64(image1), Hasher.AverageHash64(image2path)),
             ImageHashAlgorithm.Medium => ImageHasher.Compare(Hasher.MedianHash256(image1), Hasher.MedianHash256(image2path)),
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2path)),
-            ImageHashAlgorithm.DCT => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
+            ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
+            ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -354,7 +380,12 @@ public enum ImageHashAlgorithm
     Difference,
 
     /// <summary>
-    /// DCT算法
+    /// 32分辨率精度DCT算法
     /// </summary>
-    DCT
+    DCT32,
+
+    /// <summary>
+    /// 64分辨率精度DCT算法
+    /// </summary>
+    DCT64,
 }
