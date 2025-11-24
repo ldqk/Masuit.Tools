@@ -10,6 +10,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Masuit.Tools.Reflection;
+using OfficeOpenXml.Attributes;
 
 namespace Masuit.Tools.Excel;
 
@@ -408,7 +410,7 @@ public static class ExcelExtension
     public static void FillWorksheet<T>(this ExcelWorksheet sheet, IEnumerable<T> source, ColumnSettings settings = null, int startRow = 1, int startColumn = 1)
     {
         var hasPicColumn = false;
-        var properties = typeof(T).GetProperties();
+        var properties = typeof(T).GetProperties().Where(p => p.GetAttribute<ExportIgnoreAttribute>() == null && p.GetAttribute<EpplusIgnore>() == null).ToList();
         if (source is not ICollection<T> table)
         {
             table = source.ToList();
@@ -424,11 +426,15 @@ public static class ExcelExtension
             if (hasPicColumn)
             {
                 // 填充表头
-                var maxWidth = new int[properties.Length];
-                for (var j = 0; j < properties.Length; j++)
+                var maxWidth = new int[properties.Count];
+                for (var j = 0; j < properties.Count; j++)
                 {
                     sheet.SetValue(startRow, j + startColumn, properties[j].Name);
                     maxWidth[j] = Encoding.UTF8.GetBytes(properties[j].Name).Length;
+                    if (properties[j].GetAttribute<ColumnFormatAttribute>() is { } attr)
+                    {
+                        sheet.Column(j + startColumn).Style.Numberformat.Format = attr.FormatString;
+                    }
                 }
 
                 sheet.Row(startRow).Style.Font.Bold = true; // 表头设置为粗体
@@ -449,7 +455,7 @@ public static class ExcelExtension
                 foreach (var item in table)
                 {
                     sheet.Row(current + startRow + 1).CustomHeight = true; // 自动调整行高
-                    for (int j = 0; j < properties.Length; j++)
+                    for (int j = 0; j < properties.Count; j++)
                     {
                         switch (properties[j].GetValue(item))
                         {
@@ -616,6 +622,13 @@ public static class ExcelExtension
             {
                 sheet.Cells[startRow, startColumn].LoadFromCollection(table, true, TableStyles.Light15).AutoFitColumns(12, 90);
                 sheet.Cells.Style.WrapText = true;
+                for (var i = 0; i < properties.Count; i++)
+                {
+                    if (properties[i].GetAttribute<ColumnFormatAttribute>() is { } attr)
+                    {
+                        sheet.Column(i + 1).Style.Numberformat.Format = attr.FormatString;
+                    }
+                }
                 if (settings != null)
                 {
                     foreach (var x in settings.ColumnTypes)

@@ -1223,7 +1223,8 @@ var stream=list.ToDataTable("Sheet1").ToExcel("文件密码");
 2. 其中，如果是IDictionary类型的图片列，字典的键为图片超链接的完整url；
 3. 默认字段名作为列名导出；
 4. 若list是一个具体的强类型，默认会先查找每个字段的Description标记，若有Description标记，则取Description标记作为列名显示
-5. ToExcel方法支持DataTable、List `<DataTable>`、Dictionary<string, DataTable>类型的直接调用
+5. 具体的强类型，若属性被打上ExcelIgnore或EpplusIgnore标记，则该属性不会被导出；若需要设置字段的格式化输出，可以使用ExcelColumn属性进行标记，也可以通过参数传入一个字典来设置列的格式化输出；
+6. ToExcel方法支持DataTable、List `<DataTable>`、Dictionary<string, DataTable>类型的直接调用
 
 ### 39.EFCore实用扩展
 
