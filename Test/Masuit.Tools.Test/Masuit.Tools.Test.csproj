@@ -109,7 +109,7 @@
       <Version>2.0.3</Version>
     </PackageReference>
     <PackageReference Include="xunit.analyzers">
-      <Version>1.25.0</Version>
+      <Version>1.26.0</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
