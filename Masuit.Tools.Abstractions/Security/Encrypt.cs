@@ -653,6 +653,19 @@ public static class Encrypt
         return Convert.ToBase64String(result); //返回长度为44字节的字符串
     }
 
+    /// <summary>
+    /// SHA512函数
+    /// </summary>
+    /// <param name="str">原始字符串</param>
+    /// <returns>SHA512结果(返回长度为44字节的字符串)</returns>
+    public static string SHA512(this string str)
+    {
+        byte[] shaData = Encoding.UTF8.GetBytes(str);
+        using var sha512 = System.Security.Cryptography.SHA512.Create();
+        byte[] result = sha512.ComputeHash(shaData);
+        return Convert.ToBase64String(result); //返回长度为44字节的字符串
+    }
+
     #region MD5摘要算法
 
     #region 对字符串进行MD5摘要
@@ -750,6 +763,19 @@ public static class Encrypt
     {
         var fs = new BufferedStream(stream, 1048576);
         using var sha = System.Security.Cryptography.SHA256.Create();
+        byte[] checksum = sha.ComputeHash(fs);
+        return BitConverter.ToString(checksum).Replace("-", string.Empty);
+    }
+
+    /// <summary>
+    /// 计算文件的sha512
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    public static string SHA512(this Stream stream)
+    {
+        var fs = new BufferedStream(stream, 1048576);
+        using var sha = System.Security.Cryptography.SHA512.Create();
         byte[] checksum = sha.ComputeHash(fs);
         return BitConverter.ToString(checksum).Replace("-", string.Empty);
     }
