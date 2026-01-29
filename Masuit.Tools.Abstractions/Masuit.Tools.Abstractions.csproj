@@ -95,7 +95,7 @@
         <PackageReference Include="System.Collections.Immutable" Version="10.0.2" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-        <PackageReference Include="SharpCompress" Version="0.44.2" />
+        <PackageReference Include="SharpCompress" Version="0.44.5" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
@@ -104,7 +104,7 @@
         <PackageReference Include="System.Collections.Immutable" Version="10.0.2" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-        <PackageReference Include="SharpCompress" Version="0.44.2" />
+        <PackageReference Include="SharpCompress" Version="0.44.5" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0'">
         <PackageReference Include="Castle.Core" Version="5.2.1" />
@@ -112,7 +112,7 @@
         <PackageReference Include="System.Collections.Immutable" Version="10.0.2" />
         <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
-        <PackageReference Include="SharpCompress" Version="0.44.2" />
+        <PackageReference Include="SharpCompress" Version="0.44.5" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

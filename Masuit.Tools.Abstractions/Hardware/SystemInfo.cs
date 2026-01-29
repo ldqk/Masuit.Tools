@@ -42,16 +42,16 @@ namespace Masuit.Tools.Hardware
         {
             if (IsWinPlatform)
             {
-                //初始化CPU计数器
-                Counters["CpuCounter"] = new PerformanceCounter("Processor", "% Processor Time", "_Total")
-                {
-                    MachineName = "."
-                };
-                Counters["CpuCounter"].NextValue();
-
-                //获得物理内存
                 try
                 {
+                    //初始化CPU计数器
+                    Counters["CpuCounter"] = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+                    {
+                        MachineName = "."
+                    };
+                    Counters["CpuCounter"].NextValue();
+
+                    //获得物理内存
                     using var mc = new ManagementClass("Win32_ComputerSystem");
                     using var moc = mc.GetInstances();
                     foreach (var mo in moc)
