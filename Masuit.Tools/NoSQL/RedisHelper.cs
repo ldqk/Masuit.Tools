@@ -179,7 +179,7 @@ namespace Masuit.Tools.NoSQL
         public bool SetString(string key, string value, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
-            return Do(db => db.StringSet(key, value, expiry));
+            return Do(db => db.StringSet(key, value, expiry, When.Always));
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Masuit.Tools.NoSQL
         {
             key = AddSysCustomKey(key);
             string json = ConvertJson(obj);
-            return Do(db => db.StringSet(key, json, expiry));
+            return Do(db => db.StringSet(key, json, expiry, When.Always));
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Masuit.Tools.NoSQL
         public async Task<bool> SetStringAsync(string key, string value, TimeSpan? expiry = default(TimeSpan?))
         {
             key = AddSysCustomKey(key);
-            return await Do(async db => await db.StringSetAsync(key, value, expiry));
+            return await Do(async db => await db.StringSetAsync(key, value, expiry, When.Always));
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace Masuit.Tools.NoSQL
         {
             key = AddSysCustomKey(key);
             string json = ConvertJson(obj);
-            return await Do(async db => await db.StringSetAsync(key, json, expiry));
+            return await Do(async db => await db.StringSetAsync(key, json, expiry, When.Always));
         }
 
         /// <summary>

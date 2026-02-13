@@ -94,7 +94,7 @@
       <Version>4.20.72</Version>
     </PackageReference>
     <PackageReference Include="StackExchange.Redis">
-      <Version>2.10.1</Version>
+      <Version>2.11.0</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>6.1.2</Version>

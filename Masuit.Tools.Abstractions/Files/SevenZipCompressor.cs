@@ -1,16 +1,13 @@
 ﻿using Masuit.Tools.Systems;
 using SharpCompress.Archives;
 using SharpCompress.Common;
-using SharpCompress.Writers;
-using System;
+using SharpCompress.Writers.Zip;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
+using SharpCompress.Archives.Zip;
+using SharpCompress.Readers;
 
 namespace Masuit.Tools.Files;
 
@@ -35,13 +32,12 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// </summary>
     /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
     /// <param name="rootdir"></param>
-    /// <param name="archiveType"></param>
     /// <returns>文件流</returns>
-    public PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+    public PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "")
     {
-        using var archive = CreateZipArchive(files, rootdir, archiveType);
+        using var archive = CreateZipArchive(files, rootdir);
         var ms = new PooledMemoryStream();
-        archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
+        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.LZMA)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -57,30 +53,28 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// </summary>
     /// <param name="dir">文件夹</param>
     /// <param name="rootdir"></param>
-    /// <param name="archiveType"></param>
     /// <returns>文件流</returns>
-    public PooledMemoryStream ZipStream(string dir, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+    public PooledMemoryStream ZipStream(string dir, string rootdir = "")
     {
-        return ZipStream(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), rootdir, archiveType);
+        return ZipStream(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), rootdir);
     }
 
     /// <summary>
     /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
     /// </summary>
     /// <param name="streams">多个文件流</param>
-    /// <param name="archiveType"></param>
     /// <param name="disposeAllStreams">是否需要释放所有流</param>
     /// <returns>文件流</returns>
-    public PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+    public PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, bool disposeAllStreams = false)
     {
-        using var archive = ArchiveFactory.Create(archiveType);
+        using var archive = ZipArchive.CreateArchive();
         foreach (var pair in streams)
         {
             archive.AddEntry(pair.Key, pair.Value, true);
         }
 
         var ms = new PooledMemoryStream();
-        archive.SaveTo(ms, new WriterOptions(CompressionType.LZMA)
+        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.LZMA)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -101,10 +95,9 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <param name="dir">文件夹</param>
     /// <param name="zipFile">压缩到...</param>
     /// <param name="rootdir">压缩包内部根文件夹</param>
-    /// <param name="archiveType"></param>
-    public void Zip(string dir, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+    public void Zip(string dir, string zipFile, string rootdir = "")
     {
-        Zip(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), zipFile, rootdir, archiveType);
+        Zip(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), zipFile, rootdir);
     }
 
     /// <summary>
@@ -113,11 +106,10 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <param name="files">多个文件路径，文件或文件夹</param>
     /// <param name="zipFile">压缩到...</param>
     /// <param name="rootdir">压缩包内部根文件夹</param>
-    /// <param name="archiveType"></param>
-    public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip)
+    public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "")
     {
-        using var archive = CreateZipArchive(files, rootdir, archiveType);
-        archive.SaveTo(zipFile, new WriterOptions(CompressionType.LZMA)
+        using var archive = CreateZipArchive(files, rootdir);
+        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.LZMA)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -132,17 +124,15 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// </summary>
     /// <param name="streams">多个文件流</param>
     /// <param name="zipFile">压缩到...</param>
-    /// <param name="archiveType"></param>
     /// <param name="disposeAllStreams">是否需要释放所有流</param>
-    public void Zip(DisposableDictionary<string, Stream> streams, string zipFile, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false)
+    public void Zip(DisposableDictionary<string, Stream> streams, string zipFile, bool disposeAllStreams = false)
     {
-        using var archive = ArchiveFactory.Create(archiveType);
+        using var archive = ZipArchive.CreateArchive();
         foreach (var pair in streams)
         {
             archive.AddEntry(pair.Key, pair.Value, true);
         }
-
-        archive.SaveTo(zipFile, new WriterOptions(CompressionType.LZMA)
+        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.ZStandard)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -169,7 +159,7 @@ public class SevenZipCompressor : ISevenZipCompressor
             dir = Path.GetDirectoryName(compressedFile);
         }
 
-        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName, new ExtractionOptions()
+        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName, new ReaderOptions()
         {
             ExtractFullPath = true,
             Overwrite = true
@@ -183,9 +173,9 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <param name="rootdir"></param>
     /// <param name="archiveType"></param>
     /// <returns></returns>
-    private IWritableArchive CreateZipArchive(IEnumerable<string> files, string rootdir, ArchiveType archiveType)
+    private IWritableArchive<ZipWriterOptions> CreateZipArchive(IEnumerable<string> files, string rootdir)
     {
-        var archive = ArchiveFactory.Create(archiveType);
+        var archive = ZipArchive.CreateArchive();
         var dic = GetFileEntryMaps(files);
         var remoteUrls = files.Distinct().Where(s => s.StartsWith("http")).Select(s =>
         {

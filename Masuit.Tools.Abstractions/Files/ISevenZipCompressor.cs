@@ -24,17 +24,15 @@ public interface ISevenZipCompressor
     /// <param name="files">多个文件路径，文件或文件夹</param>
     /// <param name="zipFile">压缩到...</param>
     /// <param name="rootdir">压缩包内部根文件夹</param>
-    /// <param name="archiveType"></param>
-    void Zip(IEnumerable<string> files, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
+    void Zip(IEnumerable<string> files, string zipFile, string rootdir = "");
 
     /// <summary>
     /// 压缩多个文件
     /// </summary>
     /// <param name="streams">多个文件流</param>
     /// <param name="zipFile">压缩到...</param>
-    /// <param name="archiveType"></param>
     /// <param name="disposeAllStreams">是否需要释放所有流</param>
-    void Zip(DisposableDictionary<string, Stream> streams, string zipFile, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false);
+    void Zip(DisposableDictionary<string, Stream> streams, string zipFile, bool disposeAllStreams = false);
 
     /// <summary>
     /// 压缩文件夹
@@ -42,33 +40,29 @@ public interface ISevenZipCompressor
     /// <param name="dir">文件夹</param>
     /// <param name="zipFile">压缩到...</param>
     /// <param name="rootdir">压缩包内部根文件夹</param>
-    /// <param name="archiveType"></param>
-    public void Zip(string dir, string zipFile, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
+    public void Zip(string dir, string zipFile, string rootdir = "");
 
     /// <summary>
     /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
     /// </summary>
     /// <param name="files">多个文件路径，文件或文件夹，或网络路径http/https</param>
     /// <param name="rootdir"></param>
-    /// <param name="archiveType"></param>
     /// <returns>文件流</returns>
-    PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
+    PooledMemoryStream ZipStream(IEnumerable<string> files, string rootdir = "");
 
     /// <summary>
     /// 将多个文件压缩到一个文件流中，可保存为zip文件，方便于web方式下载
     /// </summary>
     /// <param name="streams">多个文件流</param>
-    /// <param name="archiveType"></param>
     /// <param name="disposeAllStreams">是否需要释放所有流</param>
     /// <returns>文件流</returns>
-    PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, ArchiveType archiveType = ArchiveType.Zip, bool disposeAllStreams = false);
+    PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, bool disposeAllStreams = false);
 
     /// <summary>
     /// 将文件夹压缩到一个文件流中，可保存为zip文件，方便于web方式下载
     /// </summary>
     /// <param name="dir">文件夹</param>
     /// <param name="rootdir"></param>
-    /// <param name="archiveType"></param>
     /// <returns>文件流</returns>
-    public PooledMemoryStream ZipStream(string dir, string rootdir = "", ArchiveType archiveType = ArchiveType.Zip);
+    public PooledMemoryStream ZipStream(string dir, string rootdir = "");
 }

@@ -38,7 +38,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="EPPlus" Version="8.4.2" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
