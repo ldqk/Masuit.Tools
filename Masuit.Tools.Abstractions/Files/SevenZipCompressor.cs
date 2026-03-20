@@ -159,11 +159,7 @@ public class SevenZipCompressor : ISevenZipCompressor
             dir = Path.GetDirectoryName(compressedFile);
         }
 
-        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName, new ReaderOptions()
-        {
-            ExtractFullPath = true,
-            Overwrite = true
-        });
+        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName,new ExtractionOptions(true,true));
     }
 
     /// <summary>
@@ -171,7 +167,6 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// </summary>
     /// <param name="files"></param>
     /// <param name="rootdir"></param>
-    /// <param name="archiveType"></param>
     /// <returns></returns>
     private IWritableArchive<ZipWriterOptions> CreateZipArchive(IEnumerable<string> files, string rootdir)
     {
