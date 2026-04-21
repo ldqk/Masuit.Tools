@@ -8,21 +8,21 @@ namespace Masuit.Tools.Test
         public void MatchUrl_True()
         {
             bool expect = "https://www.baidu.com/soft".MatchUrl();
-            Assert.Equal(true, expect);
+            Assert.True(expect);
         }
 
         [Fact]
         public void MatchEmail()
         {
             var (expect, match) = "admin@sina.com.cn".MatchEmail();
-            Assert.Equal(true, expect);
+            Assert.True(expect);
         }
 
         [Fact]
         public void MatchIdentifyCard_False()
         {
             bool expect = "513901199509120610".MatchIdentifyCard();
-            Assert.Equal(false, expect);
+            Assert.False(expect);
         }
 
         [Theory]

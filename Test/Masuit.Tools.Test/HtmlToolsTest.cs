@@ -11,7 +11,7 @@ namespace Masuit.Tools.Test
         public void MatchRandomImgSrc_NormalHtml_ReturnAImgUrl(string html)
         {
             string src = html.MatchRandomImgSrc();
-            Assert.True(src.StartsWith("http"));
+            Assert.StartsWith("http",src);
         }
 
         [Fact]

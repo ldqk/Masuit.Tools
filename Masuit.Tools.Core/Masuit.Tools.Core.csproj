@@ -35,8 +35,8 @@ github：https://github.com/ldqk/Masuit.Tools
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.5" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.201" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.6" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.202" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
@@ -46,16 +46,16 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.32]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.26" />
     </ItemGroup>
     <ItemGroup>
       <Compile Remove="..\Masuit.Tools.Abstractions\Mapping\**" />

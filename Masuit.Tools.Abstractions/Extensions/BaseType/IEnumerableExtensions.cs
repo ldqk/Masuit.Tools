@@ -750,11 +750,11 @@ public static class IEnumerableExtensions
     {
         if (source is ICollection<T> collection)
         {
-            return ForeachAsync(collection, action, collection.Count, cancellationToken);
+            return ForeachAsync(collection, action, Math.Min(collection.Count,Environment.ProcessorCount*4), cancellationToken);
         }
 
         var list = source.ToList();
-        return ForeachAsync(list, action, list.Count, cancellationToken);
+        return ForeachAsync(list, action, Math.Min(list.Count,Environment.ProcessorCount*4), cancellationToken);
     }
 
     /// <summary>
@@ -765,9 +765,9 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <returns></returns>
-    public static Task<TResult[]> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector)
+    public static Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<TResult>> selector)
     {
-        return Task.WhenAll(source.Select(selector));
+        return SelectAsync(source, selector,Environment.ProcessorCount*4,CancellationToken.None);
     }
 
     /// <summary>
@@ -778,9 +778,9 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <returns></returns>
-    public static Task<TResult[]> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<TResult>> selector)
+    public static Task<List<TResult>> SelectAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<TResult>> selector)
     {
-        return Task.WhenAll(source.Select(selector));
+        return SelectAsync(source, selector, Environment.ProcessorCount * 4, CancellationToken.None);
     }
 
     /// <summary>
@@ -865,9 +865,9 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <returns></returns>
-    public static Task<IEnumerable<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<IEnumerable<TResult>>> selector)
+    public static Task<List<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, Task<IEnumerable<TResult>>> selector)
     {
-        return Task.WhenAll(source.Select(selector)).ContinueWith(t => t.Result.SelectMany(_ => _));
+        return SelectManyAsync(source, selector,Environment.ProcessorCount*4);
     }
 
     /// <summary>
@@ -878,9 +878,9 @@ public static class IEnumerableExtensions
     /// <param name="source"></param>
     /// <param name="selector"></param>
     /// <returns></returns>
-    public static Task<IEnumerable<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<IEnumerable<TResult>>> selector)
+    public static Task<List<TResult>> SelectManyAsync<T, TResult>(this IEnumerable<T> source, Func<T, int, Task<IEnumerable<TResult>>> selector)
     {
-        return Task.WhenAll(source.Select(selector)).ContinueWith(t => t.Result.SelectMany(_ => _));
+        return SelectManyAsync(source, selector,Environment.ProcessorCount*4);
     }
 
     /// <summary>
@@ -1012,11 +1012,11 @@ public static class IEnumerableExtensions
     {
         if (source is ICollection<T> collection)
         {
-            return ForAsync(collection, selector, collection.Count, cancellationToken);
+            return ForAsync(collection, selector, Math.Min(collection.Count,Environment.ProcessorCount*4), cancellationToken);
         }
 
         var list = source.ToList();
-        return ForAsync(list, selector, list.Count, cancellationToken);
+        return ForAsync(list, selector, Math.Min(list.Count,Environment.ProcessorCount*4), cancellationToken);
     }
 
     /// <summary>
