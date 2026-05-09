@@ -46,10 +46,10 @@ github：https://github.com/ldqk/Masuit.Tools
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.32]" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net9'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0'">
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
     </ItemGroup>
     <ItemGroup Condition=" '$(TargetFramework)' == 'net6'">
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.36" />
