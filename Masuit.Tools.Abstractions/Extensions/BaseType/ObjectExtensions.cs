@@ -384,6 +384,36 @@ public static class ObjectExtensions
     /// 将对象转换成字典
     /// </summary>
     /// <param name="value"></param>
+    /// <param name="keySelector"></param>
+    public static Dictionary<string, object> ToDictionary(this object value,Func<PropertyInfo,string> keySelector)
+    {
+        var dictionary = new Dictionary<string, object>();
+        if (value != null)
+        {
+            if (value is IDictionary dic)
+            {
+                foreach (DictionaryEntry e in dic)
+                {
+                    dictionary.Add(e.Key.ToString(), e.Value);
+                }
+
+                return dictionary;
+            }
+
+            foreach (var property in value.GetType().GetProperties())
+            {
+                var obj = property.GetValue(value, null);
+                dictionary.Add(keySelector(property), obj);
+            }
+        }
+
+        return dictionary;
+    }
+
+    /// <summary>
+    /// 将对象转换成字典
+    /// </summary>
+    /// <param name="value"></param>
     public static Dictionary<string, string> ToDictionary(this JObject value)
     {
         var dictionary = new Dictionary<string, string>();

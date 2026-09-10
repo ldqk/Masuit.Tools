@@ -258,7 +258,7 @@ public class IniFile
     {
         var dic = GetSection(section);
         var obj = new T();
-        var properties = typeof(T).GetProperties().ToDictionary(p => p.GetAttribute<IniPropertyAttribute>()?.Name ?? p.Name);
+        var properties = typeof(T).GetProperties().ToDictionary(p => p.GetAttribute<IniPropertyAttribute>()?.Name ?? p.Name,p => p);
         foreach (var item in dic.Where(item => properties.ContainsKey(item.Key)))
         {
             properties[item.Key].SetValue(obj, item.Value.ConvertTo(properties[item.Key].PropertyType));
