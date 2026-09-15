@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Masuit.Tools.Extension.Object;
 using Masuit.Tools.Systems;
 using Xunit;
 

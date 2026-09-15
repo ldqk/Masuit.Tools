@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Masuit.Tools.Extension.Object;
 
 namespace Masuit.Tools.Systems;
 

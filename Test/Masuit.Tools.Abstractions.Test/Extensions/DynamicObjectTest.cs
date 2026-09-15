@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Masuit.Tools.Dynamics;
+using Masuit.Tools.Extension.Object;
 using Xunit;
 
 namespace Masuit.Tools.Abstractions.Test.Extensions;

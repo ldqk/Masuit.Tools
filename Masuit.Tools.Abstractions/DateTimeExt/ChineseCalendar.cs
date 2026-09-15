@@ -616,6 +616,19 @@ namespace Masuit.Tools.DateTimeExt
             return result;
         }
 
+        /// <summary>
+        /// 获取指定年份的节气日期
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="termIndex">节气索引，0-23</param>
+        /// <returns></returns>
+        private static DateTime GetSolarTermDate(int year, int termIndex)
+        {
+            var baseDateAndTime = new DateTime(1900, 1, 6, 2, 5, 0, DateTimeKind.Local);
+            var minutes = 525948.76 * (year - 1900) + STermInfo[termIndex];
+            return baseDateAndTime.AddMinutes(minutes);
+        }
+
         #endregion 私有函数
 
         #region 节日
@@ -934,12 +947,10 @@ namespace Masuit.Tools.DateTimeExt
         {
             get
             {
-                var baseDateAndTime = new DateTime(1900, 1, 6, 2, 5, 0, DateTimeKind.Local); //#1/6/1900 2:05:00 AM#
                 var y = Date.Year;
                 for (int i = 1; i <= 24; i++)
                 {
-                    var num = 525948.76 * (y - 1900) + STermInfo[i - 1];
-                    var newDate = baseDateAndTime.AddMinutes(num);
+                    var newDate = GetSolarTermDate(y, i - 1);
                     if (newDate.DayOfYear != Date.DayOfYear)
                     {
                         continue;
@@ -1118,22 +1129,32 @@ namespace Masuit.Tools.DateTimeExt
         {
             get
             {
-                //每个月的地支总是固定的,而且总是从寅月开始
-                int zhiIndex;
-                if (ChineseMonth > 10)
+                var liChunDay = GetSolarTermDate(Date.Year, 2).Day;
+                var yearForMonth = Date.Month < 2 || Date.Month == 2 && Date.Day < liChunDay ? Date.Year - 1 : Date.Year;
+
+                var monthOrder = Date.Month;
+                var monthFirstTermIndex = (Date.Month - 1) * 2;
+                var monthFirstTermDay = GetSolarTermDate(Date.Year, monthFirstTermIndex).Day;
+                if (Date.Day < monthFirstTermDay)
                 {
-                    zhiIndex = ChineseMonth - 10;
-                }
-                else
-                {
-                    zhiIndex = ChineseMonth + 2;
+                    monthOrder--;
+                    if (monthOrder <= 0)
+                    {
+                        monthOrder = 12;
+                    }
                 }
 
-                var zhi = DiZhi[zhiIndex - 1].ToString();
+                var monthOrderFromYin = monthOrder - 1;
+                if (monthOrderFromYin <= 0)
+                {
+                    monthOrderFromYin = 12;
+                }
 
-                //根据当年的干支年的干来计算月干的第一个
+                var zhi = DiZhi[monthOrder % 12].ToString();
+
+                //根据当年的干支年的干来计算寅月天干
                 int ganIndex = 1;
-                int i = (ChineseYear - GanZhiStartYear) % 60; //计算干支
+                int i = (yearForMonth - GanZhiStartYear) % 60;
                 ganIndex = (i % 10) switch
                 {
                     0 => 3, //甲
@@ -1149,7 +1170,7 @@ namespace Masuit.Tools.DateTimeExt
                     _ => ganIndex
                 };
 
-                var gan = TianGan[(ganIndex + ChineseMonth - 2) % 10].ToString();
+                var gan = TianGan[(ganIndex + monthOrderFromYin - 2) % 10].ToString();
                 return gan + zhi + "月";
             }
         }

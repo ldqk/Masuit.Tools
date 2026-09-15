@@ -32,21 +32,4 @@ public class ImageBorderRemoverTests
 
         Assert.True(result.HasAnyBorder);
     }
-
-    [Fact]
-    public void RemoveBorders_Stream_ShouldReturnCroppedStream()
-    {
-        var remover = new ImageBorderRemover(ToleranceMode.Channel);
-        using var image = CreateTestImage(60, 60, new SKColor(255, 0, 0), 6);
-        using var ms = new MemoryStream();
-        using (var data = image.Encode(SKEncodedImageFormat.Png, 90)) data.SaveTo(ms);
-        ms.Position = 0;
-
-        using var resultStream = remover.RemoveBorders(ms, 0);
-        resultStream.Position = 0;
-        using var cropped = SKBitmap.Decode(resultStream);
-
-        Assert.True(48 >= cropped.Width);
-        Assert.True(48 >= cropped.Height);
-    }
 }

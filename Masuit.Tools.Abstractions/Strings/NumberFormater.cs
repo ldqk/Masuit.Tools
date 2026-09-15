@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
+using Masuit.Tools.Extension.Object;
 
 namespace Masuit.Tools.Strings
 {

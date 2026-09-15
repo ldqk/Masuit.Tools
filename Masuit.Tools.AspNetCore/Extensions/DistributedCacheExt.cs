@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using System.Text;
+using Masuit.Tools.Extension.Object;
 
 namespace Masuit.Tools.AspNetCore.Extensions;
 

@@ -2,6 +2,7 @@
 using System.Net.Mime;
 using System.Reflection;
 using System.Xml.Linq;
+using Masuit.Tools.Extension.Object;
 using Masuit.Tools.Systems;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;

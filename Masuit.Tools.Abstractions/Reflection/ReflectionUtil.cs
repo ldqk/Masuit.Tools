@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
 using System.Text;
+using Masuit.Tools.Extension.Object;
 
 namespace Masuit.Tools.Reflection;
 

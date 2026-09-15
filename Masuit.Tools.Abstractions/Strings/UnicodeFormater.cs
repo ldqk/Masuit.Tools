@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using Masuit.Tools.Extension.Object;
 
 namespace Masuit.Tools.Strings;
 

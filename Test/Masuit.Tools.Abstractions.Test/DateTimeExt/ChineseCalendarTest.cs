@@ -21,6 +21,8 @@ public class ChineseCalendarTest
         Assert.Equal(new ChineseCalendar(new DateTime(2024, 1, 1)).DateHoliday, "元旦");
         Assert.Equal(new ChineseCalendar(new DateTime(2024, 1, 1)).DateString, "公元2024年1月1日");
         Assert.Equal(new ChineseCalendar(new DateTime(2024, 1, 1)).GanZhiDateString, "癸卯年甲子月甲子日");
+        Assert.Equal(new ChineseCalendar(new DateTime(1900, 3, 5)).GanZhiDateString, "庚子年戊寅月丁丑日");
+        Assert.Equal(new ChineseCalendar(new DateTime(2022, 2, 1)).GanZhiDateString, "壬寅年辛丑月乙酉日");
         Assert.True(new ChineseCalendar(new DateTime(2024, 1, 1)).IsChineseLeapYear);
         Assert.Equal(new ChineseCalendar(new DateTime(2024, 1, 1)).NextDay, new ChineseCalendar(new DateTime(2024, 1, 2)));
         Assert.Equal(new ChineseCalendar(new DateTime(2024, 1, 1)).PrevDay, new ChineseCalendar(new DateTime(2023, 12, 31)));
@@ -244,14 +246,14 @@ public class ChineseCalendarTest
     public void GanZhiMonthString_ShouldReturnCorrectGanZhiMonth()
     {
         // Arrange
-        var date = new DateTime(2023, 1, 22); // 甲寅月
+        var date = new DateTime(2023, 1, 22); // 癸丑月
         var calendar = new ChineseCalendar(date);
 
         // Act
         var ganZhiMonth = calendar.GanZhiMonthString;
 
         // Assert
-        Assert.Equal("甲寅月", ganZhiMonth);
+        Assert.Equal("癸丑月", ganZhiMonth);
     }
 
     [Fact]

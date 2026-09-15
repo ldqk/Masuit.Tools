@@ -23,7 +23,7 @@ using System.Text.Json.Serialization;
 
 #endif
 
-namespace Masuit.Tools;
+namespace Masuit.Tools.Extension.Object;
 
 /// <summary>
 /// 对象扩展

@@ -1,6 +1,4 @@
-﻿using Masuit.Tools.Systems;
-using SkiaSharp;
-using Color = System.Drawing.Color;
+﻿using SkiaSharp;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -25,6 +23,8 @@ public class ImageBorderRemover
     /// <param name="croppedBorderCount">达到边框个数则裁剪</param>
     public ImageBorderRemover(ToleranceMode mode, int croppedBorderCount = 2)
     {
+        if (croppedBorderCount is < 1 or > 4)
+            throw new ArgumentOutOfRangeException(nameof(croppedBorderCount));
         ToleranceMode = mode;
         CroppedBorderCount = croppedBorderCount;
     }
@@ -38,9 +38,14 @@ public class ImageBorderRemover
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>边框检测结果</returns>
-    public BorderDetectionResult DetectBorders(string imagePath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
+    public BorderDetectionResult DetectBorders(string imagePath, int tolerance, int maxLayers = 5, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        using var image = SKBitmap.Decode(imagePath);
+        if (string.IsNullOrWhiteSpace(imagePath))
+        {
+            throw new ArgumentException("Image path cannot be null or empty.", nameof(imagePath));
+        }
+
+        using var image = SKBitmap.Decode(imagePath) ?? throw new InvalidDataException("无法解码图像。");
         return DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
     }
 
@@ -53,29 +58,28 @@ public class ImageBorderRemover
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>边框检测结果</returns>
-    public BorderDetectionResult DetectBorders(SKBitmap image, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
+    public BorderDetectionResult DetectBorders(SKBitmap image, int tolerance, int maxLayers = 5, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        var result = new BorderDetectionResult(CroppedBorderCount)
+        if (image == null)
+        {
+            throw new ArgumentNullException(nameof(image), "Image cannot be null.");
+        }
+
+        ValidateOptions(tolerance, maxLayers, downscaleFactor);
+        using var sample = useDownscaling ? CreateSample(image, downscaleFactor) : image.Copy();
+        var detected = IsLightStudioBackground(sample, tolerance) ? FindBackgroundBounds(sample, tolerance) : FindContentBordersWithLayers(sample, tolerance, maxLayers);
+        var scale = useDownscaling ? downscaleFactor : 1;
+        return new BorderDetectionResult(CroppedBorderCount)
         {
             ImageWidth = image.Width,
             ImageHeight = image.Height,
-            BorderColors = new List<SKColor>(),
-            BorderLayers = 0
+            ContentTop = ScaleStart(detected.top, scale, image.Height),
+            ContentBottom = ScaleEnd(detected.bottom, scale, image.Height),
+            ContentLeft = ScaleStart(detected.left, scale, image.Width),
+            ContentRight = ScaleEnd(detected.right, scale, image.Width),
+            BorderLayers = detected.layers,
+            BorderColors = detected.colors
         };
-
-        byte toleranceValue = (byte) (tolerance * 2.55);
-
-        using var clone = ToGrayscaleBitmap(image);
-        var (top, bottom, left, right, layers, colors) = FindContentBordersWithLayers(clone, toleranceValue, maxLayers, useDownscaling, downscaleFactor);
-
-        // 设置内容边界
-        result.ContentTop = top;
-        result.ContentBottom = bottom;
-        result.ContentLeft = left;
-        result.ContentRight = right;
-        result.BorderLayers = layers;
-        result.BorderColors = colors;
-        return result;
     }
 
     /// <summary>
@@ -87,10 +91,7 @@ public class ImageBorderRemover
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public void RemoveBorders(string inputPath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
-    {
-        RemoveBorders(inputPath, inputPath, tolerance, maxLayers, useDownscaling, downscaleFactor);
-    }
+    public void RemoveBorders(string inputPath, int tolerance, int maxLayers = 5, bool useDownscaling = false, int downscaleFactor = 4) => RemoveBorders(inputPath, inputPath, tolerance, maxLayers, useDownscaling, downscaleFactor);
 
     /// <summary>
     /// 自动移除图片的多层边框
@@ -102,529 +103,414 @@ public class ImageBorderRemover
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public void RemoveBorders(string inputPath, string outputPath, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
+    public void RemoveBorders(string inputPath, string outputPath, int tolerance, int maxLayers = 5, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        using var image = SKBitmap.Decode(inputPath);
-        var cropped = RemoveBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
-        if (cropped != null)
+        if (string.IsNullOrWhiteSpace(inputPath))
         {
-            using (cropped)
-            {
-                using var data = cropped.Encode(SKEncodedImageFormat.Png, 90);
-                using var fs = File.OpenWrite(outputPath);
-                data.SaveTo(fs);
-            }
+            throw new ArgumentException("Input path cannot be null or empty.", nameof(inputPath));
         }
+
+        if (string.IsNullOrWhiteSpace(outputPath))
+        {
+            throw new ArgumentException("Output path cannot be null or empty.", nameof(outputPath));
+        }
+
+        using var image = SKBitmap.Decode(inputPath) ?? throw new InvalidDataException("无法解码图像。");
+        using var cropped = RemoveBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
+        using var data = (cropped ?? image).Encode(SKEncodedImageFormat.Jpeg, 90) ?? throw new InvalidOperationException("无法编码图像。");
+        using var stream = File.Create(outputPath);
+        data.SaveTo(stream);
     }
 
     /// <summary>
     /// 自动移除图片的多层边框
     /// </summary>
-    /// <param name="input">输入图片路径</param>
+    /// <param name="image">已加载的图像</param>
     /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
     /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
     /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public PooledMemoryStream RemoveBorders(Stream input, int tolerance, int maxLayers = 3, bool useDownscaling = false, int downscaleFactor = 4)
+    public SKBitmap? RemoveBorders(SKBitmap image, int tolerance, int maxLayers = 5, bool useDownscaling = false, int downscaleFactor = 4)
     {
-        var detectedFormat = input.GetImageType();
-        input.Seek(0, SeekOrigin.Begin);
-        using var codec = SKCodec.Create(input);
-        using var image = SKBitmap.Decode(codec);
-        var cropped = RemoveBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
-        var bitmapToSave = cropped ?? image;
-        var stream = new PooledMemoryStream();
-        var format = detectedFormat switch
+        var border = DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
+        if (!border.CanBeCropped || border.ContentWidth <= 0 || border.ContentHeight <= 0 || (border.ContentWidth == image.Width && border.ContentHeight == image.Height)) return null;
+        var result = new SKBitmap(border.ContentWidth, border.ContentHeight);
+        if (!image.ExtractSubset(result, new SKRectI(border.ContentLeft, border.ContentTop, border.ContentRight + 1, border.ContentBottom + 1)))
         {
-            ImageFormat.Jpg => SKEncodedImageFormat.Jpeg,
-            ImageFormat.Png => SKEncodedImageFormat.Png,
-            ImageFormat.Gif => SKEncodedImageFormat.Gif,
-            ImageFormat.Bmp => SKEncodedImageFormat.Bmp,
-            ImageFormat.WebP => SKEncodedImageFormat.Webp,
-            _ => SKEncodedImageFormat.Png,
-        };
-        using (var data = bitmapToSave.Encode(format, 90))
-        {
-            data.SaveTo(stream);
+            result.Dispose();
+            throw new InvalidOperationException("无法提取裁剪区域。");
         }
 
-        cropped?.Dispose();
-        stream.Position = 0;
-        return stream;
+        return result;
     }
 
     /// <summary>
-    /// 移除边框并返回新的裁剪后的 SKBitmap（如未裁剪则返回 null）
+    /// 查找图像内容边界（支持多层边框）
     /// </summary>
-    /// <param name="image"></param>
+    /// <param name="image">已加载的图像</param>
     /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
     /// <param name="maxLayers">最大检测边框层数，默认3</param>
-    /// <param name="useDownscaling">是否使用缩小采样优化性能，默认false，开启可能会导致图片过多裁剪</param>
-    /// <param name="downscaleFactor">缩小采样比例(1-10)，默认4</param>
-    /// <returns>是否执行了裁剪操作</returns>
-    public SKBitmap RemoveBorders(SKBitmap image, int tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
+    /// <returns>边界信息</returns>
+    private (int top, int bottom, int left, int right, int layers, List<SKColor> colors) FindContentBordersWithLayers(SKBitmap image, int tolerance, int maxLayers)
     {
-        // 保存原始尺寸用于比较
-        int originalWidth = image.Width;
-        int originalHeight = image.Height;
-
-        // 使用多层检测方法获取边框信息
-        var borderInfo = DetectBorders(image, tolerance, maxLayers, useDownscaling, downscaleFactor);
-
-        if (borderInfo.CanBeCropped)
+        var top = 0;
+        var bottom = image.Height - 1;
+        var left = 0;
+        var right = image.Width - 1;
+        var colors = new List<SKColor>();
+        var layers = 0;
+        while (layers < maxLayers && top < bottom && left < right)
         {
-            int newWidth = borderInfo.ContentRight - borderInfo.ContentLeft + 1;
-            int newHeight = borderInfo.ContentBottom - borderInfo.ContentTop + 1;
-            if (newWidth > 0 && newHeight > 0 && (newWidth != originalWidth || newHeight != originalHeight))
-            {
-                var dest = new SKBitmap(newWidth, newHeight);
-                image.ExtractSubset(dest, new SKRectI(borderInfo.ContentLeft, borderInfo.ContentTop, borderInfo.ContentLeft + newWidth, borderInfo.ContentTop + newHeight));
-                return dest;
-            }
+            var layerColors = new List<SKColor>();
+            var changed = false;
+            var nextTop = DetectLayerBorderTop(image, top, bottom, left, right, tolerance, layerColors);
+            var nextBottom = DetectLayerBorderBottom(image, top, bottom, left, right, tolerance, layerColors);
+            var nextLeft = DetectLayerBorderLeft(image, top, bottom, left, right, tolerance, layerColors);
+            var nextRight = DetectLayerBorderRight(image, top, bottom, left, right, tolerance, layerColors);
+            changed |= nextTop > top || nextBottom < bottom || nextLeft > left || nextRight < right;
+            top = nextTop;
+            bottom = nextBottom;
+            left = nextLeft;
+            right = nextRight;
+            if (!changed) break;
+            layers++;
+            colors.AddRange(layerColors.Distinct());
         }
 
-        return null;
-    }
-
-    /// <summary>
-    /// 查找内容边界（支持多层边框检测）
-    /// </summary>
-    private (int top, int bottom, int left, int right, int layers, List<SKColor> colors) FindContentBordersWithLayers(SKBitmap image, byte tolerance, int maxLayers, bool useDownscaling, int downscaleFactor)
-    {
-        SKBitmap workingImage;
-        float scale = 1f;
-        bool isDownscaled = false;
-
-        if (useDownscaling && image.Width > 500 && image.Height > 500)
-        {
-            int newWidth = image.Width / downscaleFactor;
-            int newHeight = image.Height / downscaleFactor;
-            scale = (float) image.Width / newWidth;
-            workingImage = image.Resize(new SKImageInfo(newWidth, newHeight), new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Nearest));
-            isDownscaled = true;
-        }
-        else
-        {
-            workingImage = image;
-        }
-
-        int width = workingImage.Width;
-        int height = workingImage.Height;
-        int top = 0, bottom = height - 1, left = 0, right = width - 1;
-        int layers = 0;
-        var borderColors = new List<SKColor>();
-
-        // 检测多层边框
-        for (int layer = 0; layer < maxLayers; layer++)
-        {
-            bool borderFound = false;
-            var results = new (int borderSize, SKColor? color)[4];
-
-            Parallel.Invoke(() =>
-            {
-                if (top < height / 2)
-                {
-                    SKColor? layerColor = null;
-                    int newTop = DetectLayerBorderTop(workingImage, top, bottom, left, right, tolerance, ref layerColor);
-                    results[0] = (newTop - top, layerColor);
-                    if (newTop > top) borderFound = true;
-                    top = newTop;
-                }
-            }, () =>
-            {
-                if (bottom > height / 2)
-                {
-                    SKColor? layerColor = null;
-                    int newBottom = DetectLayerBorderBottom(workingImage, top, bottom, left, right, tolerance, ref layerColor);
-                    results[1] = (newBottom - bottom, layerColor);
-                    if (newBottom < bottom) borderFound = true;
-                    bottom = newBottom;
-                }
-            }, () =>
-            {
-                if (left < width / 2)
-                {
-                    SKColor? layerColor = null;
-                    int newLeft = DetectLayerBorderLeft(workingImage, top, bottom, left, right, tolerance, ref layerColor);
-                    results[2] = (newLeft - left, layerColor);
-                    if (newLeft > left) borderFound = true;
-                    left = newLeft;
-                }
-            }, () =>
-            {
-                if (right > width / 2)
-                {
-                    SKColor? layerColor = null;
-                    int newRight = DetectLayerBorderRight(workingImage, top, bottom, left, right, tolerance, ref layerColor);
-                    results[3] = (newRight - right, layerColor);
-                    if (newRight < right) borderFound = true;
-                    right = newRight;
-                }
-            });
-
-            // 收集检测到的边框颜色
-            foreach (var (borderSize, color) in results)
-            {
-                if (color.HasValue && borderSize > 0)
-                {
-                    borderColors.Add(color.Value);
-                }
-            }
-
-            if (borderFound)
-            {
-                layers++;
-            }
-            else
-            {
-                break; // 没有检测到更多边框层
-            }
-        }
-
-        // 如果是缩小采样版本，映射回原图坐标
-        if (isDownscaled)
-        {
-            top = (int) (top * scale);
-            bottom = (int) (bottom * scale);
-            left = (int) (left * scale);
-            right = (int) (right * scale);
-
-            // 确保边界在图像范围内
-            top = Clamp(top, 0, image.Height - 1);
-            bottom = Clamp(bottom, top, image.Height - 1);
-            left = Clamp(left, 0, image.Width - 1);
-            right = Clamp(right, left, image.Width - 1);
-
-            // 释放缩小图像
-            workingImage.Dispose();
-        }
-
-        return (top, bottom, left, right, layers, borderColors);
+        return (top, bottom, left, right, layers, colors);
     }
 
     private static int Clamp(int value, int min, int max) => value < min ? min : value > max ? max : value;
 
     /// <summary>
-    /// 检测顶部边框层（优化版）
+    /// 判断图像是否为浅色工作背景
     /// </summary>
-    private int DetectLayerBorderTop(SKBitmap image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref SKColor? borderColor)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <returns>是否为浅色工作背景</returns>
+    private static bool IsLightStudioBackground(SKBitmap image, int tolerance)
     {
-        int newTop = currentTop;
-        SKColor? detectedColor = null;
-        int sampleCount = Math.Min(50, currentRight - currentLeft + 1);
-        int stepX = Math.Max(1, (currentRight - currentLeft) / sampleCount);
-
-        // 从当前顶部开始向下扫描
-        for (int y = currentTop; y <= currentBottom; y++)
+        var corners = new[]
         {
-            SKColor? rowColor = null;
-            bool isUniform = true;
+            image.GetPixel(0, 0),
+            image.GetPixel(image.Width - 1, 0),
+            image.GetPixel(0, image.Height - 1),
+            image.GetPixel(image.Width - 1, image.Height - 1)
+        };
+        var cornerTolerance = Clamp(tolerance * 2, 1, 32);
+        if (!corners.All(color => color.Red >= 180 && color.Green >= 180 && color.Blue >= 180 && color.Alpha >= 220) || !corners.All(color => CompareColors(color, corners[0], Math.Max(cornerTolerance, 80)))) return false;
 
-            // 采样检查行是否统一颜色
-            for (int x = currentLeft; x <= currentRight; x += stepX)
-            {
-                var px = image.GetPixel(x, y);
-                if (!rowColor.HasValue)
-                {
-                    rowColor = px;
-                    continue;
-                }
-
-                if (!IsSimilarColor(px, rowColor.Value, tolerance))
-                {
-                    isUniform = false;
-                    break;
-                }
-            }
-
-            // 如果是统一颜色行
-            if (isUniform && rowColor.HasValue)
-            {
-                // 第一行总是被认为是边框
-                if (y == currentTop)
-                {
-                    detectedColor = rowColor;
-                    newTop = y + 1;
-                    continue;
-                }
-
-                // 后续行必须与第一行颜色相似
-                if (detectedColor.HasValue && IsSimilarColor(rowColor.Value, detectedColor.Value, tolerance))
-                {
-                    newTop = y + 1;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if (newTop > currentTop)
-        {
-            borderColor = detectedColor;
-            return newTop;
-        }
-
-        return currentTop;
+        var bandHeight = Math.Max(1, image.Height / 10);
+        var bandWidth = Math.Max(1, image.Width / 10);
+        return IsBackgroundBand(image, 0, bandHeight, true, corners[0], tolerance) || IsBackgroundBand(image, image.Height - bandHeight, image.Height, true, corners[0], tolerance) || IsBackgroundBand(image, 0, bandWidth, false, corners[0], tolerance) || IsBackgroundBand(image, image.Width - bandWidth, image.Width, false, corners[0], tolerance);
     }
 
     /// <summary>
-    /// 检测底部边框层（优化版）
+    /// 判断图像是否为背景带
     /// </summary>
-    private int DetectLayerBorderBottom(SKBitmap image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref SKColor? borderColor)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="start">起始位置</param>
+    /// <param name="end">结束位置</param>
+    /// <param name="row">是否为行</param>
+    /// <param name="background">背景颜色</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <returns>是否为背景带</returns>
+    private static bool IsBackgroundBand(SKBitmap image, int start, int end, bool row, SKColor background, int tolerance)
     {
-        int newBottom = currentBottom;
-        SKColor? detectedColor = null;
-        int sampleCount = Math.Min(50, currentRight - currentLeft + 1);
-        int stepX = Math.Max(1, (currentRight - currentLeft) / sampleCount);
-
-        for (int y = currentBottom; y >= currentTop; y--)
+        var matching = 0;
+        var total = 0;
+        var step = Math.Max(1, (row ? image.Width : image.Height) / 64);
+        for (var edge = start; edge < end; edge += Math.Max(1, (end - start) / 16))
+        for (var coordinate = 0; coordinate < (row ? image.Width : image.Height); coordinate += step)
         {
-            SKColor? rowColor = null;
-            bool isUniform = true;
-            for (int x = currentLeft; x <= currentRight; x += stepX)
-            {
-                var px = image.GetPixel(x, y);
-                if (!rowColor.HasValue)
-                {
-                    rowColor = px;
-                    continue;
-                }
-
-                if (!IsSimilarColor(px, rowColor.Value, tolerance))
-                {
-                    isUniform = false;
-                    break;
-                }
-            }
-
-            if (isUniform && rowColor.HasValue)
-            {
-                if (y == currentBottom)
-                {
-                    detectedColor = rowColor;
-                    newBottom = y - 1;
-                    continue;
-                }
-
-                if (detectedColor.HasValue && IsSimilarColor(rowColor.Value, detectedColor.Value, tolerance))
-                {
-                    newBottom = y - 1;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
+            var color = row ? image.GetPixel(coordinate, edge) : image.GetPixel(edge, coordinate);
+            if (CompareColors(color, background, Math.Max(12, tolerance * 2))) matching++;
+            total++;
         }
 
-        if (newBottom < currentBottom)
-        {
-            borderColor = detectedColor;
-            return newBottom;
-        }
-
-        return currentBottom;
+        return matching >= total * 0.8;
     }
 
     /// <summary>
-    /// 检测左侧边框层（优化版）
+    /// 查找图像背景边界
     /// </summary>
-    private int DetectLayerBorderLeft(SKBitmap image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref SKColor? borderColor)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <returns>边界信息</returns>
+    private (int top, int bottom, int left, int right, int layers, List<SKColor> colors) FindBackgroundBounds(SKBitmap image, int tolerance)
     {
-        int newLeft = currentLeft;
-        SKColor? detectedColor = null;
-        int sampleCount = Math.Min(50, currentBottom - currentTop + 1);
-        int stepY = Math.Max(1, (currentBottom - currentTop) / sampleCount);
+        var background = image.GetPixel(0, 0);
+        const int safetyMargin = 1;
+        var top = Math.Max(0, FindBackgroundEdge(image, 0, image.Height - 1, 1, true, background, tolerance) - safetyMargin);
+        var bottom = Math.Min(image.Height - 1, FindBackgroundEdge(image, image.Height - 1, top, -1, true, background, tolerance) + safetyMargin);
+        var left = Math.Max(0, FindBackgroundEdge(image, 0, image.Width - 1, 1, false, background, tolerance) - safetyMargin);
+        var right = Math.Min(image.Width - 1, FindBackgroundEdge(image, image.Width - 1, left, -1, false, background, tolerance) + safetyMargin);
+        return (top, bottom, left, right, 1, []);
+    }
 
-        for (int x = currentLeft; x <= currentRight; x++)
+    private static int FindBackgroundEdge(SKBitmap image, int start, int limit, int direction, bool row, SKColor background, int tolerance)
+    {
+        const int sampleCount = 129;
+        var edge = start;
+        while (edge != limit)
         {
-            SKColor? colColor = null;
-            bool isUniform = true;
-            for (int y = currentTop; y <= currentBottom; y += stepY)
+            var foreground = 0;
+            for (var i = 0; i < sampleCount; i++)
             {
-                var px = image.GetPixel(x, y);
-                if (!colColor.HasValue)
-                {
-                    colColor = px;
-                    continue;
-                }
-
-                if (!IsSimilarColor(px, colColor.Value, tolerance))
-                {
-                    isUniform = false;
-                    break;
-                }
+                var coordinate = i * (row ? image.Width - 1 : image.Height - 1) / (sampleCount - 1);
+                var color = row ? image.GetPixel(coordinate, edge) : image.GetPixel(edge, coordinate);
+                if (!CompareColors(color, background, Math.Max(48, tolerance * 3))) foreground++;
             }
 
-            if (isUniform && colColor.HasValue)
-            {
-                if (x == currentLeft)
-                {
-                    detectedColor = colColor;
-                    newLeft = x + 1;
-                    continue;
-                }
-
-                if (detectedColor.HasValue && IsSimilarColor(colColor.Value, detectedColor.Value, tolerance))
-                {
-                    newLeft = x + 1;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
+            if (foreground >= 2) return edge;
+            edge += direction;
         }
 
-        if (newLeft > currentLeft)
-        {
-            borderColor = detectedColor;
-            return newLeft;
-        }
-
-        return currentLeft;
+        return direction > 0 ? edge : edge + 1;
     }
 
     /// <summary>
-    /// 检测右侧边框层（优化版）
+    /// 检测图像顶部图层边界
     /// </summary>
-    private int DetectLayerBorderRight(SKBitmap image, int currentTop, int currentBottom, int currentLeft, int currentRight, byte tolerance, ref SKColor? borderColor)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <returns>顶部图层边界位置</returns>
+    private int DetectLayerBorderTop(SKBitmap image, int top, int bottom, int left, int right, int tolerance, List<SKColor> colors) => ScanRows(image, top, bottom, left, right, tolerance, colors, 1);
+
+    /// <summary>
+    /// 检测图像底部图层边界
+    /// </summary>
+    /// <param name="image">已加载的图像</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <returns>底部图层边界位置</returns>
+    private int DetectLayerBorderBottom(SKBitmap image, int top, int bottom, int left, int right, int tolerance, List<SKColor> colors) => ScanRows(image, bottom, top, left, right, tolerance, colors, -1);
+
+    /// <summary>
+    /// 检测图像左侧图层边界
+    /// </summary>
+    /// <param name="image">已加载的图像</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <returns>左侧图层边界位置</returns>
+    private int DetectLayerBorderLeft(SKBitmap image, int top, int bottom, int left, int right, int tolerance, List<SKColor> colors) => ScanColumns(image, left, right, top, bottom, tolerance, colors, 1);
+
+    /// <summary>
+    /// 检测图像右侧图层边界
+    /// </summary>
+    /// <param name="image">已加载的图像</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <returns>右侧图层边界位置</returns>
+    private int DetectLayerBorderRight(SKBitmap image, int top, int bottom, int left, int right, int tolerance, List<SKColor> colors) => ScanColumns(image, right, left, top, bottom, tolerance, colors, -1);
+
+    /// <summary>
+    /// 扫描图像行以检测边界
+    /// </summary>
+    /// <param name="image">已加载的图像</param>
+    /// <param name="start">起始行位置</param>
+    /// <param name="limit">限制行位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <param name="direction">扫描方向(1表示从上到下，-1表示从下到上)</param>
+    /// <param name="allowedMissedRows">允许的连续未检测到边界的行数</param>
+    /// <returns>检测到的边界行位置</returns>
+    private int ScanRows(SKBitmap image, int start, int limit, int left, int right, int tolerance, List<SKColor> colors, int direction, int allowedMissedRows = 4)
     {
-        int newRight = currentRight;
-        SKColor? detectedColor = null;
-        int sampleCount = Math.Min(50, currentBottom - currentTop + 1);
-        int stepY = Math.Max(1, (currentBottom - currentTop) / sampleCount);
-
-        for (int x = currentRight; x >= currentLeft; x--)
+        var edge = start;
+        var missedRows = 0;
+        while (edge != limit)
         {
-            SKColor? colColor = null;
-            bool isUniform = true;
-            for (int y = currentTop; y <= currentBottom; y += stepY)
+            if (IsBorderRow(image, edge, left, right, tolerance, out var color))
             {
-                var px = image.GetPixel(x, y);
-                if (!colColor.HasValue)
-                {
-                    colColor = px;
-                    continue;
-                }
-
-                if (!IsSimilarColor(px, colColor.Value, tolerance))
-                {
-                    isUniform = false;
-                    break;
-                }
+                colors.Add(color);
+                missedRows = 0;
+            }
+            else if (++missedRows >= allowedMissedRows)
+            {
+                return direction > 0 ? edge - allowedMissedRows + 1 : edge;
             }
 
-            if (isUniform && colColor.HasValue)
-            {
-                if (x == currentRight)
-                {
-                    detectedColor = colColor;
-                    newRight = x - 1;
-                    continue;
-                }
-
-                if (detectedColor.HasValue && IsSimilarColor(colColor.Value, detectedColor.Value, tolerance))
-                {
-                    newRight = x - 1;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
+            edge += direction;
         }
 
-        if (newRight < currentRight)
-        {
-            borderColor = detectedColor;
-            return newRight;
-        }
-
-        return currentRight;
+        return direction > 0 ? edge : edge + 1;
     }
 
     /// <summary>
-    /// 颜色相似度比较（SIMD优化）
+    /// 扫描图像列以检测边界
     /// </summary>
-    private bool IsSimilarColor(SKColor color1, SKColor color2, byte tolerance)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="start">起始列位置</param>
+    /// <param name="limit">限制列位置</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="colors">颜色列表</param>
+    /// <param name="direction">扫描方向(1表示从左到右，-1表示从右到左)</param>
+    /// <param name="allowedMissedColumns">允许的连续未检测到边界的列数</param>
+    /// <returns>检测到的边界列位置</returns>
+    private int ScanColumns(SKBitmap image, int start, int limit, int top, int bottom, int tolerance, List<SKColor> colors, int direction, int allowedMissedColumns = 4)
     {
-        switch (ToleranceMode)
+        var edge = start;
+        var missedColumns = 0;
+        while (edge != limit)
         {
-            case ToleranceMode.Channel:
-                return CompareColors(color1, color2, tolerance, true);
-            case ToleranceMode.DeltaE2000:
-                return Color.FromArgb(color1.Alpha, color1.Red, color1.Green, color1.Blue).CIE2000(Color.FromArgb(color2.Alpha, color2.Red, color2.Green, color2.Blue)) <= tolerance;
-            case ToleranceMode.DeltaE1976:
-                return Color.FromArgb(color1.Alpha, color1.Red, color1.Green, color1.Blue).CIE1976(Color.FromArgb(color2.Alpha, color2.Red, color2.Green, color2.Blue)) <= tolerance;
-            case ToleranceMode.DeltaE1994:
-                return Color.FromArgb(color1.Alpha, color1.Red, color1.Green, color1.Blue).CIE1994(Color.FromArgb(color2.Alpha, color2.Red, color2.Green, color2.Blue)) <= tolerance;
-            case ToleranceMode.DeltaECMC:
-                return Color.FromArgb(color1.Alpha, color1.Red, color1.Green, color1.Blue).CMC(Color.FromArgb(color2.Alpha, color2.Red, color2.Green, color2.Blue)) <= tolerance;
-            case ToleranceMode.EuclideanDistance:
-                return CompareWithEuclideanDistance(color1, color2, tolerance, true);
-            default:
-                throw new ArgumentOutOfRangeException();
+            if (IsBorderColumn(image, edge, top, bottom, tolerance, out var color))
+            {
+                colors.Add(color);
+                missedColumns = 0;
+            }
+            else if (++missedColumns >= allowedMissedColumns)
+            {
+                return direction > 0 ? edge - allowedMissedColumns + 1 : edge;
+            }
+
+            edge += direction;
         }
+
+        return direction > 0 ? edge : edge + 1;
     }
 
     /// <summary>
-    /// 比较两个颜色是否在容差范围内相等
+    /// 判断指定行是否为边界行
     /// </summary>
-    /// <param name="color1">第一个颜色</param>
-    /// <param name="color2">第二个颜色</param>
-    /// <param name="tolerance">容差值 (0-255)</param>
-    /// <param name="compareAlpha">是否比较Alpha通道</param>
-    /// <returns>是否匹配</returns>
-    private static bool CompareColors(SKColor color1, SKColor color2, int tolerance = 10, bool compareAlpha = false)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="y">行位置</param>
+    /// <param name="left">左侧位置</param>
+    /// <param name="right">右侧位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="color">检测到的边界颜色</param>
+    /// <returns>是否为边界行</returns>
+    private bool IsBorderRow(SKBitmap image, int y, int left, int right, int tolerance, out SKColor color)
     {
-        if (Math.Abs(color1.Red - color2.Red) > tolerance) return false;
-        if (Math.Abs(color1.Green - color2.Green) > tolerance) return false;
-        if (Math.Abs(color1.Blue - color2.Blue) > tolerance) return false;
-        if (compareAlpha && Math.Abs(color1.Alpha - color2.Alpha) > tolerance) return false;
-        return true;
+        const int sampleCount = 9;
+        var samples = Enumerable.Range(0, sampleCount).Select(i => image.GetPixel(left + (right - left) * i / (sampleCount - 1), y)).ToArray();
+        var referenceColor = samples[sampleCount / 2];
+        color = referenceColor;
+        return samples.Count(sample => IsSimilarColor(sample, referenceColor, tolerance)) >= sampleCount - 1;
     }
 
     /// <summary>
-    /// 使用欧几里得距离比较颜色
+    /// 判断指定列是否为边界列
     /// </summary>
-    /// <param name="color1">第一个颜色</param>
-    /// <param name="color2">第二个颜色</param>
-    /// <param name="maxDistance">最大允许距离 (0-442之间)</param>
-    /// <param name="compareAlpha">是否包含Alpha通道</param>
-    /// <returns>是否匹配</returns>
-    private static bool CompareWithEuclideanDistance(SKColor color1, SKColor color2, double maxDistance = 20.0, bool compareAlpha = false)
+    /// <param name="image">已加载的图像</param>
+    /// <param name="x">列位置</param>
+    /// <param name="top">顶部位置</param>
+    /// <param name="bottom">底部位置</param>
+    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="color">检测到的边界颜色</param>
+    /// <returns>是否为边界列</returns>
+    private bool IsBorderColumn(SKBitmap image, int x, int top, int bottom, int tolerance, out SKColor color)
     {
-        double sum = Math.Pow(color1.Red - color2.Red, 2) + Math.Pow(color1.Green - color2.Green, 2) + Math.Pow(color1.Blue - color2.Blue, 2);
-        if (compareAlpha) sum += Math.Pow(color1.Alpha - color2.Alpha, 2);
-        return Math.Sqrt(sum) <= maxDistance;
+        const int sampleCount = 9;
+        var samples = Enumerable.Range(0, sampleCount).Select(i => image.GetPixel(x, top + (bottom - top) * i / (sampleCount - 1))).ToArray();
+        var referenceColor = samples[sampleCount / 2];
+        color = referenceColor;
+        return samples.Count(sample => IsSimilarColor(sample, referenceColor, tolerance)) >= sampleCount - 1;
     }
 
-    private static SKBitmap ToGrayscaleBitmap(SKBitmap source)
+    /// <summary>
+    /// 判断两个颜色是否相似
+    /// </summary>
+    /// <param name="first">第一个颜色</param>
+    /// <param name="second">第二个颜色</param>
+    /// <param name="tolerance">颜色容差</param>
+    /// <returns>是否相似</returns>
+    private bool IsSimilarColor(SKColor first, SKColor second, int tolerance) => ToleranceMode switch
     {
-        var info = new SKImageInfo(source.Width, source.Height, SKColorType.Gray8, SKAlphaType.Opaque);
-        var gray = new SKBitmap(info);
-        source.ScalePixels(gray, new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.None));
-        return gray;
+        ToleranceMode.EuclideanDistance => CompareWithEuclideanDistance(first, second, tolerance),
+        _ => CompareColors(first, second, tolerance)
+    };
+
+    /// <summary>
+    /// 比较两个颜色是否在指定容差范围内相似  
+    /// </summary>
+    /// <param name="first">第一个颜色</param>
+    /// <param name="second">第二个颜色</param>
+    /// <param name="tolerance">颜色容差</param>
+    /// <returns>是否相似</returns>
+    private static bool CompareColors(SKColor first, SKColor second, int tolerance) => Math.Abs(first.Alpha - second.Alpha) <= tolerance && Math.Abs(first.Red - second.Red) <= tolerance && Math.Abs(first.Green - second.Green) <= tolerance && Math.Abs(first.Blue - second.Blue) <= tolerance;
+
+    /// <summary>
+    /// 比较两个颜色的欧几里得距离是否在指定容差范围内相似
+    /// </summary>
+    /// <param name="first">第一个颜色</param>
+    /// <param name="second">第二个颜色</param>
+    /// <param name="tolerance">颜色容差</param>
+    /// <returns>是否相似</returns>
+    private static bool CompareWithEuclideanDistance(SKColor first, SKColor second, double tolerance)
+    {
+        var alpha = first.Alpha - second.Alpha;
+        var red = first.Red - second.Red;
+        var green = first.Green - second.Green;
+        var blue = first.Blue - second.Blue;
+        return Math.Sqrt(alpha * alpha + red * red + green * green + blue * blue) <= tolerance;
+    }
+
+    /// <summary>
+    /// 创建图像的缩小采样版本
+    /// </summary>
+    /// <param name="source">源图像</param>
+    /// <param name="factor">缩小比例</param>
+    /// <returns>缩小采样后的图像</returns>
+    private static SKBitmap CreateSample(SKBitmap source, int factor)
+    {
+        var sample = new SKBitmap(new SKImageInfo(Math.Max(1, source.Width / factor), Math.Max(1, source.Height / factor), source.ColorType, source.AlphaType));
+        source.ScalePixels(sample, new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.None));
+        return sample;
+    }
+
+    /// <summary>
+    /// 将边界值按缩放比例进行调整
+    /// </summary>
+    /// <param name="value">边界值</param>
+    /// <param name="factor">缩放比例</param>
+    /// <param name="size">图像尺寸</param>
+    /// <returns>调整后的边界值</returns>
+    private static int ScaleStart(int value, int factor, int size) => Clamp(value * factor, 0, size - 1);
+
+    /// <summary>
+    /// 将边界值按缩放比例进行调整（用于结束边界）
+    /// </summary>
+    /// <param name="value">边界值</param>
+    /// <param name="factor">缩放比例</param>
+    /// <param name="size">图像尺寸</param>
+    /// <returns>调整后的边界值</returns>
+    private static int ScaleEnd(int value, int factor, int size) => Clamp((value + 1) * factor - 1, 0, size - 1);
+
+    /// <summary>
+    /// 验证输入参数的有效性
+    /// </summary>
+    /// <param name="tolerance">颜色容差</param>
+    /// <param name="maxLayers">最大检测边框层数</param>
+    /// <param name="downscaleFactor">缩小采样比例</param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private static void ValidateOptions(int tolerance, int maxLayers, int downscaleFactor)
+    {
+        if (tolerance is < 0 or > 255) throw new ArgumentOutOfRangeException(nameof(tolerance));
+        if (maxLayers < 1) throw new ArgumentOutOfRangeException(nameof(maxLayers));
+        if (downscaleFactor is < 1 or > 10) throw new ArgumentOutOfRangeException(nameof(downscaleFactor));
     }
 }
 

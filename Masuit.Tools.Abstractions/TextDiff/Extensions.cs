@@ -51,8 +51,20 @@ public static partial class Extensions
 		}
 	}
 
-	public static (string html1, string html2) HtmlDiff(this string text1, string text2)
+	/// <summary>
+	/// 比较两段 HTML 文本，并使用 <c>del</c> 和 <c>ins</c> 标记差异。
+	/// </summary>
+	/// <param name="text1">原始 HTML 文本。</param>
+	/// <param name="text2">新 HTML 文本。</param>
+	/// <param name="maxUnchangedLength">两侧均有差异时，一并标记的最长未变文本长度。设为 <c>0</c> 时不合并。</param>
+	/// <returns>分别标记删除内容和插入内容的 HTML。</returns>
+	public static (string html1, string html2) HtmlDiff(this string text1, string text2, int maxUnchangedLength = 0)
 	{
+		if (maxUnchangedLength < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(maxUnchangedLength));
+		}
+
 		if (string.IsNullOrWhiteSpace(text1) || string.IsNullOrWhiteSpace(text2))
 		{
 			return (text1, text2);
@@ -69,10 +81,39 @@ public static partial class Extensions
 #endif
 		var html1 = regex.Replace(text1, sep);
 		var html2 = regex.Replace(text2, sep);
-		var diffs = TextDiffer.Compute(html1, html2);
-		var s1 = diffs.Where(d => d.Operation != DiffOperation.Insert).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep)).Join("");
-		var s2 = diffs.Where(d => d.Operation != DiffOperation.Delete).Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep)).Join("");
+		var diffs = MergeShortEqualities(TextDiffer.Compute(html1, html2), maxUnchangedLength, sep[0]);
+		var deletions = diffs.Where(d => d.Operation != DiffOperation.Insert);
+		var insertions = diffs.Where(d => d.Operation != DiffOperation.Delete);
+		if (maxUnchangedLength > 0)
+		{
+			deletions = deletions.CleanupMerge();
+			insertions = insertions.CleanupMerge();
+		}
+
+		var s1 = deletions.Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<del>{s}</del>").Join(sep)).Join("");
+		var s2 = insertions.Select(diff => diff.Operation == DiffOperation.Equal || string.IsNullOrWhiteSpace(diff.Text) ? diff.Text : diff.Text.Split(sep[0]).Select(s => string.IsNullOrWhiteSpace(s) ? s : $"<ins>{s}</ins>").Join(sep)).Join("");
 		return (s1.Split(sep[0]).Select((s, i) => s + tags1[i]).Join(""), s2.Split(sep[0]).Select((s, i) => s + tags2[i]).Join(""));
+	}
+
+	private static IEnumerable<TextDiffer> MergeShortEqualities(IEnumerable<TextDiffer> diffs, int maxUnchangedLength, char tagSeparator)
+	{
+		var items = diffs.ToList();
+		if (maxUnchangedLength == 0)
+		{
+			return items;
+		}
+
+		for (var i = 1; i < items.Count - 1; i++)
+		{
+			var diff = items[i];
+			if (diff.Operation == DiffOperation.Equal && diff.Text.Length <= maxUnchangedLength && !diff.Text.Contains(tagSeparator) && items[i - 1].Operation != DiffOperation.Equal && items[i + 1].Operation != DiffOperation.Equal)
+			{
+				items[i] = TextDiffer.Delete(diff.Text);
+				items.Insert(++i, TextDiffer.Insert(diff.Text));
+			}
+		}
+
+		return items;
 	}
 
 	public static string HtmlDiffMerge(this string text1, string text2)

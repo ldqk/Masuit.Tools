@@ -1,5 +1,6 @@
 using Masuit.Tools.Security;
 using System;
+using Masuit.Tools.Extension.Object;
 using Xunit;
 
 namespace Masuit.Tools.Abstractions.Test.Security
