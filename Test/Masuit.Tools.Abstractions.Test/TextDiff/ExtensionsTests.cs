@@ -47,4 +47,12 @@ public class ExtensionsTests
         Assert.Contains("<del>ello</del>", result);
         Assert.Contains("<ins>i</ins>", result);
     }
+
+    [Fact]
+    public void HtmlDiffMerge_ShouldIncludeShortUnchangedTextInChanges()
+    {
+        var result = "ABCADE".HtmlDiffMerge("ADCABE", maxUnchangedLength: 2);
+
+        Assert.Equal("A<del>BCAD</del><ins>DCAB</ins>E", result);
+    }
 }

@@ -116,8 +116,20 @@ public static partial class Extensions
 		return items;
 	}
 
-	public static string HtmlDiffMerge(this string text1, string text2)
+	/// <summary>
+	/// 比较两段 HTML 文本，并将删除和插入差异合并输出。
+	/// </summary>
+	/// <param name="text1">原始 HTML 文本。</param>
+	/// <param name="text2">新 HTML 文本。</param>
+	/// <param name="maxUnchangedLength">两侧均有差异时，一并标记的最长未变文本长度。设为 <c>0</c> 时不合并。</param>
+	/// <returns>合并后的差异 HTML。</returns>
+	public static string HtmlDiffMerge(this string text1, string text2, int maxUnchangedLength = 0)
 	{
+		if (maxUnchangedLength < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(maxUnchangedLength));
+		}
+
 		if (string.IsNullOrWhiteSpace(text1))
 		{
 			return text2;
@@ -139,7 +151,7 @@ public static partial class Extensions
 #endif
 		var html1 = regex.Replace(text1, sep);
 		var html2 = regex.Replace(text2, sep);
-		var diffs = TextDiffer.Compute(html1, html2);
+		var diffs = MergeShortEqualities(TextDiffer.Compute(html1, html2), maxUnchangedLength, sep[0]).CleanupMerge();
 		return diffs.Select(diff =>
 		{
 			switch (diff.Operation)
