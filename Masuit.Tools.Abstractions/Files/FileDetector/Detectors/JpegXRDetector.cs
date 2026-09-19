@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -16,6 +17,8 @@ internal sealed class JpegXRDetector : AbstractSignatureDetector
     public override string Extension => "hdp";
 
     protected override SignatureInformation[] SignatureInformations => JpegSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.JpegXR;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

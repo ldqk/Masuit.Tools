@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -16,6 +17,8 @@ internal sealed class PngDetector : AbstractSignatureDetector
     public override string Extension => "png";
 
     protected override SignatureInformation[] SignatureInformations => PngSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.Png;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -18,6 +19,8 @@ internal sealed class GifDetector : AbstractSignatureDetector
     public override string Extension => "gif";
 
     protected override SignatureInformation[] SignatureInformations => GifSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.Gif;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

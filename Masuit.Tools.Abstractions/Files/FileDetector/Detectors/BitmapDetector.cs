@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -16,6 +17,8 @@ internal sealed class BitmapDetector : AbstractSignatureDetector
     public override string Extension => "bmp";
 
     protected override SignatureInformation[] SignatureInformations => BmpSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.Bmp;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

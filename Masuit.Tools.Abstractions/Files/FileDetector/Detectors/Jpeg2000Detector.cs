@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -16,6 +17,8 @@ internal sealed class Jpeg2000Detector : AbstractSignatureDetector
     public override string Extension => "jp2";
 
     protected override SignatureInformation[] SignatureInformations => JpegSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.Jpeg2000;
 
     public override string MimeType => new MimeMapper().GetMimeFromExtension("." + Extension);
 

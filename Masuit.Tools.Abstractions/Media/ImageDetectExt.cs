@@ -24,12 +24,19 @@ public static class ImageDetectExt
     public static ImageFormat? GetImageType(this Stream ms)
     {
         ms.Seek(0, SeekOrigin.Begin);
-        var header = new byte[16];
+        var header = new byte[18];
         int read = ms.Read(header, 0, header.Length);
         ms.Seek(0, SeekOrigin.Begin);
 
         if (read >= 3 && header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF)
             return ImageFormat.Jpg;
+
+        if (read >= 8 && header[0] == 0x00 && header[1] == 0x00 && header[2] == 0x00 && header[3] == 0x0C
+            && header[4] == 0x6A && header[5] == 0x50 && header[6] == 0x20 && header[7] == 0x20)
+            return ImageFormat.Jpeg2000;
+
+        if (read >= 4 && header[0] == 0x49 && header[1] == 0x49 && header[2] == 0xBC && header[3] == 0x01)
+            return ImageFormat.JpegXR;
 
         if (read >= 8 && header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47
             && header[4] == 0x0D && header[5] == 0x0A && header[6] == 0x1A && header[7] == 0x0A)
@@ -44,6 +51,9 @@ public static class ImageDetectExt
         if (read >= 4 && ((header[0] == 0x49 && header[1] == 0x49 && header[2] == 0x2A && header[3] == 0x00)
                           || (header[0] == 0x4D && header[1] == 0x4D && header[2] == 0x00 && header[3] == 0x2A)))
             return ImageFormat.Tif;
+
+        if (read >= 18 && IsTga(header))
+            return ImageFormat.Tga;
 
         if (read >= 12 && header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46
             && header[8] == 0x57 && header[9] == 0x45 && header[10] == 0x42 && header[11] == 0x50)
@@ -82,6 +92,16 @@ public static class ImageDetectExt
         }
 
         return null;
+    }
+
+    private static bool IsTga(byte[] header)
+    {
+        int imageType = header[2];
+        int colorMapType = header[1];
+        int colorDepth = header[17];
+        return imageType is 0 or 1 or 2 or 3 or 9 or 10 or 11 or 32 or 33
+               && colorDepth is 8 or 15 or 16 or 24 or 32
+               && (colorMapType == 0 || (colorMapType == 1 && colorDepth == 8));
     }
 
     private static bool IsGZip(BinaryReader br)

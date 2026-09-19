@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Masuit.Tools.Media;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -23,6 +24,8 @@ internal sealed class TiffDetector : AbstractSignatureDetector
     public override List<FormatCategory> FormatCategories => GetType().GetCustomAttributes<FormatCategoryAttribute>().Select(a => a.Category).ToList();
 
     protected override SignatureInformation[] SignatureInformations => TiffSignatureInfo;
+
+    public override bool Detect(Stream stream) => stream.GetImageType() == ImageFormat.Tif;
 
     public override string ToString() => "Tagged Image File Format Detector";
 }
