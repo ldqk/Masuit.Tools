@@ -793,6 +793,12 @@ stream=maker.AddWatermark(水印图片,水印位置,边距,字体大小,字体);
 ```
 
 ```csharp
+using var image = SKBitmap.Decode(@"D:\1.jpg");
+var newImage = image.LosslessCompress(); // 无损压缩图片
+PerceptualLosslessCompressor.Compress(@"D:\1.jpg",@"D:\2.jpg"); // 无损压缩图片
+```
+
+```csharp
 var borderInfo=new ImageBorderRemover(ToleranceMode.Channel).DetectBorders(原始图片); // 检测图片是否包含纯色边框
 new ImageBorderRemover(ToleranceMode.Channel).RemoveBorders(原始图片,保存图片); // 移除图片的纯色边框并另存为
 ```
