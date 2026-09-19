@@ -5,7 +5,7 @@ namespace Masuit.Tools.Media;
 
 public static class PerceptualLosslessCompressor
 {
-    private static readonly byte[] CompressionMarker = "Masuit.Tools.PerceptualLosslessCompressor\0v1"u8.ToArray();
+    private static readonly byte[] CompressionMarker = "Masuit.Tools.PerceptualCompressor\0v1"u8.ToArray();
     private const byte ApplicationMarker = 0xEF;
     private const int MinimumQuality = 90;
     private const int MaximumQuality = 100;
