@@ -1,5 +1,16 @@
-using Masuit.Tools.Media;
+using Masuit.Tools.AspNetCore.ModelBinder;
 
-var remover = new ImageBorderRemover(ToleranceMode.DeltaE1994);
-remover.RemoveBorders(@"F:\新建文件夹\0T2A3259.jpg", @"F:\新建文件夹\0T2A3259_r.jpg",2);
-//Console.ReadKey();
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+app.MapControllers();
+app.Run();
