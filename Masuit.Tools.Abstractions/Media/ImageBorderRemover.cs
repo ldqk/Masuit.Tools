@@ -85,16 +85,10 @@ public class ImageBorderRemover
             BorderColors = new List<SKColor>()
         };
 
-        var maxScan = Math.Min(_options.MaximumScanPixels > 0 ? _options.MaximumScanPixels : Math.Min(image.Width, image.Height) / 3, Math.Min(image.Width, image.Height) / 2);
-        if (maxScan < _options.MinimumBorderThickness)
-        {
-            return result;
-        }
-
-        result.ContentTop = FindBorder(image, tolerance, maxScan, BorderSide.Top, result.BorderColors);
-        result.ContentBottom = image.Height - 1 - FindBorder(image, tolerance, maxScan, BorderSide.Bottom, result.BorderColors);
-        result.ContentLeft = FindBorder(image, tolerance, maxScan, BorderSide.Left, result.BorderColors);
-        result.ContentRight = image.Width - 1 - FindBorder(image, tolerance, maxScan, BorderSide.Right, result.BorderColors);
+        result.ContentTop = FindBorder(image, tolerance, image.Height/2-1, BorderSide.Top, result.BorderColors);
+        result.ContentBottom = image.Height - 1 - FindBorder(image, tolerance, image.Height / 2 - 1, BorderSide.Bottom, result.BorderColors);
+        result.ContentLeft = FindBorder(image, tolerance, image.Width / 2 - 1, BorderSide.Left, result.BorderColors);
+        result.ContentRight = image.Width - 1 - FindBorder(image, tolerance, image.Width / 2 - 1, BorderSide.Right, result.BorderColors);
 
         if (!IsValidContentArea(result))
         {
@@ -239,7 +233,6 @@ public class ImageBorderRemover
 
     private bool IsBorderLine(IReadOnlyList<SKColor> samples, int tolerance, out double variance)
     {
-        var effectiveTolerance = tolerance + _options.CompressionNoiseTolerance;
         var reference = samples[samples.Count / 2];
         var similar = 0;
         var adjacentSimilar = 0;
@@ -249,12 +242,12 @@ public class ImageBorderRemover
         {
             var sample = samples[index];
             graySum += ToGray(sample);
-            if (IsSimilarColor(reference, sample, effectiveTolerance))
+            if (IsSimilarColor(reference, sample, tolerance))
             {
                 similar++;
             }
 
-            if (index > 0 && IsSimilarColor(samples[index - 1], sample, effectiveTolerance))
+            if (index > 0 && IsSimilarColor(samples[index - 1], sample, tolerance))
             {
                 adjacentSimilar++;
             }
@@ -276,7 +269,7 @@ public class ImageBorderRemover
         var smoothlyChanging = samples.Count > 1 && (double)adjacentSimilar / (samples.Count - 1) >= _options.MinimumSimilarRatio;
         variance /= samples.Count;
         var uniformlyColored = (double)similar / samples.Count >= _options.MinimumSimilarRatio && variance <= _options.MaximumGrayVariance;
-        return uniformlyColored || smoothlyChanging && maximumGradientStep <= _options.MaximumGradientStep && variance <= _options.MaximumGradientVariance;
+        return uniformlyColored || smoothlyChanging && maximumGradientStep <= _options.MaximumGradientStep;
     }
 
     private bool IsValidContentArea(BorderDetectionResult result) => result.ContentLeft >= 0 && result.ContentTop >= 0 && result.ContentRight < result.ImageWidth && result.ContentBottom < result.ImageHeight && result.ContentWidth >= _options.MinimumContentSize && result.ContentHeight >= _options.MinimumContentSize;
@@ -367,7 +360,7 @@ public class ImageBorderRemover
 
     private static void ValidateOptions(ImageBorderRemoverOptions options)
     {
-        if (options.SampleCount < 1 || options.SampleMarginRatio is < 0 or >= 0.5 || options.MinimumSimilarRatio is <= 0 or > 1 || options.CompressionNoiseTolerance < 0 || options.MaximumBorderGaps < 0 || options.MaximumGrayVariance < 0 || options.MaximumGradientVariance < 0 || options.MaximumGradientStep < 0 || options.VarianceTransitionThreshold < 0 || options.MaximumScanPixels < 0 || options.MinimumBorderThickness < 1 || options.MinimumContentSize < 1 || options.SafetyPadding < 0 || options.ContourSampleStride < 1 || options.ContourEdgeThreshold < 0 || options.MinimumContourPixels < 1 || options.MaximumContourRefinementPixels < 0)
+        if (options.SampleCount < 1 || options.SampleMarginRatio is < 0 or >= 0.5 || options.MinimumSimilarRatio is <= 0 or > 1 || options.MaximumBorderGaps < 0 || options.MaximumGrayVariance < 0 || options.MaximumGradientStep < 0 || options.VarianceTransitionThreshold < 0 ||  options.MinimumBorderThickness < 1 || options.MinimumContentSize < 1 || options.SafetyPadding < 0 || options.ContourSampleStride < 1 || options.ContourEdgeThreshold < 0 || options.MinimumContourPixels < 1 || options.MaximumContourRefinementPixels < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(options));
         }

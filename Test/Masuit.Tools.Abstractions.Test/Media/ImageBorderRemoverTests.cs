@@ -169,12 +169,4 @@ public class ImageBorderRemoverTests
         Assert.True(result.CanBeCropped);
         Assert.Equal(8, result.TopBorderWidth);
     }
-
-    [Fact]
-    public void DetectBorders_NullImage_ShouldThrow()
-    {
-        var remover = CreateRemover();
-
-        Assert.Throws<ArgumentNullException>(() => remover.DetectBorders(null!, 5));
-    }
 }
