@@ -1,4 +1,5 @@
-﻿using SkiaSharp;
+﻿using System.Drawing;
+using SkiaSharp;
 
 // ReSharper disable AccessToDisposedClosure
 
@@ -440,7 +441,12 @@ public class ImageBorderRemover
     private bool IsSimilarColor(SKColor first, SKColor second, int tolerance) => ToleranceMode switch
     {
         ToleranceMode.EuclideanDistance => CompareWithEuclideanDistance(first, second, tolerance),
-        _ => CompareColors(first, second, tolerance)
+        ToleranceMode.Channel => CompareColors(first, second, tolerance),
+        ToleranceMode.DeltaE1976 => Color.FromArgb(first.Alpha, first.Red, first.Green, first.Blue).CIE1976(Color.FromArgb(second.Alpha, second.Red, second.Green, second.Blue)) <= tolerance,
+        ToleranceMode.DeltaE1994 => Color.FromArgb(first.Alpha, first.Red, first.Green, first.Blue).CIE1994(Color.FromArgb(second.Alpha, second.Red, second.Green, second.Blue)) <= tolerance,
+        ToleranceMode.DeltaE2000 => Color.FromArgb(first.Alpha, first.Red, first.Green, first.Blue).CIE2000(Color.FromArgb(second.Alpha, second.Red, second.Green, second.Blue)) <= tolerance,
+        ToleranceMode.DeltaECMC => Color.FromArgb(first.Alpha, first.Red, first.Green, first.Blue).CMC(Color.FromArgb(second.Alpha, second.Red, second.Green, second.Blue)) <= tolerance,
+        _ => throw new ArgumentOutOfRangeException()
     };
 
     /// <summary>
