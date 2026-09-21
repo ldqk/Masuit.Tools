@@ -54,7 +54,7 @@
       <PackageReference Include="System.Management" Version="10.0.12" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.50.4" />
-    <PackageReference Include="SkiaSharp" Version="4.152.0" />
+    <PackageReference Include="SkiaSharp" Version="4.152.1" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="IndexRange" Version="1.1.1" />
