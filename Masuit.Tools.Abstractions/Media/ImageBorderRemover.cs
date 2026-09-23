@@ -20,11 +20,12 @@ public class ImageBorderRemover
     private int CroppedBorderCount { get; }
 
     /// <summary>
-    ///
+    /// 
     /// </summary>
     /// <param name="mode">容差模式</param>
     /// <param name="croppedBorderCount">达到边框个数则裁剪</param>
-    public ImageBorderRemover(ToleranceMode mode, int croppedBorderCount = 2, ImageBorderRemoverOptions? options = null)
+    /// <param name="options"></param>
+    public ImageBorderRemover(ToleranceMode mode, int croppedBorderCount = 2, ImageBorderRemoverOptions options = null)
     {
         if (croppedBorderCount is < 1 or > 4)
             throw new ArgumentOutOfRangeException(nameof(croppedBorderCount));
@@ -38,9 +39,9 @@ public class ImageBorderRemover
     /// 检测图片边框信息（支持多色边框）
     /// </summary>
     /// <param name="imagePath">图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="tolerance">颜色容差，通道模式建议不超过5 (0-100)，ΔE模式建议不超过3 (1-10)，欧几里德模式建议不超过6 (0-442之间)</param>
     /// <returns>边框检测结果</returns>
-    public BorderDetectionResult DetectBorders(string imagePath, int tolerance)
+    public BorderDetectionResult DetectBorders(string imagePath, double tolerance)
     {
         if (string.IsNullOrWhiteSpace(imagePath))
         {
@@ -55,9 +56,9 @@ public class ImageBorderRemover
     /// 检测图片边框信息（从已加载的图像）
     /// </summary>
     /// <param name="image">已加载的图像</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="tolerance">颜色容差，通道模式建议不超过4 (0-100)，ΔE模式建议不超过3 (1-10)，欧几里德模式建议不超过5 (0-442之间)</param>
     /// <returns>边框检测结果</returns>
-    public BorderDetectionResult DetectBorders(SKBitmap image, int tolerance)
+    public BorderDetectionResult DetectBorders(SKBitmap image, double tolerance)
     {
         if (image == null)
         {
@@ -108,18 +109,18 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="tolerance">颜色容差，通道模式建议不超过4 (0-100)，ΔE模式建议不超过3 (1-10)，欧几里德模式建议不超过5 (0-442之间)</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public void RemoveBorders(string inputPath, int tolerance) => RemoveBorders(inputPath, inputPath, tolerance);
+    public void RemoveBorders(string inputPath, double tolerance) => RemoveBorders(inputPath, inputPath, tolerance);
 
     /// <summary>
     /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="inputPath">输入图片路径</param>
     /// <param name="outputPath">输出图片路径</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="tolerance">颜色容差，通道模式建议不超过4 (0-100)，ΔE模式建议不超过3 (1-10)，欧几里德模式建议不超过5 (0-442之间)</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public void RemoveBorders(string inputPath, string outputPath, int tolerance)
+    public void RemoveBorders(string inputPath, string outputPath, double tolerance)
     {
         if (string.IsNullOrWhiteSpace(inputPath))
         {
@@ -148,9 +149,9 @@ public class ImageBorderRemover
     /// 自动移除图片的多层边框
     /// </summary>
     /// <param name="image">已加载的图像</param>
-    /// <param name="tolerance">颜色容差(0-100)，通道模式建议10，ΔE模式建议1-10，欧几里德模式建议(0-442之间)</param>
+    /// <param name="tolerance">颜色容差，通道模式建议不超过4 (0-100)，ΔE模式建议不超过3 (1-10)，欧几里德模式建议不超过5 (0-442之间)</param>
     /// <returns>是否执行了裁剪操作</returns>
-    public SKBitmap? RemoveBorders(SKBitmap image, int tolerance)
+    public SKBitmap? RemoveBorders(SKBitmap image, double tolerance)
     {
         var border = DetectBorders(image, tolerance);
         if (!border.CanBeCropped || border.ContentWidth <= 0 || border.ContentHeight <= 0 || (border.ContentWidth == image.Width && border.ContentHeight == image.Height)) return null;
@@ -175,7 +176,7 @@ public class ImageBorderRemover
         BorderColors = new List<SKColor>()
     };
 
-    private int FindBorder(SKBitmap image, int tolerance, int maxScan, BorderSide side, List<SKColor> colors)
+    private int FindBorder(SKBitmap image, double tolerance, int maxScan, BorderSide side, List<SKColor> colors)
     {
         var lastBorderOffset = -1;
         var borderGaps = 0;
@@ -231,7 +232,7 @@ public class ImageBorderRemover
         return samples;
     }
 
-    private bool IsBorderLine(IReadOnlyList<SKColor> samples, int tolerance, out double variance)
+    private bool IsBorderLine(IReadOnlyList<SKColor> samples, double tolerance, out double variance)
     {
         var reference = samples[samples.Count / 2];
         var similar = 0;
@@ -259,13 +260,7 @@ public class ImageBorderRemover
         }
 
         var mean = graySum / samples.Count;
-        variance = 0;
-        foreach (var sample in samples)
-        {
-            var difference = ToGray(sample) - mean;
-            variance += difference * difference;
-        }
-
+        variance = samples.Sum(sample => Math.Pow(ToGray(sample) - mean, 2));
         var smoothlyChanging = samples.Count > 1 && (double)adjacentSimilar / (samples.Count - 1) >= _options.MinimumSimilarRatio;
         variance /= samples.Count;
         var uniformlyColored = (double)similar / samples.Count >= _options.MinimumSimilarRatio && variance <= _options.MaximumGrayVariance;
@@ -340,10 +335,10 @@ public class ImageBorderRemover
     private int CountBordersAtMinimumThickness(BorderDetectionResult result)
     {
         var thickness = _options.MinimumBorderThickness;
-        return (result.TopBorderWidth >= thickness ? 1 : 0) +
-               (result.BottomBorderWidth >= thickness ? 1 : 0) +
-               (result.LeftBorderWidth >= thickness ? 1 : 0) +
-               (result.RightBorderWidth >= thickness ? 1 : 0);
+        return (result.Borders.Top >= thickness ? 1 : 0) +
+               (result.Borders.Bottom >= thickness ? 1 : 0) +
+               (result.Borders.Left >= thickness ? 1 : 0) +
+               (result.Borders.Right >= thickness ? 1 : 0);
     }
 
     private static double ToGray(SKColor color) => color.Red * 0.299 + color.Green * 0.587 + color.Blue * 0.114;
@@ -381,7 +376,7 @@ public class ImageBorderRemover
     /// <param name="second">第二个颜色</param>
     /// <param name="tolerance">颜色容差</param>
     /// <returns>是否相似</returns>
-    private bool IsSimilarColor(SKColor first, SKColor second, int tolerance) => ToleranceMode switch
+    private bool IsSimilarColor(SKColor first, SKColor second, double tolerance) => ToleranceMode switch
     {
         ToleranceMode.EuclideanDistance => CompareWithEuclideanDistance(first, second, tolerance),
         ToleranceMode.Channel => CompareColors(first, second, tolerance),
@@ -399,7 +394,7 @@ public class ImageBorderRemover
     /// <param name="second">第二个颜色</param>
     /// <param name="tolerance">颜色容差</param>
     /// <returns>是否相似</returns>
-    private static bool CompareColors(SKColor first, SKColor second, int tolerance) => Math.Abs(first.Alpha - second.Alpha) <= tolerance && Math.Abs(first.Red - second.Red) <= tolerance && Math.Abs(first.Green - second.Green) <= tolerance && Math.Abs(first.Blue - second.Blue) <= tolerance;
+    private static bool CompareColors(SKColor first, SKColor second, double tolerance) => Math.Abs(first.Alpha - second.Alpha) <= tolerance && Math.Abs(first.Red - second.Red) <= tolerance && Math.Abs(first.Green - second.Green) <= tolerance && Math.Abs(first.Blue - second.Blue) <= tolerance;
 
     /// <summary>
     /// 比较两个颜色的欧几里得距离是否在指定容差范围内相似

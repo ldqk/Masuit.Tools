@@ -37,10 +37,10 @@ public class ImageBorderRemoverTests
 
         var result = remover.DetectBorders(image, 10);
 
-        Assert.Equal(3, result.TopBorderWidth);
-        Assert.Equal(3, result.BottomBorderWidth);
-        Assert.Equal(3, result.LeftBorderWidth);
-        Assert.Equal(3, result.RightBorderWidth);
+        Assert.Equal(3, result.Borders.Top);
+        Assert.Equal(3, result.Borders.Bottom);
+        Assert.Equal(3, result.Borders.Left);
+        Assert.Equal(3, result.Borders.Right);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class ImageBorderRemoverTests
         var result = remover.DetectBorders(image, 20);
 
         Assert.True(result.CanBeCropped);
-        Assert.Equal(4, result.TopBorderWidth);
+        Assert.Equal(4, result.Borders.Top);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ImageBorderRemoverTests
         var result = remover.DetectBorders(image, 5);
 
         Assert.True(result.CanBeCropped);
-        Assert.Equal(3, result.LeftBorderWidth);
+        Assert.Equal(3, result.Borders.Left);
     }
 
     [Fact]
@@ -127,10 +127,10 @@ public class ImageBorderRemoverTests
 
         var result = remover.DetectBorders(image, 5);
 
-        Assert.Equal(8, result.TopBorderWidth);
-        Assert.Equal(8, result.BottomBorderWidth);
-        Assert.Equal(0, result.LeftBorderWidth);
-        Assert.Equal(0, result.RightBorderWidth);
+        Assert.Equal(8, result.Borders.Top);
+        Assert.Equal(8, result.Borders.Bottom);
+        Assert.Equal(0, result.Borders.Left);
+        Assert.Equal(0, result.Borders.Right);
         Assert.Equal(image.Width, result.ContentWidth);
     }
 
@@ -167,6 +167,6 @@ public class ImageBorderRemoverTests
         var result = remover.DetectBorders(image, 5);
 
         Assert.True(result.CanBeCropped);
-        Assert.Equal(8, result.TopBorderWidth);
+        Assert.Equal(8, result.Borders.Top);
     }
 }

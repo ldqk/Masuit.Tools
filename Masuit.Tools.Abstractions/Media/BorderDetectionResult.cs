@@ -38,29 +38,27 @@ public struct BorderDetectionResult
     /// <summary>边框颜色层次（从外到内）</summary>
     public List<SKColor> BorderColors { get; set; }
 
-    /// <summary>顶部边框总宽度（像素）</summary>
-    public int TopBorderWidth => ContentTop;
-
-    /// <summary>底部边框总宽度（像素）</summary>
-    public int BottomBorderWidth => ImageHeight - 1 - ContentBottom;
-
-    /// <summary>左侧边框总宽度（像素）</summary>
-    public int LeftBorderWidth => ContentLeft;
-
-    /// <summary>右侧边框总宽度（像素）</summary>
-    public int RightBorderWidth => ImageWidth - 1 - ContentRight;
-
+    /// <summary>
+    /// 边框信息
+    /// </summary>
+    public ImageBorders Borders => new()
+    {
+        Top = ContentTop,
+        Bottom = ImageHeight - 1 - ContentBottom,
+        Left = ContentLeft,
+        Right = ImageWidth - 1 - ContentRight
+    };
     /// <summary>是否有顶部边框</summary>
-    public bool HasTopBorder => TopBorderWidth > 0;
+    public bool HasTopBorder => Borders.Top > 0;
 
     /// <summary>是否有底部边框</summary>
-    public bool HasBottomBorder => BottomBorderWidth > 0;
+    public bool HasBottomBorder => Borders.Bottom > 0;
 
     /// <summary>是否有左侧边框</summary>
-    public bool HasLeftBorder => LeftBorderWidth > 0;
+    public bool HasLeftBorder => Borders.Left > 0;
 
     /// <summary>是否有右侧边框</summary>
-    public bool HasRightBorder => RightBorderWidth > 0;
+    public bool HasRightBorder => Borders.Right > 0;
 
     /// <summary>是否有任意边框</summary>
     public bool HasAnyBorder => BorderCount > 0;
@@ -75,4 +73,19 @@ public struct BorderDetectionResult
 
     /// <summary>内容区域高度</summary>
     public int ContentHeight => ContentBottom - ContentTop + 1;
+}
+
+public struct ImageBorders
+{
+    public int Top { get; set; }
+    public int Left { get; set; }
+    public int Right { get; set; }
+    public int Bottom { get; set; }
+
+    /// <summary>Returns the fully qualified type name of this instance.</summary>
+    /// <returns>The fully qualified type name.</returns>
+    public override string ToString()
+    {
+        return $"Top: {Top}, Bottom: {Bottom}, Left: {Left}, Right: {Right}";
+    }
 }

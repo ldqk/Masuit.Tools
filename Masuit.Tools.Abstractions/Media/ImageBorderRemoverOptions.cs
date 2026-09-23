@@ -8,12 +8,12 @@ public sealed class ImageBorderRemoverOptions
     /// <summary>每条扫描线最多采集的像素数。</summary>
     public int SampleCount { get; set; } = 64;
 
-    /// <summary>边界扫描在线段两端忽略的比例，避免角部主体内容干扰。</summary>
-    public double SampleMarginRatio { get; set; } = 0.15;
-
     /// <summary>一条扫描线被认定为边框所需的相似像素比例，范围为 0 到 1。</summary>
-    public double MinimumSimilarRatio { get; set; } = 0.9;
-    
+    public double MinimumSimilarRatio { get; set; } = 0.95;
+
+    /// <summary>边界扫描在线段两端忽略的比例，避免角部主体内容干扰。</summary>
+    public double SampleMarginRatio { get; set; } = 0.1;
+
     /// <summary>边框扫描允许的连续异常行数。</summary>
     public int MaximumBorderGaps { get; set; } = 1;
 
