@@ -47,11 +47,11 @@
     <PackageReference Include="DnsClient" Version="1.8.0" />
     <PackageReference Include="HtmlSanitizer" Version="9.2.1039" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="System.Collections.Immutable" Version="10.0.12" />
-      <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.12" />
-      <PackageReference Include="System.Management" Version="10.0.12" />
+      <PackageReference Include="System.Collections.Immutable" Version="10.0.13" />
+      <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.13" />
+      <PackageReference Include="System.Management" Version="10.0.13" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.50.5" />
     <PackageReference Include="SkiaSharp" Version="4.153.1" />
