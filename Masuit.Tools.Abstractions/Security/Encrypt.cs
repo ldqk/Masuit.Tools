@@ -1,4 +1,4 @@
-﻿using Masuit.Tools.Systems;
+using Masuit.Tools.Systems;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -28,21 +28,12 @@ public static class Encrypt
             throw new Exception("密钥长度无效，密钥必须是8位！");
         }
 
-        StringBuilder ret = new StringBuilder();
         using var des = DES.Create();
         byte[] inputByteArray = Encoding.Default.GetBytes(strText);
         des.Key = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
         des.IV = Encoding.ASCII.GetBytes(strEncrKey.Substring(0, 8));
-        using var ms = new PooledMemoryStream();
-        using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
-        cs.Write(inputByteArray, 0, inputByteArray.Length);
-        cs.FlushFinalBlock();
-        foreach (var b in ms)
-        {
-            ret.AppendFormat($"{b:X2}");
-        }
-
-        return ret.ToString();
+        using var encryptor = des.CreateEncryptor();
+        return ToHexString(encryptor.TransformFinalBlock(inputByteArray, 0, inputByteArray.Length));
     }
 
     /// <summary>
@@ -55,21 +46,12 @@ public static class Encrypt
     /// <returns>加密后的数据</returns>
     public static string DesEncrypt(this string strText, byte[] desKey, byte[] desIV)
     {
-        StringBuilder ret = new StringBuilder();
         using var des = DES.Create();
         byte[] inputByteArray = Encoding.Default.GetBytes(strText);
         des.Key = desKey;
         des.IV = desIV;
-        using var ms = new PooledMemoryStream();
-        using var cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
-        cs.Write(inputByteArray, 0, inputByteArray.Length);
-        cs.FlushFinalBlock();
-        foreach (byte b in ms.ToArray())
-        {
-            ret.AppendFormat($"{b:X2}");
-        }
-
-        return ret.ToString();
+        using var encryptor = des.CreateEncryptor();
+        return ToHexString(encryptor.TransformFinalBlock(inputByteArray, 0, inputByteArray.Length));
     }
 
     /// <summary>
@@ -80,31 +62,13 @@ public static class Encrypt
     /// <param name="strEncrKey">加密密钥</param>
     public static void DesEncrypt(this FileStream fin, string outFilePath, string strEncrKey)
     {
-        byte[] iv =
-        {
-            0x12,
-            0x34,
-            0x56,
-            0x78,
-            0x90,
-            0xAB,
-            0xCD,
-            0xEF
-        };
+        byte[] iv = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
         var byKey = Encoding.UTF8.GetBytes(strEncrKey.Substring(0, 8));
         using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
         fout.SetLength(0);
-        byte[] bin = new byte[100];
-        long rdlen = 0;
-        long totlen = fin.Length;
         using var des = DES.Create();
-        var encStream = new CryptoStream(fout, des.CreateEncryptor(byKey, iv), CryptoStreamMode.Write);
-        while (rdlen < totlen)
-        {
-            var len = fin.Read(bin, 0, 100);
-            encStream.Write(bin, 0, len);
-            rdlen += len;
-        }
+        using var encStream = new CryptoStream(fout, des.CreateEncryptor(byKey, iv), CryptoStreamMode.Write);
+        fin.CopyTo(encStream);
     }
 
     /// <summary>
@@ -116,19 +80,10 @@ public static class Encrypt
     /// <param name="desIV"></param>
     public static void DesEncrypt(this FileStream fin, string outFilePath, byte[] desKey, byte[] desIV)
     {
-        using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
-        fout.SetLength(0);
-        byte[] bin = new byte[100];
-        long rdlen = 0;
-        long totlen = fin.Length;
+        using var fout = new FileStream(outFilePath, FileMode.Create, FileAccess.Write);
         using var des = DES.Create();
-        var encStream = new CryptoStream(fout, des.CreateEncryptor(desKey, desIV), CryptoStreamMode.Write);
-        while (rdlen < totlen)
-        {
-            var len = fin.Read(bin, 0, 100);
-            encStream.Write(bin, 0, len);
-            rdlen += len;
-        }
+        using var encStream = new CryptoStream(fout, des.CreateEncryptor(desKey, desIV), CryptoStreamMode.Write);
+        fin.CopyTo(encStream);
     }
 
     /// <summary>
@@ -139,31 +94,12 @@ public static class Encrypt
     /// <param name="sDecrKey">解密密钥</param>
     public static void DesDecrypt(this FileStream fin, string outFilePath, string sDecrKey)
     {
-        byte[] iv =
-        {
-            0x12,
-            0x34,
-            0x56,
-            0x78,
-            0x90,
-            0xAB,
-            0xCD,
-            0xEF
-        };
+        byte[] iv = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
         var byKey = Encoding.UTF8.GetBytes(sDecrKey.Substring(0, 8));
-        using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
-        fout.SetLength(0);
-        byte[] bin = new byte[100];
-        long rdlen = 0;
-        long totlen = fin.Length;
+        using var fout = new FileStream(outFilePath, FileMode.Create, FileAccess.Write);
         using var des = DES.Create();
-        var encStream = new CryptoStream(fout, des.CreateDecryptor(byKey, iv), CryptoStreamMode.Write);
-        while (rdlen < totlen)
-        {
-            var len = fin.Read(bin, 0, 100);
-            encStream.Write(bin, 0, len);
-            rdlen += len;
-        }
+        using var encStream = new CryptoStream(fout, des.CreateDecryptor(byKey, iv), CryptoStreamMode.Write);
+        fin.CopyTo(encStream);
     }
 
     /// <summary>
@@ -175,19 +111,10 @@ public static class Encrypt
     /// <param name="desIV"></param>
     public static void DesDecrypt(this FileStream fin, string outFilePath, byte[] desKey, byte[] desIV)
     {
-        using var fout = new FileStream(outFilePath, FileMode.OpenOrCreate, FileAccess.Write);
-        fout.SetLength(0);
-        byte[] bin = new byte[100];
-        long rdlen = 0;
-        long totlen = fin.Length;
+        using var fout = new FileStream(outFilePath, FileMode.Create, FileAccess.Write);
         using var des = DES.Create();
-        var encStream = new CryptoStream(fout, des.CreateDecryptor(desKey, desIV), CryptoStreamMode.Write);
-        while (rdlen < totlen)
-        {
-            var len = fin.Read(bin, 0, 100);
-            encStream.Write(bin, 0, len);
-            rdlen += len;
-        }
+        using var encStream = new CryptoStream(fout, des.CreateDecryptor(desKey, desIV), CryptoStreamMode.Write);
+        fin.CopyTo(encStream);
     }
 
     /// <summary>
@@ -204,21 +131,12 @@ public static class Encrypt
             throw new Exception("密钥长度无效，密钥必须是8位！");
         }
 
-        using var ms = new PooledMemoryStream();
         using var des = DES.Create();
-        var inputByteArray = new byte[pToDecrypt.Length / 2];
-        for (int x = 0; x < pToDecrypt.Length / 2; x++)
-        {
-            int i = Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16);
-            inputByteArray[x] = (byte)i;
-        }
-
+        byte[] inputByteArray = FromHexString(pToDecrypt);
         des.Key = Encoding.ASCII.GetBytes(sKey.Substring(0, 8));
         des.IV = Encoding.ASCII.GetBytes(sKey.Substring(0, 8));
-        using var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
-        cs.Write(inputByteArray, 0, inputByteArray.Length);
-        cs.FlushFinalBlock();
-        return Encoding.Default.GetString(ms.ToArray());
+        using var decryptor = des.CreateDecryptor();
+        return Encoding.Default.GetString(decryptor.TransformFinalBlock(inputByteArray, 0, inputByteArray.Length));
     }
 
     /// <summary>
@@ -231,21 +149,30 @@ public static class Encrypt
     /// <returns>解密后的数据</returns>
     public static string DesDecrypt(this string pToDecrypt, byte[] desKey, byte[] desIV)
     {
-        using var ms = new PooledMemoryStream();
         using var des = DES.Create();
-        var inputByteArray = new byte[pToDecrypt.Length / 2];
-        for (int x = 0; x < pToDecrypt.Length / 2; x++)
-        {
-            int i = Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16);
-            inputByteArray[x] = (byte)i;
-        }
-
+        byte[] inputByteArray = FromHexString(pToDecrypt);
         des.Key = desKey;
         des.IV = desIV;
-        using var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
-        cs.Write(inputByteArray, 0, inputByteArray.Length);
-        cs.FlushFinalBlock();
-        return Encoding.Default.GetString(ms.ToArray());
+        using var decryptor = des.CreateDecryptor();
+        return Encoding.Default.GetString(decryptor.TransformFinalBlock(inputByteArray, 0, inputByteArray.Length));
+    }
+
+    private static string ToHexString(byte[] data) => BitConverter.ToString(data).Replace("-", string.Empty);
+
+    private static byte[] FromHexString(string hex)
+    {
+        if (hex.Length % 2 != 0)
+        {
+            throw new FormatException("加密数据必须由成对的十六进制字符组成。");
+        }
+
+        var bytes = new byte[hex.Length / 2];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+        }
+
+        return bytes;
     }
 
     #endregion DES对称加密解密
@@ -263,10 +190,108 @@ public static class Encrypt
     {
         using var aes = Aes.Create();
         aes.KeySize = length;
-        aes.BlockSize = 128;
         aes.GenerateKey();
         return Convert.ToBase64String(aes.Key);
     }
+
+#if !NETSTANDARD2_0
+    private const int AesGcmNonceSize = 12;
+    private const int AesGcmTagSize = 16;
+
+    /// <summary>
+    /// 使用 AES-GCM 加密字符串。返回值为 Base64 编码的 nonce、认证标签和密文。
+    /// </summary>
+    /// <remarks>该方法仅在 .NET Standard 2.1 及以上目标框架中提供。</remarks>
+    /// <param name="plainText">待加密字符串</param>
+    /// <param name="key">UTF-8 编码后长度为 16、24 或 32 字节的 AES 密钥</param>
+    /// <param name="associatedData">可选的附加认证数据，解密时必须提供相同数据</param>
+    /// <returns>Base64 编码的加密结果</returns>
+    public static string AesGcmEncrypt(this string plainText, string key, byte[] associatedData = null)
+    {
+        if (plainText == null)
+        {
+            throw new ArgumentNullException(nameof(plainText));
+        }
+
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        byte[] nonce = new byte[AesGcmNonceSize];
+        using (var randomNumberGenerator = RandomNumberGenerator.Create())
+        {
+            randomNumberGenerator.GetBytes(nonce);
+        }
+
+        byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+        byte[] cipherBytes = new byte[plainBytes.Length];
+        byte[] tag = new byte[AesGcmTagSize];
+#if NET8_0_OR_GREATER
+        using (var aesGcm = new AesGcm(keyBytes, AesGcmTagSize))
+#else
+        using (var aesGcm = new AesGcm(keyBytes))
+#endif
+        {
+            aesGcm.Encrypt(nonce, plainBytes, cipherBytes, tag, associatedData ?? Array.Empty<byte>());
+        }
+
+        byte[] result = new byte[nonce.Length + tag.Length + cipherBytes.Length];
+        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+        Buffer.BlockCopy(tag, 0, result, nonce.Length, tag.Length);
+        Buffer.BlockCopy(cipherBytes, 0, result, nonce.Length + tag.Length, cipherBytes.Length);
+        return Convert.ToBase64String(result);
+    }
+
+    /// <summary>
+    /// 使用 AES-GCM 解密字符串。输入须为 AES-GCM 加密方法生成的 Base64 字符串。
+    /// </summary>
+    /// <remarks>该方法仅在 .NET Standard 2.1 及以上目标框架中提供。</remarks>
+    /// <param name="cipherText">Base64 编码的 nonce、认证标签和密文</param>
+    /// <param name="key">UTF-8 编码后长度为 16、24 或 32 字节的 AES 密钥</param>
+    /// <param name="associatedData">加密时使用的附加认证数据</param>
+    /// <returns>解密后的字符串；认证失败时抛出 <see cref="CryptographicException"/></returns>
+    public static string AesGcmDecrypt(this string cipherText, string key, byte[] associatedData = null)
+    {
+        if (cipherText == null)
+        {
+            throw new ArgumentNullException(nameof(cipherText));
+        }
+
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        byte[] encryptedBytes = Convert.FromBase64String(cipherText);
+        if (encryptedBytes.Length < AesGcmNonceSize + AesGcmTagSize)
+        {
+            throw new CryptographicException("AES-GCM 密文格式无效。");
+        }
+
+        byte[] nonce = new byte[AesGcmNonceSize];
+        byte[] tag = new byte[AesGcmTagSize];
+        int cipherLength = encryptedBytes.Length - nonce.Length - tag.Length;
+        byte[] cipherBytes = new byte[cipherLength];
+        Buffer.BlockCopy(encryptedBytes, 0, nonce, 0, nonce.Length);
+        Buffer.BlockCopy(encryptedBytes, nonce.Length, tag, 0, tag.Length);
+        Buffer.BlockCopy(encryptedBytes, nonce.Length + tag.Length, cipherBytes, 0, cipherLength);
+        byte[] plainBytes = new byte[cipherLength];
+#if NET8_0_OR_GREATER
+        using (var aesGcm = new AesGcm(keyBytes, AesGcmTagSize))
+#else
+        using (var aesGcm = new AesGcm(keyBytes))
+#endif
+        {
+            aesGcm.Decrypt(nonce, cipherBytes, tag, plainBytes, associatedData ?? Array.Empty<byte>());
+        }
+
+        return Encoding.UTF8.GetString(plainBytes);
+    }
+
+#endif
 
     /// <summary>
     /// 对称加密算法AES(块式加密算法)
@@ -277,10 +302,8 @@ public static class Encrypt
     /// <returns>加密结果字符串</returns>
     public static string AESEncrypt(this string encryptString, string encryptKey, CipherMode mode = CipherMode.CBC)
     {
-        encryptKey = GetSubString(encryptKey, 32, "");
-        encryptKey = encryptKey.PadRight(32, ' ');
-        using var aes = Aes.Create("AesManaged");
-        aes.Key = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 32));
+        using var aes = Aes.Create();
+        aes.Key = Encoding.UTF8.GetBytes(encryptKey);
         aes.IV = Keys;
         aes.Mode = mode;
         using var rijndaelEncrypt = aes.CreateEncryptor();
@@ -312,7 +335,7 @@ public static class Encrypt
     /// <returns>加密结果字符串</returns>
     public static string AESEncrypt(this string encryptString, byte[] encryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Key = encryptKey;
         aes.IV = Keys;
         aes.Mode = mode;
@@ -328,26 +351,17 @@ public static class Encrypt
     /// <param name="decryptString">待解密的字符串</param>
     /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
     /// <param name="mode">加密模式</param>
-    /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
+    /// <returns>解密后的字符串</returns>
     public static string AESDecrypt(this string decryptString, string decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        try
-        {
-            decryptKey = GetSubString(decryptKey, 32, "");
-            decryptKey = decryptKey.PadRight(32, ' ');
-            using var aes = Aes.Create("AesManaged");
-            aes.Key = Encoding.UTF8.GetBytes(decryptKey);
-            aes.IV = Keys;
-            aes.Mode = mode;
-            using ICryptoTransform rijndaelDecrypt = aes.CreateDecryptor();
-            byte[] inputData = Convert.FromBase64String(decryptString);
-            byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-            return Encoding.UTF8.GetString(decryptedData);
-        }
-        catch
-        {
-            return string.Empty;
-        }
+        using var aes = Aes.Create();
+        aes.Key = Encoding.UTF8.GetBytes(decryptKey);
+        aes.IV = Keys;
+        aes.Mode = mode;
+        using ICryptoTransform rijndaelDecrypt = aes.CreateDecryptor();
+        byte[] inputData = Convert.FromBase64String(decryptString);
+        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+        return Encoding.UTF8.GetString(decryptedData);
     }
 
     /// <summary>
@@ -355,20 +369,13 @@ public static class Encrypt
     /// </summary>
     /// <param name="decryptString">待解密的字符串</param>
     /// <param name="options">加密选项</param>
-    /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
+    /// <returns>解密后的字符串</returns>
     public static string AESDecrypt(this string decryptString, Aes options)
     {
-        try
-        {
-            using ICryptoTransform rijndaelDecrypt = options.CreateDecryptor();
-            byte[] inputData = Convert.FromBase64String(decryptString);
-            byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-            return Encoding.UTF8.GetString(decryptedData);
-        }
-        catch
-        {
-            return string.Empty;
-        }
+        using ICryptoTransform rijndaelDecrypt = options.CreateDecryptor();
+        byte[] inputData = Convert.FromBase64String(decryptString);
+        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+        return Encoding.UTF8.GetString(decryptedData);
     }
 
     /// <summary>
@@ -377,24 +384,17 @@ public static class Encrypt
     /// <param name="decryptString">待解密的字符串</param>
     /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
     /// <param name="mode">加密模式</param>
-    /// <returns>解密成功返回解密后的字符串,失败返回空</returns>
+    /// <returns>解密后的字符串</returns>
     public static string AESDecrypt(this string decryptString, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        try
-        {
-            using var aes = Aes.Create("AesManaged");
-            aes.Key = decryptKey;
-            aes.IV = Keys;
-            aes.Mode = mode;
-            using var rijndaelDecrypt = aes.CreateDecryptor();
-            byte[] inputData = Convert.FromBase64String(decryptString);
-            byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-            return Encoding.UTF8.GetString(decryptedData);
-        }
-        catch
-        {
-            return string.Empty;
-        }
+        using var aes = Aes.Create();
+        aes.Key = decryptKey;
+        aes.IV = Keys;
+        aes.Mode = mode;
+        using var rijndaelDecrypt = aes.CreateDecryptor();
+        byte[] inputData = Convert.FromBase64String(decryptString);
+        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
+        return Encoding.UTF8.GetString(decryptedData);
     }
 
     /// <summary>
@@ -503,14 +503,11 @@ public static class Encrypt
     /// <returns>加密流</returns>
     public static CryptoStream AESEncryptStrream(this FileStream fs, string decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        decryptKey = GetSubString(decryptKey, 32, "");
-        decryptKey = decryptKey.PadRight(32, ' ');
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Key = Encoding.UTF8.GetBytes(decryptKey);
         aes.IV = Keys;
         aes.Mode = mode;
-        using var encrypto = aes.CreateEncryptor();
-        return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
+        return new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write);
     }
 
     /// <summary>
@@ -522,12 +519,11 @@ public static class Encrypt
     /// <returns>加密流</returns>
     public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Key = decryptKey;
         aes.IV = Keys;
         aes.Mode = mode;
-        using var encrypto = aes.CreateEncryptor();
-        return new CryptoStream(fs, encrypto, CryptoStreamMode.Write);
+        return new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write);
     }
 
     /// <summary>
@@ -539,14 +535,11 @@ public static class Encrypt
     /// <returns>加密流</returns>
     public static CryptoStream AESDecryptStream(this FileStream fs, string decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        decryptKey = GetSubString(decryptKey, 32, "");
-        decryptKey = decryptKey.PadRight(32, ' ');
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Key = Encoding.UTF8.GetBytes(decryptKey);
         aes.IV = Keys;
         aes.Mode = mode;
-        using var decrypto = aes.CreateDecryptor();
-        return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
+        return new CryptoStream(fs, aes.CreateDecryptor(), CryptoStreamMode.Read);
     }
 
     /// <summary>
@@ -558,12 +551,11 @@ public static class Encrypt
     /// <returns>加密流</returns>
     public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create("AesManaged");
+        using var aes = Aes.Create();
         aes.Key = decryptKey;
         aes.IV = Keys;
         aes.Mode = mode;
-        using var decrypto = aes.CreateDecryptor();
-        return new CryptoStream(fs, decrypto, CryptoStreamMode.Read);
+        return new CryptoStream(fs, aes.CreateDecryptor(), CryptoStreamMode.Read);
     }
 
     /// <summary>
@@ -577,9 +569,7 @@ public static class Encrypt
     {
         using var fren = new FileStream(outputPath, FileMode.Create);
         using var enfr = AESEncryptStrream(fren, key, mode);
-        byte[] bytearrayinput = new byte[input.Length];
-        _ = input.Read(bytearrayinput, 0, bytearrayinput.Length);
-        enfr.Write(bytearrayinput, 0, bytearrayinput.Length);
+        input.CopyTo(enfr);
     }
 
     /// <summary>
@@ -593,16 +583,7 @@ public static class Encrypt
     {
         using var frde = new FileStream(outputPath, FileMode.Create);
         using var defr = AESDecryptStream(input, key, mode);
-        byte[] bytearrayoutput = new byte[1024];
-        while (true)
-        {
-            var count = defr.Read(bytearrayoutput, 0, bytearrayoutput.Length);
-            frde.Write(bytearrayoutput, 0, count);
-            if (count < bytearrayoutput.Length)
-            {
-                break;
-            }
-        }
+        defr.CopyTo(frde);
     }
 
     #endregion 对称加密算法AES加密解密
