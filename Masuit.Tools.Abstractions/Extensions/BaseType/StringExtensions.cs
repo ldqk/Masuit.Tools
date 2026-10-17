@@ -676,11 +676,10 @@ namespace Masuit.Tools
         /// <summary>
         /// 判断url是否是外部地址
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="uri"></param>
         /// <returns></returns>
-        public static bool IsExternalAddress(this string url)
+        public static bool IsExternalAddress(this Uri uri)
         {
-            var uri = new Uri(url);
             switch (uri.HostNameType)
             {
                 case UriHostNameType.Dns:
@@ -697,6 +696,17 @@ namespace Masuit.Tools
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 判断url是否是外部地址
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static bool IsExternalAddress(this string url)
+        {
+            var uri = new Uri(url);
+            return IsExternalAddress(uri);
         }
 
         #endregion Url
