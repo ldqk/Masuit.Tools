@@ -53,7 +53,7 @@
       <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.13" />
       <PackageReference Include="System.Management" Version="10.0.13" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-    <PackageReference Include="SharpCompress" Version="0.50.6" />
+    <PackageReference Include="SharpCompress" Version="0.50.7" />
     <PackageReference Include="SkiaSharp" Version="4.153.1" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
