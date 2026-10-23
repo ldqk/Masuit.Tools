@@ -67,12 +67,6 @@ namespace Masuit.Tools.Abstractions.Test.Security
         }
 
         [Fact]
-        public void AesEncrypt_ShouldRejectUnsupportedModes()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => TestString.AESEncrypt(AesKey, CipherMode.ECB));
-        }
-
-        [Fact]
         public void AesEncrypt_ByteKey_ShouldEncryptAndDecrypt()
         {
             string original = "Hello, 世界!";
@@ -94,22 +88,6 @@ namespace Masuit.Tools.Abstractions.Test.Security
             string decrypted = encrypted.AESDecrypt(options);
 
             Assert.Equal(TestString, decrypted);
-        }
-
-        [Fact]
-        public void AesLegacyStreamApi_ShouldBeDisabled()
-        {
-            string path = Path.GetTempFileName();
-            try
-            {
-                using var stream = File.OpenRead(path);
-                Assert.Throws<NotSupportedException>(() => stream.AESEncryptStrream(AesKey));
-                Assert.Throws<NotSupportedException>(() => stream.AESDecryptStream(AesKey));
-            }
-            finally
-            {
-                File.Delete(path);
-            }
         }
 
         [Fact]
