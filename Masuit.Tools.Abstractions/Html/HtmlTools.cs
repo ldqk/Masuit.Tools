@@ -117,9 +117,9 @@ public static class HtmlTools
         /// <summary>
         /// 替换html的img路径为绝对路径
         /// </summary>
-        /// <param name="imgDest"></param>
+        /// <param name="imgDest">图片路径前缀，会按 HTML 属性值进行编码。</param>
         /// <returns></returns>
-        public string ReplaceHtmlImgSource(string imgDest) => html.Replace("<img src=\"", "<img src=\"" + imgDest + "/");
+        public string ReplaceHtmlImgSource(string imgDest) => html.Replace("<img src=\"", "<img src=\"" + HttpUtility.HtmlEncode(imgDest) + "/");
 
         /// <summary>
         /// 将src的绝对路径换成相对路径

@@ -49,6 +49,14 @@ public class HtmlToolsTests
     }
 
     [Fact]
+    public void ReplaceHtmlImgSource_ShouldEncodeAttributeValue()
+    {
+        var html = "<img src=\"image.jpg\">";
+        var result = html.ReplaceHtmlImgSource("https://example.com\" onerror=\"alert(1)");
+        Assert.Equal("<img src=\"https://example.com&quot; onerror=&quot;alert(1)/image.jpg\">", result);
+    }
+
+    [Fact]
     public void ConvertImgSrcToRelativePath_ShouldConvertToRelativePath()
     {
         var html = "<img src=\"http://example.com/image.jpg\">";
