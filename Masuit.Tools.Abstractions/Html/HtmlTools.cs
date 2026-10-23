@@ -4,6 +4,7 @@ using Ganss.Xss;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Masuit.Tools.Html
 {
@@ -104,7 +105,7 @@ namespace Masuit.Tools.Html
         {
             var context = BrowsingContext.New(Configuration.Default);
             var doc = context.OpenAsync(req => req.Content(html)).Result;
-            var strText = doc.Body.TextContent;
+            var strText = HttpUtility.HtmlEncode(doc.Body.TextContent);
             if (length > 0 && strText.Length > length)
             {
                 return strText.Substring(0, length);
