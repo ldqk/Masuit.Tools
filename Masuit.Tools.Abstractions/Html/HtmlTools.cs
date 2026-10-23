@@ -6,19 +6,21 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace Masuit.Tools.Html
+namespace Masuit.Tools.Html;
+
+/// <summary>
+/// html工具类
+/// </summary>
+public static class HtmlTools
 {
-    /// <summary>
-    /// html工具类
-    /// </summary>
-    public static class HtmlTools
+    /// <param name="html"></param>
+    extension(string html)
     {
         /// <summary>
         /// 标准的防止html的xss净化器
         /// </summary>
-        /// <param name="html"></param>
         /// <returns></returns>
-        public static string HtmlSanitizerStandard(this string html)
+        public string HtmlSanitizerStandard()
         {
             var sanitizer = new HtmlSanitizer
             {
@@ -43,12 +45,11 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 自定义的防止html的xss净化器
         /// </summary>
-        /// <param name="html">源html</param>
         /// <param name="labels">需要移除的标签集合</param>
         /// <param name="attributes">需要移除的属性集合</param>
         /// <param name="styles">需要移除的样式集合</param>
         /// <returns></returns>
-        public static string HtmlSanitizerCustom(this string html, string[] labels = null, string[] attributes = null, string[] styles = null)
+        public string HtmlSanitizerCustom(string[] labels = null, string[] attributes = null, string[] styles = null)
         {
             var sanitizer = new HtmlSanitizer
             {
@@ -98,17 +99,16 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 去除html标签后并截取字符串
         /// </summary>
-        /// <param name="html">源html</param>
         /// <param name="length">截取长度</param>
         /// <returns></returns>
-        public static string RemoveHtmlTag(this string html, int length = 0)
+        public string RemoveHtmlTag(int length = 0)
         {
             var context = BrowsingContext.New(Configuration.Default);
             var doc = context.OpenAsync(req => req.Content(html)).Result;
             var strText = HttpUtility.HtmlEncode(doc.Body.TextContent);
             if (length > 0 && strText.Length > length)
             {
-                return strText.Substring(0, length);
+                return strText[..length];
             }
 
             return strText;
@@ -117,27 +117,24 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 替换html的img路径为绝对路径
         /// </summary>
-        /// <param name="html"></param>
         /// <param name="imgDest"></param>
         /// <returns></returns>
-        public static string ReplaceHtmlImgSource(this string html, string imgDest) => html.Replace("<img src=\"", "<img src=\"" + imgDest + "/");
+        public string ReplaceHtmlImgSource(string imgDest) => html.Replace("<img src=\"", "<img src=\"" + imgDest + "/");
 
         /// <summary>
         /// 将src的绝对路径换成相对路径
         /// </summary>
-        /// <param name="s"></param>
         /// <returns></returns>
-        public static string ConvertImgSrcToRelativePath(this string s)
+        public string ConvertImgSrcToRelativePath()
         {
-            return Regex.Replace(s, @"<img src=""(http:\/\/.+?)/", @"<img src=""/");
+            return Regex.Replace(html, @"<img src=""(http:\/\/.+?)/", @"<img src=""/");
         }
 
         /// <summary>
         /// 匹配html的所有img标签集合
         /// </summary>
-        /// <param name="html"></param>
         /// <returns></returns>
-        public static IHtmlCollection<IElement> MatchImgTags(this string html)
+        public IHtmlCollection<IElement> MatchImgTags()
         {
             var context = BrowsingContext.New(Configuration.Default);
             var doc = context.OpenAsync(req => req.Content(html)).Result;
@@ -147,9 +144,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 匹配html的所有img标签的src集合
         /// </summary>
-        /// <param name="html"></param>
         /// <returns></returns>
-        public static IEnumerable<string> MatchImgSrcs(this string html)
+        public IEnumerable<string> MatchImgSrcs()
         {
             return MatchImgTags(html).Where(n => n.HasAttribute("src")).Select(n => n.GetAttribute("src"));
         }
@@ -157,9 +153,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 获取html中第一个img标签的src
         /// </summary>
-        /// <param name="html"></param>
         /// <returns></returns>
-        public static string MatchFirstImgSrc(this string html)
+        public string MatchFirstImgSrc()
         {
             return MatchImgSrcs(html).FirstOrDefault();
         }
@@ -167,9 +162,8 @@ namespace Masuit.Tools.Html
         /// <summary>
         /// 随机获取html代码中的img标签的src属性
         /// </summary>
-        /// <param name="html"></param>
         /// <returns></returns>
-        public static string MatchRandomImgSrc(this string html)
+        public string MatchRandomImgSrc()
         {
             return MatchImgSrcs(html).OrderByRandom().FirstOrDefault();
         }

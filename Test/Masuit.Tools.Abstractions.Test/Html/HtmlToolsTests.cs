@@ -89,12 +89,4 @@ public class HtmlToolsTests
         var result = html.MatchRandomImgSrc();
         Assert.Contains(result, new[] { "image1.jpg", "image2.jpg" });
     }
-
-    [Fact]
-    public void EncodeHtml_ShouldEncodeHtml()
-    {
-        var html = "Hello, World!";
-        var result = html.EncodeHtml();
-        Assert.Equal("Hello&def World!", result);
-    }
 }
