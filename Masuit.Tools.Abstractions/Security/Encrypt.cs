@@ -194,7 +194,7 @@ public static class Encrypt
         return Convert.ToBase64String(aes.Key);
     }
 
-#if !NETSTANDARD2_0
+#if NET8_0_OR_GREATER
     private const int AesGcmNonceSize = 12;
     private const int AesGcmTagSize = 16;
 
@@ -228,11 +228,7 @@ public static class Encrypt
         byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
         byte[] cipherBytes = new byte[plainBytes.Length];
         byte[] tag = new byte[AesGcmTagSize];
-#if NET8_0_OR_GREATER
         using (var aesGcm = new AesGcm(keyBytes, AesGcmTagSize))
-#else
-        using (var aesGcm = new AesGcm(keyBytes))
-#endif
         {
             aesGcm.Encrypt(nonce, plainBytes, cipherBytes, tag, associatedData ?? Array.Empty<byte>());
         }
@@ -279,11 +275,7 @@ public static class Encrypt
         Buffer.BlockCopy(encryptedBytes, nonce.Length, tag, 0, tag.Length);
         Buffer.BlockCopy(encryptedBytes, nonce.Length + tag.Length, cipherBytes, 0, cipherLength);
         byte[] plainBytes = new byte[cipherLength];
-#if NET8_0_OR_GREATER
         using (var aesGcm = new AesGcm(keyBytes, AesGcmTagSize))
-#else
-        using (var aesGcm = new AesGcm(keyBytes))
-#endif
         {
             aesGcm.Decrypt(nonce, cipherBytes, tag, plainBytes, associatedData ?? Array.Empty<byte>());
         }
