@@ -55,6 +55,24 @@ namespace Masuit.Tools.Abstractions.Test.Security
         }
 
         [Fact]
+        public void AesEncrypt_ShouldUseRandomIvAndAuthenticateCiphertext()
+        {
+            string first = TestString.AESEncrypt(AesKey);
+            string second = TestString.AESEncrypt(AesKey);
+            byte[] tampered = Convert.FromBase64String(first);
+            tampered[tampered.Length - 1] ^= 0x01;
+
+            Assert.NotEqual(first, second);
+            Assert.Throws<CryptographicException>(() => Convert.ToBase64String(tampered).AESDecrypt(AesKey));
+        }
+
+        [Fact]
+        public void AesEncrypt_ShouldRejectUnsupportedModes()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => TestString.AESEncrypt(AesKey, CipherMode.ECB));
+        }
+
+        [Fact]
         public void AesEncrypt_ByteKey_ShouldEncryptAndDecrypt()
         {
             string original = "Hello, 世界!";
@@ -64,6 +82,34 @@ namespace Masuit.Tools.Abstractions.Test.Security
             string decrypted = encrypted.AESDecrypt(key);
 
             Assert.Equal(original, decrypted);
+        }
+
+        [Fact]
+        public void AesEncrypt_AesOptions_ShouldUseAuthenticatedEnvelope()
+        {
+            using var options = Aes.Create();
+            options.Key = Encoding.UTF8.GetBytes(AesKey);
+
+            string encrypted = TestString.AESEncrypt(options);
+            string decrypted = encrypted.AESDecrypt(options);
+
+            Assert.Equal(TestString, decrypted);
+        }
+
+        [Fact]
+        public void AesLegacyStreamApi_ShouldBeDisabled()
+        {
+            string path = Path.GetTempFileName();
+            try
+            {
+                using var stream = File.OpenRead(path);
+                Assert.Throws<NotSupportedException>(() => stream.AESEncryptStrream(AesKey));
+                Assert.Throws<NotSupportedException>(() => stream.AESDecryptStream(AesKey));
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         [Fact]
@@ -91,7 +137,7 @@ namespace Masuit.Tools.Abstractions.Test.Security
             byte[] encrypted = Convert.FromBase64String("Hello, AES-GCM!".AesGcmEncrypt(AesKey));
             encrypted[12] ^= 0x01;
 
-            Assert.Throws<CryptographicException>(() => Convert.ToBase64String(encrypted).AesGcmDecrypt(AesKey));
+            Assert.ThrowsAny<CryptographicException>(() => Convert.ToBase64String(encrypted).AesGcmDecrypt(AesKey));
         }
 
         [Fact]
@@ -99,7 +145,7 @@ namespace Masuit.Tools.Abstractions.Test.Security
         {
             string ciphertext = "authenticated data".AesGcmEncrypt(AesKey, "header"u8.ToArray());
 
-            Assert.Throws<CryptographicException>(() => ciphertext.AesGcmDecrypt(AesKey, "other header"u8.ToArray()));
+            Assert.ThrowsAny<CryptographicException>(() => ciphertext.AesGcmDecrypt(AesKey, "other header"u8.ToArray()));
         }
 
         [Fact]
@@ -159,6 +205,44 @@ namespace Masuit.Tools.Abstractions.Test.Security
                 File.Delete(inputPath);
                 File.Delete(encryptedPath);
                 File.Delete(decryptedPath);
+            }
+        }
+
+        [Fact]
+        public void AesDecryptFile_TamperedCiphertext_ShouldNotCreateOutput()
+        {
+            string inputPath = Path.GetTempFileName();
+            string encryptedPath = Path.GetTempFileName();
+            string decryptedPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".txt");
+
+            try
+            {
+                File.WriteAllText(inputPath, "Authenticated AES file content");
+                using (var input = File.OpenRead(inputPath))
+                {
+                    input.AESEncryptFile(encryptedPath, AesKey);
+                }
+
+                using (var encrypted = new FileStream(encryptedPath, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    encrypted.Position = encrypted.Length - 1;
+                    int lastByte = encrypted.ReadByte();
+                    encrypted.Position = encrypted.Length - 1;
+                    encrypted.WriteByte((byte)(lastByte ^ 0x01));
+                }
+
+                using var tamperedInput = File.OpenRead(encryptedPath);
+                Assert.Throws<CryptographicException>(() => tamperedInput.AESDecryptFile(decryptedPath, AesKey));
+                Assert.False(File.Exists(decryptedPath));
+            }
+            finally
+            {
+                File.Delete(inputPath);
+                File.Delete(encryptedPath);
+                if (File.Exists(decryptedPath))
+                {
+                    File.Delete(decryptedPath);
+                }
             }
         }
     }

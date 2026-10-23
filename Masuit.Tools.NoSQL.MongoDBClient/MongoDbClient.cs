@@ -1,6 +1,5 @@
-﻿using MongoDB.Bson;
+using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Events;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
@@ -23,13 +22,6 @@ namespace Masuit.Tools.NoSQL.MongoDBClient
 
         private MongoDbClient(MongoClientSettings settings, string database)
         {
-            settings.ClusterConfigurator = cb =>
-            {
-                cb.Subscribe<CommandStartedEvent>(e =>
-                {
-                    Console.WriteLine($"{e.CommandName} - {e.Command.ToJson()}");
-                });
-            };
             Client = new MongoClient(settings);
             Database = Client.GetDatabase(database);
         }

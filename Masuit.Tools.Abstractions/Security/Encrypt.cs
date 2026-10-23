@@ -179,7 +179,11 @@ public static class Encrypt
 
     #region 对称加密算法AES加密解密
 
-    private static byte[] Keys = [0x41, 0x72, 0x65, 0x79, 0x6F, 0x75, 0x6D, 0x79, 0x53, 0x6E, 0x6F, 0x77, 0x6D, 0x61, 0x6E, 0x3F];
+    private static readonly byte[] AesEnvelopeMagic = Encoding.ASCII.GetBytes("MTA1");
+    private static readonly byte[] AesAuthenticationContext = Encoding.UTF8.GetBytes("Masuit.Tools AES-CBC-HMAC v1");
+    private const int AesIvSize = 16;
+    private const int AesTagSize = 32;
+    private const int AesEnvelopeHeaderSize = 4 + AesIvSize;
 
     /// <summary>
     /// 生成符合AES加密规则的密钥
@@ -291,17 +295,11 @@ public static class Encrypt
     /// <param name="encryptString">待加密字符串</param>
     /// <param name="encryptKey">加密密钥，须半角字符</param>
     /// <param name="mode">加密模式</param>
-    /// <returns>加密结果字符串</returns>
+    /// <returns>包含版本标识、随机IV、密文和认证标签的Base64字符串</returns>
+    /// <remarks>仅支持CBC模式；输出格式与旧版固定IV密文不兼容。</remarks>
     public static string AESEncrypt(this string encryptString, string encryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(encryptKey);
-        aes.IV = Keys;
-        aes.Mode = mode;
-        using var rijndaelEncrypt = aes.CreateEncryptor();
-        byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
-        byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Convert.ToBase64String(encryptedData);
+        return AesEncrypt(Encoding.UTF8.GetBytes(encryptString), Encoding.UTF8.GetBytes(encryptKey), mode);
     }
 
     /// <summary>
@@ -309,13 +307,11 @@ public static class Encrypt
     /// </summary>
     /// <param name="encryptString">待加密字符串</param>
     /// <param name="options">加密选项</param>
-    /// <returns>加密结果字符串</returns>
+    /// <returns>包含版本标识、随机IV、密文和认证标签的Base64字符串</returns>
+    /// <remarks>仅支持CBC模式；输出格式与旧版固定IV密文不兼容。</remarks>
     public static string AESEncrypt(this string encryptString, Aes options)
     {
-        using ICryptoTransform rijndaelEncrypt = options.CreateEncryptor();
-        byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
-        byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Convert.ToBase64String(encryptedData);
+        return AesEncrypt(Encoding.UTF8.GetBytes(encryptString), options.Key, options.Mode);
     }
 
     /// <summary>
@@ -324,17 +320,11 @@ public static class Encrypt
     /// <param name="encryptString">待加密字符串</param>
     /// <param name="encryptKey">加密密钥，须半角字符</param>
     /// <param name="mode">加密模式</param>
-    /// <returns>加密结果字符串</returns>
+    /// <returns>包含版本标识、随机IV、密文和认证标签的Base64字符串</returns>
+    /// <remarks>仅支持CBC模式；输出格式与旧版固定IV密文不兼容。</remarks>
     public static string AESEncrypt(this string encryptString, byte[] encryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create();
-        aes.Key = encryptKey;
-        aes.IV = Keys;
-        aes.Mode = mode;
-        using var rijndaelEncrypt = aes.CreateEncryptor();
-        byte[] inputData = Encoding.UTF8.GetBytes(encryptString);
-        byte[] encryptedData = rijndaelEncrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Convert.ToBase64String(encryptedData);
+        return AesEncrypt(Encoding.UTF8.GetBytes(encryptString), encryptKey, mode);
     }
 
     /// <summary>
@@ -344,16 +334,10 @@ public static class Encrypt
     /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
     /// <param name="mode">加密模式</param>
     /// <returns>解密后的字符串</returns>
+    /// <remarks>仅接受当前版本的认证密文；旧版固定IV密文需在升级前迁移。</remarks>
     public static string AESDecrypt(this string decryptString, string decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(decryptKey);
-        aes.IV = Keys;
-        aes.Mode = mode;
-        using ICryptoTransform rijndaelDecrypt = aes.CreateDecryptor();
-        byte[] inputData = Convert.FromBase64String(decryptString);
-        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Encoding.UTF8.GetString(decryptedData);
+        return Encoding.UTF8.GetString(AesDecrypt(decryptString, Encoding.UTF8.GetBytes(decryptKey), mode));
     }
 
     /// <summary>
@@ -362,12 +346,10 @@ public static class Encrypt
     /// <param name="decryptString">待解密的字符串</param>
     /// <param name="options">加密选项</param>
     /// <returns>解密后的字符串</returns>
+    /// <remarks>仅接受当前版本的认证密文；旧版固定IV密文需在升级前迁移。</remarks>
     public static string AESDecrypt(this string decryptString, Aes options)
     {
-        using ICryptoTransform rijndaelDecrypt = options.CreateDecryptor();
-        byte[] inputData = Convert.FromBase64String(decryptString);
-        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Encoding.UTF8.GetString(decryptedData);
+        return Encoding.UTF8.GetString(AesDecrypt(decryptString, options.Key, options.Mode));
     }
 
     /// <summary>
@@ -377,16 +359,124 @@ public static class Encrypt
     /// <param name="decryptKey">解密密钥,和加密密钥相同</param>
     /// <param name="mode">加密模式</param>
     /// <returns>解密后的字符串</returns>
+    /// <remarks>仅接受当前版本的认证密文；旧版固定IV密文需在升级前迁移。</remarks>
     public static string AESDecrypt(this string decryptString, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
+        return Encoding.UTF8.GetString(AesDecrypt(decryptString, decryptKey, mode));
+    }
+
+    private static string AesEncrypt(byte[] plainText, byte[] key, CipherMode mode)
+    {
         using var aes = Aes.Create();
-        aes.Key = decryptKey;
-        aes.IV = Keys;
+        aes.Key = key;
         aes.Mode = mode;
-        using var rijndaelDecrypt = aes.CreateDecryptor();
-        byte[] inputData = Convert.FromBase64String(decryptString);
-        byte[] decryptedData = rijndaelDecrypt.TransformFinalBlock(inputData, 0, inputData.Length);
-        return Encoding.UTF8.GetString(decryptedData);
+        aes.Padding = PaddingMode.PKCS7;
+        var iv = new byte[AesIvSize];
+        using (var randomNumberGenerator = RandomNumberGenerator.Create())
+        {
+            randomNumberGenerator.GetBytes(iv);
+        }
+
+        aes.IV = iv;
+        byte[] cipherText;
+        using (var encryptor = aes.CreateEncryptor())
+        {
+            cipherText = encryptor.TransformFinalBlock(plainText, 0, plainText.Length);
+        }
+
+        var authenticatedData = new byte[AesEnvelopeHeaderSize + cipherText.Length];
+        Buffer.BlockCopy(AesEnvelopeMagic, 0, authenticatedData, 0, AesEnvelopeMagic.Length);
+        Buffer.BlockCopy(iv, 0, authenticatedData, AesEnvelopeMagic.Length, iv.Length);
+        Buffer.BlockCopy(cipherText, 0, authenticatedData, AesEnvelopeHeaderSize, cipherText.Length);
+        byte[] tag = ComputeAesAuthenticationTag(authenticatedData, key);
+        var envelope = new byte[authenticatedData.Length + tag.Length];
+        Buffer.BlockCopy(authenticatedData, 0, envelope, 0, authenticatedData.Length);
+        Buffer.BlockCopy(tag, 0, envelope, authenticatedData.Length, tag.Length);
+        return Convert.ToBase64String(envelope);
+    }
+
+    private static byte[] AesDecrypt(string encryptedText, byte[] key, CipherMode mode)
+    {
+        byte[] envelope = Convert.FromBase64String(encryptedText);
+        int cipherLength = envelope.Length - AesEnvelopeHeaderSize - AesTagSize;
+        if (cipherLength < AesIvSize || cipherLength % AesIvSize != 0 || !HasAesEnvelopeMagic(envelope))
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        int authenticatedLength = envelope.Length - AesTagSize;
+        var authenticatedData = new byte[authenticatedLength];
+        Buffer.BlockCopy(envelope, 0, authenticatedData, 0, authenticatedLength);
+        byte[] expectedTag = ComputeAesAuthenticationTag(authenticatedData, key);
+        var actualTag = new byte[AesTagSize];
+        Buffer.BlockCopy(envelope, authenticatedLength, actualTag, 0, actualTag.Length);
+        if (!FixedTimeEquals(expectedTag, actualTag))
+        {
+            throw new CryptographicException("AES密文认证失败。");
+        }
+
+        var iv = new byte[AesIvSize];
+        Buffer.BlockCopy(envelope, AesEnvelopeMagic.Length, iv, 0, iv.Length);
+        var cipherText = new byte[cipherLength];
+        Buffer.BlockCopy(envelope, AesEnvelopeHeaderSize, cipherText, 0, cipherText.Length);
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.IV = iv;
+        aes.Mode = mode;
+        aes.Padding = PaddingMode.PKCS7;
+        using var decryptor = aes.CreateDecryptor();
+        return decryptor.TransformFinalBlock(cipherText, 0, cipherText.Length);
+    }
+
+    private static byte[] ComputeAesAuthenticationTag(byte[] authenticatedData, byte[] key)
+    {
+        using var hmac = new HMACSHA256(DeriveAesAuthenticationKey(key));
+        return hmac.ComputeHash(authenticatedData);
+    }
+
+    private static byte[] DeriveAesAuthenticationKey(byte[] key)
+    {
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        using var hmac = new HMACSHA256(key);
+        return hmac.ComputeHash(AesAuthenticationContext);
+    }
+
+    private static bool HasAesEnvelopeMagic(byte[] envelope)
+    {
+        if (envelope.Length < AesEnvelopeHeaderSize)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < AesEnvelopeMagic.Length; i++)
+        {
+            if (envelope[i] != AesEnvelopeMagic[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool FixedTimeEquals(byte[] left, byte[] right)
+    {
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        int difference = 0;
+        for (int i = 0; i < left.Length; i++)
+        {
+            difference |= left[i] ^ right[i];
+        }
+
+        return difference == 0;
     }
 
     /// <summary>
@@ -497,7 +587,7 @@ public static class Encrypt
     {
         using var aes = Aes.Create();
         aes.Key = Encoding.UTF8.GetBytes(decryptKey);
-        aes.IV = Keys;
+        aes.IV = AesEnvelopeMagic;
         aes.Mode = mode;
         return new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write);
     }
@@ -509,45 +599,106 @@ public static class Encrypt
     /// <param name="decryptKey">加密密钥</param>
     /// <param name="mode">加密模式</param>
     /// <returns>加密流</returns>
-    public static CryptoStream AESEncryptStrream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
+    public static Stream AESEncryptStrream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
         using var aes = Aes.Create();
         aes.Key = decryptKey;
-        aes.IV = Keys;
         aes.Mode = mode;
-        return new CryptoStream(fs, aes.CreateEncryptor(), CryptoStreamMode.Write);
+        aes.Padding = PaddingMode.PKCS7;
+        var iv = new byte[AesIvSize];
+        using (var randomNumberGenerator = RandomNumberGenerator.Create())
+        {
+            randomNumberGenerator.GetBytes(iv);
+        }
+
+        aes.IV = iv;
+        var output = new PooledMemoryStream();
+        output.Write(AesEnvelopeMagic, 0, AesEnvelopeMagic.Length);
+        output.Write(iv, 0, iv.Length);
+        using (var encryptedStream = new CryptoStream(output, aes.CreateEncryptor(), CryptoStreamMode.Write))
+        {
+            fs.CopyTo(encryptedStream);
+            encryptedStream.FlushFinalBlock();
+        }
+
+        long authenticatedLength = output.Position;
+        output.Position = 0;
+        byte[] tag;
+        using (var hmac = new HMACSHA256(DeriveAesAuthenticationKey(decryptKey)))
+        {
+            tag = hmac.ComputeHash(output);
+        }
+
+        output.Position = authenticatedLength;
+        output.Write(tag, 0, tag.Length);
+        return output;
     }
 
     /// <summary>
     /// 解密文件流
     /// </summary>
-    /// <param name="fs">需要解密的文件流</param>
+    /// <param name="input">需要解密的文件流</param>
     /// <param name="decryptKey">解密密钥</param>
     /// <param name="mode">加密模式</param>
     /// <returns>加密流</returns>
-    public static CryptoStream AESDecryptStream(this FileStream fs, string decryptKey, CipherMode mode = CipherMode.CBC)
+    public static Stream AESDecryptStream(this FileStream input, string decryptKey, CipherMode mode = CipherMode.CBC)
     {
-        using var aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(decryptKey);
-        aes.IV = Keys;
-        aes.Mode = mode;
-        return new CryptoStream(fs, aes.CreateDecryptor(), CryptoStreamMode.Read);
+        byte[] keyBytes = Encoding.UTF8.GetBytes(decryptKey);
+        return input.AESDecryptStream(keyBytes, mode);
     }
 
     /// <summary>
     /// 解密文件流
     /// </summary>
-    /// <param name="fs">需要解密的文件流</param>
+    /// <param name="input">需要解密的文件流</param>
     /// <param name="decryptKey">解密密钥</param>
     /// <param name="mode">加密模式</param>
     /// <returns>加密流</returns>
-    public static CryptoStream AESDecryptStream(this FileStream fs, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
+    public static Stream AESDecryptStream(this FileStream input, byte[] decryptKey, CipherMode mode = CipherMode.CBC)
     {
         using var aes = Aes.Create();
         aes.Key = decryptKey;
-        aes.IV = Keys;
         aes.Mode = mode;
-        return new CryptoStream(fs, aes.CreateDecryptor(), CryptoStreamMode.Read);
+        aes.Padding = PaddingMode.PKCS7;
+        long startPosition = input.Position;
+        long envelopeLength = input.Length - startPosition;
+        if (envelopeLength < AesEnvelopeHeaderSize + AesIvSize + AesTagSize)
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        var header = new byte[AesEnvelopeHeaderSize];
+        ReadExactly(input, header, 0, header.Length);
+        if (!HasAesEnvelopeMagic(header))
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        long cipherLength = envelopeLength - AesEnvelopeHeaderSize - AesTagSize;
+        if (cipherLength < AesIvSize || cipherLength % AesIvSize != 0)
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        long authenticatedLength = envelopeLength - AesTagSize;
+        byte[] expectedTag = ComputeAesAuthenticationTag(input, startPosition, authenticatedLength, decryptKey);
+        input.Position = startPosition + authenticatedLength;
+        var actualTag = new byte[AesTagSize];
+        ReadExactly(input, actualTag, 0, actualTag.Length);
+        if (!FixedTimeEquals(expectedTag, actualTag))
+        {
+            throw new CryptographicException("AES密文认证失败。");
+        }
+
+        var iv = new byte[AesIvSize];
+        Buffer.BlockCopy(header, AesEnvelopeMagic.Length, iv, 0, iv.Length);
+        input.Position = startPosition + AesEnvelopeHeaderSize;
+        using var boundedInput = new LimitedReadStream(input, cipherLength);
+        var output = new PooledMemoryStream();
+        aes.IV = iv;
+        using var decryptedStream = new CryptoStream(boundedInput, aes.CreateDecryptor(), CryptoStreamMode.Read);
+        decryptedStream.CopyTo(output);
+        return output;
     }
 
     /// <summary>
@@ -557,11 +708,41 @@ public static class Encrypt
     /// <param name="key">加密密钥</param>
     /// <param name="mode">加密模式</param>
     /// <param name="outputPath">输出文件路径</param>
+    /// <remarks>输出采用带随机IV和认证标签的版本化格式。</remarks>
     public static void AESEncryptFile(this FileStream input, string outputPath, string key, CipherMode mode = CipherMode.CBC)
     {
-        using var fren = new FileStream(outputPath, FileMode.Create);
-        using var enfr = AESEncryptStrream(fren, key, mode);
-        input.CopyTo(enfr);
+        EnsureDifferentFile(input, outputPath);
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        using var aes = Aes.Create();
+        aes.Key = keyBytes;
+        aes.Mode = mode;
+        aes.Padding = PaddingMode.PKCS7;
+        var iv = new byte[AesIvSize];
+        using (var randomNumberGenerator = RandomNumberGenerator.Create())
+        {
+            randomNumberGenerator.GetBytes(iv);
+        }
+
+        aes.IV = iv;
+        using var output = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+        output.Write(AesEnvelopeMagic, 0, AesEnvelopeMagic.Length);
+        output.Write(iv, 0, iv.Length);
+        using (var encryptedStream = new CryptoStream(new NonClosingStream(output), aes.CreateEncryptor(), CryptoStreamMode.Write))
+        {
+            input.CopyTo(encryptedStream);
+            encryptedStream.FlushFinalBlock();
+        }
+
+        long authenticatedLength = output.Position;
+        output.Position = 0;
+        byte[] tag;
+        using (var hmac = new HMACSHA256(DeriveAesAuthenticationKey(keyBytes)))
+        {
+            tag = hmac.ComputeHash(output);
+        }
+
+        output.Position = authenticatedLength;
+        output.Write(tag, 0, tag.Length);
     }
 
     /// <summary>
@@ -571,11 +752,203 @@ public static class Encrypt
     /// <param name="key">解密密钥</param>
     /// <param name="mode">加密模式</param>
     /// <param name="outputPath">输出文件路径</param>
+    /// <remarks>仅接受带认证标签的版本化密文，输入流必须可读取且可定位。</remarks>
     public static void AESDecryptFile(this FileStream input, string outputPath, string key, CipherMode mode = CipherMode.CBC)
     {
-        using var frde = new FileStream(outputPath, FileMode.Create);
-        using var defr = AESDecryptStream(input, key, mode);
-        defr.CopyTo(frde);
+        EnsureDifferentFile(input, outputPath);
+        if (!input.CanRead || !input.CanSeek)
+        {
+            throw new ArgumentException("The encrypted file stream must be readable and seekable.", nameof(input));
+        }
+
+        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+        using var aes = Aes.Create();
+        aes.Key = keyBytes;
+        aes.Mode = mode;
+        aes.Padding = PaddingMode.PKCS7;
+        long startPosition = input.Position;
+        long envelopeLength = input.Length - startPosition;
+        if (envelopeLength < AesEnvelopeHeaderSize + AesIvSize + AesTagSize)
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        var header = new byte[AesEnvelopeHeaderSize];
+        ReadExactly(input, header, 0, header.Length);
+        if (!HasAesEnvelopeMagic(header))
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        long cipherLength = envelopeLength - AesEnvelopeHeaderSize - AesTagSize;
+        if (cipherLength < AesIvSize || cipherLength % AesIvSize != 0)
+        {
+            throw new CryptographicException("AES密文格式无效。");
+        }
+
+        long authenticatedLength = envelopeLength - AesTagSize;
+        byte[] expectedTag = ComputeAesAuthenticationTag(input, startPosition, authenticatedLength, keyBytes);
+        input.Position = startPosition + authenticatedLength;
+        var actualTag = new byte[AesTagSize];
+        ReadExactly(input, actualTag, 0, actualTag.Length);
+        if (!FixedTimeEquals(expectedTag, actualTag))
+        {
+            throw new CryptographicException("AES密文认证失败。");
+        }
+
+        var iv = new byte[AesIvSize];
+        Buffer.BlockCopy(header, AesEnvelopeMagic.Length, iv, 0, iv.Length);
+        input.Position = startPosition + AesEnvelopeHeaderSize;
+        using var boundedInput = new LimitedReadStream(input, cipherLength);
+        using var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+        aes.IV = iv;
+        using var decryptedStream = new CryptoStream(boundedInput, aes.CreateDecryptor(), CryptoStreamMode.Read);
+        decryptedStream.CopyTo(output);
+    }
+
+    private static byte[] ComputeAesAuthenticationTag(Stream input, long startPosition, long length, byte[] key)
+    {
+        input.Position = startPosition;
+        using var hmac = new HMACSHA256(DeriveAesAuthenticationKey(key));
+        var buffer = new byte[81920];
+        long remaining = length;
+        while (remaining > 0)
+        {
+            int bytesToRead = (int)Math.Min(buffer.Length, remaining);
+            int bytesRead = input.Read(buffer, 0, bytesToRead);
+            if (bytesRead == 0)
+            {
+                throw new CryptographicException("AES密文格式无效。");
+            }
+
+            hmac.TransformBlock(buffer, 0, bytesRead, buffer, 0);
+            remaining -= bytesRead;
+        }
+
+        hmac.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        return hmac.Hash;
+    }
+
+    private static void ReadExactly(Stream input, byte[] buffer, int offset, int count)
+    {
+        while (count > 0)
+        {
+            int bytesRead = input.Read(buffer, offset, count);
+            if (bytesRead == 0)
+            {
+                throw new CryptographicException("AES密文格式无效。");
+            }
+
+            offset += bytesRead;
+            count -= bytesRead;
+        }
+    }
+
+    private static void EnsureDifferentFile(FileStream input, string outputPath)
+    {
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        var comparison = Path.DirectorySeparatorChar == '\\' ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        if (string.Equals(Path.GetFullPath(input.Name), Path.GetFullPath(outputPath), comparison))
+        {
+            throw new ArgumentException("The input and output files must be different.", nameof(outputPath));
+        }
+    }
+
+    private sealed class LimitedReadStream : Stream
+    {
+        private readonly Stream input;
+        private long remaining;
+
+        public LimitedReadStream(Stream input, long length)
+        {
+            this.input = input;
+            remaining = length;
+        }
+
+        public override bool CanRead => input.CanRead;
+
+        public override bool CanSeek => false;
+
+        public override bool CanWrite => false;
+
+        public override long Length => throw new NotSupportedException();
+
+        public override long Position
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+
+        public override void Flush()
+        {
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            if (remaining == 0)
+            {
+                return 0;
+            }
+
+            int bytesToRead = (int)Math.Min(count, remaining);
+            int bytesRead = input.Read(buffer, offset, bytesToRead);
+            remaining -= bytesRead;
+            return bytesRead;
+        }
+
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+
+        public override void SetLength(long value) => throw new NotSupportedException();
+
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+    }
+
+    private sealed class NonClosingStream : Stream
+    {
+        private readonly Stream inner;
+
+        public NonClosingStream(Stream inner)
+        {
+            this.inner = inner;
+        }
+
+        public override bool CanRead => inner.CanRead;
+
+        public override bool CanSeek => inner.CanSeek;
+
+        public override bool CanWrite => inner.CanWrite;
+
+        public override long Length => inner.Length;
+
+        public override long Position
+        {
+            get => inner.Position;
+            set => inner.Position = value;
+        }
+
+        public override void Flush() => inner.Flush();
+
+        public override int Read(byte[] buffer, int offset, int count) => inner.Read(buffer, offset, count);
+
+        public override long Seek(long offset, SeekOrigin origin) => inner.Seek(offset, origin);
+
+        public override void SetLength(long value) => inner.SetLength(value);
+
+        public override void Write(byte[] buffer, int offset, int count) => inner.Write(buffer, offset, count);
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
     }
 
     #endregion 对称加密算法AES加密解密

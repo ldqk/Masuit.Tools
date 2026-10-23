@@ -22,7 +22,7 @@ public static class RsaCrypt
     /// <param name="type">密钥类型</param>
     /// <param name="length">密钥长度</param>
     /// <returns></returns>
-    public static RsaKey GenerateRsaKeys(RsaKeyType type = RsaKeyType.PKCS8, int length = 1024)
+    public static RsaKey GenerateRsaKeys(RsaKeyType type = RsaKeyType.PKCS8, int length = 2048)
     {
         var rsa = new RSA(length);
         return type switch
@@ -214,6 +214,8 @@ public static class RsaCrypt
 
     #region RSA签名
 
+    /// <remarks>签名和验签默认使用SHA-256，并拒绝MD5和SHA-1。</remarks>
+
     /// <summary>
     /// RSA签名
     /// </summary>
@@ -223,10 +225,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static byte[] SignatureBytes(this byte[] data, string privateKey, HashAlgo halg = HashAlgo.MD5)
+    public static byte[] SignatureBytes(this byte[] data, string privateKey, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(privateKey);
-        return rsa.Sign(halg.ToString(), data);
+        return rsa.Sign(GetSignatureHashName(halg), data);
     }
 
     /// <summary>
@@ -251,10 +253,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static byte[] SignatureBytes(this string value, string privateKey, HashAlgo halg = HashAlgo.MD5)
+    public static byte[] SignatureBytes(this string value, string privateKey, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(privateKey);
-        return Encoding.UTF32.GetBytes(rsa.Sign(halg.ToString(), value));
+        return Encoding.UTF32.GetBytes(rsa.Sign(GetSignatureHashName(halg), value));
     }
 
     /// <summary>
@@ -266,10 +268,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static string SignatureString(this string value, string privateKey, HashAlgo halg = HashAlgo.MD5)
+    public static string SignatureString(this string value, string privateKey, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(privateKey);
-        return rsa.Sign(halg.ToString(), value);
+        return rsa.Sign(GetSignatureHashName(halg), value);
     }
 
     #endregion RSA签名
@@ -286,10 +288,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static bool SignatureDeformatter(this byte[] data, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.MD5)
+    public static bool SignatureDeformatter(this byte[] data, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(publicKey);
-        return rsa.Verify(halg.ToString(), sign, data);
+        return rsa.Verify(GetSignatureHashName(halg), sign, data);
     }
 
     /// <summary>
@@ -302,10 +304,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static bool SignatureDeformatter(this byte[] data, string publicKey, string sign, HashAlgo halg = HashAlgo.MD5)
+    public static bool SignatureDeformatter(this byte[] data, string publicKey, string sign, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(publicKey);
-        return rsa.Verify(halg.ToString(), Convert.FromBase64String(sign), data);
+        return rsa.Verify(GetSignatureHashName(halg), Convert.FromBase64String(sign), data);
     }
 
     /// <summary>
@@ -318,10 +320,10 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static bool SignatureDeformatter(this string value, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.MD5)
+    public static bool SignatureDeformatter(this string value, string publicKey, byte[] sign, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(publicKey);
-        return rsa.Verify(halg.ToString(), sign, Convert.FromBase64String(value));
+        return rsa.Verify(GetSignatureHashName(halg), sign, Convert.FromBase64String(value));
     }
 
     /// <summary>
@@ -334,13 +336,23 @@ public static class RsaCrypt
     /// <returns>处理结果</returns>
     /// <exception cref="CryptographicException">The cryptographic service provider (CSP) cannot be acquired. </exception>
     /// <exception cref="CryptographicUnexpectedOperationException">The key is null.-or- The hash algorithm is null. </exception>
-    public static bool SignatureDeformatter(this string value, string publicKey, string sign, HashAlgo halg = HashAlgo.MD5)
+    public static bool SignatureDeformatter(this string value, string publicKey, string sign, HashAlgo halg = HashAlgo.SHA256)
     {
         var rsa = new RSA(publicKey);
-        return rsa.Verify(halg.ToString(), sign, value);
+        return rsa.Verify(GetSignatureHashName(halg), sign, value);
     }
 
     #endregion RSA 签名验证
 
     #endregion RSA数字签名
+
+    private static string GetSignatureHashName(HashAlgo hashAlgorithm)
+    {
+        if (hashAlgorithm is HashAlgo.MD5 or HashAlgo.SHA1 || !Enum.IsDefined(typeof(HashAlgo), hashAlgorithm))
+        {
+            throw new ArgumentOutOfRangeException(nameof(hashAlgorithm), hashAlgorithm, "RSA signatures require SHA-256 or a stronger hash algorithm.");
+        }
+
+        return hashAlgorithm.ToString();
+    }
 }

@@ -46,5 +46,20 @@ namespace Masuit.Tools.Abstractions.Test.Security
             // 验证结果为False
             Assert.True(data.SignatureDeformatter(rsaKey.PublicKey, sign));
         }
+
+        [Fact]
+        public void GenerateRsaKeys_ShouldRejectWeakKeySizes()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => RsaCrypt.GenerateRsaKeys(length: 1024));
+        }
+
+        [Fact]
+        public void RsaSignatures_ShouldRejectWeakHashAlgorithms()
+        {
+            RsaKey rsaKey = RsaCrypt.GenerateRsaKeys();
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => "data".SignatureString(rsaKey.PrivateKey, HashAlgo.MD5));
+            Assert.Throws<ArgumentOutOfRangeException>(() => "data".SignatureString(rsaKey.PrivateKey, HashAlgo.SHA1));
+        }
     }
 }
