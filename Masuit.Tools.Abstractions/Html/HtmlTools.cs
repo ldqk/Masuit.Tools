@@ -173,19 +173,5 @@ namespace Masuit.Tools.Html
         {
             return MatchImgSrcs(html).OrderByRandom().FirstOrDefault();
         }
-
-        /// <summary>
-        /// 替换html字符
-        /// </summary>
-        /// <param name="strHtml">html</param>
-        public static string EncodeHtml(this string strHtml)
-        {
-            if (strHtml != "")
-            {
-                return strHtml.Replace(",", "&def").Replace("'", "&dot").Replace(";", "&dec");
-            }
-
-            return "";
-        }
     }
 }
