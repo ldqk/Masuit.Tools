@@ -284,7 +284,7 @@ public static class ExcelExtension
             CreateStyledTable(sheet, startRow, startColumn, lastRow, lastColumn);
         }
 
-        AdjustColumns(sheet, startRow, lastRow, startColumn, lastColumn, Enumerable.Range(startColumn, table.Columns.Count).Where(column => !imageColumns.Contains(column)));
+        AdjustColumns(sheet, startRow, lastRow, Enumerable.Range(startColumn, table.Columns.Count).Where(column => !imageColumns.Contains(column)));
     }
 
     /// <summary>
@@ -297,7 +297,7 @@ public static class ExcelExtension
 
     private static void FillCollection<T>(IXLWorksheet sheet, IEnumerable<T> source, ColumnSettings settings, int startRow, int startColumn, bool createTable, List<PictureHyperlink> pictureHyperlinks)
     {
-        var properties = typeof(T).GetProperties().Where(property => property.GetIndexParameters().Length == 0 && property.GetAttribute<ExportIgnoreAttribute>() == null && !HasEpplusIgnoreAttribute(property)).ToList();
+        var properties = typeof(T).GetProperties().Where(property => property.GetIndexParameters().Length == 0 && property.GetAttribute<ExportIgnoreAttribute>() == null).ToList();
         var items = source as ICollection<T> ?? source.ToList();
         if (items.Count == 0 || properties.Count == 0)
         {
@@ -351,14 +351,14 @@ public static class ExcelExtension
             CreateStyledTable(sheet, startRow, startColumn, lastRow, lastColumn);
         }
 
-        AdjustColumns(sheet, startRow, lastRow, startColumn, lastColumn, Enumerable.Range(startColumn, properties.Count).Where(column => !imageColumns.Contains(column)));
+        AdjustColumns(sheet, startRow, lastRow, Enumerable.Range(startColumn, properties.Count).Where(column => !imageColumns.Contains(column)));
     }
 
     private static void StyleHeader(IXLWorksheet sheet, int row, int startColumn, int endColumn)
     {
         var header = sheet.Range(row, startColumn, row, endColumn);
         header.Style.Font.Bold = true;
-        header.Style.Font.FontSize = header.Style.Font.FontSize * 1.11;
+        header.Style.Font.FontSize *= 1.11;
         header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
     }
 
@@ -387,7 +387,7 @@ public static class ExcelExtension
         table.Theme = XLTableTheme.TableStyleLight15;
     }
 
-    private static void AdjustColumns(IXLWorksheet sheet, int startRow, int lastRow, int startColumn, int lastColumn, IEnumerable<int> columns)
+    private static void AdjustColumns(IXLWorksheet sheet, int startRow, int lastRow, IEnumerable<int> columns)
     {
         foreach (var column in columns.Distinct())
         {
@@ -474,37 +474,18 @@ public static class ExcelExtension
 
     private static void SetCellValue(IXLCell cell, object value)
     {
-        switch (value)
+        cell.Value = value switch
         {
-            case null:
-            case DBNull:
-                cell.Value = string.Empty;
-                break;
-            case string text:
-                cell.Value = text;
-                break;
-            case DateTime dateTime:
-                cell.Value = dateTime;
-                break;
-            case DateTimeOffset dateTimeOffset:
-                cell.Value = dateTimeOffset.DateTime;
-                break;
-            case TimeSpan timeSpan:
-                cell.Value = timeSpan;
-                break;
-            case bool boolean:
-                cell.Value = boolean;
-                break;
-            case Enum enumValue:
-                cell.Value = Convert.ToDouble(enumValue, CultureInfo.InvariantCulture);
-                break;
-            case byte or sbyte or short or ushort or int or uint or long or ulong or float or double or decimal:
-                cell.Value = Convert.ToDouble(value, CultureInfo.InvariantCulture);
-                break;
-            default:
-                cell.Value = Convert.ToString(value, CultureInfo.CurrentCulture);
-                break;
-        }
+            null or DBNull => string.Empty,
+            string text => text,
+            DateTime dateTime => dateTime,
+            DateTimeOffset dateTimeOffset => dateTimeOffset.DateTime,
+            TimeSpan timeSpan => timeSpan,
+            bool boolean => boolean,
+            Enum enumValue => Convert.ToDouble(enumValue, CultureInfo.InvariantCulture),
+            byte or sbyte or short or ushort or int or uint or long or ulong or float or double or decimal => Convert.ToDouble(value, CultureInfo.InvariantCulture),
+            _ => Convert.ToString(value, CultureInfo.CurrentCulture)
+        };
     }
 
     private static bool IsPictureType(Type type)
@@ -538,7 +519,7 @@ public static class ExcelExtension
 
             using var decodeStream = new MemoryStream(bytes);
             using var bitmap = SkiaSharp.SKBitmap.Decode(decodeStream);
-            if (bitmap == null || bitmap.Width <= 0 || bitmap.Height <= 0)
+            if (bitmap is not {Width: > 0} || bitmap.Height <= 0)
             {
                 throw new ArgumentException($"{location}图像格式不受支持");
             }
@@ -594,7 +575,7 @@ public static class ExcelExtension
             yield break;
         }
 
-        if (value is IEnumerable enumerable && value is not string)
+        if (value is IEnumerable enumerable and not string)
         {
             foreach (var item in enumerable)
             {
@@ -659,7 +640,7 @@ public static class ExcelExtension
                         TwoCellAnchor twoCellAnchor => twoCellAnchor.FromMarker,
                         _ => null
                     };
-                    var picture = anchor.GetFirstChild<Picture>();
+                    var picture = anchor.GetFirstChild<DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture>();
                     if (marker == null || picture?.NonVisualPictureProperties?.NonVisualDrawingProperties == null)
                     {
                         continue;
@@ -685,11 +666,6 @@ public static class ExcelExtension
         return stream.ToArray();
     }
 
-    private static bool HasEpplusIgnoreAttribute(System.Reflection.PropertyInfo property)
-    {
-        return property.GetCustomAttributes(false).Any(attribute => attribute.GetType().FullName == "OfficeOpenXml.Attributes.EpplusIgnore");
-    }
-
     /// <summary>
     /// 获取字母列
     /// </summary>
@@ -705,32 +681,7 @@ public static class ExcelExtension
     {
         return cell.IsEmpty() ? defaultValue : cell.GetValue<T>();
     }
-
-    private sealed class PictureContent
-    {
-        public PictureContent(Stream stream, Uri hyperlink)
-        {
-            Stream = stream;
-            Hyperlink = hyperlink;
-        }
-
-        public Stream Stream { get; }
-        public Uri Hyperlink { get; }
-    }
-
-    private sealed class PictureHyperlink
-    {
-        public PictureHyperlink(string worksheetName, int row, int column, Uri hyperlink)
-        {
-            WorksheetName = worksheetName;
-            Row = row;
-            Column = column;
-            Hyperlink = hyperlink;
-        }
-
-        public string WorksheetName { get; }
-        public int Row { get; }
-        public int Column { get; }
-        public Uri Hyperlink { get; }
-    }
 }
+
+internal sealed record PictureContent(Stream Stream, Uri Hyperlink);
+internal sealed record PictureHyperlink(string WorksheetName, int Row, int Column, Uri Hyperlink);
