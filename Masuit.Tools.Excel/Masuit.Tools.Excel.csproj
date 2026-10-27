@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Authors>懒得勤快</Authors>
-        <Description>Masuit.Tools.Excel导出库，支持一些简单数据的导出，支持图片列</Description>
+        <Description>Masuit.Tools.Excel导出库，基于ClosedXML，支持数据表、集合、图片和格式导出</Description>
         <Copyright>懒得勤快</Copyright>
         <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
         <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
@@ -37,8 +37,11 @@
       </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="EPPlus" Version="8.7.2" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.402" PrivateAssets="All" />
+        <PackageReference Include="ClosedXML" Version="0.105.1" />
+        <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+        <PackageReference Include="ExcelEncryptor" Version="2.0.5.1" />
+        <PackageReference Include="OpenMcdf" Version="3.4.0" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
