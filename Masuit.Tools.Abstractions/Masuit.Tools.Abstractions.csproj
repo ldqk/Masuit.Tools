@@ -22,7 +22,7 @@
     <FileVersion>2.5.9</FileVersion>
     <Company>masuit.org</Company>
     <AssemblyVersion>2.5.9</AssemblyVersion>
-    <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -54,7 +54,7 @@
       <PackageReference Include="System.Management" Version="10.0.14" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.50.7" />
-    <PackageReference Include="SkiaSharp" Version="4.153.1" />
+    <PackageReference Include="SkiaSharp" Version="4.154.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="IndexRange" Version="1.1.1" />

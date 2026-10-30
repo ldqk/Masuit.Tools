@@ -31,9 +31,7 @@ internal sealed class QuickTimeDetector : AbstractISOBaseMediaFileDetailDetector
         if (!base.Detect(stream))
         {
             stream.Position = 4;
-            byte[] buffer = new byte[4];
-            stream.Read(buffer, 0, 4);
-            return buffer[0] == 0x6D && buffer[1] == 0x6F && buffer[2] == 0x6F && buffer[3] == 0x76;
+            return stream.ReadByte() == 0x6D && stream.ReadByte() == 0x6F && stream.ReadByte() == 0x6F && stream.ReadByte() == 0x76;
         }
 
         return true;

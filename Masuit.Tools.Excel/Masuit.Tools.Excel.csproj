@@ -1,50 +1,49 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <LangVersion>latest</LangVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Authors>懒得勤快</Authors>
-        <Description>Masuit.Tools.Excel导出库，基于ClosedXML，支持数据表、集合、图片和格式导出</Description>
-        <Copyright>懒得勤快</Copyright>
-        <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
-        <PackageTags>Masuit.Tools,工具库,Utility,Excel,Extensions</PackageTags>
-        <PackageReleaseNotes>Masuit.Tools.Excel导出库</PackageReleaseNotes>
-        <Product>Masuit.Tools.Excel</Product>
-        <PackageId>Masuit.Tools.Excel</PackageId>
-        <RepositoryType>Github</RepositoryType>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <FileVersion>1.2.5</FileVersion>
-        <Company>masuit.org</Company>
-        <AssemblyVersion>1.2.3</AssemblyVersion>
-        <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <GenerateDocumentationFile>True</GenerateDocumentationFile>
-        <Title>Masuit.Tools.Excel</Title>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <NeutralLanguage>zh-CN</NeutralLanguage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|AnyCPU'">
-        <DocumentationFile>.\Masuit.Tools.Excel.xml</DocumentationFile>
-    </PropertyGroup>
-    <ItemGroup>
-      <None Include="..\README.md">
-        <Pack>True</Pack>
-        <PackagePath>\</PackagePath>
-      </None>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="ClosedXML" Version="0.105.1" />
-        <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
-        <PackageReference Include="ExcelEncryptor" Version="2.0.5.1" />
-        <PackageReference Include="OpenMcdf" Version="3.4.0" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403" PrivateAssets="All" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Authors>懒得勤快</Authors>
+    <Description>Masuit.Tools.Excel导出库，基于ClosedXML，支持数据表、集合、图片和格式导出</Description>
+    <Copyright>懒得勤快</Copyright>
+    <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+    <PackageTags>Masuit.Tools,工具库,Utility,Excel,Extensions</PackageTags>
+    <PackageReleaseNotes>Masuit.Tools.Excel导出库</PackageReleaseNotes>
+    <Product>Masuit.Tools.Excel</Product>
+    <PackageId>Masuit.Tools.Excel</PackageId>
+    <RepositoryType>Github</RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <FileVersion>1.2.5</FileVersion>
+    <Company>masuit.org</Company>
+    <AssemblyVersion>1.2.3</AssemblyVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Masuit.Tools.Excel</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <NeutralLanguage>zh-CN</NeutralLanguage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>.\Masuit.Tools.Excel.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+    <PackageReference Include="ExcelEncryptor" Version="2.0.5.1" />
+    <PackageReference Include="OpenMcdf" Version="3.4.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

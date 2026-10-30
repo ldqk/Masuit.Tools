@@ -825,7 +825,7 @@ public static class Encrypt
             remaining -= bytesRead;
         }
 
-        hmac.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        hmac.TransformFinalBlock([], 0, 0);
         return hmac.Hash;
     }
 
@@ -1244,7 +1244,7 @@ public static class RC2Crypt
         var index = new byte[10261];
 
         //将读取的内容写到byte数组
-        tmpFileStream.Read(index, 0, 10261);
+        ReadExactly(tmpFileStream, index, 0, index.Length);
         tmpFileStream.Close();
 
         //定义基本的加密转换运算
@@ -1309,7 +1309,7 @@ public static class RC2Crypt
         using var msDecrypt = new PooledMemoryStream();
         using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
         var index = new byte[10261];
-        tmpFileStream.Read(index, 0, 10261);
+        ReadExactly(tmpFileStream, index, 0, index.Length);
         var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
         var tmp = new byte[count];
         Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
@@ -1357,9 +1357,7 @@ public static class RC2Crypt
         using var decryptor = _rc2Csp.CreateDecryptor(_key, _iv);
         using var msDecrypt = new PooledMemoryStream();
         using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
-        var tmp = new byte[tmpFileStream.Length];
-        tmpFileStream.Read(tmp, 0, tmp.Length);
-        csDecrypt.Write(tmp, 0, tmp.Length);
+        tmpFileStream.CopyTo(csDecrypt);
         csDecrypt.FlushFinalBlock();
         var decrypted = msDecrypt.ToArray();
         return _textConverter.GetString(decrypted, 0, decrypted.Length);
@@ -1392,7 +1390,7 @@ public static class RC2Crypt
         var index = new byte[10261];
 
         //将读取的内容写到byte数组
-        fs.Read(index, 0, 10261);
+        ReadExactly(fs, index, 0, index.Length);
 
         //定义基本的加密转换运算
         using var encryptor = _rc2Csp.CreateEncryptor(Key, IV);
@@ -1455,7 +1453,7 @@ public static class RC2Crypt
         using var msDecrypt = new PooledMemoryStream();
         using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
         var index = new byte[10261];
-        tmpFileStream.Read(index, 0, 10261);
+        ReadExactly(tmpFileStream, index, 0, index.Length);
         var count = index[dataIndex * 2 - 1] * 128 + index[dataIndex * 2];
         var tmp = new byte[count];
         Array.Copy(index, 1024 * (dataIndex - 1) + 21, tmp, 0, count);
@@ -1508,12 +1506,25 @@ public static class RC2Crypt
         using var decryptor = _rc2Csp.CreateDecryptor(key, iv);
         using var msDecrypt = new PooledMemoryStream();
         using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write);
-        var tmp = new byte[tmpFileStream.Length];
-        tmpFileStream.Read(tmp, 0, tmp.Length);
-        csDecrypt.Write(tmp, 0, tmp.Length);
+        tmpFileStream.CopyTo(csDecrypt);
         csDecrypt.FlushFinalBlock();
         var decrypted = msDecrypt.ToArray();
         return _textConverter.GetString(decrypted, 0, decrypted.Length);
+    }
+
+    private static void ReadExactly(Stream stream, byte[] buffer, int offset, int count)
+    {
+        while (count > 0)
+        {
+            int bytesRead = stream.Read(buffer, offset, count);
+            if (bytesRead == 0)
+            {
+                throw new EndOfStreamException();
+            }
+
+            offset += bytesRead;
+            count -= bytesRead;
+        }
     }
 
     #endregion 将一个被加密的文件解密

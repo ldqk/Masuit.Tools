@@ -1,47 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net461</TargetFramework>
-        <LangVersion>latest</LangVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Authors>懒得勤快</Authors>
-        <Description>
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Authors>懒得勤快</Authors>
+    <Description>
             全龄段友好的C#万能工具库，码数吐司库，不管你是菜鸟新手还是骨灰级玩家都能轻松上手，Masuit.Tools(适用于.NET Framework 4.6.1及以上项目)，包含一些常用的操作类，大都是静态类，加密解密，反射操作，Excel简单导出，权重随机筛选算法，分布式短id，表达式树，linq扩展，文件压缩，多线程下载和FTP客户端，硬件信息，字符串扩展方法，日期时间扩展操作，中国农历，大文件拷贝，图像裁剪，验证码，断点续传，集合扩展等常用封装。
             官网教程：https://masuit.tools
             github：https://github.com/ldqk/Masuit.Tools
         </Description>
-        <Copyright>懒得勤快，长空X</Copyright>
-        <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
-        <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
-        <PackageReleaseNotes>Masuit.Tools基础公共库，如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
-        <Product>Masuit.Tools.Net</Product>
-        <PackageId>Masuit.Tools.Net</PackageId>
-        <RepositoryType></RepositoryType>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-        <FileVersion>2.5.9</FileVersion>
-        <Company>masuit.org</Company>
-        <AssemblyVersion>2.5.9</AssemblyVersion>
-        <PackageLicenseUrl>https://github.com/ldqk/Masuit.Tools/blob/master/LICENSE</PackageLicenseUrl>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <GenerateDocumentationFile>True</GenerateDocumentationFile>
-        <Title>Masuit.Tools</Title>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-        <SonarQubeExclude>True</SonarQubeExclude>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
-        <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
-        <Reference Include="System.Web" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\README.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
+    <Copyright>懒得勤快，长空X</Copyright>
+    <RepositoryUrl>https://github.com/ldqk/Masuit.Tools</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ldqk/Masuit.Tools</PackageProjectUrl>
+    <PackageTags>Masuit.Tools,工具库,Utility,Crypt,Extensions</PackageTags>
+    <PackageReleaseNotes>Masuit.Tools基础公共库，如有问题请联系作者QQ:3444764617，或者到项目的github反馈问题，详细的API文档在github上:https://github.com/ldqk/Masuit.Tools</PackageReleaseNotes>
+    <Product>Masuit.Tools.Net</Product>
+    <PackageId>Masuit.Tools.Net</PackageId>
+    <RepositoryType></RepositoryType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <FileVersion>2.5.9</FileVersion>
+    <Company>masuit.org</Company>
+    <AssemblyVersion>2.5.9</AssemblyVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Masuit.Tools</Title>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <SonarQubeExclude>True</SonarQubeExclude>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
+    <ProjectReference Include="..\Masuit.Tools.Abstractions\Masuit.Tools.Abstractions.csproj" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 </Project>

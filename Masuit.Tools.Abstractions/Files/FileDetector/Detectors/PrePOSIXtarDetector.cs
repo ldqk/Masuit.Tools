@@ -19,7 +19,17 @@ internal sealed class POSIXtarDetector : IDetector
     {
         stream.Position = 100;
         byte[] mode = new byte[8];
-        stream.Read(mode, 0, 8);
+        for (int i = 0; i < mode.Length; i++)
+        {
+            int value = stream.ReadByte();
+            if (value < 0)
+            {
+                return false;
+            }
+
+            mode[i] = (byte)value;
+        }
+
         return Regex.IsMatch(Encoding.GetEncoding("ascii").GetString(mode, 0, 8), "[0-7][0-7][0-7][0-7][0-7][0-7][0-7][\0]");
     }
 

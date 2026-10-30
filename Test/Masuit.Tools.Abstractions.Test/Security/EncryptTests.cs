@@ -186,6 +186,105 @@ namespace Masuit.Tools.Abstractions.Test.Security
             }
         }
 
+        [Theory]
+        [InlineData(false, 0)]
+        [InlineData(false, 100000)]
+        [InlineData(true, 0)]
+        [InlineData(true, 100000)]
+        public void Rc2FileEncryption_ShouldRoundTrip(bool useCustomKey, int length)
+        {
+            string path = Path.GetTempFileName();
+            string original = new string('中', length);
+            byte[] key = Encoding.ASCII.GetBytes("0123456789abcdef");
+            byte[] iv = Encoding.ASCII.GetBytes("12345678");
+
+            try
+            {
+                if (useCustomKey)
+                {
+                    original.EncryptToFile(path, iv, key);
+                    Assert.Equal(original, path.DecryptFromFile(iv, key));
+                }
+                else
+                {
+                    original.EncryptToFile(path);
+                    Assert.Equal(original, path.DecryptFromFile());
+                }
+            }
+            finally
+            {
+                File.Delete(path);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Rc2FileDecryption_TruncatedCiphertext_ShouldThrow(bool useCustomKey)
+        {
+            string path = Path.GetTempFileName();
+            byte[] key = Encoding.ASCII.GetBytes("0123456789abcdef");
+            byte[] iv = Encoding.ASCII.GetBytes("12345678");
+
+            try
+            {
+                if (useCustomKey)
+                {
+                    TestString.EncryptToFile(path, iv, key);
+                }
+                else
+                {
+                    TestString.EncryptToFile(path);
+                }
+
+                using (var file = new FileStream(path, FileMode.Open, FileAccess.Write))
+                {
+                    file.SetLength(file.Length - 1);
+                }
+
+                if (useCustomKey)
+                {
+                    Assert.ThrowsAny<CryptographicException>(() => path.DecryptFromFile(iv, key));
+                }
+                else
+                {
+                    Assert.ThrowsAny<CryptographicException>(() => path.DecryptFromFile());
+                }
+            }
+            finally
+            {
+                File.Delete(path);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Rc2IndexedFileDecryption_TruncatedFile_ShouldThrow(bool useCustomKey)
+        {
+            string path = Path.GetTempFileName();
+            byte[] key = Encoding.ASCII.GetBytes("0123456789abcdef");
+            byte[] iv = Encoding.ASCII.GetBytes("12345678");
+
+            try
+            {
+                File.WriteAllBytes(path, new byte[5]);
+
+                if (useCustomKey)
+                {
+                    Assert.Throws<EndOfStreamException>(() => path.DecryptFromFile(1, iv, key));
+                }
+                else
+                {
+                    Assert.Throws<EndOfStreamException>(() => path.DecryptFromFile(1));
+                }
+            }
+            finally
+            {
+                File.Delete(path);
+            }
+        }
+
         [Fact]
         public void AesDecryptFile_TamperedCiphertext_ShouldNotCreateOutput()
         {

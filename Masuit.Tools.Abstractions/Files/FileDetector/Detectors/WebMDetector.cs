@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Masuit.Tools.Mime;
 
 namespace Masuit.Tools.Files.FileDetector.Detectors;
@@ -30,9 +29,7 @@ internal sealed class WebMDetector : AbstractSignatureDetector
         if (base.Detect(stream))
         {
             stream.Position = 0x1F;
-            byte[] buffer = new byte[4];
-            stream.Read(buffer, 0, 4);
-            return Encoding.GetEncoding("ascii").GetString(buffer, 0, 4) == "webm";
+            return stream.ReadByte() == 'w' && stream.ReadByte() == 'e' && stream.ReadByte() == 'b' && stream.ReadByte() == 'm';
         }
         return false;
     }

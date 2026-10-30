@@ -50,7 +50,7 @@ public class LargeMemoryStream : Stream
         else
         {
             var streamBuffers = new byte[_streamBuffers.Length + AllocStep][];
-            Buffer.BlockCopy(_streamBuffers, 0, streamBuffers, 0, _streamBuffers.Length);
+            Array.Copy(_streamBuffers, streamBuffers, _streamBuffers.Length);
             _streamBuffers = streamBuffers;
         }
 
