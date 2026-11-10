@@ -28,7 +28,7 @@
     <NeutralLanguage>zh-CN</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20261107" />
   </ItemGroup>
   <ItemGroup>
     <None Update="README.md">
