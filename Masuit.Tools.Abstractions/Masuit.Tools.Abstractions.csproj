@@ -45,7 +45,7 @@
   <ItemGroup>
       <PackageReference Include="Castle.Core" Version="5.2.1" />
     <PackageReference Include="DnsClient" Version="1.8.0" />
-    <PackageReference Include="HtmlSanitizer" Version="10.0.1120" />
+    <PackageReference Include="HtmlSanitizer" Version="11.0.26" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
@@ -54,7 +54,7 @@
       <PackageReference Include="System.Management" Version="10.0.14" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.50.8" />
-    <PackageReference Include="SkiaSharp" Version="4.154.0" />
+    <PackageReference Include="SkiaSharp" Version="4.155.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="IndexRange" Version="1.1.1" />
