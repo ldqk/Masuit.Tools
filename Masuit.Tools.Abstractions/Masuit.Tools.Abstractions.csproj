@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6;net8;net9;net10.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -47,11 +47,11 @@
     <PackageReference Include="DnsClient" Version="1.8.0" />
     <PackageReference Include="HtmlSanitizer" Version="11.0.26" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="11.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-      <PackageReference Include="System.Collections.Immutable" Version="10.0.14" />
-      <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.14" />
-      <PackageReference Include="System.Management" Version="10.0.14" />
+      <PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
+      <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="11.0.0" />
+      <PackageReference Include="System.Management" Version="11.0.0" />
       <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="SharpCompress" Version="0.50.8" />
     <PackageReference Include="SkiaSharp" Version="4.155.0" />
