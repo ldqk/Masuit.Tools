@@ -20,13 +20,15 @@
 
 关于本项目，如果你有任何不懂的地方或使用过程中遇到任何问题，可以直接提issue或私信联系我，我会为你提供**完全免费**的技术指导，当然，如果你觉得不好意思接受免费的指导，想适当打赏我也是不会拒绝的！🤣🤣🤣
 
-## 本项目已得到[JetBrains](https://www.jetbrains.com/shop/eform/opensource)的支持！
-
-<img src="https://www.jetbrains.com/shop/static/images/jetbrains-logo-inv.svg" height="100">
-
 ## Star趋势
 
-<img src="https://starchart.cc/ldqk/Masuit.Tools.svg">
+<a href="https://www.star-history.com/?repos=ldqk%2Fmasuit.tools&type=timeline&logscale=&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ldqk/masuit.tools&type=timeline&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ldqk/masuit.tools&type=timeline&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ldqk/masuit.tools&type=timeline&legend=bottom-right" />
+ </picture>
+</a>
 
 ## 请注意：
 
