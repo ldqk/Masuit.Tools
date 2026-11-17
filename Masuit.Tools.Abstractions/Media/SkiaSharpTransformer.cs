@@ -68,6 +68,8 @@ public static class ImageHashExt
     public static ulong[] DifferenceHash256(this SKBitmap image) => Hasher.DifferenceHash256(image);
     public static ulong DctHash(this SKBitmap image) => Hasher.DctHash(image);
     public static ulong DctHash64(this SKBitmap image) => Hasher.DctHash64(image);
+    public static ulong[] DctHash256(this SKBitmap image) => Hasher.DctHash256(image);
+    public static ulong[] MHHash256(this SKBitmap image) => Hasher.MHHash256(image);
 
     public static float Compare(this SKBitmap image1, SKBitmap image2, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
@@ -78,6 +80,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2)),
             ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2)),
             ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2)),
+            ImageHashAlgorithm.DCT256 => ImageHasher.Compare(Hasher.DctHash256(image1), Hasher.DctHash256(image2)),
+            ImageHashAlgorithm.MHHash256 => ImageHasher.Compare(Hasher.MHHash256(image1), Hasher.MHHash256(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -91,6 +95,8 @@ public static class ImageHashExt
             ImageHashAlgorithm.Difference => ImageHasher.Compare(Hasher.DifferenceHash256(image1), Hasher.DifferenceHash256(image2path)),
             ImageHashAlgorithm.DCT32 => ImageHasher.Compare(Hasher.DctHash(image1), Hasher.DctHash(image2path)),
             ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2path)),
+            ImageHashAlgorithm.DCT256 => ImageHasher.Compare(Hasher.DctHash256(image1), Hasher.DctHash256(image2path)),
+            ImageHashAlgorithm.MHHash256 => ImageHasher.Compare(Hasher.MHHash256(image1), Hasher.MHHash256(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -108,4 +114,8 @@ public enum ImageHashAlgorithm
     DCT32,
     /// <summary>64分辨率精度DCT算法</summary>
     DCT64,
+    /// <summary>256位DCT算法</summary>
+    DCT256,
+    /// <summary>256位MH算法</summary>
+    MHHash256
 }

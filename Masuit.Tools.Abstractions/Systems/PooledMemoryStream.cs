@@ -12,26 +12,18 @@ namespace Masuit.Tools.Systems;
 /// </summary>
 public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
 {
-    /// <summary>
-    /// 终结器
-    /// </summary>
-    ~PooledMemoryStream()
-    {
-        Dispose(true);
-    }
-
-    private const float OverExpansionFactor = 2;
+    private static readonly ArrayPool<byte> DefaultPool = ArrayPool<byte>.Create(1024 * 1024, 4);
 
     private byte[] _data = { };
     private int _length;
     private readonly ArrayPool<byte> _pool;
     private bool _isDisposed;
 
-    public PooledMemoryStream() : this(ArrayPool<byte>.Shared)
+    public PooledMemoryStream() : this(DefaultPool)
     {
     }
 
-    public PooledMemoryStream(byte[] buffer) : this(ArrayPool<byte>.Shared, buffer.Length)
+    public PooledMemoryStream(byte[] buffer) : this(DefaultPool, buffer.Length)
     {
         Buffer.BlockCopy(buffer, 0, _data, 0, buffer.Length);
         _length = buffer.Length;
@@ -134,7 +126,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
                 return Position;
 
             case SeekOrigin.End:
-                if (Length + offset < 0)
+                if (offset < -Length || offset > int.MaxValue - Length)
                 {
                     throw new ArgumentOutOfRangeException(nameof(offset));
                 }
@@ -161,7 +153,7 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     public override void SetLength(long value)
     {
         AssertNotDisposed();
-        if (value < 0)
+        if (value < 0 || value > int.MaxValue)
         {
             throw new ArgumentOutOfRangeException(nameof(value));
         }
@@ -195,7 +187,15 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
 
         if (Capacity - Position < count)
         {
-            SetCapacity((int)(OverExpansionFactor * (Position + count)));
+            if (Position < 0 || Position > int.MaxValue - (long)count)
+            {
+                throw new IOException("Stream is too long.");
+            }
+
+            var requiredCapacity = Position + count;
+            var growthCapacity = Capacity <= 1024 * 1024 ? Capacity * 2 : Capacity + Capacity / 4;
+            var newCapacity = growthCapacity > int.MaxValue ? requiredCapacity : Math.Max(requiredCapacity, growthCapacity);
+            SetCapacity((int)newCapacity);
         }
 
         Array.Copy(buffer, offset, _data, Position, count);
@@ -258,11 +258,12 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
             Position = 0;
             _length = 0;
 
-            if (_data != null)
+            if (_data is {Length: > 0})
             {
                 _pool.Return(_data);
-                _data = null;
             }
+
+            _data = null;
         }
 
         base.Dispose(disposing);
@@ -271,9 +272,9 @@ public sealed class PooledMemoryStream : Stream, IEnumerable<byte>
     private void SetCapacity(int newCapacity)
     {
         var newData = _pool.Rent(newCapacity);
-        if (_data != null)
+        if (_data.Length > 0)
         {
-            Array.Copy(_data, 0, newData, 0, Position);
+            Array.Copy(_data, 0, newData, 0, _length);
             _pool.Return(_data);
         }
 

@@ -1,4 +1,4 @@
-﻿using SkiaSharp;
+using SkiaSharp;
 
 namespace Masuit.Tools.Media;
 
@@ -12,6 +12,7 @@ public class ImageHasher
     private static readonly double[,] DctCosTable32 = BuildDctCosTable(32);
     private static readonly double Dct32Scale = Math.Sqrt(2.0 / 32);
     private static readonly double DctCu32Zero = 1.0 / Math.Sqrt(2.0);
+    private static readonly double[,] MarrHildrethKernel = BuildMarrHildrethKernel();
 
     private static double[,] BuildDctCosTable(int n)
     {
@@ -386,6 +387,68 @@ public class ImageHasher
     }
 
     /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的64位哈希。
+    /// </summary>
+    /// <param name="pathToImage">图片的文件路径</param>
+    /// <returns>64位hash值</returns>
+    public ulong MHHash64(string pathToImage)
+    {
+        using var image = SkiaImageHelper.DecodeGrayThumb(pathToImage, 160);
+        return MHHash64(image);
+    }
+
+    /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的64位哈希。
+    /// </summary>
+    /// <param name="sourceStream">读取到的图片流</param>
+    /// <returns>64位hash值</returns>
+    public ulong MHHash64(Stream sourceStream)
+    {
+        return CreateHash(ComputeMarrHildrethHash(_transformer.TransformImage(sourceStream, 32, 32), 8));
+    }
+
+    /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的64位哈希。
+    /// </summary>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>64位hash值</returns>
+    public ulong MHHash64(SKBitmap image)
+    {
+        return CreateHash(ComputeMarrHildrethHash(_transformer.TransformImage(image, 32, 32), 8));
+    }
+
+    /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的256位哈希。
+    /// </summary>
+    /// <param name="pathToImage">图片的文件路径</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] MHHash256(string pathToImage)
+    {
+        using var image = SkiaImageHelper.DecodeGrayThumb(pathToImage, 160);
+        return MHHash256(image);
+    }
+
+    /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的256位哈希。
+    /// </summary>
+    /// <param name="sourceStream">读取到的图片流</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] MHHash256(Stream sourceStream)
+    {
+        return CreateHash256(ComputeMarrHildrethHash(_transformer.TransformImage(sourceStream, 64, 64), 16));
+    }
+
+    /// <summary>
+    /// 使用Marr-Hildreth算子计算图像的256位哈希。
+    /// </summary>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] MHHash256(SKBitmap image)
+    {
+        return CreateHash256(ComputeMarrHildrethHash(_transformer.TransformImage(image, 64, 64), 16));
+    }
+
+    /// <summary>
     /// 使用32分辨率精度DCT算法计算图像的64位哈希
     /// </summary>
     /// <see cref="https://segmentfault.com/a/1190000038308093"/>
@@ -448,6 +511,213 @@ public class ImageHasher
     public ulong DctHash64(SKBitmap image)
     {
         return DctHasher.Compute(image);
+    }
+
+    /// <summary>
+    /// 使用64x64像素图像和16x16低频DCT系数计算256位哈希。
+    /// 比64位DCT哈希保留更多图像信息，但对缩放、裁剪和其他编辑的鲁棒性仍取决于图像内容。
+    /// </summary>
+    /// <param name="path">图片路径</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] DctHash256(string path)
+    {
+        using var image = SkiaImageHelper.DecodeGrayThumb(path, 160);
+        return DctHash256(image);
+    }
+
+    /// <summary>
+    /// 使用64x64像素图像和16x16低频DCT系数计算256位哈希。
+    /// 比64位DCT哈希保留更多图像信息，但对缩放、裁剪和其他编辑的鲁棒性仍取决于图像内容。
+    /// </summary>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] DctHash256(SKBitmap image)
+    {
+        return DctHasher.Compute256(image);
+    }
+
+    private static bool[] ComputeWaveletHash(byte[] pixels, int hashSize)
+    {
+        const int imageSize = 64;
+        var coefficients = new double[imageSize, imageSize];
+        for (var y = 0; y < imageSize; y++)
+        for (var x = 0; x < imageSize; x++)
+            coefficients[y, x] = pixels[y * imageSize + x] / 255.0;
+
+        var fullLevelCount = 6;
+        HaarForward(coefficients, imageSize, fullLevelCount);
+        coefficients[0, 0] = 0;
+        HaarInverse(coefficients, imageSize, fullLevelCount);
+
+        var levelCount = 0;
+        for (var size = imageSize; size > hashSize; size >>= 1)
+            levelCount++;
+        HaarForward(coefficients, imageSize, levelCount);
+
+        var lowFrequencies = new double[hashSize * hashSize];
+        for (var y = 0; y < hashSize; y++)
+        for (var x = 0; x < hashSize; x++)
+            lowFrequencies[y * hashSize + x] = coefficients[y, x];
+
+        var sorted = (double[])lowFrequencies.Clone();
+        Array.Sort(sorted);
+        var median = (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]) / 2.0;
+        var bits = new bool[lowFrequencies.Length];
+        for (var i = 0; i < bits.Length; i++)
+            bits[i] = lowFrequencies[i] > median;
+        return bits;
+    }
+
+    private static void HaarForward(double[,] data, int imageSize, int levelCount)
+    {
+        var temp = new double[imageSize];
+        var scale = 1.0 / Math.Sqrt(2.0);
+        var activeSize = imageSize;
+        for (var level = 0; level < levelCount; level++, activeSize >>= 1)
+        {
+            for (var y = 0; y < activeSize; y++)
+            {
+                for (var x = 0; x < activeSize / 2; x++)
+                {
+                    var left = data[y, x * 2];
+                    var right = data[y, x * 2 + 1];
+                    temp[x] = (left + right) * scale;
+                    temp[activeSize / 2 + x] = (left - right) * scale;
+                }
+
+                for (var x = 0; x < activeSize; x++)
+                    data[y, x] = temp[x];
+            }
+
+            for (var x = 0; x < activeSize; x++)
+            {
+                for (var y = 0; y < activeSize / 2; y++)
+                {
+                    var top = data[y * 2, x];
+                    var bottom = data[y * 2 + 1, x];
+                    temp[y] = (top + bottom) * scale;
+                    temp[activeSize / 2 + y] = (top - bottom) * scale;
+                }
+
+                for (var y = 0; y < activeSize; y++)
+                    data[y, x] = temp[y];
+            }
+        }
+    }
+
+    private static void HaarInverse(double[,] data, int imageSize, int levelCount)
+    {
+        var temp = new double[imageSize];
+        var scale = 1.0 / Math.Sqrt(2.0);
+        var activeSize = imageSize >> (levelCount - 1);
+        for (var level = levelCount - 1; level >= 0; level--, activeSize <<= 1)
+        {
+            for (var x = 0; x < activeSize; x++)
+            {
+                for (var y = 0; y < activeSize / 2; y++)
+                {
+                    var low = data[y, x];
+                    var high = data[activeSize / 2 + y, x];
+                    temp[y * 2] = (low + high) * scale;
+                    temp[y * 2 + 1] = (low - high) * scale;
+                }
+
+                for (var y = 0; y < activeSize; y++)
+                    data[y, x] = temp[y];
+            }
+
+            for (var y = 0; y < activeSize; y++)
+            {
+                for (var x = 0; x < activeSize / 2; x++)
+                {
+                    var low = data[y, x];
+                    var high = data[y, activeSize / 2 + x];
+                    temp[x * 2] = (low + high) * scale;
+                    temp[x * 2 + 1] = (low - high) * scale;
+                }
+
+                for (var x = 0; x < activeSize; x++)
+                    data[y, x] = temp[x];
+            }
+        }
+    }
+
+    private static bool[] ComputeMarrHildrethHash(byte[] pixels, int hashSize)
+    {
+        var imageSize = hashSize * 4;
+        var responses = new double[imageSize * imageSize];
+        const int radius = 2;
+        for (var y = 0; y < imageSize; y++)
+        for (var x = 0; x < imageSize; x++)
+        {
+            double response = 0;
+            for (var ky = -radius; ky <= radius; ky++)
+            for (var kx = -radius; kx <= radius; kx++)
+            {
+                var sampleX = Math.Min(Math.Max(x + kx, 0), imageSize - 1);
+                var sampleY = Math.Min(Math.Max(y + ky, 0), imageSize - 1);
+                response += pixels[sampleY * imageSize + sampleX] * MarrHildrethKernel[ky + radius, kx + radius];
+            }
+
+            responses[y * imageSize + x] = response;
+        }
+
+        var sorted = (double[])responses.Clone();
+        Array.Sort(sorted);
+        var median = (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]) / 2.0;
+        var bits = new bool[hashSize * hashSize];
+        for (var y = 0; y < hashSize; y++)
+        for (var x = 0; x < hashSize; x++)
+        {
+            double blockResponse = 0;
+            for (var by = 0; by < 4; by++)
+            for (var bx = 0; bx < 4; bx++)
+                blockResponse += responses[(y * 4 + by) * imageSize + x * 4 + bx];
+            bits[y * hashSize + x] = blockResponse > median * 16;
+        }
+
+        return bits;
+    }
+
+    private static double[,] BuildMarrHildrethKernel()
+    {
+        const int radius = 2;
+        const double sigma = 1.0;
+        var kernel = new double[radius * 2 + 1, radius * 2 + 1];
+        double sum = 0;
+        for (var y = -radius; y <= radius; y++)
+        for (var x = -radius; x <= radius; x++)
+        {
+            var distanceSquared = x * x + y * y;
+            var value = (distanceSquared - 2 * sigma * sigma) *
+                        Math.Exp(-distanceSquared / (2 * sigma * sigma));
+            kernel[y + radius, x + radius] = value;
+            sum += value;
+        }
+
+        var mean = sum / (kernel.GetLength(0) * kernel.GetLength(1));
+        for (var y = 0; y < kernel.GetLength(0); y++)
+        for (var x = 0; x < kernel.GetLength(1); x++)
+            kernel[y, x] -= mean;
+        return kernel;
+    }
+
+    private static ulong CreateHash(bool[] bits)
+    {
+        ulong hash = 0;
+        for (var i = 0; i < bits.Length; i++)
+            if (bits[i])
+                hash |= 1UL << i;
+        return hash;
+    }
+
+    private static ulong[] CreateHash256(bool[] bits)
+    {
+        var hash = new ulong[4];
+        for (var i = 0; i < bits.Length; i++)
+            if (bits[i])
+                hash[i / 64] |= 1UL << (i % 64);
+        return hash;
     }
 
     /// <summary>

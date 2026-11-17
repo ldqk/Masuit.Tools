@@ -32,6 +32,6 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="3.13.0" />
+    <PackageReference Include="MongoDB.Driver" Version="3.14.0" />
   </ItemGroup>
 </Project>

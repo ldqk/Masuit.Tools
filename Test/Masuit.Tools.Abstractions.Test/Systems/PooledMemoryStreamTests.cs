@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Masuit.Tools.Systems;
 using Xunit;
 
@@ -98,5 +101,128 @@ public class PooledMemoryStreamTests
         var stream = new PooledMemoryStream();
         stream.Dispose();
         Assert.Throws<ObjectDisposedException>(() => stream.Write(new byte[1], 0, 1));
+    }
+
+    [Fact]
+    public void DefaultPool_ShouldLimitRetainedBuffers()
+    {
+        var smallBuffers = CreateDisposedBuffers(1024 * 1024, 12);
+        var largeBuffers = CreateDisposedBuffers(2 * 1024 * 1024, 4);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        Assert.True(smallBuffers.Count(reference => reference.IsAlive) <= 4);
+        Assert.All(largeBuffers, reference => Assert.False(reference.IsAlive));
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference[] CreateDisposedBuffers(int size, int count)
+    {
+        var streams = new PooledMemoryStream[count];
+        var references = new WeakReference[count];
+        for (var i = 0; i < count; i++)
+        {
+            streams[i] = new PooledMemoryStream();
+            streams[i].SetLength(size);
+            references[i] = new WeakReference(streams[i].GetBuffer());
+        }
+
+        foreach (var stream in streams)
+        {
+            stream.Dispose();
+        }
+
+        return references;
+    }
+
+    [Fact]
+    public void Growth_ShouldPreserveDataBeyondPositionAndReturnRentedBuffers()
+    {
+        var pool = new TrackingPool();
+        var stream = new PooledMemoryStream(pool);
+        stream.Write(new byte[] { 1, 2, 3, 4 }, 0, 4);
+        stream.Position = 1;
+        stream.SetLength(8);
+
+        Assert.Equal(new byte[] { 1, 2, 3, 4 }, stream.ToArray().Take(4));
+        stream.Dispose();
+        stream.Dispose();
+        Assert.Equal(pool.Rented, pool.Returned);
+    }
+
+    [Fact]
+    public void Dispose_EmptyStream_ShouldNotReturnUnrentedBuffer()
+    {
+        var pool = new TrackingPool();
+        new PooledMemoryStream(pool).Dispose();
+        Assert.Empty(pool.Returned);
+    }
+
+    [Fact]
+    public void LargeInitialWrite_ShouldNotDoubleRequestedCapacity()
+    {
+        var pool = new TrackingPool();
+        var stream = new PooledMemoryStream(pool);
+        var data = new byte[2 * 1024 * 1024];
+        stream.Write(data, 0, data.Length);
+        Assert.Equal(data.Length, stream.Capacity);
+        stream.Dispose();
+        Assert.Same(pool.Rented[0], Assert.Single(pool.Returned));
+    }
+
+    [Fact]
+    public void LargeIncrementalWrite_ShouldLimitExtraCapacity()
+    {
+        var pool = new TrackingPool();
+        using var stream = new PooledMemoryStream(pool, 2 * 1024 * 1024);
+        stream.Position = stream.Capacity;
+        stream.Write(new byte[1], 0, 1);
+        Assert.Equal(2 * 1024 * 1024 + 512 * 1024, stream.Capacity);
+    }
+
+    [Fact]
+    public void AbandonedStream_ShouldNotDelayBufferCollectionForFinalization()
+    {
+        var reference = CreateAbandonedBuffer();
+        GC.Collect();
+        Assert.False(reference.IsAlive);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference CreateAbandonedBuffer()
+    {
+        var stream = new PooledMemoryStream();
+        stream.SetLength(2 * 1024 * 1024);
+        return new WeakReference(stream.GetBuffer());
+    }
+
+    [Fact]
+    public void CapacityAboveIntMaxValue_ShouldFailBeforeOverflow()
+    {
+        using var stream = new PooledMemoryStream();
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.SetLength((long)int.MaxValue + 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => stream.Seek(long.MaxValue, SeekOrigin.End));
+        stream.Position = int.MaxValue;
+        Assert.Throws<IOException>(() => stream.Write(new byte[1], 0, 1));
+    }
+
+    private sealed class TrackingPool : ArrayPool<byte>
+    {
+        public readonly List<byte[]> Rented = new();
+        public readonly List<byte[]> Returned = new();
+
+        public override byte[] Rent(int minimumLength)
+        {
+            var buffer = new byte[minimumLength];
+            Rented.Add(buffer);
+            return buffer;
+        }
+
+        public override void Return(byte[] array, bool clearArray = false)
+        {
+            Returned.Add(array);
+        }
     }
 }

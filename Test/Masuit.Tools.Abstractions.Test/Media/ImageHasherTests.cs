@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Masuit.Tools.Media;
 using SkiaSharp;
 using Xunit;
@@ -54,6 +54,87 @@ public class ImageHasherTests
         var hash = _imageHasher.DifferenceHash256(image);
         Assert.NotNull(hash);
         Assert.Equal(4, hash.Length);
+    }
+
+    [Fact]
+    public void WaveletAndMarrHildrethHashes_ShouldReturnExpectedSizesAndDistinguishPatterns()
+    {
+        using var horizontal = new SKBitmap(64, 64);
+        using var vertical = new SKBitmap(64, 64);
+        for (var y = 0; y < 64; y++)
+        {
+            for (var x = 0; x < 64; x++)
+            {
+                horizontal.SetPixel(x, y, new SKColor((byte)(x * 4), (byte)(x * 4), (byte)(x * 4)));
+                vertical.SetPixel(x, y, new SKColor((byte)(y * 4), (byte)(y * 4), (byte)(y * 4)));
+            }
+        }
+
+        Assert.NotEqual(_imageHasher.WHash64(horizontal), _imageHasher.WHash64(vertical));
+        Assert.Equal(4, _imageHasher.WHash256(horizontal).Length);
+        Assert.NotEqual(_imageHasher.MHHash64(horizontal), _imageHasher.MHHash64(vertical));
+        Assert.Equal(4, _imageHasher.MHHash256(horizontal).Length);
+    }
+
+    [Fact]
+    public void WaveletAndMarrHildrethStreamAndPathOverloads_ShouldMatchBitmapOverloads()
+    {
+        using var image = new SKBitmap(64, 64);
+        for (var y = 0; y < 64; y++)
+        {
+            for (var x = 0; x < 64; x++)
+            {
+                var value = (byte)((x * 3 + y * 5) % 256);
+                image.SetPixel(x, y, new SKColor(value, value, value));
+            }
+        }
+
+        using var encoded = SKImage.FromBitmap(image).Encode(SKEncodedImageFormat.Png, 100);
+        var imageBytes = encoded.ToArray();
+        using var stream = new System.IO.MemoryStream(imageBytes);
+        var path = System.IO.Path.GetTempFileName();
+        try
+        {
+            System.IO.File.WriteAllBytes(path, imageBytes);
+            Assert.Equal(_imageHasher.WHash64(image), _imageHasher.WHash64(stream));
+            using var waveletStream256 = new System.IO.MemoryStream(imageBytes);
+            Assert.Equal(_imageHasher.WHash256(image), _imageHasher.WHash256(waveletStream256));
+            Assert.Equal(_imageHasher.WHash64(image), _imageHasher.WHash64(path));
+            Assert.Equal(_imageHasher.WHash256(image), _imageHasher.WHash256(path));
+            using var marrHildrethStream64 = new System.IO.MemoryStream(imageBytes);
+            Assert.Equal(_imageHasher.MHHash64(image), _imageHasher.MHHash64(marrHildrethStream64));
+            using var marrHildrethStream256 = new System.IO.MemoryStream(imageBytes);
+            Assert.Equal(_imageHasher.MHHash256(image), _imageHasher.MHHash256(marrHildrethStream256));
+            Assert.Equal(_imageHasher.MHHash64(image), _imageHasher.MHHash64(path));
+            Assert.Equal(_imageHasher.MHHash256(image), _imageHasher.MHHash256(path));
+        }
+        finally
+        {
+            System.IO.File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void DctHash256_ShouldReturnFourWordsAndComparePatterns()
+    {
+        using var horizontal = new SKBitmap(64, 64);
+        using var vertical = new SKBitmap(64, 64);
+        for (var y = 0; y < 64; y++)
+        {
+            for (var x = 0; x < 64; x++)
+            {
+                horizontal.SetPixel(x, y, new SKColor((byte)(x * 4), (byte)(x * 4), (byte)(x * 4)));
+                vertical.SetPixel(x, y, new SKColor((byte)(y * 4), (byte)(y * 4), (byte)(y * 4)));
+            }
+        }
+
+        var horizontalHash = _imageHasher.DctHash256(horizontal);
+        var verticalHash = _imageHasher.DctHash256(vertical);
+
+        Assert.Equal(4, horizontalHash.Length);
+        Assert.Equal(1.0f, ImageHasher.Compare(horizontalHash, _imageHasher.DctHash256(horizontal)));
+        Assert.True(ImageHasher.Compare(horizontalHash, verticalHash) < 1.0f);
+        Assert.Equal(1.0f, horizontal.Compare(horizontal, ImageHashAlgorithm.DCT256));
     }
 
     [Fact]

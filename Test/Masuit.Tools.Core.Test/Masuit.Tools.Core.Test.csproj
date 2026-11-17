@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="11.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

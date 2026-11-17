@@ -20,6 +20,16 @@ internal static class DctHasher
 
     public static ulong Compute(SKBitmap image)
     {
+        return Compute(image, 8)[0];
+    }
+
+    public static ulong[] Compute256(SKBitmap image)
+    {
+        return Compute(image, 16);
+    }
+
+    private static ulong[] Compute(SKBitmap image, int hashSize)
+    {
         if (image == null)
         {
             throw new ArgumentNullException(nameof(image));
@@ -57,50 +67,48 @@ internal static class DctHasher
             }
         }
 
-        for (var x = 0; x < 8; x++)
+        for (var x = 0; x < hashSize; x++)
         {
             for (var y = 0; y < Size; y++)
             {
                 sequence[y] = rows[y, x];
             }
 
-            Dct1D_SIMD(sequence, matrix, x, limit: 8);
+            Dct1D_SIMD(sequence, matrix, x, limit: hashSize);
         }
 
-        var top8X8 = new double[Size];
-        for (var y = 0; y < 8; y++)
+        var topLeftBlock = new double[hashSize * hashSize];
+        for (var y = 0; y < hashSize; y++)
         {
-            for (var x = 0; x < 8; x++)
+            for (var x = 0; x < hashSize; x++)
             {
-                top8X8[(y * 8) + x] = matrix[y, x];
+                topLeftBlock[(y * hashSize) + x] = matrix[y, x];
             }
         }
 
-        var median = CalculateMedian64(top8X8);
-        var mask = 1UL << (Size - 1);
-        var hash = 0UL;
+        var median = CalculateMedian(topLeftBlock);
+        var hash = new ulong[(topLeftBlock.Length + 63) / 64];
 
-        for (var i = 0; i < Size; i++)
+        for (var i = 0; i < topLeftBlock.Length; i++)
         {
-            if (top8X8[i] > median)
+            if (topLeftBlock[i] > median)
             {
-                hash |= mask;
+                hash[i / 64] |= 1UL << (63 - (i % 64));
             }
-
-            mask >>= 1;
         }
 
         return hash;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static double CalculateMedian64(double[] values)
+    private static double CalculateMedian(double[] values)
     {
         // 用数组拷贝+Array.Sort替代LINQ OrderBy，避免IEnumerable枚举器分配
-        var copy = new double[64];
-        Array.Copy(values, copy, 64);
+        var copy = new double[values.Length];
+        Array.Copy(values, copy, values.Length);
         Array.Sort(copy);
-        return (copy[31] + copy[32]) / 2.0;
+        var middle = copy.Length / 2;
+        return (copy[middle - 1] + copy[middle]) / 2.0;
     }
 
     private static Vector<double>[][] GenerateDctCoeffsSIMD()
