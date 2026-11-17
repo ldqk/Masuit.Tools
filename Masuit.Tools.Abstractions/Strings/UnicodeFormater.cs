@@ -83,7 +83,7 @@ public class UnicodeFormater
         /// <param name="offset">起始值偏移</param>
         public UnicodeFormater(ReadOnlySpan<byte> characters, byte offset = 0)
         {
-            if (characters == null || characters.Length == 0)
+            if (characters.IsEmpty)
             {
                 throw new ArgumentException("符号集不能为空");
             }
@@ -99,7 +99,7 @@ public class UnicodeFormater
         /// <param name="offset">起始值偏移</param>
         public UnicodeFormater(ReadOnlySpan<char> characters, byte offset = 0)
         {
-            if (characters == null || characters.Length == 0)
+            if (characters.IsEmpty)
             {
                 throw new ArgumentException("符号集不能为空");
             }

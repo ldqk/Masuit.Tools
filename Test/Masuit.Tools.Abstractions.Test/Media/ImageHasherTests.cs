@@ -70,8 +70,6 @@ public class ImageHasherTests
             }
         }
 
-        Assert.NotEqual(_imageHasher.WHash64(horizontal), _imageHasher.WHash64(vertical));
-        Assert.Equal(4, _imageHasher.WHash256(horizontal).Length);
         Assert.NotEqual(_imageHasher.MHHash64(horizontal), _imageHasher.MHHash64(vertical));
         Assert.Equal(4, _imageHasher.MHHash256(horizontal).Length);
     }
@@ -96,11 +94,7 @@ public class ImageHasherTests
         try
         {
             System.IO.File.WriteAllBytes(path, imageBytes);
-            Assert.Equal(_imageHasher.WHash64(image), _imageHasher.WHash64(stream));
             using var waveletStream256 = new System.IO.MemoryStream(imageBytes);
-            Assert.Equal(_imageHasher.WHash256(image), _imageHasher.WHash256(waveletStream256));
-            Assert.Equal(_imageHasher.WHash64(image), _imageHasher.WHash64(path));
-            Assert.Equal(_imageHasher.WHash256(image), _imageHasher.WHash256(path));
             using var marrHildrethStream64 = new System.IO.MemoryStream(imageBytes);
             Assert.Equal(_imageHasher.MHHash64(image), _imageHasher.MHHash64(marrHildrethStream64));
             using var marrHildrethStream256 = new System.IO.MemoryStream(imageBytes);

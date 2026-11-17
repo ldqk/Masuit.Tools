@@ -350,8 +350,24 @@ public static class StreamExtensions
     {
         stream.Position = 0;
         byte[] bytes = new byte[stream.Length];
-        await stream.ReadAsync(bytes, cancellationToken);
+        int bytesRead = 0;
+        while (bytesRead < bytes.Length)
+        {
+            int read = await stream.ReadAsync(bytes.AsMemory(bytesRead), cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            bytesRead += read;
+        }
+
         stream.Seek(0, SeekOrigin.Begin);
+        if (bytesRead != bytes.Length)
+        {
+            Array.Resize(ref bytes, bytesRead);
+        }
+
         return bytes;
     }
 

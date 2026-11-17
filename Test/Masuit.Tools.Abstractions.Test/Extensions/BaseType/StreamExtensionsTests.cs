@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Masuit.Tools.Security;
 using Masuit.Tools.Systems;
@@ -163,9 +164,18 @@ namespace Masuit.Tools.Abstractions.Test.Extensions.BaseType
         [Fact]
         public async Task ToArrayAsync_ShouldReturnByteArray()
         {
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes("Test data"));
+            using var stream = new ChunkedReadMemoryStream(Encoding.UTF8.GetBytes("Test data"));
             var result = await stream.ToArrayAsync();
             Assert.Equal(Encoding.UTF8.GetBytes("Test data"), result);
+            Assert.Equal(0, stream.Position);
+        }
+
+        private sealed class ChunkedReadMemoryStream(byte[] buffer) : MemoryStream(buffer)
+        {
+            public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+            {
+                return base.ReadAsync(buffer[..Math.Min(buffer.Length, 2)], cancellationToken);
+            }
         }
 
 #endif

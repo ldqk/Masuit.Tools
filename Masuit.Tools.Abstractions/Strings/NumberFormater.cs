@@ -62,7 +62,7 @@ namespace Masuit.Tools.Strings
         /// <param name="offset">起始值偏移</param>
         public NumberFormater(ReadOnlySpan<byte> characters, byte offset = 0)
         {
-            if (characters == null || characters.Length == 0)
+            if (characters.IsEmpty)
             {
                 throw new ArgumentException("符号集不能为空");
             }
@@ -78,7 +78,7 @@ namespace Masuit.Tools.Strings
         /// <param name="offset">起始值偏移</param>
         public NumberFormater(ReadOnlySpan<char> characters, byte offset = 0)
         {
-            if (characters == null || characters.Length == 0)
+            if (characters.IsEmpty)
             {
                 throw new ArgumentException("符号集不能为空");
             }
