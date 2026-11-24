@@ -65,4 +65,39 @@ public interface ISevenZipCompressor
     /// <param name="rootdir"></param>
     /// <returns>文件流</returns>
     public PooledMemoryStream ZipStream(string dir, string rootdir = "");
+    /// <summary>将文件或文件夹压缩到 7z 文件。</summary>
+    /// <param name="files">文件、文件夹或 HTTP/HTTPS 地址。</param>
+    /// <param name="sevenZipFile">目标 7z 文件。</param>
+    /// <param name="rootdir">压缩包内部根文件夹。</param>
+    void SevenZip(IEnumerable<string> files, string sevenZipFile, string rootdir = "");
+
+    /// <summary>将文件夹压缩到 7z 文件。</summary>
+    /// <param name="dir">源文件夹。</param>
+    /// <param name="sevenZipFile">目标 7z 文件。</param>
+    /// <param name="rootdir">压缩包内部根文件夹。</param>
+    void SevenZip(string dir, string sevenZipFile, string rootdir = "");
+
+    /// <summary>将文件流压缩到 7z 文件。</summary>
+    /// <param name="streams">条目名称和文件流。</param>
+    /// <param name="sevenZipFile">目标 7z 文件。</param>
+    /// <param name="disposeAllStreams">是否释放输入流。</param>
+    void SevenZip(DisposableDictionary<string, Stream> streams, string sevenZipFile, bool disposeAllStreams = false);
+
+    /// <summary>将文件或文件夹压缩到 7z 流。</summary>
+    /// <param name="files">文件、文件夹或 HTTP/HTTPS 地址。</param>
+    /// <param name="rootdir">压缩包内部根文件夹。</param>
+    /// <returns>包含 7z 压缩包的流。</returns>
+    PooledMemoryStream SevenZipStream(IEnumerable<string> files, string rootdir = "");
+
+    /// <summary>将文件夹压缩到 7z 流。</summary>
+    /// <param name="dir">源文件夹。</param>
+    /// <param name="rootdir">压缩包内部根文件夹。</param>
+    /// <returns>包含 7z 压缩包的流。</returns>
+    PooledMemoryStream SevenZipStream(string dir, string rootdir = "");
+
+    /// <summary>将文件流压缩到 7z 流。</summary>
+    /// <param name="streams">条目名称和文件流。</param>
+    /// <param name="disposeAllStreams">是否释放输入流。</param>
+    /// <returns>包含 7z 压缩包的流。</returns>
+    PooledMemoryStream SevenZipStream(DisposableDictionary<string, Stream> streams, bool disposeAllStreams = false);
 }

@@ -2,12 +2,12 @@
 using SharpCompress.Archives;
 using SharpCompress.Common;
 using SharpCompress.Writers.Zip;
-using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text;
 using System.Web;
 using SharpCompress.Archives.Zip;
-using SharpCompress.Readers;
+using SharpCompress.Writers;
+using SharpCompress.Writers.SevenZip;
 
 namespace Masuit.Tools.Files;
 
@@ -37,7 +37,7 @@ public class SevenZipCompressor : ISevenZipCompressor
     {
         using var archive = CreateZipArchive(files, rootdir);
         var ms = new PooledMemoryStream();
-        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.LZMA)
+        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.Deflate)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -56,7 +56,7 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <returns>文件流</returns>
     public PooledMemoryStream ZipStream(string dir, string rootdir = "")
     {
-        return ZipStream(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), rootdir);
+        return ZipStream(new[] { dir }, rootdir);
     }
 
     /// <summary>
@@ -67,14 +67,10 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <returns>文件流</returns>
     public PooledMemoryStream ZipStream(DisposableDictionary<string, Stream> streams, bool disposeAllStreams = false)
     {
-        using var archive = ZipArchive.CreateArchive();
-        foreach (var pair in streams)
-        {
-            archive.AddEntry(pair.Key, pair.Value, true);
-        }
+        using var archive = CreateStreamArchive(streams);
 
         var ms = new PooledMemoryStream();
-        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.LZMA)
+        archive.SaveTo(ms, new ZipWriterOptions(CompressionType.Deflate)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -97,7 +93,7 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <param name="rootdir">压缩包内部根文件夹</param>
     public void Zip(string dir, string zipFile, string rootdir = "")
     {
-        Zip(Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories), zipFile, rootdir);
+        Zip(new[] { dir }, zipFile, rootdir);
     }
 
     /// <summary>
@@ -109,7 +105,7 @@ public class SevenZipCompressor : ISevenZipCompressor
     public void Zip(IEnumerable<string> files, string zipFile, string rootdir = "")
     {
         using var archive = CreateZipArchive(files, rootdir);
-        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.LZMA)
+        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.Deflate)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -127,12 +123,8 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <param name="disposeAllStreams">是否需要释放所有流</param>
     public void Zip(DisposableDictionary<string, Stream> streams, string zipFile, bool disposeAllStreams = false)
     {
-        using var archive = ZipArchive.CreateArchive();
-        foreach (var pair in streams)
-        {
-            archive.AddEntry(pair.Key, pair.Value, true);
-        }
-        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.ZStandard)
+        using var archive = CreateStreamArchive(streams);
+        archive.SaveTo(zipFile, new ZipWriterOptions(CompressionType.Deflate)
         {
             LeaveStreamOpen = true,
             ArchiveEncoding = new ArchiveEncoding()
@@ -156,10 +148,97 @@ public class SevenZipCompressor : ISevenZipCompressor
     {
         if (string.IsNullOrEmpty(dir))
         {
-            dir = Path.GetDirectoryName(compressedFile);
+            dir = Path.GetDirectoryName(Path.GetFullPath(compressedFile));
         }
 
-        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName,new ExtractionOptions(true,true));
+        ArchiveFactory.WriteToDirectory(compressedFile, Directory.CreateDirectory(dir).FullName, new ExtractionOptions(true, true));
+    }
+
+    /// <inheritdoc />
+    public void SevenZip(IEnumerable<string> files, string sevenZipFile, string rootdir = "")
+    {
+        using var archive = CreateZipArchive(files, rootdir);
+        using var output = File.Create(sevenZipFile);
+        WriteSevenZip(archive, output);
+    }
+
+    /// <inheritdoc />
+    public void SevenZip(string dir, string sevenZipFile, string rootdir = "")
+    {
+        SevenZip(new[] { dir }, sevenZipFile, rootdir);
+    }
+
+    /// <inheritdoc />
+    public void SevenZip(DisposableDictionary<string, Stream> streams, string sevenZipFile, bool disposeAllStreams = false)
+    {
+        using var archive = CreateStreamArchive(streams);
+        using var output = File.Create(sevenZipFile);
+        WriteSevenZip(archive, output);
+        if (disposeAllStreams)
+        {
+            streams.Dispose();
+        }
+    }
+
+    /// <inheritdoc />
+    public PooledMemoryStream SevenZipStream(IEnumerable<string> files, string rootdir = "")
+    {
+        using var archive = CreateZipArchive(files, rootdir);
+        return CreateSevenZipStream(archive);
+    }
+
+    /// <inheritdoc />
+    public PooledMemoryStream SevenZipStream(string dir, string rootdir = "")
+    {
+        return SevenZipStream(new[] { dir }, rootdir);
+    }
+
+    /// <inheritdoc />
+    public PooledMemoryStream SevenZipStream(DisposableDictionary<string, Stream> streams, bool disposeAllStreams = false)
+    {
+        using var archive = CreateStreamArchive(streams);
+        var result = CreateSevenZipStream(archive);
+        if (disposeAllStreams)
+        {
+            streams.Dispose();
+        }
+        return result;
+    }
+
+    private static IWritableArchive<ZipWriterOptions> CreateStreamArchive(DisposableDictionary<string, Stream> streams)
+    {
+        var archive = ZipArchive.CreateArchive();
+        foreach (var pair in streams)
+        {
+            archive.AddEntry(((string)pair.Key).Replace('\\', '/'), pair.Value, false);
+        }
+        return archive;
+    }
+
+    private static PooledMemoryStream CreateSevenZipStream(IWritableArchive<ZipWriterOptions> archive)
+    {
+        var output = new PooledMemoryStream();
+        try
+        {
+            WriteSevenZip(archive, output);
+            return output;
+        }
+        catch
+        {
+            output.Dispose();
+            throw;
+        }
+    }
+
+    private static void WriteSevenZip(IWritableArchive<ZipWriterOptions> archive, Stream output)
+    {
+        using var writer = WriterFactory.OpenWriter(output, ArchiveType.SevenZip,
+            new SevenZipWriterOptions(CompressionType.LZMA2) { LeaveStreamOpen = true,CompressionLevel = 9});
+        foreach (var entry in archive.Entries)
+        {
+            using var source = entry.OpenEntryStream();
+            writer.Write(entry.Key, source, entry.LastModifiedTime);
+        }
     }
 
     /// <summary>
@@ -170,50 +249,39 @@ public class SevenZipCompressor : ISevenZipCompressor
     /// <returns></returns>
     private IWritableArchive<ZipWriterOptions> CreateZipArchive(IEnumerable<string> files, string rootdir)
     {
+        var inputs = files.ToList();
         var archive = ZipArchive.CreateArchive();
-        var dic = GetFileEntryMaps(files);
-        var remoteUrls = files.Distinct().Where(s => s.StartsWith("http")).Select(s =>
+        try
         {
-            try
+            foreach (var pair in GetFileEntryMaps(inputs.Where(s => !IsRemote(s))))
             {
-                return new Uri(s);
+                archive.AddEntry(GetEntryName(rootdir, pair.Value), pair.Key);
             }
-            catch (UriFormatException)
-            {
-                return null;
-            }
-        }).Where(u => u != null).ToList();
-        foreach (var pair in dic)
-        {
-            archive.AddEntry(Path.Combine(rootdir, pair.Value), pair.Key);
-        }
 
-        if (remoteUrls.Any())
-        {
-            var streams = new ConcurrentDictionary<string, Stream>();
-            Parallel.ForEach(remoteUrls, url =>
+            foreach (var address in inputs.Where(IsRemote).Distinct())
             {
-                _httpClient.GetAsync(url).ContinueWith(async t =>
-                {
-                    if (t.IsCompleted)
-                    {
-                        var res = await t;
-                        if (res.IsSuccessStatusCode)
-                        {
-                            var stream = await res.Content.ReadAsStreamAsync();
-                            streams[Path.Combine(rootdir, Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath)))] = stream;
-                        }
-                    }
-                }).Wait();
-            });
-            foreach (var pair in streams)
-            {
-                archive.AddEntry(pair.Key, pair.Value, true);
+                var url = new Uri(address);
+                using var response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
+                response.EnsureSuccessStatusCode();
+                var bytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                var name = Path.GetFileName(HttpUtility.UrlDecode(url.AbsolutePath));
+                archive.AddEntry(GetEntryName(rootdir, name), new MemoryStream(bytes), true);
             }
+            return archive;
         }
-
-        return archive;
+        catch
+        {
+            archive.Dispose();
+            throw;
+        }
     }
+
+    private static bool IsRemote(string path) =>
+        path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+
+    private static string GetEntryName(string rootdir, string name) =>
+        (rootdir.Trim('/', '\\') + "/" + name.TrimStart('/', '\\')).TrimStart('/').Replace('\\', '/');
 
     /// <summary>
     /// 获取文件路径和zip-entry的映射
@@ -223,6 +291,7 @@ public class SevenZipCompressor : ISevenZipCompressor
     private Dictionary<string, string> GetFileEntryMaps(IEnumerable<string> files)
     {
         var fileList = new List<string>();
+        var baseDirectories = new List<string>();
         void GetFilesRecurs(string path)
         {
             //遍历目标文件夹的所有文件
@@ -235,15 +304,18 @@ public class SevenZipCompressor : ISevenZipCompressor
             }
         }
 
-        files.Where(s => !s.StartsWith("http")).ForEach(s =>
+        files.ForEach(s =>
         {
             if (Directory.Exists(s))
             {
+                baseDirectories.Add(Path.GetFullPath(s));
                 GetFilesRecurs(s);
             }
             else
             {
-                fileList.Add(s);
+                var path = Path.GetFullPath(s);
+                baseDirectories.Add(Path.GetDirectoryName(path));
+                fileList.Add(path);
             }
         });
 
@@ -252,12 +324,21 @@ public class SevenZipCompressor : ISevenZipCompressor
             return new Dictionary<string, string>();
         }
 
-        var dirname = new string(fileList.First().Substring(0, fileList.Min(s => s.Length)).TakeWhile((c, i) => fileList.All(s => s[i] == c)).ToArray());
-        if (!Directory.Exists(dirname))
+        fileList = fileList.Select(Path.GetFullPath).ToList();
+        var comparison = Path.DirectorySeparatorChar == '\\' ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+        var dirname = baseDirectories[0];
+        while (baseDirectories.Any(path => !path.Equals(dirname, comparison) &&
+            !path.StartsWith(dirname.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar, comparison)))
         {
-            dirname = Directory.GetParent(dirname).FullName;
+            var parent = Directory.GetParent(dirname);
+            if (parent == null)
+            {
+                throw new ArgumentException("Files must share a common directory root.", nameof(files));
+            }
+            dirname = parent.FullName;
         }
 
-        return fileList.ToDictionary(s => s, s => s.Substring(dirname.Length));
+        var prefixLength = dirname.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length + 1;
+        return fileList.ToDictionary(s => s, s => s.Substring(prefixLength));
     }
 }
