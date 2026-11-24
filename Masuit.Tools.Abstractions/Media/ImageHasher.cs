@@ -536,112 +536,6 @@ public class ImageHasher
         return DctHasher.Compute256(image);
     }
 
-    private static bool[] ComputeWaveletHash(byte[] pixels, int hashSize)
-    {
-        const int imageSize = 64;
-        var coefficients = new double[imageSize, imageSize];
-        for (var y = 0; y < imageSize; y++)
-        for (var x = 0; x < imageSize; x++)
-            coefficients[y, x] = pixels[y * imageSize + x] / 255.0;
-
-        var fullLevelCount = 6;
-        HaarForward(coefficients, imageSize, fullLevelCount);
-        coefficients[0, 0] = 0;
-        HaarInverse(coefficients, imageSize, fullLevelCount);
-
-        var levelCount = 0;
-        for (var size = imageSize; size > hashSize; size >>= 1)
-            levelCount++;
-        HaarForward(coefficients, imageSize, levelCount);
-
-        var lowFrequencies = new double[hashSize * hashSize];
-        for (var y = 0; y < hashSize; y++)
-        for (var x = 0; x < hashSize; x++)
-            lowFrequencies[y * hashSize + x] = coefficients[y, x];
-
-        var sorted = (double[])lowFrequencies.Clone();
-        Array.Sort(sorted);
-        var median = (sorted[sorted.Length / 2 - 1] + sorted[sorted.Length / 2]) / 2.0;
-        var bits = new bool[lowFrequencies.Length];
-        for (var i = 0; i < bits.Length; i++)
-            bits[i] = lowFrequencies[i] > median;
-        return bits;
-    }
-
-    private static void HaarForward(double[,] data, int imageSize, int levelCount)
-    {
-        var temp = new double[imageSize];
-        var scale = 1.0 / Math.Sqrt(2.0);
-        var activeSize = imageSize;
-        for (var level = 0; level < levelCount; level++, activeSize >>= 1)
-        {
-            for (var y = 0; y < activeSize; y++)
-            {
-                for (var x = 0; x < activeSize / 2; x++)
-                {
-                    var left = data[y, x * 2];
-                    var right = data[y, x * 2 + 1];
-                    temp[x] = (left + right) * scale;
-                    temp[activeSize / 2 + x] = (left - right) * scale;
-                }
-
-                for (var x = 0; x < activeSize; x++)
-                    data[y, x] = temp[x];
-            }
-
-            for (var x = 0; x < activeSize; x++)
-            {
-                for (var y = 0; y < activeSize / 2; y++)
-                {
-                    var top = data[y * 2, x];
-                    var bottom = data[y * 2 + 1, x];
-                    temp[y] = (top + bottom) * scale;
-                    temp[activeSize / 2 + y] = (top - bottom) * scale;
-                }
-
-                for (var y = 0; y < activeSize; y++)
-                    data[y, x] = temp[y];
-            }
-        }
-    }
-
-    private static void HaarInverse(double[,] data, int imageSize, int levelCount)
-    {
-        var temp = new double[imageSize];
-        var scale = 1.0 / Math.Sqrt(2.0);
-        var activeSize = imageSize >> (levelCount - 1);
-        for (var level = levelCount - 1; level >= 0; level--, activeSize <<= 1)
-        {
-            for (var x = 0; x < activeSize; x++)
-            {
-                for (var y = 0; y < activeSize / 2; y++)
-                {
-                    var low = data[y, x];
-                    var high = data[activeSize / 2 + y, x];
-                    temp[y * 2] = (low + high) * scale;
-                    temp[y * 2 + 1] = (low - high) * scale;
-                }
-
-                for (var y = 0; y < activeSize; y++)
-                    data[y, x] = temp[y];
-            }
-
-            for (var y = 0; y < activeSize; y++)
-            {
-                for (var x = 0; x < activeSize / 2; x++)
-                {
-                    var low = data[y, x];
-                    var high = data[y, activeSize / 2 + x];
-                    temp[x * 2] = (low + high) * scale;
-                    temp[x * 2 + 1] = (low - high) * scale;
-                }
-
-                for (var x = 0; x < activeSize; x++)
-                    data[y, x] = temp[x];
-            }
-        }
-    }
-
     private static bool[] ComputeMarrHildrethHash(byte[] pixels, int hashSize)
     {
         var imageSize = hashSize * 4;
@@ -689,8 +583,7 @@ public class ImageHasher
         for (var x = -radius; x <= radius; x++)
         {
             var distanceSquared = x * x + y * y;
-            var value = (distanceSquared - 2 * sigma * sigma) *
-                        Math.Exp(-distanceSquared / (2 * sigma * sigma));
+            var value = (distanceSquared - 2 * sigma * sigma) * Math.Exp(-distanceSquared / (2 * sigma * sigma));
             kernel[y + radius, x + radius] = value;
             sum += value;
         }
