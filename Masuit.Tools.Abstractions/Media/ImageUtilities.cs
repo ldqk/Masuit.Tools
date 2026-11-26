@@ -337,6 +337,7 @@ namespace Masuit.Tools.Media
         public static void Save(this SKBitmap bitmap, string path, SKEncodedImageFormat format, int quality)
         {
             using var data = bitmap.Encode(format, quality);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             using var fs = File.OpenWrite(path);
             data.SaveTo(fs);
         }

@@ -829,11 +829,55 @@ var imageFormat=stream.GetImageType(); // 获取图片的真实格式
 最佳实践案例，以图搜图：https://github.com/ldqk/ImageSearch
 
 #### 图像添加盲水印
-```bash
-Install-Package Masuit.Tools.DigitalWatermarker
-Install-Package OpenCvSharp4.runtime.win
+DigitalWatermarker 是一个数字盲水印库，提供鲁棒的图像数字水印嵌入和提取功能。该库采用 DCT（离散余弦变换）和 QIM（量化索引调制）技术，可以在图像中嵌入不可见的数字水印，用于版权保护和内容追溯。
+
+##### 特性
+
+- **不可见水印**：水印嵌入在图像的频域中，肉眼不可见
+- **鲁棒性强**：对图像压缩、裁剪、翻转、翻录等攻击具有较强的抵抗能力
+- **简单易用**：提供简洁的 API，支持文件路径、流等多种输入方式
+- **高性能**：处理速度快，在 Ryzen 9 9950X、.NET 10下，处理4k图片测试嵌入约 65–231 ms、提取约 91–164 ms。
+
+##### 应用场景
+
+1. 版权保护  
+2. 内容溯源
+##### 示例代码
+```csharp
+using var original = SKBitmap.Decode("input.png")
+    ?? throw new InvalidOperationException("无法读取输入图片");
+var watermark = new Watermark(imagePassword: 123, watermarkPassword: 456);
+
+using var embedded = watermark.EmbedText(original, "示例水印");
+using var encoded = SKImage.FromBitmap(embedded).Encode(SKEncodedImageFormat.Png, 100);
+File.WriteAllBytes("watermarked.png", encoded.ToArray());
+
+using var decoded = SKBitmap.Decode("watermarked.png")
+    ?? throw new InvalidOperationException("无法读取水印图片");
+var text = watermark.ExtractText(decoded, utf8ByteCount: System.Text.Encoding.UTF8.GetByteCount("示例水印"));
 ```
-用法参阅：[Masuit.Tools.DigitalWatermarker](./Masuit.Tools.DigtalWatermarker/README.md)
+
+可用 API：
+
+- `EmbedText` / `ExtractText`：UTF-8 文本水印，提取时需提供原文本的 UTF-8 字节数。`ExtractText` 自动尝试 0°、90°、180°、270°，根据提取信号选择方向；非法 UTF-8 会抛出 `InvalidOperationException`。
+- `ExtractText(image, utf8ByteCount, originalSize)`：当图片经过缩放时，传入嵌入前的原始宽高以尝试恢复水印。例如：`watermark.ExtractText(resizedImage, "Hello World"u8.Length, original.Info.Size)`。
+- `EmbedBits` / `ExtractBits`：二进制水印以 `byte[]` 输入和输出，提取时传入原始字节数。每字节占 8 位，按最高位优先展开。该接口已替换旧版 `bool[]` 接口，旧的位数参数需改为字节数。
+- `ExtractBits(image, byteCount, originalSize)`：图片经缩放或直角旋转后，传入载体图片嵌入前的尺寸，尝试恢复二进制水印。例如 `watermark.ExtractBits(resizedImage, data.Length, original.Info.Size)`。原有两参数版本仍按当前尺寸和方向提取。
+- `ExtractSoftBits`：按位返回软判决值，参数仍为水印位数。
+- `EmbedImage` / `ExtractImage`：二值化的灰度图片水印。
+- `ExtractImage(image, width, height, originalSize)`：图片经缩放或直角旋转后，传入水印图片宽高和载体图片嵌入前的尺寸，尝试恢复水印。例如 `watermark.ExtractImage(resizedImage, logo.Width, logo.Height, original.Info.Size)`。原有三参数版本仍按当前尺寸和方向提取。
+
+水印长度不得超过图像的载荷块数：`(ceil(height / 2) / 4) * (ceil(width / 2) / 4)`。嵌入/提取必须使用相同的密码和 `d1`、`d2` 参数。水印图片建议使用 PNG 等无损格式。
+
+二进制水印示例：
+
+```csharp
+byte[] data = [0x00, 0x80, 0xff];
+using var embedded = watermark.EmbedBits(original, data);
+byte[] extracted = watermark.ExtractBits(embedded, data.Length);
+```
+
+
 ### 26.随机数
 
 ```csharp
