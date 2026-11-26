@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -575,7 +576,20 @@ public static class IDictionaryExtensions
         return @this.TryAdd(key, addValue) ? addValue : @this[key];
     }
 
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> CacheLocks = new();
+    /// <summary>
+    /// 异步键锁，引用计数归零时移除
+    /// </summary>
+    private sealed class KeyLock
+    {
+        public readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+
+        public int RefCount;
+    }
+
+    /// <summary>
+    /// 每个字典实例的每个键对应一把锁
+    /// </summary>
+    private static readonly ConditionalWeakTable<object, Dictionary<object, KeyLock>> KeyLocks = new ConditionalWeakTable<object, Dictionary<object, KeyLock>>();
 
     /// <summary>
     /// 获取或添加
@@ -587,33 +601,56 @@ public static class IDictionaryExtensions
     /// <param name="addValueFactory"></param>
     public static async Task<TValue> GetOrAddAsync<TKey, TValue>(this IDictionary<TKey, TValue> @this, TKey key, Func<Task<TValue>> addValueFactory)
     {
-        var semaphore = CacheLocks.GetOrAdd(key.ToString(), _ => new SemaphoreSlim(1, 1));
         if (@this.TryGetValue(key, out TValue value))
         {
             return value;
         }
 
-        await semaphore.WaitAsync();
-        try
+        var locks = KeyLocks.GetOrCreateValue(@this);
+        KeyLock keyLock;
+        lock (locks)
         {
-            // 双重检查：锁内再次确认缓存，防止锁等待期间已创建值
-            if (@this.TryGetValue(key, out value))
+            if (!locks.TryGetValue(key, out keyLock))
             {
-                return value;
+                keyLock = new KeyLock();
+                locks.Add(key, keyLock);
             }
 
-            value = await addValueFactory();
-            @this[key] = value;
-            return value;
+            // 等待者也计数，避免锁在仍有等待者时被移除
+            keyLock.RefCount++;
+        }
+
+        try
+        {
+            await keyLock.Semaphore.WaitAsync();
+            try
+            {
+                // 双重检查：锁内再次确认缓存，防止锁等待期间已创建值
+                if (@this.TryGetValue(key, out value))
+                {
+                    return value;
+                }
+
+                value = await addValueFactory();
+                @this[key] = value;
+                return value;
+            }
+            finally
+            {
+                keyLock.Semaphore.Release();
+            }
         }
         finally
         {
-            semaphore.Release();
             // 清理闲置锁
-            if (semaphore.CurrentCount == 1)
+            lock (locks)
             {
-                CacheLocks.TryRemove(key.ToString(), out _);
-                semaphore.Dispose();
+                keyLock.RefCount--;
+                if (keyLock.RefCount == 0)
+                {
+                    locks.Remove(key);
+                    keyLock.Semaphore.Dispose();
+                }
             }
         }
     }
