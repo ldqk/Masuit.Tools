@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -96,6 +97,48 @@ public class IDictionaryExtensionsTests
         // Assert
         Assert.Equal(1, value1);
         Assert.Equal(3, value2);
+    }
+
+    [Fact]
+    public async Task GetOrAddAsync_ShouldNotShareLocksBetweenDictionaries()
+    {
+        // Arrange
+        var names = new Dictionary<string, string>();
+        var lengths = new Dictionary<string, int>();
+
+        // Act
+        var task = lengths.GetOrAddAsync("name", async () => (await names.GetOrAddAsync("name", () => Task.FromResult("value"))).Length);
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5)));
+
+        // Assert
+        Assert.Same(task, completed);
+        Assert.Equal(5, await task);
+    }
+
+    [Fact]
+    public async Task GetOrAddAsync_ShouldWorkUnderContention()
+    {
+        // Arrange
+        var dict = new ConcurrentDictionary<string, int>();
+
+        // Act
+        var task = Task.WhenAll(Enumerable.Range(0, 8).Select(_ => Task.Run(async () =>
+        {
+            for (int i = 0; i < 100000; i++)
+            {
+                Assert.Equal(1, await dict.GetOrAddAsync("key", async () =>
+                {
+                    await Task.Yield();
+                    return 1;
+                }));
+                dict.TryRemove("key", out int _);
+            }
+        })));
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(30)));
+
+        // Assert
+        Assert.Same(task, completed);
+        await task;
     }
 
     [Fact]
