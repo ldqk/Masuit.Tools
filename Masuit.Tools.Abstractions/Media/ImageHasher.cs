@@ -536,6 +536,77 @@ public class ImageHasher
         return DctHasher.Compute256(image);
     }
 
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希，并返回哈希质量分数。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="pathToImage">图片的文件路径</param>
+    /// <param name="quality">范围为0到100的哈希质量分数</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(string pathToImage, out int quality)
+    {
+        using var stream = File.OpenRead(pathToImage);
+        return PDQHash256(stream, out quality);
+    }
+
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希，并返回哈希质量分数。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="sourceStream">读取到的图片流</param>
+    /// <param name="quality">范围为0到100的哈希质量分数</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(Stream sourceStream, out int quality)
+    {
+        if (sourceStream == null)
+        {
+            throw new ArgumentNullException(nameof(sourceStream));
+        }
+
+        using var image = SKBitmap.Decode(sourceStream)
+            ?? throw new InvalidDataException("无法解码图像流。");
+        return PDQHash256(image, out quality);
+    }
+
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希，并返回哈希质量分数。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="image">读取到的图片</param>
+    /// <param name="quality">范围为0到100的哈希质量分数</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(SKBitmap image, out int quality)
+    {
+        return PdqHasher.Compute(image, out quality);
+    }
+
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="pathToImage">图片的文件路径</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(string pathToImage)
+    {
+        return PDQHash256(pathToImage, out _);
+    }
+
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="sourceStream">读取到的图片流</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(Stream sourceStream)
+    {
+        return PDQHash256(sourceStream, out _);
+    }
+
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="image">读取到的图片</param>
+    /// <returns>由4个64位整数组成的256位哈希</returns>
+    public ulong[] PDQHash256(SKBitmap image)
+    {
+        return PDQHash256(image, out _);
+    }
+
     private static bool[] ComputeMarrHildrethHash(byte[] pixels, int hashSize)
     {
         var imageSize = hashSize * 4;

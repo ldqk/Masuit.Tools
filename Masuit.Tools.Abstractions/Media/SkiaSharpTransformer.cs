@@ -70,6 +70,19 @@ public static class ImageHashExt
     public static ulong DctHash64(this SKBitmap image) => Hasher.DctHash64(image);
     public static ulong[] DctHash256(this SKBitmap image) => Hasher.DctHash256(image);
     public static ulong[] MHHash256(this SKBitmap image) => Hasher.MHHash256(image);
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    public static ulong[] PDQHash256(this SKBitmap image) => Hasher.PDQHash256(image);
+    /// <summary>
+    /// 使用PDQ算法计算图像的256位哈希。性能比其他哈希慢一些，因为它为保持原有预处理需要处理原图，性能大约是其他哈希的1/5，适用于对图像进行高精度相似度比较。
+    /// </summary>
+    /// <param name="image"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public static ulong[] PDQHash256(this SKBitmap image, out int quality) => Hasher.PDQHash256(image, out quality);
 
     public static float Compare(this SKBitmap image1, SKBitmap image2, ImageHashAlgorithm algorithm = ImageHashAlgorithm.Difference)
     {
@@ -82,6 +95,7 @@ public static class ImageHashExt
             ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2)),
             ImageHashAlgorithm.DCT256 => ImageHasher.Compare(Hasher.DctHash256(image1), Hasher.DctHash256(image2)),
             ImageHashAlgorithm.MHHash256 => ImageHasher.Compare(Hasher.MHHash256(image1), Hasher.MHHash256(image2)),
+            ImageHashAlgorithm.PDQ256 => ImageHasher.Compare(Hasher.PDQHash256(image1), Hasher.PDQHash256(image2)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -97,6 +111,7 @@ public static class ImageHashExt
             ImageHashAlgorithm.DCT64 => ImageHasher.Compare(Hasher.DctHash64(image1), Hasher.DctHash64(image2path)),
             ImageHashAlgorithm.DCT256 => ImageHasher.Compare(Hasher.DctHash256(image1), Hasher.DctHash256(image2path)),
             ImageHashAlgorithm.MHHash256 => ImageHasher.Compare(Hasher.MHHash256(image1), Hasher.MHHash256(image2path)),
+            ImageHashAlgorithm.PDQ256 => ImageHasher.Compare(Hasher.PDQHash256(image1), Hasher.PDQHash256(image2path)),
             _ => throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null)
         };
     }
@@ -117,5 +132,7 @@ public enum ImageHashAlgorithm
     /// <summary>256位DCT算法</summary>
     DCT256,
     /// <summary>256位MH算法</summary>
-    MHHash256
+    MHHash256,
+    /// <summary>256位PDQ算法</summary>
+    PDQ256
 }

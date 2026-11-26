@@ -132,6 +132,84 @@ public class ImageHasherTests
     }
 
     [Fact]
+    public void PDQHash256_ShouldReturnFourWordsAndZeroQualityForBlankImage()
+    {
+        using var image = new SKBitmap(64, 64);
+
+        var hash = _imageHasher.PDQHash256(image, out var quality);
+
+        Assert.Equal(new ulong[4], hash);
+        Assert.Equal(0, quality);
+    }
+
+    [Fact]
+    public void PDQHash256_ShouldHandleRgbaAndBgraPixelLayoutsConsistently()
+    {
+        using var rgbaImage = new SKBitmap(new SKImageInfo(128, 96, SKColorType.Rgba8888, SKAlphaType.Opaque));
+        using var bgraImage = new SKBitmap(new SKImageInfo(128, 96, SKColorType.Bgra8888, SKAlphaType.Opaque));
+        for (var y = 0; y < 96; y++)
+        {
+            for (var x = 0; x < 128; x++)
+            {
+                var color = new SKColor((byte)(x * 3 % 256), (byte)(y * 5 % 256), (byte)(x + y));
+                rgbaImage.SetPixel(x, y, color);
+                bgraImage.SetPixel(x, y, color);
+            }
+        }
+
+        Assert.Equal(_imageHasher.PDQHash256(rgbaImage), _imageHasher.PDQHash256(bgraImage));
+    }
+
+    [Fact]
+    public void PDQHash256_ShouldMatchAcrossBitmapStreamAndPathOverloads()
+    {
+        using var image = new SKBitmap(128, 96);
+        for (var y = 0; y < image.Height; y++)
+        {
+            for (var x = 0; x < image.Width; x++)
+            {
+                var value = (byte)((x * 7 + y * 11 + (x * y % 31)) % 256);
+                image.SetPixel(x, y, new SKColor(value, value, value));
+            }
+        }
+
+        using var encoded = SKImage.FromBitmap(image).Encode(SKEncodedImageFormat.Png, 100);
+        var imageBytes = encoded.ToArray();
+        var path = System.IO.Path.GetTempFileName();
+        try
+        {
+            System.IO.File.WriteAllBytes(path, imageBytes);
+            var bitmapHash = _imageHasher.PDQHash256(image, out var bitmapQuality);
+            using var stream = new System.IO.MemoryStream(imageBytes);
+            var streamHash = _imageHasher.PDQHash256(stream, out var streamQuality);
+            var pathHash = _imageHasher.PDQHash256(path, out var pathQuality);
+
+            Assert.Equal(4, bitmapHash.Length);
+            Assert.Equal(bitmapHash, streamHash);
+            Assert.Equal(bitmapHash, pathHash);
+            Assert.InRange(bitmapQuality, 0, 100);
+            Assert.Equal(bitmapQuality, streamQuality);
+            Assert.Equal(bitmapQuality, pathQuality);
+            Assert.Equal(1.0f, ImageHasher.Compare(bitmapHash, pathHash));
+            Assert.Equal(bitmapHash, _imageHasher.PDQHash256(image));
+            Assert.Equal(bitmapHash, image.PDQHash256());
+            Assert.Equal(bitmapHash, image.PDQHash256(out var extensionQuality));
+            Assert.Equal(bitmapQuality, extensionQuality);
+            Assert.Equal(1.0f, image.Compare(image, ImageHashAlgorithm.PDQ256));
+            Assert.Equal(1.0f, image.Compare(path, ImageHashAlgorithm.PDQ256));
+
+            using var jpegEncoded = SKImage.FromBitmap(image).Encode(SKEncodedImageFormat.Jpeg, 85);
+            using var jpegStream = new System.IO.MemoryStream(jpegEncoded.ToArray());
+            var jpegHash = _imageHasher.PDQHash256(jpegStream);
+            Assert.True(ImageHasher.Compare(bitmapHash, jpegHash) >= 1.0f - (31.0f / 256));
+        }
+        finally
+        {
+            System.IO.File.Delete(path);
+        }
+    }
+
+    [Fact]
     public void Compare_ShouldReturnCorrectSimilarity()
     {
         var hash1 = 0b1010101010101010101010101010101010101010101010101010101010101010UL;
