@@ -128,14 +128,14 @@ public static class PerceptualLosslessCompressor
             }
 
             var marker = jpeg[offset++];
-            if (marker == 0xDA || marker == 0xD9)
+            switch (marker)
             {
-                return false;
-            }
-
-            if (marker == 0xD8 || marker == 0x01 || marker is >= 0xD0 and <= 0xD7)
-            {
-                continue;
+                case 0xDA or 0xD9:
+                    return false;
+                case 0xD8:
+                case 0x01:
+                case >= 0xD0 and <= 0xD7:
+                    continue;
             }
 
             if (offset + 1 >= jpeg.Length)
